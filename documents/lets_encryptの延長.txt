@@ -1,0 +1,10 @@
+○本番
+
+sudo systemctl stop apache2
+sudo /opt/letsencrypt/certbot-auto renew
+sudo systemctl start apache2
+
+
+○開発
+
+sudo certbot renew --post-hook "sudo systemctl restart apache"
