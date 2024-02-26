@@ -22,5 +22,5 @@ Route::group(['prefix' => 'admin'/*, 'middleware' => ['auth', 'can:admin', 'mana
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('suspend');
 });
