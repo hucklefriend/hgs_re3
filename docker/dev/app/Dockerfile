@@ -1,4 +1,5 @@
 FROM php:8.3-fpm-bookworm
+
 RUN apt-get update
 RUN apt-get install -y libonig-dev zlib1g-dev libpng-dev libxml2-dev libzip-dev libmemcached-dev
 RUN apt-get install -y default-mysql-client
@@ -31,3 +32,4 @@ COPY php.ini /usr/local/etc/php/php.ini
 WORKDIR /var/hgs_re3
 
 RUN kill -USR2 1
+USER 1000
