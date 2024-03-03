@@ -1,17 +1,8 @@
-@extends('layouts.management')
-
-@section('title', 'プラットフォーム登録')
+@extends('admin.layout')
 
 @section('content')
-    <ol class="breadcrumb float-xl-end">
-        <li class="breadcrumb-item"><a href="{{ route('管理') }}">管理</a></li>
-        <li class="breadcrumb-item">マスター</li>
-        <li class="breadcrumb-item"><a href="{{ route('管理-マスター-プラットフォーム') }}">プラットフォーム</a></li>
-        <li class="breadcrumb-item active">登録</li>
-    </ol>
-    <h1 class="page-header">プラットフォーム登録</h1>
     <div class="panel panel-inverse">
-        <form method="POST" action="{{ route('管理-マスター-プラットフォーム登録処理') }}">
+        <form method="POST" action="{{ route('Admin.MasterData.Platform.Store') }}">
             {{ csrf_field() }}
             <div class="panel-heading">
                 <h4 class="panel-title">新規登録</h4>

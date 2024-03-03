@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Defines\AdminDefine;
-use App\Http\Controllers\Controller;
+use App\Models\MasterData\GameMaker;
 use App\Models\MasterData\GamePlatform;
+use Hgs3\Http\Requests\Master\GamePlatformRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Controller as BaseController;
 
-class GamePlatformController extends Controller
+class GamePlatformController extends AbstractAdminController
 {
 
     /**
@@ -24,7 +24,7 @@ class GamePlatformController extends Controller
         $platforms = GamePlatform::orderByDesc('id')
             ->paginate(AdminDefine::ITEMS_PER_PAGE);
 
-        return view('management.master.platform.index', [
+        return view('admin.game_platform.index', [
             'platforms' => $platforms
         ]);
     }
@@ -33,12 +33,13 @@ class GamePlatformController extends Controller
     /**
      * 詳細
      *
-     * @param Orm\GamePlatform $platform
+     * @param GamePlatform $platform
      * @return Application|Factory|View
      */
-    public function detail(Orm\GamePlatform $platform): Application|Factory|View
+    public function detail(GamePlatform $platform): Application|Factory|View
     {
-        return view('management.master.platform.detail', [
+        $platform->loadSynonyms();
+        return view('admin.game_platform.detail', [
             'model' => $platform
         ]);
     }
@@ -50,9 +51,8 @@ class GamePlatformController extends Controller
      */
     public function add(): Application|Factory|View
     {
-        return view('management.master.platform.add', [
-            'model'  => new Orm\GamePlatform(),
-            'makers' => Orm\GameMaker::getHashBy('name', prepend: ['' => '-'])
+        return view('admin.game_platform.add', [
+            'model'  => new GamePlatform()
         ]);
     }
 
@@ -61,29 +61,28 @@ class GamePlatformController extends Controller
      *
      * @param GamePlatformRequest $request
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(GamePlatformRequest $request): RedirectResponse
     {
-        $platform = new Orm\GamePlatform();
+        $platform = new GamePlatform();
         $platform->fill($request->validated());
         $platform->save();
 
-        return redirect()->route('管理-マスター-プラットフォーム詳細', $platform);
+        return redirect()->route('Admin.MasterData.Platform.Detail', $platform);
     }
 
     /**
      * 編集画面
      *
-     * @param Orm\GamePlatform $platform
+     * @param GamePlatform $platform
      * @return Application|Factory|View
      */
-    public function edit(Orm\GamePlatform $platform): Application|Factory|View
+    public function edit(GamePlatform $platform): Application|Factory|View
     {
-        $makers = Orm\GameMaker::getHashBy('name', prepend: ['' => '-']);
-
-        return view('management.master.platform.edit', [
-            'model'  => $platform,
-            'makers' => $makers
+        $platform->loadSynonyms();
+        return view('admin.game_platform.edit', [
+            'model'  => $platform
         ]);
     }
 
@@ -91,27 +90,29 @@ class GamePlatformController extends Controller
      * データ更新
      *
      * @param GamePlatformRequest $request
-     * @param Orm\GamePlatform $platform
+     * @param GamePlatform $platform
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function update(GamePlatformRequest $request, Orm\GamePlatform $platform): RedirectResponse
+    public function update(GamePlatformRequest $request, GamePlatform $platform): RedirectResponse
     {
         $platform->fill($request->validated());
         $platform->save();
 
-        return redirect()->route('管理-マスター-プラットフォーム詳細', $platform);
+        return redirect()->route('Admin.MasterData.Platform.Detail', $platform);
     }
 
     /**
      * 削除
      *
-     * @param Orm\GamePlatform $platform
+     * @param GamePlatform $platform
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function delete(Orm\GamePlatform $platform): RedirectResponse
+    public function delete(GamePlatform $platform): RedirectResponse
     {
         $platform->delete();
 
-        return redirect()->route('管理-マスター-プラットフォーム');
+        return redirect()->route('Admin.MasterData.Platform');
     }
 }

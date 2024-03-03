@@ -3,10 +3,10 @@
     use Illuminate\Support\Facades\Route;
 @endphp
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
-    <title>ホラーゲームネットワーク 管理</title>
+    <title>H.G.N. Admin</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
@@ -22,6 +22,7 @@
     <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
     <!-- ================== END page-css ================== -->
 </head>
 <body>
@@ -41,7 +42,7 @@
     <div id="header" class="app-header">
         <!-- BEGIN navbar-header -->
         <div class="navbar-header">
-            <a href="{{ route('Admin') }}" class="navbar-brand"><span class="navbar-logo"></span> <b class="me-1">Color</b> Admin</a>
+            <a href="{{ route('Admin') }}" class="navbar-brand"><span class="navbar-logo"></span> <b class="me-1">H.G.N.</b> Admin</a>
             <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -92,7 +93,7 @@
                         <div class="menu-text">Top</div>
                     </a>
                 </div>
-                <div class="menu-item has-sub {{ menu_active("Admin>MasterData") }}">
+                <div class="menu-item has-sub {{ menu_active("Admin.MasterData") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-sitemap"></i>
@@ -101,13 +102,13 @@
                         <div class="menu-caret"></div>
                     </a>
                     <div class="menu-submenu">
-                        <div class="menu-item  {{ menu_active("Admin>MasterData>Maker") }}">
-                            <a href="{{ route("Admin>MasterData>Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
+                        <div class="menu-item  {{ menu_active("Admin.MasterData.Maker") }}">
+                            <a href="{{ route("Admin.MasterData.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin>MasterData>Platform") }}">
-                            <a href="{{ route("Admin>MasterData>Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Platform") }}">
+                            <a href="{{ route("Admin.MasterData.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin>MasterData>Game") }}">
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Game") }}">
                             <a href="index_v3.html" class="menu-link"><div class="menu-text">Game</div></a>
                         </div>
                     </div>
@@ -129,15 +130,17 @@
 
     <!-- BEGIN #content -->
     <div id="content" class="app-content">
+        @php $pageTitle = ''; @endphp
         @if (Request::route()->getName() !== 'Admin')
         <!-- BEGIN breadcrumb -->
         <ol class="breadcrumb float-xl-end">
             @php $routeNames = []; @endphp
-            @foreach (explode('>', Request::route()->getName()) as $route)
+            @foreach (explode('.', Request::route()->getName()) as $route)
                 @if($loop->last)
                     <li class="breadcrumb-item active">{{ $route }}</li>
+                    @php $pageTitle = $route; @endphp
                 @else
-                    @php $routeNames[] = $route;$routeName = implode('>', $routeNames); @endphp
+                    @php $routeNames[] = $route;$routeName = implode('.', $routeNames); @endphp
                     @if (Route::has($routeName))
                         <li class="breadcrumb-item"><a href="{{ route($routeName) }}">{{ $route }}</a></li>
                     @else
@@ -150,7 +153,7 @@
         <!-- END breadcrumb -->
         @endif
         <!-- BEGIN page-header -->
-        <h1 class="page-header">@yield('title')</h1>
+        <h1 class="page-header">@hasSection('title') @yield('title') @else {{ $pageTitle }} @endif</h1>
         <!-- END page-header -->
 
         @yield('content')
@@ -177,6 +180,9 @@
 <script src="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/jvectormap-content/world-mill.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
+<script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
+@hasSection('js') @yield('js') @endif
+
 <!-- ================== END page-js ================== -->
 </body>
 </html>

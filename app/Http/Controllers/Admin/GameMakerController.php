@@ -6,15 +6,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Defines\AdminDefine;
-use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\GameMakerRequest;
 use App\Models\MasterData\GameMaker;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
-class GameMakerController extends Controller
+class GameMakerController extends AbstractAdminController
 {
     /**
      * インデックス
@@ -24,28 +25,28 @@ class GameMakerController extends Controller
      */
     public function index(Request $request): Application|Factory|View
     {
-        $makers = GameMaker::orderByDesc('id');
+        $makers = GameMaker::orderBy('id');
 
-//        $searchName = trim($request->query('name', ''));
-//        $search = [];
+        $searchName = trim($request->query('name', ''));
+        $search = ['name' => ''];
 
-//        if (!empty($searchName)) {
-//            $search['name'] = $searchName;
-//            $words = explode(' ', $searchName);
-//
-//            $makers->where(function ($query) use ($words) {
-//                foreach ($words as $word) {
-//                    $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
-//                    $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
-//                    $query->orWhere('acronym', operator: 'LIKE', value: '%' . $word . '%');
-//                }
-//            });
-//        }
-//
-//        $this->putSearchSession('search_maker', $search);
+        if (!empty($searchName)) {
+            $search['name'] = $searchName;
+            $words = explode(' ', $searchName);
+
+            $makers->where(function ($query) use ($words) {
+                foreach ($words as $word) {
+                    $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
+                    $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
+                    $query->orWhere('acronym', operator: 'LIKE', value: '%' . $word . '%');
+                }
+            });
+        }
+
+        $this->saveSearchSession('search_maker', $search);
 
         return view('admin.game_maker.index', [
-            //'search' => $search,
+            'search' => $search,
             'makers' => $makers->paginate(AdminDefine::ITEMS_PER_PAGE)
         ]);
     }
@@ -53,12 +54,12 @@ class GameMakerController extends Controller
     /**
      * 詳細
      *
-     * @param Orm\GameMaker $maker
+     * @param GameMaker $maker
      * @return Application|Factory|View
      */
-    public function detail(Orm\GameMaker $maker): Application|Factory|View
+    public function detail(GameMaker $maker): Application|Factory|View
     {
-        return view('management.master.maker.detail', [
+        return view('admin.game_maker.detail', [
             'model' => $maker
         ]);
     }
@@ -70,8 +71,8 @@ class GameMakerController extends Controller
      */
     public function add(): Application|Factory|View
     {
-        return view('management.master.maker.add', [
-            'model' => new Orm\GameMaker(),
+        return view('admin.game_maker.add', [
+            'model' => new GameMaker(),
         ]);
     }
 
@@ -80,25 +81,28 @@ class GameMakerController extends Controller
      *
      * @param GameMakerRequest $request
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(GameMakerRequest $request): RedirectResponse
     {
-        $maker = new Orm\GameMaker();
+        $maker = new GameMaker();
         $maker->fill($request->validated());
+        $maker->synonymsStr = $request->post('synonymsStr', '');
         $maker->save();
 
-        return redirect()->route('管理-マスター-メーカー詳細', $maker);
+        return redirect()->route('Admin>MasterData>Maker');
     }
 
     /**
      * 編集画面
      *
-     * @param Orm\GameMaker $maker
+     * @param GameMaker $maker
      * @return Application|Factory|View
      */
-    public function edit(Orm\GameMaker $maker): Application|Factory|View
+    public function edit(GameMaker $maker): Application|Factory|View
     {
-        return view('management.master.maker.edit', [
+        $maker->loadSynonyms();
+        return view('admin.game_maker.edit', [
             'model' => $maker
         ]);
     }
@@ -107,27 +111,30 @@ class GameMakerController extends Controller
      * データ更新
      *
      * @param GameMakerRequest $request
-     * @param Orm\GameMaker $maker
+     * @param GameMaker $maker
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function update(GameMakerRequest $request, Orm\GameMaker $maker): RedirectResponse
+    public function update(GameMakerRequest $request, GameMaker $maker): RedirectResponse
     {
         $maker->fill($request->validated());
+        $maker->synonymsStr = $request->validated('synonymsStr', '');
         $maker->save();
 
-        return redirect()->route('管理-マスター-メーカー詳細', $maker);
+        return redirect()->route('Admin.MasterData.Maker');
     }
 
     /**
      * 削除
      *
-     * @param Orm\GameMaker $maker
+     * @param GameMaker $maker
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function delete(Orm\GameMaker $maker): RedirectResponse
+    public function delete(GameMaker $maker): RedirectResponse
     {
         $maker->delete();
 
-        return redirect()->route('管理-マスター-メーカー');
+        return redirect()->route('Admin.MasterData.Maker');
     }
 }

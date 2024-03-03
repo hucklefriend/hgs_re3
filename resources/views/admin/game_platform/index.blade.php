@@ -1,24 +1,10 @@
-@extends('layouts.management')
-
-@section('title', 'プラットフォーム')
+@extends('admin.layout')
 
 @section('content')
-    <ol class="breadcrumb float-xl-end">
-        <li class="breadcrumb-item"><a href="{{ route('管理') }}">Home</a></li>
-        <li class="breadcrumb-item">マスター</li>
-        <li class="breadcrumb-item active">プラットフォーム</li>
-    </ol>
-    <h1 class="page-header">プラットフォーム</h1>
     <div class="panel panel-inverse">
-        <div class="panel-heading">
-            <h4 class="panel-title">一覧</h4>
-            <div class="panel-heading-btn">
-                <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
-            </div>
-        </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('管理-マスター-プラットフォーム登録') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                <a href="{{ route('Admin.MasterData.Platform.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
             </div>
 
             <table class="table table-hover">
@@ -36,7 +22,7 @@
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
                         <td>{{ $platform->acronym }}</td>
-                        <td class="text-center"><a href="{{ route('管理-マスター-プラットフォーム詳細', $platform) }}">詳細</a></td>
+                        <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}">Detail</a></td>
                     </tr>
                 @endforeach
                 </tbody>
