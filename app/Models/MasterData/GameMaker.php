@@ -1,12 +1,11 @@
 <?php
 /**
- * ORM: game_companies
+ * game_makers
  */
 
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class GameMaker extends Model

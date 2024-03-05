@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 class AdminController extends AbstractAdminController
 {
-
-    public function top()
+    /**
+     * Adminトップ
+     *
+     * @return Application|Factory|View
+     */
+    public function top(): Application|Factory|View
     {
         return view('admin.top');
     }

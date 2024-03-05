@@ -13,36 +13,103 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use \App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Admin;
 // 管理用
 Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'admin']], function () {
-    // 管理
-    Route::get('/', [Admin\AdminController::class, 'top'])->name('Admin');
+// 管理
+    Route::get('top', [Admin\AdminController::class, 'top'])->name('Admin');
 
     // マスター
     Route::group(['prefix' => 'master'], function () {
         // メーカー
-        Route::group(['prefix' => 'maker'], function () {
+        $prefix = 'maker';
+        Route::group(['prefix' => 'maker'], function () use ($prefix) {
             $basename = 'Admin.MasterData.Maker';
-            Route::get('/', [Admin\GameMakerController::class, 'index'])->name($basename);
-            Route::get('add', [Admin\GameMakerController::class, 'add'])->name("{$basename}.Add");
-            Route::post('add', [Admin\GameMakerController::class, 'store'])->name("{$basename}.Store");
-            Route::get('{maker}/edit', [Admin\GameMakerController::class, 'edit'])->name("{$basename}.Edit");
-            Route::put('{maker}/edit', [Admin\GameMakerController::class, 'update'])->name("{$basename}.Update");
-            Route::get('{maker}', [Admin\GameMakerController::class, 'detail'])->name("{$basename}.Detail");
-            Route::delete('{maker}', [Admin\GameMakerController::class, 'delete'])->name("{$basename}.Delete");
+            $class = Admin\MasterData\GameMakerController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
         });
 
         // プラットフォーム
-        Route::group(['prefix' => 'platform'], function () {
+        $prefix = 'platform';
+        Route::group(['prefix' => 'platform'], function () use ($prefix) {
             $basename = 'Admin.MasterData.Platform';
-            Route::get('/', [Admin\GamePlatformController::class, 'index'])->name($basename);
-            Route::get('add', [Admin\GamePlatformController::class, 'add'])->name("{$basename}.Add");
-            Route::post('add', [Admin\GamePlatformController::class, 'store'])->name("{$basename}.Store");
-            Route::get('{platform}/edit', [Admin\GamePlatformController::class, 'edit'])->name("{$basename}.Edit");
-            Route::put('{platform}/edit', [Admin\GamePlatformController::class, 'update'])->name("{$basename}.Update");
-            Route::get('{platform}', [Admin\GamePlatformController::class, 'detail'])->name("{$basename}.Detail");
-            Route::delete('{platform}', [Admin\GamePlatformController::class, 'delete'])->name("{$basename}.Delete");
+            $class = Admin\MasterData\GamePlatformController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+        });
+
+        // フランチャイズ
+        $prefix = 'franchise';
+        Route::group(['prefix' => 'franchise'], function () use ($prefix) {
+            $basename = 'Admin.MasterData.Franchise';
+            $class = Admin\MasterData\GameFranchiseController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}/link_series', [$class, 'linkSeries'])->name("{$basename}.LinkSeries");
+            Route::post('{' . $prefix . '}/link_series', [$class, 'syncSeries'])->name("{$basename}.SyncSeries");
+            Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
+            Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+        });
+
+        // シリーズ
+        $prefix = 'series';
+        Route::group(['prefix' => $prefix], function () use ($prefix) {
+            $basename = 'Admin.MasterData.Series';
+            $class = Admin\MasterData\GameSeriesController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+        });
+
+        // タイトル
+        $prefix = 'title';
+        Route::group(['prefix' => $prefix], function () use ($prefix) {
+            $basename = 'Admin.MasterData.Title';
+            $class = Admin\MasterData\GameTitleController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+        });
+
+        // パッケージ
+        $prefix = 'package';
+        Route::group(['prefix' => $prefix], function () use ($prefix) {
+            $basename = 'Admin.MasterData.Package';
+            $class = Admin\MasterData\GamePackageController::class;
+            Route::get('/', [$class, 'index'])->name($basename);
+            Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+            Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+            Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+            Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+            Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+            Route::get('{package}/copy', [$class, 'copy'])->name("{$basename}.Copy");
+            Route::post('{package}/copy', [$class, 'doCopy'])->name("{$basename}.DoCopy");
         });
     });
 });

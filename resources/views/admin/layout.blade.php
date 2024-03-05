@@ -18,6 +18,9 @@
     <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet" />
     <!-- ================== END core-css ================== -->
 
+    <!-- オリジナルCSS -->
+    <link href="{{ asset('admin/style.css') }}" rel="stylesheet" />
+
     <!-- ================== BEGIN page-css ================== -->
     <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
@@ -42,7 +45,7 @@
     <div id="header" class="app-header">
         <!-- BEGIN navbar-header -->
         <div class="navbar-header">
-            <a href="{{ route('Admin') }}" class="navbar-brand"><span class="navbar-logo"></span> <b class="me-1">H.G.N.</b> Admin</a>
+            <a href="{{ route('Admin') }}" class="navbar-brand"><img src="{{ asset('admin/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
             <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -98,7 +101,7 @@
                         <div class="menu-icon">
                             <i class="fa fa-sitemap"></i>
                         </div>
-                        <div class="menu-text">Master Data</div>
+                        <div class="menu-text">MasterData</div>
                         <div class="menu-caret"></div>
                     </a>
                     <div class="menu-submenu">
@@ -108,8 +111,17 @@
                         <div class="menu-item {{ menu_active("Admin.MasterData.Platform") }}">
                             <a href="{{ route("Admin.MasterData.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Game") }}">
-                            <a href="index_v3.html" class="menu-link"><div class="menu-text">Game</div></a>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Franchise") }}">
+                            <a href="{{ route("Admin.MasterData.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Series") }}">
+                            <a href="{{ route("Admin.MasterData.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Title") }}">
+                            <a href="{{ route("Admin.MasterData.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.Package") }}">
+                            <a href="{{ route("Admin.MasterData.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
                         </div>
                     </div>
                 </div>
