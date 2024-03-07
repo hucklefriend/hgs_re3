@@ -14,8 +14,8 @@
                 @include('admin.master_data.game_title.form')
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Franchise.Title', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
-                <button type="submit" class="btn btn-default">Save</button>
+                <a href="{{ route('Admin.MasterData.Title.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

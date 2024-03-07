@@ -18,6 +18,12 @@
         </td>
     </tr>
     <tr>
+        <th>俗称</th>
+        <td>
+            @include ('admin.common.form.textarea', ['name' => 'synonymsStr'])
+        </td>
+    </tr>
+    <tr>
         <th>ジャンル</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'genre', 'options' => ['maxlength' => 150]])

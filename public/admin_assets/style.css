@@ -1,5 +1,5 @@
 .admin-form-table th {
-    width: 150px;
+    white-space: nowrap;
 }
 
 .admin-form-table tr:last-child > td,

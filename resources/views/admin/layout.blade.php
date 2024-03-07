@@ -193,6 +193,9 @@
 <script src="{{ asset('assets/plugins/jvectormap-content/world-mill.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
 <script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
+
+<script src="{{ asset('admin_assets/common.js') }}"></script>
+
 @hasSection('js') @yield('js') @endif
 
 <!-- ================== END page-js ================== -->

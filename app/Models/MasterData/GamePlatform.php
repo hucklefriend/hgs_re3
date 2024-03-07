@@ -4,7 +4,9 @@ namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GamePlatform extends Model
 {
@@ -32,9 +34,14 @@ class GamePlatform extends Model
      */
     public string $synonymsStr = '';
 
-    public function synonyms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    /**
+     * 俗称
+     *
+     * @return HasMany
+     */
+    public function synonyms(): HasMany
     {
-        return $this->hasMany(GameMakerSynonym::class, 'game_maker_id');
+        return $this->hasMany(GamePlatformSynonym::class, 'game_platform_id');
     }
 
     /**
@@ -44,7 +51,9 @@ class GamePlatform extends Model
      */
     public function loadSynonyms(): void
     {
-        $this->synonymsStr = $this->synonyms()->pluck('synonym')->implode("\r\n");
+        $this->synonymsStr = $this->synonyms()
+            ->pluck('synonym')
+            ->implode("\r\n");
     }
 
     /**
@@ -59,9 +68,8 @@ class GamePlatform extends Model
 
             parent::save($options);
 
-            // game_maker_synonymから一旦全部削除して再登録する
+            // synonymsから一旦全部削除して再登録する
             $this->synonyms()->delete();
-
             foreach (explode("\r\n", $this->synonymsStr) as $synonym) {
                 $synonym = trim($synonym);
                 if (empty($synonym)) {
@@ -70,7 +78,7 @@ class GamePlatform extends Model
 
                 $this->synonyms()->create([
                     'game_platform_id' => $this->id,
-                    'synonym'       => $synonym
+                    'synonym' => synonym($synonym),
                 ]);
             }
 

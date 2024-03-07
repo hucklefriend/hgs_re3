@@ -9,12 +9,7 @@
             <div class="text-end">
                 <a href="{{ route('Admin.MasterData.Platform.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
-            <style>
-                #platform-table th {
-                    width: 150px;
-                }
-            </style>
-            <table class="table" id="platform-table">
+            <table class="table admin-form-table" id="platform-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>

@@ -9,7 +9,7 @@
             <div class="text-end">
                 <a href="{{ route('Admin.MasterData.Series.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
-            <table class="table">
+            <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>

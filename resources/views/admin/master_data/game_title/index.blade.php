@@ -48,7 +48,7 @@
                     <tr>
                         <td>{{ $title->id }}</td>
                         <td>{{ $title->name }}</td>
-                        <td>{{ $title->series->name ?? '' }}</td>
+                        <td>{{ $title->series()->name ?? '' }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.Title.Detail', $title) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
                         </td>

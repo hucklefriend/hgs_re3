@@ -1,7 +1,4 @@
 <?php
-/**
- * ORM: game_companies
- */
 
 namespace App\Models\MasterData;
 

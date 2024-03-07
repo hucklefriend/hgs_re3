@@ -22,7 +22,7 @@ class GameMakerController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
-        $makers = GameMaker::orderBy('id');
+        $makers = GameMaker::orderByDesc('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -38,26 +38,26 @@ class GameMakerController extends AbstractAdminController
                     $query->orWhere('acronym', operator: 'LIKE', value: '%' . $word . '%');
                 }
             });
+
+            // 俗称も探す
+            // $words配列の中にある文字列にsynonym関数を適用する
+            array_walk($words, function ($value, $key){
+                return synonym($value);
+            });
+
+            // サブクエリで、game_maker_synonymsテーブルのsynonymが一致するgame_maker_id
+            $makers->orWhereIn('id', function ($query) use ($words) {
+                $query->select('game_maker_id')
+                    ->from('game_maker_synonyms')
+                    ->whereIn('synonym', $words);
+            });
         }
 
-        $this->saveSearchSession('search_maker', $search);
+        $this->saveSearchSession('search_game_maker', $search);
 
         return view('admin.master_data.game_maker.index', [
             'search' => $search,
             'makers' => $makers->paginate(AdminDefine::ITEMS_PER_PAGE)
-        ]);
-    }
-
-    /**
-     * 詳細
-     *
-     * @param GameMaker $maker
-     * @return Application|Factory|View
-     */
-    public function detail(GameMaker $maker): Application|Factory|View
-    {
-        return view('admin.master_data.game_maker.detail', [
-            'model' => $maker
         ]);
     }
 

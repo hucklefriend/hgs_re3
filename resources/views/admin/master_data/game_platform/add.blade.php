@@ -12,7 +12,7 @@
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.MasterData.Platform') }}" class="btn btn-default">Cancel</a>&nbsp;
-                <button type="submit" class="btn btn-default">登録</button>
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

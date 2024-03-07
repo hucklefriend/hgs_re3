@@ -23,12 +23,6 @@
         </td>
     </tr>
     <tr>
-        <th>公式サイトURL</th>
-        <td>
-            @include ('admin.common.form.input', ['type' => 'url', 'name' => 'url', 'options' => ['maxlength' => 300]])
-        </td>
-    </tr>
-    <tr>
         <th>メーカー</th>
         <td>
             @include ('admin.common.form.select_game_maker', ['name' => 'game_maker_id', 'value' => $model->game_maker_id, 'withBlank' => true])

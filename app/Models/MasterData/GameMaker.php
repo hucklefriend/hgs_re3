@@ -1,14 +1,11 @@
 <?php
-/**
- * game_makers
- */
 
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class GameMaker extends Model
+class GameMaker extends \Eloquent
 {
     protected $guarded = ['id', 'synonymsStr'];
 
@@ -64,7 +61,7 @@ class GameMaker extends Model
 
                 $this->synonyms()->create([
                     'game_maker_id' => $this->id,
-                    'synonym'       => $synonym
+                    'synonym'       => synonym($synonym)
                 ]);
             }
 

@@ -29,7 +29,7 @@ class Admin
                 $controller = class_basename($action['controller']);
                 list($controller, $method) = explode('@', $controller);
 
-                View::share('controllerName', $controller);
+                View::share('controllerName', mb_substr($controller, 0, -10));
             }
         }
 

@@ -1,4 +1,5 @@
 @extends('admin.layout')
+
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
@@ -8,7 +9,7 @@
             <div class="text-end">
                 <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
-            <table class="table">
+            <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
@@ -20,6 +21,10 @@
                 <tr>
                     <th>よみがな</th>
                     <td>{{ $model->phonetic }}</td>
+                </tr>
+                <tr>
+                    <th>俗称</th>
+                    <td>{!! nl2br(e($model->synonymsStr)); !!}</td>
                 </tr>
                 <tr>
                     <th>ジャンル</th>
@@ -36,6 +41,36 @@
                 <tr>
                     <th>あらすじ引用元</th>
                     <td>{!! $model->introduction_from !!}</td>
+                </tr>
+                <tr>
+                    <th>シリーズ</th>
+                    <td>
+                        @if ($model->series())
+                            <span class="mr-2">
+                                <a href="{{ route('Admin.MasterData.Series.Detail', $model->series()) }}">
+                                    {{ $model->series()->name }}
+                                </a>
+                            </span>
+                        @endif
+                        <a href="{{ route('Admin.MasterData.Title.LinkSeries', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i> Link
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>フランチャイズ</th>
+                    <td>
+                        @if ($model->franchise())
+                            <span class="mr-2">
+                                <a href="{{ route('Admin.MasterData.Franchise.Detail', $model->franchise()) }}">
+                                    {{ $model->franchise()->name }}
+                                </a>
+                            </span>
+                        @endif
+                        @if (!$model->series())
+                        <a href="{{ route('Admin.MasterData.Title.LinkFranchise', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        @endif
+                    </td>
                 </tr>
             </table>
         </div>

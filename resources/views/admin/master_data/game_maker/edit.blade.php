@@ -14,7 +14,7 @@
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.MasterData.Maker.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
-                <button type="submit" class="btn btn-default">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

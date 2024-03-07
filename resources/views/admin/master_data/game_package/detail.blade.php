@@ -10,7 +10,7 @@
                 <a href="{{ route('Admin.MasterData.Package.Copy', $package) }}" class="btn btn-outline-info"><i class="far fa-copy"></i></a>&nbsp;
                 <a href="{{ route('Admin.MasterData.Package.Edit', $package) }}" class="btn btn-default"><i class="fas fa-edit"></i></a>
             </div>
-            <table class="table">
+            <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $package->id }}</td>

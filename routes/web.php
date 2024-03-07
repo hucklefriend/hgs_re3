@@ -96,6 +96,10 @@ Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'ad
             Route::post('add', [$class, 'store'])->name("{$basename}.Store");
             Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
             Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}/link_franchise', [$class, 'linkFranchise'])->name("{$basename}.LinkFranchise");
+            Route::post('{' . $prefix . '}/link_franchise', [$class, 'syncFranchise'])->name("{$basename}.SyncFranchise");
+            Route::get('{' . $prefix . '}/link_series', [$class, 'linkSeries'])->name("{$basename}.LinkSeries");
+            Route::post('{' . $prefix . '}/link_series', [$class, 'syncSeries'])->name("{$basename}.SyncSeries");
             Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
             Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
         });

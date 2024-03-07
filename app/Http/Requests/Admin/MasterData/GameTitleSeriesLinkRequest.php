@@ -2,12 +2,9 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-
-use App\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
-class GamePlatformRequest extends FormRequest
+class GameTitleSeriesLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +24,7 @@ class GamePlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'required|max:200',
-            'acronym'       => 'required|max:30',
-            'sort_order'    => 'required|integer|min:0|max:99999999',
-            'game_maker_id' => 'nullable|exists:game_makers,id',
-            'rated_r'       => ['required', new Enum(RatedR::class)],
+            'series_id' => 'required|exists:game_series,id',
         ];
     }
 }

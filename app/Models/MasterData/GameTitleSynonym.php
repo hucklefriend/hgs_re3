@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class GameMakerSynonym extends Model
+class GameTitleSynonym extends Model
 {
     public $incrementing = false;
-    protected $fillable = ['game_maker_id', 'synonym'];
+    protected $fillable = ['game_title_id', 'synonym'];
 
     /**
-     * メーカーを取得
+     * タイトルを取得
      *
      * @return BelongsTo
      */
-    public function maker(): BelongsTo
+    public function titles(): BelongsTo
     {
-        return $this->belongsTo(GameMaker::class, 'game_maker_id');
+        return $this->belongsTo(GameTitle::class, 'game_title_id');
     }
 }
