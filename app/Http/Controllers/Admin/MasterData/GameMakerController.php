@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Models\MasterData\GameMaker;
-use GameMakerRequest;
+use App\Http\Requests\Admin\MasterData\GameMakerRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

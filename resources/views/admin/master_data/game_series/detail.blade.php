@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Series.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i></a>
+                <a href="{{ route('Admin.MasterData.Series.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
             <table class="table">
                 <tr>
@@ -24,16 +24,22 @@
                 </tr>
                 <tr>
                     <th>フランチャイズ</th>
-                    <td>{{ $model->franchise->name }}</td>
+                    <td>
+                        @if ($model->franchise())
+                            <span class="mr-2"><a href="{{ route('Admin.MasterData.Franchise.Detail', $model->franchise()) }}">{{ $model->franchise()->name }}</a></span>
+                        @endif
+                        <a href="{{ route('Admin.MasterData.Series.LinkFranchise', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                    </td>
                 </tr>
                 <tr>
-                    <th>ソフト</th>
+                    <th>タイトル</th>
                     <td>
-                        <ul>
+                        <ul class="list-group">
                         @foreach ($model->titles as $title)
-                            <li><a href="{{ route('Admin.MasterData.Title.Detail', $title) }}">{{ $title->name }}</a></li>
+                            <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.Title.Detail', $title) }}">{{ $title->name }}</a></li>
                         @endforeach
                         </ul>
+                        <a href="{{ route('Admin.MasterData.Series.LinkTitle', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
                     </td>
                 </tr>
             </table>
@@ -43,7 +49,7 @@
                 <form method="POST" action="{{ route('Admin.MasterData.Series.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i></button>
+                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>
             </div>
         </div>

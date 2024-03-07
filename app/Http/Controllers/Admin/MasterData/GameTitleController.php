@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Controllers\Admin\GameFranchise;
-use App\Http\Controllers\Admin\GameFranchiseRequest;
-use App\Models\MasterData\GameSeries;
+use App\Http\Requests\Admin\MasterData\GameTitleRequest;
 use App\Models\MasterData\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -24,7 +22,7 @@ class GameTitleController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
-        $softs = GameTitle::orderBy('id');
+        $titles = GameTitle::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -33,7 +31,7 @@ class GameTitleController extends AbstractAdminController
             $search['name'] = $searchName;
             $words = explode(' ', $searchName);
 
-            $softs->where(function ($query) use ($words) {
+            $titles->where(function ($query) use ($words) {
                 foreach ($words as $word) {
                     $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
                     $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
@@ -41,11 +39,24 @@ class GameTitleController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_soft', $search);
+        $this->saveSearchSession('search_game_title', $search);
 
-        return view('admin.game_soft.index', [
-            'softs' => $softs->paginate(AdminDefine::ITEMS_PER_PAGE),
+        return view('admin.master_data.game_title.index', [
+            'titles' => $titles->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
+        ]);
+    }
+
+    /**
+     * 詳細
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function detail(GameTitle $title): Application|Factory|View
+    {
+        return view('admin.master_data.game_title.detail', [
+            'model' => $title
         ]);
     }
 
@@ -56,67 +67,67 @@ class GameTitleController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
-        return view('admin.game_franchise.add', [
-            'model' => new GameFranchise(),
+        return view('admin.master_data.game_title.add', [
+            'model' => new GameTitle(),
         ]);
     }
 
     /**
      * 追加処理
      *
-     * @param GameFranchiseRequest $request
+     * @param GameTitleRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameFranchiseRequest $request): RedirectResponse
+    public function store(GameTitleRequest $request): RedirectResponse
     {
-        $series = new GameSeries();
-        $series->fill($request->validated());
-        $series->save();
+        $title = new GameTitle();
+        $title->fill($request->validated());
+        $title->save();
 
-        return redirect()->route('Admin.MasterData.Series');
+        return redirect()->route('Admin.MasterData.Title.Detail', $title);
     }
 
     /**
      * 編集画面
      *
-     * @param GameFranchise $franchise
+     * @param GameTitle $title
      * @return Application|Factory|View
      */
-    public function edit(GameFranchise $franchise): Application|Factory|View
+    public function edit(GameTitle $title): Application|Factory|View
     {
-        return view('admin.game_franchise.edit', [
-            'model' => $franchise
+        return view('admin.master_data.game_title.edit', [
+            'model' => $title
         ]);
     }
 
     /**
      * 更新処理
      *
-     * @param GameFranchiseRequest $request
-     * @param GameFranchise $series
+     * @param GameTitleRequest $request
+     * @param GameTitle $title
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameFranchiseRequest $request, GameFranchise $series): RedirectResponse
+    public function update(GameTitleRequest $request, GameTitle $title): RedirectResponse
     {
-        $series->fill($request->validated());
-        $series->save();
+        $title->fill($request->validated());
+        $title->save();
 
-        return redirect()->route('Admin.MasterData.Series');
+        return redirect()->route('Admin.MasterData.Title.Detail', $title);
     }
 
     /**
      * 削除
      *
-     * @param GameSeries $series
+     * @param GameTitle $series
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function delete(GameSeries $series): RedirectResponse
+    public function delete(GameTitle $title): RedirectResponse
     {
-        $series->delete();
+        $title->delete();
 
-        return redirect()->route('Admin.MasterData.Series');
+        return redirect()->route('Admin.MasterData.Title');
     }
 }

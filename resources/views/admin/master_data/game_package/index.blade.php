@@ -61,7 +61,7 @@
                         <td>{{ $package->hard->acronym ?? '' }}</td>
                         <td>{{ $package->platform->acronym ?? '' }}</td>
                         <td>{{ $package->release_at }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}">Detail</a></td>
+                        <td class="text-center"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
                     </tr>
                 @endforeach
                 </tbody>

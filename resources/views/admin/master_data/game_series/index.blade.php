@@ -31,7 +31,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
             </div>
 
             <table class="table table-hover">
@@ -40,24 +40,24 @@
                     <th>ID</th>
                     <th>タイトル</th>
                     <th>よみがな</th>
-                    <th>フランチャイズ</th>
                     <td></td>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($serieses as $series)
+                @foreach ($series as $s)
                     <tr>
-                        <td>{{ $series->id }}</td>
-                        <td>{{ $series->name }}</td>
-                        <td>{{ $series->phonetic }}</td>
-                        <td>{{ $series->franchise->name }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Series.Detail', $series) }}">Detail</a></td>
+                        <td>{{ $s->id }}</td>
+                        <td>{{ $s->name }}</td>
+                        <td>{{ $s->phonetic }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('Admin.MasterData.Series.Detail', $s) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
 
-            <div>{{ $serieses->appends($search)->links() }}</div>
+            <div>{{ $series->appends($search)->links() }}</div>
         </div>
     </div>
 @endsection

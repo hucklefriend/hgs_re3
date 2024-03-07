@@ -13,18 +13,6 @@
                         {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前 or よみがな(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3">フランチャイズ</label>
-                    <div class="col-md-9">
-                        {{ Form::select('franchise', $franchises, $search['franchise'] ?? '', ['class' => 'form-control', 'id' => 'franchise']) }}
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3">シリーズ</label>
-                    <div class="col-md-9">
-                        {{ Form::select('series', $series, $search['series'] ?? '', ['class' => 'form-control', 'id' => 'series']) }}
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-md-7 offset-md-3">
                         <button type="submit" class="btn btn-sm btn-primary w-100px me-5px">Search</button>
@@ -51,25 +39,25 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>フランチャイズ</th>
                     <th>シリーズ</th>
                     <td></td>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach ($softs as $soft)
+                @foreach ($titles as $title)
                     <tr>
-                        <td>{{ $soft->id }}</td>
-                        <td>{{ $soft->name }}</td>
-                        <td>{{ $soft->franchise->name }}</td>
-                        <td>{{ $soft->series->name ?? '' }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Title.Detail', $soft) }}">Detail</a></td>
+                        <td>{{ $title->id }}</td>
+                        <td>{{ $title->name }}</td>
+                        <td>{{ $title->series->name ?? '' }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('Admin.MasterData.Title.Detail', $title) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
 
-            <div>{{ $softs->appends($search)->links() }}</div>
+            <div>{{ $titles->appends($search)->links() }}</div>
         </div>
     </div>
 @endsection

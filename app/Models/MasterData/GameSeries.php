@@ -17,20 +17,22 @@ class GameSeries extends \Eloquent
     /**
      * フランチャイズ
      *
-     * @return HasOneThrough
+     * @return ?GameFranchise
      */
-    public function franchise(): HasOneThrough
+    public function franchise(): ?GameFranchise
     {
-        return $this->hasOneThrough(GameFranchise::class, GameFranchiseSeriesLinks::class);
+        // 1対多だが、中間テーブルを利用しているためこうした
+        $many =  $this->belongsToMany(GameFranchise::class, GameFranchiseSeriesLinks::class);
+        return $many->count() == 0 ? null : $many->first();
     }
 
     /**
      * タイトル
      *
-     * @return HasManyThrough
+     * @return BelongsToMany
      */
-    public function titles(): HasManyThrough
+    public function titles(): BelongsToMany
     {
-        return $this->hasManyThrough(GameTitle::class, GameSeriesTitleLinks::class);
+        return $this->belongsToMany(GameTitle::class, GameSeriesTitleLinks::class);
     }
 }

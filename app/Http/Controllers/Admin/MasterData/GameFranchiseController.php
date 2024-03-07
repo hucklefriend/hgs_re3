@@ -146,6 +146,7 @@ class GameFranchiseController extends AbstractAdminController
         $series = GameSeries::orderBy('id')->get(['id', 'name']);
         return view('admin.master_data.game_franchise.link_series', [
             'model' => $franchise,
+            'linkedSeriesIds' => $franchise->series()->pluck('id')->toArray(),
             'series' => $series,
         ]);
     }
@@ -178,8 +179,9 @@ class GameFranchiseController extends AbstractAdminController
             })
             ->get(['id', 'name']);
         return view('admin.master_data.game_franchise.link_title', [
-            'model' => $franchise,
-            'titles' => $titles,
+            'model'          => $franchise,
+            'linkedTitleIds' => $franchise->titles()->pluck('id')->toArray(),
+            'titles'         => $titles,
         ]);
     }
 

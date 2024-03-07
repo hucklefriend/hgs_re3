@@ -3,23 +3,23 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">Series Link</h4>
+            <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
-        <form method="POST" action="{{ route('Admin.MasterData.Franchise.SyncSeries', $model) }}">
+        <form method="POST" action="{{ route('Admin.MasterData.Series.SyncFranchise', $model) }}">
             {{ csrf_field() }}
 
             <div class="panel-body panel-inverse">
                 <div class="list-group">
-                @foreach ($series as $s)
+                @foreach ($franchises as $franchise)
                     <label class="list-group-item">
-                        {{ Form::checkbox('series_id[]', $s->id, in_array($s->id, $linkedSeriesIds), ['class' => 'form-check-input me-1']) }}
-                        {{ $s->name }}
+                        {{ Form::radio('franchise_id', $franchise->id, $franchise->id == ($model->franchise()->id ?? null), ['class' => 'form-check-input me-1']) }}
+                        {{ $franchise->name }}
                     </label>
                 @endforeach
                 </div>
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Franchise.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.MasterData.Series.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

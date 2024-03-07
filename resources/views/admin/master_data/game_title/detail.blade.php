@@ -6,7 +6,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i></a>
+                <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
             <table class="table">
                 <tr>
@@ -22,24 +22,8 @@
                     <td>{{ $model->phonetic }}</td>
                 </tr>
                 <tr>
-                    <th>よみがな(ソート用)</th>
-                    <td>{{ $model->phonetic2 }}</td>
-                </tr>
-                <tr>
                     <th>ジャンル</th>
                     <td>{{ $model->genre }}</td>
-                </tr>
-                <tr>
-                    <th>シリーズ</th>
-                    <td>{{ $model->series->name ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th>シリーズ内の表示順</th>
-                    <td>{{ $model->order_in_series ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th>フランチャイズ</th>
-                    <td>{{ $model->franchise->name }}</td>
                 </tr>
                 <tr>
                     <th>原点パッケージ</th>
@@ -62,7 +46,7 @@
                 <form method="POST" action="{{ route('Admin.MasterData.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i></button>
+                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>
             </div>
         </div>

@@ -5,12 +5,13 @@
         <form method="POST" action="{{ route('Admin.MasterData.Platform.Store') }}">
             {{ csrf_field() }}
             <div class="panel-heading">
-                <h4 class="panel-title">新規登録</h4>
+                <h4 class="panel-title">New Platform</h4>
             </div>
             <div class="panel-body">
-                @include('management.master.platform.form')
+                @include('admin.master_data.game_platform.form')
             </div>
             <div class="panel-footer text-end">
+                <a href="{{ route('Admin.MasterData.Platform') }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-default">登録</button>
             </div>
         </form>

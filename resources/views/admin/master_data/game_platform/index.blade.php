@@ -22,7 +22,7 @@
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
                         <td>{{ $platform->acronym }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}">Detail</a></td>
+                        <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
                     </tr>
                 @endforeach
                 </tbody>

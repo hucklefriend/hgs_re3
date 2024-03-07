@@ -22,6 +22,17 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response|RedirectResponse
     {
+        if ($route = $request->route()) {
+            $action = $route->getAction();
+
+            if (isset($action['controller'])) {
+                $controller = class_basename($action['controller']);
+                list($controller, $method) = explode('@', $controller);
+
+                View::share('controllerName', $controller);
+            }
+        }
+
         Paginator::useBootstrap();
         return $next($request);
     }

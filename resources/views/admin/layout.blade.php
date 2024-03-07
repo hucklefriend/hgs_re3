@@ -6,7 +6,7 @@
 <html lang="ja" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
-    <title>H.G.N. Admin</title>
+    <title>{{ $controllerName }} | H.G.N.</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
@@ -19,7 +19,7 @@
     <!-- ================== END core-css ================== -->
 
     <!-- オリジナルCSS -->
-    <link href="{{ asset('admin/style.css') }}" rel="stylesheet" />
+    <link href="{{ asset('admin_assets/style.css') }}" rel="stylesheet" />
 
     <!-- ================== BEGIN page-css ================== -->
     <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />
@@ -45,7 +45,7 @@
     <div id="header" class="app-header">
         <!-- BEGIN navbar-header -->
         <div class="navbar-header">
-            <a href="{{ route('Admin') }}" class="navbar-brand"><img src="{{ asset('admin/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
+            <a href="{{ route('Admin') }}" class="navbar-brand"><img src="{{ asset('admin_assets/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
             <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>

@@ -50,7 +50,7 @@
                         <td>{{ $franchise->name }}</td>
                         <td>{{ $franchise->phonetic }}</td>
                         <td class="text-center">
-                            <a href="{{ route('Admin.MasterData.Franchise.Detail', $franchise) }}" class="btn btn-default">Detail</a>
+                            <a href="{{ route('Admin.MasterData.Franchise.Detail', $franchise) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
                         </td>
                     </tr>
                 @endforeach

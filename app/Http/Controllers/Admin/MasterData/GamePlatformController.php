@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Models\MasterData\GamePlatform;
-use GamePlatformRequest;
+use App\Http\Requests\Admin\MasterData\GamePlatformRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -23,7 +23,7 @@ class GamePlatformController extends AbstractAdminController
         $platforms = GamePlatform::orderByDesc('id')
             ->paginate(AdminDefine::ITEMS_PER_PAGE);
 
-        return view('admin.game_platform.index', [
+        return view('admin.master_data.game_platform.index', [
             'platforms' => $platforms
         ]);
     }
@@ -37,7 +37,7 @@ class GamePlatformController extends AbstractAdminController
     public function detail(GamePlatform $platform): Application|Factory|View
     {
         $platform->loadSynonyms();
-        return view('admin.game_platform.detail', [
+        return view('admin.master_data.game_platform.detail', [
             'model' => $platform
         ]);
     }
@@ -49,7 +49,7 @@ class GamePlatformController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
-        return view('admin.game_platform.add', [
+        return view('admin.master_data.game_platform.add', [
             'model'  => new GamePlatform()
         ]);
     }
@@ -79,7 +79,7 @@ class GamePlatformController extends AbstractAdminController
     public function edit(GamePlatform $platform): Application|Factory|View
     {
         $platform->loadSynonyms();
-        return view('admin.game_platform.edit', [
+        return view('admin.master_data.game_platform.edit', [
             'model'  => $platform
         ]);
     }

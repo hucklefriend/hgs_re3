@@ -10,12 +10,12 @@
 
             <div class="panel-body panel-inverse">
                 <div class="list-group">
-                @foreach ($titles as $title)
-                    <label class="list-group-item">
-                        <input class="form-check-input me-1" type="checkbox" value="{{ $title->id }}" name="title_id[]">
-                        {{ $title->name }}
-                    </label>
-                @endforeach
+                    @foreach ($titles as $title)
+                        <label class="list-group-item">
+                            {{ Form::checkbox('title_id[]', $title->id, in_array($title->id, $linkedTitleIds), ['class' => 'form-check-input me-1']) }}
+                            {{ $title->name }}
+                        </label>
+                    @endforeach
                 </div>
             </div>
             <div class="panel-footer text-end">

@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin;
 // 管理用
 Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'admin']], function () {
 // 管理
-    Route::get('top', [Admin\AdminController::class, 'top'])->name('Admin');
+    Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
 
     // マスター
     Route::group(['prefix' => 'master'], function () {
@@ -78,6 +78,10 @@ Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'ad
             Route::post('add', [$class, 'store'])->name("{$basename}.Store");
             Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
             Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{' . $prefix . '}/link_franchise', [$class, 'linkFranchise'])->name("{$basename}.LinkFranchise");
+            Route::post('{' . $prefix . '}/link_franchise', [$class, 'syncFranchise'])->name("{$basename}.SyncFranchise");
+            Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
+            Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
             Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
             Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
         });

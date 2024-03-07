@@ -2,6 +2,11 @@
     width: 150px;
 }
 
+.admin-form-table tr:last-child > td,
+.admin-form-table tr:last-child > th {
+    border-bottom: none;
+}
+
 .navbar-logo-hgn {
     width:28px;
     height:28px;

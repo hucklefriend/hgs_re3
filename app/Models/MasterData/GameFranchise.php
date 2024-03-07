@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class GameFranchise extends Model
+class GameFranchise extends \Eloquent
 {
     protected $guarded = ['id'];
 
@@ -37,6 +37,6 @@ class GameFranchise extends Model
      */
     public function titles(): BelongsToMany
     {
-        return $this->BelongsToMany(GameTitle::class, GameFranchiseTitleLinks::class);
+        return $this->belongsToMany(GameTitle::class, GameFranchiseTitleLinks::class);
     }
 }

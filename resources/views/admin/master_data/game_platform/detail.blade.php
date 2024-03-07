@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Platform.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i></a>
+                <a href="{{ route('Admin.MasterData.Platform.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
             <style>
                 #platform-table th {
@@ -54,7 +54,7 @@
                 <form method="POST" action="{{ route('Admin.MasterData.Platform.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i></button>
+                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>
             </div>
         </div>

@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Controllers\Admin\GameFranchise;
-use App\Http\Controllers\Admin\GameFranchiseRequest;
+use App\Http\Requests\Admin\MasterData\GameFranchiseSeriesLinkRequest;
+use App\Http\Requests\Admin\MasterData\GameSeriesFranchiseLinkRequest;
+use App\Http\Requests\Admin\MasterData\GameSeriesTitleLinkRequest;
+use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameSeries;
+use App\Http\Requests\Admin\MasterData\GameSeriesRequest;
+use App\Models\MasterData\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -42,9 +46,22 @@ class GameSeriesController extends AbstractAdminController
 
         $this->saveSearchSession('search_game_series', $search);
 
-        return view('admin.game_series.index', [
+        return view('admin.master_data.game_series.index', [
             'series' => $series->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
+        ]);
+    }
+
+    /**
+     * 詳細
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function detail(GameSeries $series): Application|Factory|View
+    {
+        return view('admin.master_data.game_series.detail', [
+            'model' => $series
         ]);
     }
 
@@ -55,54 +72,54 @@ class GameSeriesController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
-        return view('admin.game_franchise.add', [
-            'model' => new GameFranchise(),
+        return view('admin.master_data.game_franchise.add', [
+            'model' => new GameSeries(),
         ]);
     }
 
     /**
      * 追加処理
      *
-     * @param GameFranchiseRequest $request
+     * @param GameSeriesRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameFranchiseRequest $request): RedirectResponse
+    public function store(GameSeriesRequest $request): RedirectResponse
     {
         $series = new GameSeries();
         $series->fill($request->validated());
         $series->save();
 
-        return redirect()->route('Admin.MasterData.Series');
+        return redirect()->route('Admin.MasterData.Series.Detail', $series);
     }
 
     /**
      * 編集画面
      *
-     * @param GameFranchise $franchise
+     * @param GameSeries $series
      * @return Application|Factory|View
      */
-    public function edit(GameFranchise $franchise): Application|Factory|View
+    public function edit(GameSeries $series): Application|Factory|View
     {
-        return view('admin.game_franchise.edit', [
-            'model' => $franchise
+        return view('admin.master_data.game_series.edit', [
+            'model' => $series
         ]);
     }
 
     /**
      * 更新処理
      *
-     * @param GameFranchiseRequest $request
-     * @param GameFranchise $series
+     * @param GameSeriesRequest $request
+     * @param GameSeries $series
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameFranchiseRequest $request, GameFranchise $series): RedirectResponse
+    public function update(GameSeriesRequest $request, GameSeries $series): RedirectResponse
     {
         $series->fill($request->validated());
         $series->save();
 
-        return redirect()->route('Admin.MasterData.Series');
+        return redirect()->route('Admin.MasterData.Series.Detail', $series);
     }
 
     /**
@@ -114,8 +131,72 @@ class GameSeriesController extends AbstractAdminController
      */
     public function delete(GameSeries $series): RedirectResponse
     {
+        $series->titles()->detach();
         $series->delete();
 
         return redirect()->route('Admin.MasterData.Series');
+    }
+
+    /**
+     * フランチャイズとリンク
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function linkFranchise(GameSeries $series): Application|Factory|View
+    {
+        $franchises = GameFranchise::orderBy('id')->get(['id', 'name']);
+        return view('admin.master_data.game_series.link_franchise', [
+            'model' => $series,
+            'franchises' => $franchises,
+        ]);
+    }
+
+    /**
+     * フランチャイズと同期処理
+     *
+     * @param GameSeriesFranchiseLinkRequest $request
+     * @param GameSeries $series
+     * @return RedirectResponse
+     */
+    public function syncFranchise(GameSeriesFranchiseLinkRequest $request, GameSeries $series): RedirectResponse
+    {
+        if ($series->franchise()) {
+            $series->franchise()->series()->detach($series->id);
+        }
+
+        $franchise = GameFranchise::find($request->validated('franchise_id'));
+        $franchise->series()->attach($series->id);
+
+        return redirect()->route('Admin.MasterData.Series.Detail', $series);
+    }
+
+    /**
+     * タイトルとリンク
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function linkTitle(GameSeries $series): Application|Factory|View
+    {
+        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        return view('admin.master_data.game_series.link_title', [
+            'model' => $series,
+            'linkedTitleIds' => $series->titles()->pluck('id')->toArray(),
+            'titles' => $titles,
+        ]);
+    }
+
+    /**
+     * タイトルと同期処理
+     *
+     * @param GameSeriesTitleLinkRequest $request
+     * @param GameSeries $series
+     * @return RedirectResponse
+     */
+    public function syncTitle(GameSeriesTitleLinkRequest $request, GameSeries $series): RedirectResponse
+    {
+        $series->titles()->sync($request->validated('title_id'));
+        return redirect()->route('Admin.MasterData.Series.Detail', $series);
     }
 }
