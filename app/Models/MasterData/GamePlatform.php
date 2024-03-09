@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class GamePlatform extends Model
 {
     protected $guarded = ['id', 'synonymsStr'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * @var array デフォルト値

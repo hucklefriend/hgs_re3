@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class GameTitle extends \Eloquent
 {
     protected $guarded = ['id', 'synonymsStr'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * @var array デフォルト値
@@ -34,7 +35,7 @@ class GameTitle extends \Eloquent
         if ($this->series()) {
             return $this->series()->franchise();
         } else {
-            $hasOneThrough = $this->hasOneThrough(GameFranchise::class, GameFranchiseTitleLinks::class,
+            $hasOneThrough = $this->hasOneThrough(GameFranchise::class, GameFranchiseTitleLink::class,
                 'game_title_id', 'id', 'id', 'game_franchise_id');
             if ($hasOneThrough) {
                 return $hasOneThrough->first();
@@ -51,7 +52,7 @@ class GameTitle extends \Eloquent
      */
     public function series(): ?GameSeries
     {
-        $hasOneThrough =  $this->hasOneThrough(GameSeries::class, GameSeriesTitleLinks::class,
+        $hasOneThrough =  $this->hasOneThrough(GameSeries::class, GameSeriesTitleLink::class,
             'game_title_id', 'id', 'id', 'game_series_id');
         if ($hasOneThrough) {
             return $hasOneThrough->first();
@@ -97,7 +98,7 @@ class GameTitle extends \Eloquent
      */
     public function packages(): BelongsToMany
     {
-        return $this->belongsToMany(GamePackage::class, GameTitlePackageLinks::class);
+        return $this->belongsToMany(GamePackage::class, GameTitlePackageLink::class);
     }
 
     /**

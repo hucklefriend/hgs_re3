@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 class GameFranchise extends \Eloquent
 {
     protected $guarded = ['id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * @var array デフォルト値
@@ -27,7 +28,7 @@ class GameFranchise extends \Eloquent
      */
     public function series(): BelongsToMany
     {
-        return $this->belongsToMany(GameSeries::class, GameFranchiseSeriesLinks::class);
+        return $this->belongsToMany(GameSeries::class, GameFranchiseSeriesLink::class);
     }
 
     /**
@@ -37,6 +38,6 @@ class GameFranchise extends \Eloquent
      */
     public function titles(): BelongsToMany
     {
-        return $this->belongsToMany(GameTitle::class, GameFranchiseTitleLinks::class);
+        return $this->belongsToMany(GameTitle::class, GameFranchiseTitleLink::class);
     }
 }

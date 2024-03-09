@@ -1,6 +1,6 @@
 @php
 $nameColumn = $nameColumn ?? 'acronym';
-$list = \App\Models\MasterData\GameMaker::all(['id', $nameColumn])->pluck($nameColumn, 'id')->toArray();
+$list = \App\Models\MasterData\GamePlatform::all(['id', $nameColumn])->pluck($nameColumn, 'id')->toArray();
 if ($withBlank ?? false) {
     $list = ['' => '-'] + $list;
 }
@@ -11,9 +11,11 @@ if (!isset($value)) {
         $value = null;
     }
 }
+
+$options = array_merge($options ?? [], ['multiple']);
 @endphp
 
-{{ Form::select($name, $list, old($name, $value), array_merge(['id' => $name, 'class' => 'default-select2 form-control' . invalid($errors, $name)], $options ?? [])) }}
+{{ Form::select($name, $list, old($name, $value), array_merge(['id' => $name, 'class' => 'multiple-select2 form-control' . invalid($errors, $name)], $options ?? [])) }}
 @if ($errors->has($name))
     <div class="invalid-feedback">{{$errors->first($name)}}</div>
 @endif

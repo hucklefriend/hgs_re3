@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class GameTitleSynonym extends Model
+class GameTitleSynonym extends \Eloquent
 {
     public $incrementing = false;
     protected $fillable = ['game_title_id', 'synonym'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * タイトルを取得

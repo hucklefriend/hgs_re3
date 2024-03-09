@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameSeriesFranchiseLinkRequest;
+use App\Http\Requests\Admin\MasterData\GameTitlePackageLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameTitleRequest;
+use App\Http\Requests\Admin\MasterData\GameTitleSeriesLinkRequest;
 use App\Models\MasterData\GameFranchise;
+use App\Models\MasterData\GamePackage;
+use App\Models\MasterData\GamePlatform;
 use App\Models\MasterData\GameSeries;
 use App\Models\MasterData\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
@@ -14,6 +18,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GameTitleController extends AbstractAdminController
 {
@@ -180,6 +185,75 @@ class GameTitleController extends AbstractAdminController
 
         $franchise = GameFranchise::find($request->validated('franchise_id'));
         $franchise->series()->attach($title->id);
+
+        return redirect()->route('Admin.MasterData.Title.Detail', $title);
+    }
+
+    /**
+     * シリーズとリンク
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function linkSeries(GameTitle $title): Application|Factory|View
+    {
+        $series = ['' => 'シリーズに属さない'] + GameSeries::orderBy('id')
+                ->get(['id', 'name'])->pluck('name', 'id')->toArray();
+        return view('admin.master_data.game_title.link_series', [
+            'model' => $title,
+            'series' => $series,
+        ]);
+    }
+
+    /**
+     * シリーズと同期処理
+     *
+     * @param GameTitleSeriesLinkRequest $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     */
+    public function syncSeries(GameTitleSeriesLinkRequest $request, GameTitle $title): RedirectResponse
+    {
+        if ($title->series()) {
+            $title->series()->titles()->detach($title->id);
+        }
+
+        if (!empty($request->validated('series_id'))) {
+            $series = GameSeries::find($request->validated('series_id'));
+            $series->titles()->attach($title->id);
+        }
+
+        return redirect()->route('Admin.MasterData.Title.Detail', $title);
+    }
+
+    /**
+     * パッケージとリンク
+     *
+     * @param Request $request
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function linkPackage(Request $request, GameTitle $title): Application|Factory|View
+    {
+        $packages = GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
+        return view('admin.master_data.game_title.link_packages', [
+            'model' => $title,
+            'linkedPackageIds' => $title->packages()->pluck('id')->toArray(),
+            'packages' => $packages,
+            'platformHash' => GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
+        ]);
+    }
+
+    /**
+     * パッケージと同期処理
+     *
+     * @param GameTitlePackageLinkRequest $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     */
+    public function syncPackage(GameTitlePackageLinkRequest $request, GameTitle $title): RedirectResponse
+    {
+        $title->packages()->sync($request->validated('package_id'));
 
         return redirect()->route('Admin.MasterData.Title.Detail', $title);
     }

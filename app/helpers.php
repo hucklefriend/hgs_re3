@@ -92,3 +92,16 @@ function synonym(string $synonym): string
     $synonym = preg_replace('/[ 　]/u', '', $synonym);
     return strtoupper(mb_convert_kana($synonym, 'aKV'));
 }
+
+/**
+ * 配列の中身にsynonymを適用
+ *
+ * @param array $words
+ * @return void
+ */
+function array_walk_synonym(array &$words): void
+{
+    array_walk($words, function (&$value, $key){
+        $value = synonym($value);
+    });
+}

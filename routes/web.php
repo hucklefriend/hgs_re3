@@ -64,6 +64,7 @@ Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'ad
             Route::post('{' . $prefix . '}/link_series', [$class, 'syncSeries'])->name("{$basename}.SyncSeries");
             Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
             Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+            Route::get('{' . $prefix . '}/link_tree', [$class, 'linkTree'])->name("{$basename}.LinkTree");
             Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
             Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
         });
@@ -100,6 +101,8 @@ Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'ad
             Route::post('{' . $prefix . '}/link_franchise', [$class, 'syncFranchise'])->name("{$basename}.SyncFranchise");
             Route::get('{' . $prefix . '}/link_series', [$class, 'linkSeries'])->name("{$basename}.LinkSeries");
             Route::post('{' . $prefix . '}/link_series', [$class, 'syncSeries'])->name("{$basename}.SyncSeries");
+            Route::get('{' . $prefix . '}/link_package', [$class, 'linkPackage'])->name("{$basename}.LinkPackage");
+            Route::post('{' . $prefix . '}/link_package', [$class, 'syncPackage'])->name("{$basename}.SyncPackage");
             Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
             Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
         });
@@ -114,10 +117,12 @@ Route::group(['prefix' => 'admin', 'middleware' => [/*'auth', 'can:admin', */'ad
             Route::post('add', [$class, 'store'])->name("{$basename}.Store");
             Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
             Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+            Route::get('{package}/copy', [$class, 'copy'])->name("{$basename}.Copy");
+            Route::post('{package}/copy', [$class, 'makeCopy'])->name("{$basename}.MakeCopy");
+            Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
+            Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
             Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
             Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
-            Route::get('{package}/copy', [$class, 'copy'])->name("{$basename}.Copy");
-            Route::post('{package}/copy', [$class, 'doCopy'])->name("{$basename}.DoCopy");
         });
     });
 });

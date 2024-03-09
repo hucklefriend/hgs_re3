@@ -24,7 +24,7 @@ class GameTitleSeriesLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'series_id' => 'required|exists:game_series,id',
+            'series_id' => 'nullable|exists:game_series,id',
         ];
     }
 }

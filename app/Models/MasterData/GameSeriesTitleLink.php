@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-class GameSeriesTitleLinks extends Model
+class GameSeriesTitleLink extends Model
 {
     protected $primaryKey = ['game_series_id', 'game_title_id'];
+    protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
     public function series(): BelongsTo

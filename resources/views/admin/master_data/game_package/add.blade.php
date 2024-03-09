@@ -9,11 +9,11 @@
             {{ csrf_field() }}
 
             <div class="panel-body">
-                @include('admin.master_data.game_package.form')
+                @include('admin.master_data.game_package.form', ['isAdd' => true])
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.MasterData.Package') }}" class="btn btn-default">Cancel</a>&nbsp;
-                <button type="submit" class="btn btn-default">Save</button>
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>

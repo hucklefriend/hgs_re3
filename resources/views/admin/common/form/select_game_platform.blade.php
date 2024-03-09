@@ -1,6 +1,6 @@
 @php
 $nameColumn = $nameColumn ?? 'acronym';
-$list = \App\Models\MasterData\GameMaker::all(['id', $nameColumn])->pluck($nameColumn, 'id')->toArray();
+$list = \App\Models\MasterData\GamePlatform::all(['id', $nameColumn])->pluck($nameColumn, 'id')->toArray();
 if ($withBlank ?? false) {
     $list = ['' => '-'] + $list;
 }

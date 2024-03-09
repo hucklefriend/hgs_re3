@@ -10,13 +10,13 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前 or よみがな(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or よみがな or タイトルの俗称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">プラットフォーム</label>
                     <div class="col-md-9">
-                        {{ Form::select('platform', \App\Models\GamePlatform::getSelectList(), $search['platform'] ?? '', ['class' => 'form-control']) }}
+                        @include ('admin.common.form.select_game_platform_multi', ['name' => 'platform_ids[]', 'value' => $search['platform_ids']])
                     </div>
                 </div>
                 <div class="row">
@@ -37,7 +37,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Package.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                <a href="{{ route('Admin.MasterData.Package.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
             </div>
 
             <table class="table table-hover">
@@ -46,8 +46,7 @@
                     <th>ID</th>
                     <th>タイトル</th>
                     <th>略称</th>
-                    <th>ハード</th>
-                    <th>PLT</th>
+                    <th>プラットフォーム</th>
                     <th>発売日</th>
                     <td></td>
                 </tr>
@@ -58,7 +57,6 @@
                         <td>{{ $package->id }}</td>
                         <td>{{ $package->name }}</td>
                         <td>{{ $package->acronym }}</td>
-                        <td>{{ $package->hard->acronym ?? '' }}</td>
                         <td>{{ $package->platform->acronym ?? '' }}</td>
                         <td>{{ $package->release_at }}</td>
                         <td class="text-center"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
@@ -70,4 +68,13 @@
             <div>{{ $packages->appends($search)->links() }}</div>
         </div>
     </div>
+@endsection
+
+
+@section('js')
+    <script>
+        $(()=> {
+            $(".multiple-select2").select2();
+        });
+    </script>
 @endsection

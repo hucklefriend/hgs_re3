@@ -8,14 +8,14 @@
         @foreach ($errors->all() as $error)
             <li>{{$error}}</li>
         @endforeach
-        <form method="POST" action="{{ route('管理-マスター-パッケージ複製処理', $model) }}">
+        <form method="POST" action="{{ route('Admin.MasterData.Package.MakeCopy', $model) }}">
             {{ csrf_field() }}
 
             <div class="panel-body">
-                @include('management.master.package.form')
+                @include('admin.master_data.game_package.form', ['isAdd' => false])
             </div>
             <div class="panel-footer text-end">
-                <button type="submit" class="btn btn-default">複製</button>
+                <button type="submit" class="btn btn-primary">Copy</button>
             </div>
         </form>
     </div>

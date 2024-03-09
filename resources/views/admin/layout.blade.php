@@ -6,7 +6,7 @@
 <html lang="ja" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
-    <title>{{ $controllerName }} | H.G.N.</title>
+    <title>{{ $controllerName }}.Admin.HGN</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />

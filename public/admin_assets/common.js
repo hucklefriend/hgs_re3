@@ -30,4 +30,23 @@ $(()=>{
     if (adminLinkListFilter.length > 0) {
         filterAdminLinkList();
     }
+
+
+    let adminLinkPlatformFilter = $('#admin-link-platform-filter');
+    if (adminLinkPlatformFilter.length > 0) {
+        adminLinkPlatformFilter.select2({placeholder: "プラットフォーム"});
+        adminLinkPlatformFilter.on('change', function (e) {
+            let selectedIds = adminLinkPlatformFilter.val();
+
+            // selectedIdsでループ
+            if (selectedIds) {
+                $('.list-group-item').hide();
+                selectedIds.forEach(function(value) {
+                    $('.list-group-item[data-platform="' + value + '"]').show();
+                });
+            } else {
+                $('.list-group-item').show();
+            }
+        });
+    }
 });

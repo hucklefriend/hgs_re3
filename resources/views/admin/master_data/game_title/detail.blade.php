@@ -72,6 +72,17 @@
                         @endif
                     </td>
                 </tr>
+                <tr>
+                    <th>パッケージ</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->packages as $package)
+                                <li class="list-group-item"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.MasterData.Title.LinkPackage', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                    </td>
+                </tr>
             </table>
         </div>
 

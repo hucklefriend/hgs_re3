@@ -11,6 +11,7 @@ class GamePlatformSynonym extends Model
 {
     public $incrementing = false;
     protected $fillable = ['game_platform_id', 'synonym'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * メーカーを取得

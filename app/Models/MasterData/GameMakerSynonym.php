@@ -11,6 +11,7 @@ class GameMakerSynonym extends Model
 {
     public $incrementing = false;
     protected $fillable = ['game_maker_id', 'synonym'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * メーカーを取得

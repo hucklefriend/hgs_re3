@@ -65,6 +65,19 @@ class GameFranchiseController extends AbstractAdminController
     }
 
     /**
+     * リンクツリー
+     *
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View
+     */
+    public function linkTree(GameFranchise $franchise): Application|Factory|View
+    {
+        return view('admin.master_data.game_franchise.link_tree', [
+            'franchise' => $franchise
+        ]);
+    }
+
+    /**
      * 追加画面
      *
      * @return Application|Factory|View

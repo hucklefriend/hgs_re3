@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 class GameMaker extends \Eloquent
 {
     protected $guarded = ['id', 'synonymsStr'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * @var array デフォルト値

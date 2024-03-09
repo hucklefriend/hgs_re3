@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class GamePackage extends Model
+class GamePackage extends \Eloquent
 {
     protected $guarded = ['id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * メーカーを取得
@@ -20,7 +21,7 @@ class GamePackage extends Model
      */
     public function maker(): BelongsTo
     {
-        return $this->belongsTo(GameMaker::class, 'maker_id');
+        return $this->belongsTo(GameMaker::class, 'game_maker_id');
     }
 
     /**
@@ -30,17 +31,27 @@ class GamePackage extends Model
      */
     public function platform(): BelongsTo
     {
-        return $this->belongsTo(GamePlatform::class, 'platform_id');
+        return $this->belongsTo(GamePlatform::class, 'game_platform_id');
     }
 
     /**
-     * ソフトを取得
+     * タイトルを取得
      *
      * @return BelongsToMany
      */
-    public function softs(): BelongsToMany
+    public function titles(): BelongsToMany
     {
-        return $this->belongsToMany(GameTitle::class);
+        return $this->belongsToMany(GameTitle::class, GameTitlePackageLink::class);
+    }
+
+    /**
+     * プラットフォーム名とセットの名称を取得
+     *
+     * @return string
+     */
+    public function getNameWithPlatform(): string
+    {
+        return sprintf('%s (%s)', $this->name, $this->platform->acronym ?? '');
     }
 
     /**
@@ -64,24 +75,24 @@ class GamePackage extends Model
 //        return $this->hasMany(GamePackageShop::class, 'package_id', 'id');
 //    }
 
-    /**
-     * 保存
-     *
-     * @param array $options
-     * @return bool
-     */
-    public function save(array $options = []): bool
-    {
-        /* @var $soft GameTitle */
-        foreach ($this->softs as $soft) {
-            if ($soft->original_package_id === null) {
-                $soft->setOriginalPackage();
-                $soft->save();
-            }
-        }
-
-        return parent::save($options);
-    }
+//    /**
+//     * 保存
+//     *
+//     * @param array $options
+//     * @return bool
+//     */
+//    public function save(array $options = []): bool
+//    {
+//        /* @var $soft GameTitle */
+//        foreach ($this->softs as $soft) {
+//            if ($soft->original_package_id === null) {
+//                $soft->setOriginalPackage();
+//                $soft->save();
+//            }
+//        }
+//
+//        return parent::save($options);
+//    }
 
     /**
      * データのハッシュを取得

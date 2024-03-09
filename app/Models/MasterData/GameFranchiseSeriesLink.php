@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-class GameFranchiseTitleLinks extends Model
+class GameFranchiseSeriesLink extends Model
 {
-    protected $primaryKey = ['game_franchise_id', 'game_soft_id'];
+    protected $primaryKey = ['game_franchise_id', 'game_series_id'];
+    protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
     public function franchise(): BelongsTo
@@ -16,8 +17,8 @@ class GameFranchiseTitleLinks extends Model
         return $this->belongsTo(GameFranchise::class);
     }
 
-    public function soft(): BelongsTo
+    public function series(): BelongsTo
     {
-        return $this->belongsTo(GameTitle::class);
+        return $this->belongsTo(GameSeries::class);
     }
 }

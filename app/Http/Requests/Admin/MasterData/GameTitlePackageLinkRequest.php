@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-use Hgs3\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GamePackageHardRelationRequest extends FormRequest
+class GameTitlePackageLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +13,7 @@ class GamePackageHardRelationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +24,7 @@ class GamePackageHardRelationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'hard_id' => 'nullable|array|exists:game_hards,id',
+            'package_id' => 'required|array|exists:game_packages,id',
         ];
     }
 }

@@ -6,6 +6,8 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GamePackageRequest;
 use App\Models\MasterData\GamePackage;
+use App\Models\MasterData\GameTitlePackageLink;
+use App\Models\MasterData\GameTitleSynonym;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -25,7 +27,8 @@ class GamePackageController extends AbstractAdminController
         $packages = GamePackage::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
-        $search = ['name' => ''];
+        $searchPlatforms = $request->query('platform_ids', []);
+        $search = ['name' => '', 'platform_ids' => []];
 
         if (!empty($searchName)) {
             $search['name'] = $searchName;
@@ -34,9 +37,23 @@ class GamePackageController extends AbstractAdminController
             $packages->where(function ($query) use ($words) {
                 foreach ($words as $word) {
                     $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
-                    $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
                 }
             });
+
+            array_walk_synonym($words);
+            $gamePackageIds = GameTitlePackageLink::whereIn('game_title_id', function ($query) use ($words) {
+                $query->select('game_title_id')
+                    ->from('game_title_synonyms')
+                    ->whereIn('synonym', $words);
+            })->get(['game_package_id'])->pluck('id')->toArray();
+            if (!empty($gamePackageIds)) {
+                $packages->orWhereIn('id', $gamePackageIds);
+            }
+        }
+
+        if (!empty($searchPlatforms)) {
+            $search['platform_ids'] = $searchPlatforms;
+            $packages->orWhereIn('game_platform_id', $searchPlatforms);
         }
 
         $this->saveSearchSession('search_game_package', $search);
@@ -44,6 +61,19 @@ class GamePackageController extends AbstractAdminController
         return view('admin.master_data.game_package.index', [
             'packages' => $packages->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
+        ]);
+    }
+
+    /**
+     * 詳細
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function detail(GamePackage $package): Application|Factory|View
+    {
+        return view('admin.master_data.game_package.detail', [
+            'model' => $package
         ]);
     }
 
@@ -68,9 +98,15 @@ class GamePackageController extends AbstractAdminController
      */
     public function store(GamePackageRequest $request): RedirectResponse
     {
-        $package = new GamePackage();
-        $package->fill($request->validated());
-        $package->save();
+        $platformIds = $request->validated('game_platform_ids');
+        $validated = $request->validated();
+        unset($validated['game_platform_ids']);
+        foreach ($platformIds as $platformId) {
+            $validated['game_platform_id'] = $platformId;
+            $package = new GamePackage();
+            $package->fill($validated);
+            $package->save();
+        }
 
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
     }
@@ -98,6 +134,35 @@ class GamePackageController extends AbstractAdminController
      */
     public function update(GamePackageRequest $request, GamePackage $package): RedirectResponse
     {
+        $package->fill($request->validated());
+        $package->save();
+
+        return redirect()->route('Admin.MasterData.Package.Detail', $package);
+    }
+
+    /**
+     * 複製画面
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function copy(GamePackage $package): Application|Factory|View
+    {
+        return view('admin.master_data.game_package.copy', [
+            'model' => $package
+        ]);
+    }
+
+    /**
+     * 複製処理
+     *
+     * @param GamePackageRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function makeCopy(GamePackageRequest $request): RedirectResponse
+    {
+        $package = new GamePackage();
         $package->fill($request->validated());
         $package->save();
 

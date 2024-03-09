@@ -45,7 +45,7 @@
 @section('js')
     <script>
         $(()=>{
-            $("#game_maker_id").select2();
+            $(".default-select2").select2();
         });
     </script>
 @endsection

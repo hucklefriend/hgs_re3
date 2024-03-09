@@ -41,8 +41,8 @@ class GamePlatformController extends AbstractAdminController
 
             // 俗称も探す
             // $words配列の中にある文字列にsynonym関数を適用する
-            array_walk($words, function ($value, $key){
-                return synonym($value);
+            array_walk($words, function (&$value, $key){
+                $value = synonym($value);
             });
 
             // サブクエリで、game_maker_synonymsテーブルのsynonymが一致するgame_maker_id
