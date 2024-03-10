@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
@@ -32,6 +33,9 @@ class Admin
                 View::share('controllerName', mb_substr($controller, 0, -10));
             }
         }
+
+        // ログインはしているはず
+        View::share('adminUser', Auth::user());
 
         Paginator::useBootstrap();
         return $next($request);

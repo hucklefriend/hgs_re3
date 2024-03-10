@@ -24,6 +24,7 @@ enum Shop: int
     case DMM = 43;
     case FANZA = 44;
     case FANZA_GAMES = 45;
+    case RAKUTEN_LINK_SHARE = 46;
 
     /**
      * ショップ名
@@ -49,7 +50,8 @@ enum Shop: int
             self::DLsite           => 'DLsite',
             self::DMM              => 'DMM.com',
             self::FANZA            => 'FANZA',
-            self::FANZA_GAMES      => 'FANZA Games'
+            self::FANZA_GAMES      => 'FANZA Games',
+            self::RAKUTEN_LINK_SHARE => 'リンクシェア',
         };
     }
 
