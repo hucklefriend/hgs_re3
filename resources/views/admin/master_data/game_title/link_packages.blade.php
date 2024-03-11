@@ -1,0 +1,38 @@
+@extends('admin.layout')
+
+@section('content')
+    <div class="panel panel-inverse">
+        <div class="panel-heading">
+            <h4 class="panel-title">{{ $model->name }}</h4>
+        </div>
+        <div class="panel-body">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}" placeholder="名前" autocomplete="off">
+            </div>
+            <div>
+                @include ('admin.common.form.select_game_platform_multi', ['name' => 'platform_ids[]', 'options' => ['id' => 'admin-link-platform-filter']])
+            </div>
+        </div>
+        <form method="POST" action="{{ route('Admin.MasterData.Title.SyncPackage', $model) }}">
+            {{ csrf_field() }}
+
+            <div class="panel-body panel-inverse">
+                <div class="list-group" id="admin-link-list">
+                    @foreach ($packages as $package)
+                        <label class="list-group-item" data-platform="{{ $package->game_platform_id }}">
+                            {{ Form::checkbox('package_id[]', $package->id, in_array($package->id, $linkedPackageIds), ['class' => 'form-check-input me-1']) }}
+                            {{ $package->name }} ({{ $platformHash[$package->game_platform_id] }})
+                        </label>
+                    @endforeach
+                </div>
+                @if ($errors->has('package_id[]'))
+                    <div class="invalid-feedback">{{ $errors->first('package_id[]') }}</div>
+                @endif
+            </div>
+            <div class="panel-footer text-end">
+                <a href="{{ route('Admin.MasterData.Title.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+@endsection
