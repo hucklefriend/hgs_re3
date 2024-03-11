@@ -7,21 +7,39 @@ services:
     hostname: hgs_app
     volumes:
       - /var/hgs_re3:/var/hgs_re3
+      - ./logs:/var/log/php-fpm
     restart: always
     depends_on:
-      - hgs_memcached
       - hgs_redis
+      - hgs_db
     ports:
       - "9000:9000"
     networks:
       - hgs_net
 
-  hgs_memcached:
-    image: memcached:1.6-alpine
-    container_name: hgs_memcached
-    restart: always
+  hgs_db:
+    image: mariadb:11.3
+    container_name: hgs_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
     networks:
-      - hgs_net
+        - hgs_net
+
+  hgs_db_admin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+        PMA_HOST: hgs_db
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+        - '8080:80'
+    depends_on:
+        - hgs_db
+    networks:
+        - hgs_net
 
   hgs_redis:
     image: redis:7.2-alpine
@@ -49,6 +67,7 @@ services:
       - /var/hgs_re3/docker/dev/mongo_backup:/tmp/backup
 
 volumes:
+  hgs_db_vol:
   hgs_mongo_vol:
   hgs_mongo_config_vol:
   hgs_redis_vol:
