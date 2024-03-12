@@ -31,11 +31,12 @@ services:
 
   hgs_db_admin:
     image: phpmyadmin/phpmyadmin:latest
+    container_name: hgs_db_admin
     environment:
         PMA_HOST: hgs_db
         MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-        - '8080:80'
+        - '8081:80'
     depends_on:
         - hgs_db
     networks:
@@ -53,8 +54,8 @@ services:
     container_name: hgs_mongodb
     restart: always
     environment:
- #     MONGO_INITDB_ROOT_USERNAME: hgs
- #     MONGO_INITDB_ROOT_PASSWORD: hgshgs
+      MONGO_INITDB_ROOT_USERNAME: hgs
+      MONGO_INITDB_ROOT_PASSWORD: hgshgs
       MONGO_INITDB_DATABASE: hgs
       TZ: Asia/Tokyo
     networks:
@@ -64,7 +65,6 @@ services:
     volumes:
       - hgs_mongo_vol:/data/db
       - hgs_mongo_config_vol:/data/configdb
-      - /var/hgs_re3/docker/dev/mongo_backup:/tmp/backup
 
 volumes:
   hgs_db_vol:
