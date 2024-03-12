@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker-compose -f ../../docker/dev/docker-compose.yml up -d
+docker-compose -f ../../docker/dev/docker-compose.yml down

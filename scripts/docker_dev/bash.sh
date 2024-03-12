@@ -6,4 +6,4 @@ if [ "$#" -ne 1 ]; then
 fi
 
 container_name=$1
-docker-compose -f ../docker/dev/docker-compose.yml exec container_name /bin/bash
+docker exec -it docker $container_name /bin/bash
