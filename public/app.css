@@ -1,0 +1,36 @@
+
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    font-size: 15px;
+    font-weight: unset;
+}
+
+.title {
+    display:inline-block;
+    padding: 5px 25px;
+}
+
+.node-list {
+    margin-top: 20px;
+}
+
+.node {
+    margin-bottom: 30px;
+}
+
+.node-item {
+    padding: 15px 25px;
+    display: inline-block;
+}
+
+.node:nth-child(event) {
+    padding-left: 50px;
+}
+
+.node:nth-child(odd) {
+    padding-left: 30px;
+}
