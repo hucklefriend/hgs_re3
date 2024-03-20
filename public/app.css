@@ -5,7 +5,7 @@ body {
 }
 
 h1 {
-    font-size: 15px;
+    font-size: 25px;
     font-weight: unset;
     display: inline-block;
 }
@@ -26,11 +26,34 @@ h1 {
     margin-bottom: 30px;
 }
 
-.node-item {
+.child-node {
     padding: 15px 25px;
     display: inline-block;
 }
 
 .node {
 
+}
+
+
+#back-node {
+    display:inline-block;
+    padding: 10px 10px;
+}
+
+.content-node {
+    padding: 0 20px 40px 20px;
+    width: 500px;
+}
+
+.content-node h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.content-node-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
 }

@@ -1,268 +1,695 @@
 
-let lineCanvas = null;
-let lineCtx = null;
-let bg1Canvas = null;
-let bg1Ctx = null;
-window.onload = function() {
-    lineCanvas = document.getElementById('lineCanvas');
-    bg1Canvas = document.getElementById('backgroundCanvas1');
+const MATH_PI_2 = Math.PI * 2;
 
-    // Set the canvas size to full window
-    lineCanvas.width = window.innerWidth;
-    lineCanvas.height = window.innerHeight;
-    bg1Canvas.width = window.innerWidth;
-    bg1Canvas.height = window.innerHeight;
+class HorrorGameNetwork
+{
+    constructor(network, data)
+    {
+        this.mainCanvas = document.getElementById('lineCanvas');
 
-    if(lineCanvas.getContext) {
-        lineCtx = lineCanvas.getContext('2d');
-        drawLine(lineCtx);
+        this.mainCanvas.width = document.documentElement.scrollWidth;
+        this.mainCanvas.height = document.documentElement.scrollHeight;
+
+        this.mainCtx = null;
+
+        if (this.mainCanvas.getContext) {
+            this.mainCtx = this.mainCanvas.getContext('2d');
+        }
+
+        this.titleNode = null;
+        this.backNode = null;
+        this.childNodes = [];
+        this.contentNodes = [];
+
+        this.loadNodes();
+
+        this.bg12 = new Background12(this);
+        this.bg12.draw();
+
+        this.bg3 = new Background3Maker('backgroundCanvas3')
+        this.bg3.draw();
+
+        this.prevScrollX = -99999;
+        this.prevScrollY = -99999;
+
+
+        this.update = this.update.bind(this);
+        window.requestAnimationFrame(this.update);
     }
 
-    if(bg1Canvas.getContext) {
-        bg1Ctx = bg1Canvas.getContext('2d');
-        //drawBackground1(bg1Ctx);
+    loadNodes()
+    {
+        let titleElem = document.getElementById('title-node');
+        this.titleNode = new TitleNode(titleElem);
+
+        let backElem = document.getElementById('back-node');
+        if (backElem) {
+            this.backNode = new BackNode(backElem);
+        }
+
+        let childNodeElems = [...document.getElementsByClassName('child-node')];
+        childNodeElems.forEach(nodeElem => {
+            this.childNodes.push(new ChildNode(nodeElem));
+        });
+
+        let contentNodeElems = [...document.getElementsByClassName('content-node')];
+        contentNodeElems.forEach(nodeElem =>  {
+            this.contentNodes.push(new ContentNode(nodeElem));
+        });
+    }
+
+    start()
+    {
+        this.draw();
+    }
+
+    draw()
+    {
+        this.drawConnectLine();
+        this.drawOctagons();
+    }
+
+    drawConnectLine()
+    {
+        if (this.backNode) {
+            // titleNodeとbackNodeを線でつなげる
+            this.mainCtx.beginPath();
+            this.mainCtx.moveTo(this.titleNode.vertices[0].x, this.titleNode.vertices[0].y);
+            this.mainCtx.lineTo(this.backNode.vertices[4].x, this.backNode.vertices[4].y);
+            this.mainCtx.strokeStyle = "rgba(0, 255, 0, 0.8)";
+            this.mainCtx.lineWidth = 1;
+            this.mainCtx.stroke();
+        }
+
+
+    }
+
+    drawOctagons()
+    {
+        this.titleNode.draw(this.mainCtx);
+
+        if (this.backNode) {
+            this.backNode.draw(this.mainCtx);
+        }
+
+        this.childNodes.forEach(childNode => {
+            childNode.draw(this.mainCtx);
+        });
+
+        this.contentNodes.forEach(contentNode => {
+            contentNode.draw(this.mainCtx);
+        });
+    }
+
+    drawBackground3()
+    {
+
+    }
+
+    update()
+    {
+        this.scroll();
+
+        window.requestAnimationFrame(this.update);
+    }
+
+    scroll() {
+
+        if (this.prevScrollX == window.scrollX && this.prevScrollY == window.scrollY) {
+            return;
+        }
+
+        this.bg12.scroll();
+        this.bg12.drawConnection();
+        this.bg3.scroll();
+
+        this.prevScrollX = window.scrollX;
+        this.prevScrollY = window.scrollY;
     }
 }
 
-function drawLine(ctx)
+class Node
 {
-    var titleElem = document.getElementById('title-node');
-    let titleNode = getNodeVertexData(titleElem, 25);
-    drawTitleNodeHexagon(ctx, titleNode);
+    constructor(x = 0, y = 0, w = 0, h = 0, notchSize = 0)
+    {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.notchSize = notchSize;
+        this.vertices = [];
 
-    let childNodeElems = [...document.getElementsByClassName('node-item')];
-    let childNodes = [];
-    childNodeElems.forEach(function (nodeElem) {
-        let node = getNodeVertexData(nodeElem, 25);
-        childNodes.push(node);
-        drawChildNodeHexagon(ctx, node, 20);
-    });
+        if (w > 0 && h > 0 && notchSize > 0) {
+            this.setOctagon();
+        }
+    }
 
-    drawNodeLinkLine(ctx, titleNode, childNodes);
-}
+    setOctagon()
+    {
+        this.vertices = [
+            new Vertex(this.x + this.notchSize, this.y),
+            new Vertex(this.x + this.w - this.notchSize, this.y),
+            new Vertex(this.x + this.w, this.y + this.notchSize),
+            new Vertex(this.x + this.w, this.y + this.h - this.notchSize),
+            new Vertex(this.x + this.w - this.notchSize, this.y + this.h),
+            new Vertex(this.x + this.notchSize, this.y + this.h),
+            new Vertex(this.x, this.y + this.h - this.notchSize),
+            new Vertex(this.x, this.y +  this.notchSize),
+        ];
+    }
 
-function drawNodeLinkLine(ctx, titleNode, childNodes)
-{
-
-    // Set line color
-    ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
-    ctx.lineWidth = 2; // 線の太さ
-    ctx.lineJoin = "round"; // 線の結合部分のスタイル
-    ctx.lineCap = "round"; // 線の末端のスタイル
-    ctx.shadowColor = "lime"; // 影の色
-    ctx.shadowBlur = 10; // 影のぼかし効果
-
-    let x = titleNode.l.x;
-    let y = titleNode.l.y;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x - 30, y + 30);
-
-
-    ctx.lineTo(x - 30, childNodes[childNodes.length-1].l.y - 30);
-    ctx.lineTo(childNodes[childNodes.length-1].l.x, childNodes[childNodes.length-1].l.y);
-    ctx.stroke();
-
-
-    for (i = 0; i < childNodes.length-1; i++) {
-        let cn = childNodes[i];
+    setShapePath(ctx, offsetX = 0, offsetY = 0)
+    {
         ctx.beginPath();
-        ctx.moveTo(cn.l.x, cn.l.y);
-        ctx.lineTo(cn.l.x - 30, cn.l.y - 30);
+        ctx.moveTo(this.vertices[0].x + offsetX, this.vertices[0].y + offsetY);
+        for (let i = 1; i < this.vertices.length; i++) {
+            ctx.lineTo(this.vertices[i].x + offsetX, this.vertices[i].y + offsetY);
+        }
+        ctx.closePath();
+    }
+
+    setShapeVertexArc(ctx, r)
+    {
+        this.vertices.forEach(vertex => {
+            ctx.beginPath();
+            ctx.arc(vertex.x, vertex.y, r, 0, MATH_PI_2, false);
+            ctx.fill();
+        });
+    }
+
+    move(offsetX, offsetY)
+    {
+        this.x += offsetX;
+        this.y += offsetY;
+        this.setOctagon();
+    }
+}
+
+class DOMNode extends Node
+{
+    constructor(DOM, notchSize) {
+        super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
+    }
+}
+
+class TitleNode extends DOMNode
+{
+    constructor(DOM) {
+        super(DOM, 15);
+    }
+
+    draw(ctx) {
+        super.setShapePath(ctx);
+
+        ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
+        ctx.lineWidth = 3; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 15; // 影のぼかし効果
         ctx.stroke();
     }
-
 }
 
-function getNodeVertexData(nodeElem, notchSize)
+
+class BackNode extends DOMNode
 {
-    return {
-        ex: nodeElem.offsetLeft,
-        ey: nodeElem.offsetTop,
-        w:  nodeElem.offsetWidth,
-        h:  nodeElem.offsetHeight,
-        lt: {x: nodeElem.offsetLeft + notchSize, y: nodeElem.offsetTop},
-        rt: {x: nodeElem.offsetLeft + nodeElem.offsetWidth - notchSize, y: nodeElem.offsetTop},
-        r:  {x: nodeElem.offsetLeft + nodeElem.offsetWidth, y: nodeElem.offsetTop + nodeElem.offsetHeight * 0.5},
-        rb: {x: nodeElem.offsetLeft + nodeElem.offsetWidth - notchSize, y: nodeElem.offsetTop + nodeElem.offsetHeight},
-        lb: {x: nodeElem.offsetLeft + notchSize, y: nodeElem.offsetTop + nodeElem.offsetHeight},
-        l:  {x: nodeElem.offsetLeft, y: nodeElem.offsetTop + nodeElem.offsetHeight * 0.5},
-    };
+    constructor(DOM) {
+        super(DOM, 10);
+    }
+
+    draw(ctx) {
+        super.setShapePath(ctx);
+
+        // Set line color
+        ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
+        ctx.lineWidth = 2; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 10; // 影のぼかし効果
+        ctx.stroke();
+    }
 }
 
-function drawHex(ctx, node)
+class ChildNode extends DOMNode
 {
-    ctx.beginPath();
-    ctx.moveTo(node.lt.x, node.lt.y);
-    ctx.lineTo(node.rt.x, node.rt.y);
-    ctx.lineTo(node.r.x, node.r.y);
-    ctx.lineTo(node.rb.x, node.rb.y);
-    ctx.lineTo(node.lb.x, node.lb.y);
-    ctx.lineTo(node.l.x, node.l.y);
-    ctx.closePath();
+    constructor(DOM) {
+        super(DOM, 15);
+    }
+
+    draw(ctx) {
+        super.setShapePath(ctx);
+
+        // Set line color
+        ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
+        ctx.lineWidth = 2; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 10; // 影のぼかし効果
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(0, 2550, 0, 0.8)";
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 10; // 影のぼかし効果
+        super.setShapeVertexArc(ctx, 3)
+    }
 }
 
-function drawTitleNodeHexagon(ctx, node)
+
+class ContentNode extends DOMNode
 {
-    drawHex(ctx, node);
+    constructor(DOM) {
+        super(DOM, 50);
+    }
 
-    // Set line color
-    ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
-    ctx.lineWidth = 3; // 線の太さ
-    ctx.lineJoin = "round"; // 線の結合部分のスタイル
-    ctx.lineCap = "round"; // 線の末端のスタイル
-    ctx.shadowColor = "lime"; // 影の色
-    ctx.shadowBlur = 15; // 影のぼかし効果
-    ctx.stroke();
+    draw(ctx) {
+        super.setShapePath(ctx);
+
+        // Set line color
+        ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
+        ctx.lineWidth = 2; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 10; // 影のぼかし効果
+        ctx.stroke();
+    }
 }
 
-function drawChildNodeHexagon(ctx, node)
+
+class Vertex
 {
-    drawHex(ctx, node);
+    constructor(x, y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
-    // Set line color
-    ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
-    ctx.lineWidth = 2; // 線の太さ
-    ctx.lineJoin = "round"; // 線の結合部分のスタイル
-    ctx.lineCap = "round"; // 線の末端のスタイル
-    ctx.shadowColor = "lime"; // 影の色
-    ctx.shadowBlur = 10; // 影のぼかし効果
-    ctx.stroke();
+    move(offsetX, offsetY)
+    {
+        this.x += offsetX;
+        this.y += offsetY;
+    }
 }
 
-let hexagons = {};
+class Background12
+{
 
-function drawBackground1(ctx) {
-    const centerX = Math.trunc(bg1Canvas.width / 2);
-    const centerY = Math.trunc(bg1Canvas.height / 2);
-    const sideLength = 50; // 六角形の一辺の長さ
-    const parentHexagon = {center: {x: 0, y: 0}, vertices: [], children: []};
-    const angleStep = Math.PI / 3;
-    const offset1 = Math.trunc(sideLength * Math.cos(angleStep));
-    const offset2 = Math.trunc(sideLength * Math.sin(angleStep));
-    const offset3 = Math.trunc(sideLength * Math.cos(angleStep * 90));
+    constructor(network) {
+        this.scrollRate = 1.5;
 
-    parentHexagon.center.x = centerX;
-    parentHexagon.center.y = centerY;
-    let x = centerX + offset1;
-    let y = centerY + offset2;
-    parentHexagon.vertices.push({x: x, y: y});
-    x = centerX - offset1;
-    parentHexagon.vertices.push({x: x, y: y});
-    x = centerX - offset3;
-    y = centerY;
-    parentHexagon.vertices.push({x: x, y: y});
-    x = centerX - offset1;
-    y = centerY - offset2;
-    parentHexagon.vertices.push({x: x, y: y});
-    x = centerX + offset1;
-    parentHexagon.vertices.push({x: x, y: y});
-    x = centerX + offset3;
-    y = centerY;
-    parentHexagon.vertices.push({x: x, y: y});
-    hexagons[centerX.toString() + '-' + centerY.toString()] = parentHexagon;
+        this.bg1Canvas = document.getElementById('backgroundCanvas1');
+        this.bg1Canvas.width = document.documentElement.scrollWidth;
+        this.bg1Canvas.height = document.documentElement.scrollHeight;
+        this.bg2Canvas = document.getElementById('backgroundCanvas2');
+        this.bg2Canvas.width = document.documentElement.scrollWidth;
+        this.bg2Canvas.height = document.documentElement.scrollHeight;
 
-    drawHexagon(ctx, parentHexagon, "green");
+        this.bg1Ctx = null;
+        if (this.bg1Canvas.getContext) {
+            this.bg1Ctx = this.bg1Canvas.getContext('2d');
 
-    addChild(parentHexagon, offset1, offset2, offset3);
-    console.debug(parentHexagon.children);
+            this.bg1Ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.bg1Ctx.lineWidth = 1; // 線の太さ
+            this.bg1Ctx.shadowColor = "lime"; // 影の色
+            this.bg1Ctx.shadowBlur = 5; // 影のぼかし効果
+            this.bg1Ctx.fillStyle = "rgba(0, 150, 0, 0.8)"; // 線の色と透明度
+        }
 
-    parentHexagon.children.forEach(hexagon => {
-        drawHexagon(ctx, hexagon, "red");
-        addChild(hexagon, offset1, offset2, offset3);
+        this.bg2Ctx = null;
+        if (this.bg2Canvas.getContext) {
+            this.bg2Ctx = this.bg2Canvas.getContext('2d');
+            this.bg2Ctx.strokeStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+            this.bg2Ctx.lineWidth = 1; // 線の太さ
+            this.bg2Ctx.shadowColor = "lime"; // 影の色
+            this.bg2Ctx.shadowBlur = 10; // 影のぼかし効果
+            this.bg2Ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+        }
 
-        hexagon.children.forEach(hexagon => {
-            drawHexagon(ctx, hexagon, "yellow");
+        this.nodes = [];
+        this.connections = [];
+
+        this.init(network);
+    }
+
+    init(network) {
+        network.childNodes.forEach(child => {
+            for (let i = 0; i < 8; i++) {
+                if (this.judge()) {
+                    this.addNode(i, child.vertices[i]);
+                }
+            }
         });
-    });
+
+        this.scroll();
+    }
+
+    judge(rate = 50) {
+        //return true;
+        return Math.random() * 100 <= 50;
+    }
+
+    addNode(i, v) {
+        let x = v.x;
+        let y = v.y;
+        let vn = 0;
+
+        switch (i) {
+            case 0:
+                x -= 80;
+                y -= 80;
+                vn = 4
+                break;
+            case 1:
+                x += 80;
+                y -= 80;
+                vn = 6;
+                break;
+            case 2:
+                x += 80;
+                y -= 40;
+                vn = 7;
+                break;
+            case 3:
+                x += 100;
+                y += 30;
+                vn = 0;
+                break;
+            case 4:
+                x += 10;
+                y += 40;
+                vn = 0;
+                break;
+            case 5:
+                x -= 10;
+                y += 40;
+                vn = 2;
+                break;
+            case 6:
+                x -= 30;
+                y += 70;
+                vn = 2;
+                break;
+            case 7:
+                x -= 40;
+                y += 40;
+                vn = 1;
+                break;
+        }
+
+        let node = new Node(x, y, 40, 40, 12);
+        this.nodes.push(node);
+
+        this.connections.push({v1: v, v2: node.vertices[vn]});
+    }
+
+    draw() {
+        this.bg1Ctx.clearRect(0, 0, this.bg1Canvas.width, this.bg1Canvas.height);
+        this.drawNode();
+        this.drawConnection();
+    }
+
+    drawNode() {
+
+        let scrollX2 = 0;//window.scrollX / this.scrollRate;
+        let scrollY2 = 0;//window.scrollY / this.scrollRate;
+        this.nodes.forEach(node => {
+            node.setShapePath(this.bg1Ctx, scrollX2, scrollY2);
+            this.bg1Ctx.stroke();
+        });
+    }
+
+    drawConnection() {
+        let scrollX1 = window.scrollX;
+        let scrollY1 = window.scrollY;
+        let scrollX2 = scrollX1;//window.scrollX / this.scrollRate;
+        let scrollY2 = window.scrollY / this.scrollRate;
+
+        this.connections.forEach(con => {
+            this.bg1Ctx.beginPath();
+            this.bg1Ctx.moveTo(con.v1.x/* - scrollX1*/, con.v1.y/* - scrollY1*/);
+            this.bg1Ctx.lineTo(con.v2.x, con.v2.y);
+            this.bg1Ctx.stroke();
+        });
+    }
+
+    scroll() {
+        this.draw();
+        //this.bg1Canvas.style.top = (-window.scrollY / this.scrollRate) + 'px';
+    }
 }
 
-function addChild(parentHexagon, offset1, offset2, offset3)
+class Background3Maker
 {
-    let child, key;
+    constructor(id) {
+        this.canvas = document.getElementById(id);
 
-    child = moveHexagon(parentHexagon, -offset3 - offset1, -offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+        this.canvas.width = window.innerWidth + 100;
+        this.canvas.height = window.innerHeight + 100;
+
+        this.ctx = null;
+
+        if (this.canvas.getContext) {
+            this.ctx = this.canvas.getContext('2d');
+        }
+
+        this.seed = 0;
+
+        this.json = {octagons:[], arcs: [], lines: []};
     }
-    child = moveHexagon(parentHexagon, 0, -offset2-offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+
+    draw()
+    {
+        this.draw1();
     }
-    child = moveHexagon(parentHexagon, offset3 + offset1, -offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+
+    draw2()
+    {
+        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 10; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(0, 130, 0, 0.8)"; // 線の色と透明度
+
+        this.seed = 11;
+
+        let hexNum = 15;
+        let nodes = [];
+        for (let i = 0; i < hexNum; i++) {
+            let size = this.random(20, 40)
+            let n = new Node(this.random(100, 300), this.random(100, 300), size, size, size / 3);
+            nodes.push(n);
+        }
+
+        nodes[2].move(40, 40);
+        nodes[3].move(-140, -100);
+        nodes[4].move(150, -10);
+        nodes[5].move(0, -30);
+        nodes[7].move(-40, -30);
+        nodes[8].move(-60, -60);
+        nodes[9].move(30, 0);
+
+        this.seed = 200;
+        let ptNum = 3;
+        let points = [];
+        for (let i = 0; i < ptNum; i++) {
+            let v = new Vertex(this.random(100, 300), this.random(100, 300));
+
+            switch (i) {
+                case 0:
+                    v.move(-40, -60);
+                    break;
+                case 1:
+                    v.move(0, 10);
+                    break;
+            }
+
+            points.push(v);
+        }
+
+        let nn1 = 3;
+        let nn2 = 3;
+        let nv1 = 0;
+        let nv2 = 3;
+        let pn1 = 0;
+        let pn2 = 0;
+        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
+
+        nv1 = 3;
+        pn1 = 1;
+        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
+
+        nn1 = 13;
+        nv1 = 0;
+        pn1 = 1;
+        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
+
+        nodes.forEach(node => {
+            this.drawOctagon(node);
+        });
+
+        points.forEach(node => {
+            this.drawArc(node);
+        });
     }
-    child = moveHexagon(parentHexagon, offset3 + offset1, offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+
+    random(min, max)
+    {
+        var x = Math.sin(this.seed++) * 10000;
+        var random = x - Math.floor(x);
+        return Math.floor(random * (max - min + 1)) + min;
     }
-    child = moveHexagon(parentHexagon, 0, offset2+offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+
+    draw1()
+    {
+        // Set line color
+        this.ctx.strokeStyle = "rgba(0, 40, 0, 0.5)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 10; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(0, 50, 0, 0.5)"; // 線の色と透明度
+        this.ctx.font = '24px Arial';
+
+        let json = {octagons:[], arcs: [], lines: []};
+        let n1 = new Node(300, 300, 30, 30, 9);
+        this.drawOctagon(n1, 1);
+
+        let v = 1;
+        let v1 = new Vertex(280, 288);
+        this.drawArc(v1, v);
+        this.drawLine(n1.vertices[7].x, n1.vertices[7].y, v1.x, v1.y);
+
+        let n2 = new Node(330, 250, 30, 30, 9);
+        this.drawOctagon(n2, 2);
+        this.drawLine(n1.vertices[1].x, n1.vertices[1].y, n2.vertices[5].x, n2.vertices[5].y);
+
+        let v2 = new Vertex(240, 350);
+        this.drawArc(v2, ++v);
+        this.drawLine(v1.x, v1.y, v2.x, v2.y);
+
+        let n3 = new Node(350, 370, 30, 30, 9);
+        this.drawOctagon(n3, 3);
+        this.drawLine(n3.vertices[0].x, n3.vertices[0].y, n1.vertices[4].x, n1.vertices[4].y);
+
+        let n4 = new Node(160, 270, 40, 40, 12);
+        this.drawOctagon(n4, 4);
+        this.drawLine(n4.vertices[3].x, n4.vertices[3].y, v2.x, v2.y);
+
+        let v3 = new Vertex(150, 330);
+        this.drawArc(v3, ++v);
+        this.drawLine(n4.vertices[5].x, n4.vertices[5].y, v3.x, v3.y);
+
+        let v4 = new Vertex(130, 230);
+        this.drawArc(v4, ++v);
+        this.drawLine(n4.vertices[0].x, n4.vertices[0].y, v4.x, v4.y);
+
+        let v5 = new Vertex(130, 200);
+        this.drawArc(v5, ++v);
+        this.drawLine(v5.x, v5.y, v4.x, v4.y);
+
+        let n5 = new Node(180, 370, 25, 25, 8);
+        this.drawOctagon(n5, 5);
+        this.drawLine(n5.vertices[2].x, n5.vertices[2].y, v2.x, v2.y);
+
+        let v6 = new Vertex(260, 240);
+        this.drawArc(v6, ++v);
+        this.drawLine(v6.x, v6.y, v1.x, v1.y);
+
+        let n6 = new Node(290, 170, 25, 25, 8);
+        this.drawOctagon(n6, 6);
+        this.drawLine(n6.vertices[6].x, n6.vertices[6].y, v6.x, v6.y);
+
+        let v7 = new Vertex(350, 180);
+        this.drawArc(v7, ++v);
+        this.drawLine(v7.x, v7.y, v1.x, v1.y);
+        this.drawLine(v7.x, v7.y, n6.vertices[3].x, n6.vertices[3].y);
+
+        let n7 = new Node(370, 170, 25, 25, 8);
+        this.drawOctagon(n7, 7);
+        this.drawLine(n7.vertices[6].x, n7.vertices[6].y, v7.x, v7.y);
+
+        let n8 = new Node(410, 230, 23, 23, 7);
+        this.drawOctagon(n8, 8);
+        this.drawLine(n7.vertices[4].x, n7.vertices[4].y, n8.vertices[0].x, n8.vertices[0].y);
+
+        let v8 = new Vertex(380, 250);
+        this.drawArc(v8, ++v);
+        this.drawLine(v8.x, v8.y, n2.vertices[2].x, n2.vertices[2].y);
+        this.drawLine(n7.vertices[4].x, n7.vertices[4].y, n8.vertices[0].x, n8.vertices[0].y);
+
+        let v9 = new Vertex(400, 300);
+        this.drawArc(v9, ++v);
+        this.drawLine(v8.x, v8.y, v9.x, v9.y);
+
+        this.drawLine2(n3.vertices[1], v9);
+
+
+        let v10 = new Vertex(300, 370);
+        this.drawArc(v10, ++v);
+        this.drawLine2(n1.vertices[5], v10);
+
+        let v11 = new Vertex(270, 410);
+        this.drawArc(v11, ++v);
+        this.drawLine2(v11, v10);
+
+        let v12 = new Vertex(330, 400);
+        this.drawArc(v12, ++v);
+        this.drawLine2(v12, v10);
+
+        let v13 = new Vertex(200, 150);
+        this.drawArc(v13, ++v);
+
+
+        this.drawLine2(n3.vertices[5], v12);
+
+        console.debug(JSON.stringify(json));
     }
-    child = moveHexagon(parentHexagon, -offset3 - offset1, offset2);
-    key = child.center.x.toString() + '-' + child.center.y.toString();
-    if (!(key in hexagons)) {
-        hexagons[key] = child;
-        parentHexagon.children.push(child);
+
+    drawOctagon(node, i)
+    {
+        this.json.octagons.push(node);
+        node.setShapePath(this.ctx);
+        this.ctx.stroke();
+
+        //this.ctx.fillText(i.toString(), node.x, node.y)
+    }
+
+    drawArc(v, i)
+    {
+        this.json.arcs.push({x: v.x, y: v.y});
+        this.ctx.beginPath();
+        this.ctx.arc(v.x, v.y, 3, 0, MATH_PI_2, false);
+        this.ctx.fill();
+
+        //this.ctx.fillText(i.toString(), v.x, v.y)
+    }
+
+    drawLine(x1, y1, x2, y2)
+    {
+        this.json.lines.push({x1: x1, y1: y1, x2: x2, y2: y2});
+        this.ctx.beginPath();
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.stroke();
+    }
+
+    drawLine2(v1, v2)
+    {
+        this.json.lines.push({x1: v1.x, y1: v1.y, x2: v2.x, y2: v2.y});
+        this.ctx.beginPath();
+        this.ctx.moveTo(v1.x, v1.y);
+        this.ctx.lineTo(v2.x, v2.y);
+        this.ctx.stroke();
+    }
+
+    scroll() {
+        this.canvas.style.top = -50 - (window.scrollY / 4) + 'px';
     }
 }
 
-function moveHexagon(baseHexagon, x, y)
-{
-    let newHexagon = {center: {x: 0, y: 0}, vertices: [], children: []};
-
-    newHexagon.center.x = baseHexagon.center.x + x;
-    newHexagon.center.y = baseHexagon.center.y + y;
-
-    newHexagon.vertices[0] = {x: baseHexagon.vertices[0].x + x, y: baseHexagon.vertices[0].y + y};
-    newHexagon.vertices[1] = {x: baseHexagon.vertices[1].x + x, y: baseHexagon.vertices[1].y + y};
-    newHexagon.vertices[2] = {x: baseHexagon.vertices[2].x + x, y: baseHexagon.vertices[2].y + y};
-    newHexagon.vertices[3] = {x: baseHexagon.vertices[3].x + x, y: baseHexagon.vertices[3].y + y};
-    newHexagon.vertices[4] = {x: baseHexagon.vertices[4].x + x, y: baseHexagon.vertices[4].y + y};
-    newHexagon.vertices[5] = {x: baseHexagon.vertices[5].x + x, y: baseHexagon.vertices[5].y + y};
-
-    return newHexagon;
-}
-
-function drawHexagon(ctx, hexagon, style)
-{
-
-    ctx.beginPath();
-    ctx.moveTo(hexagon.vertices[0].x, hexagon.vertices[0].y);
-
-// 残りの頂点に線分を引く
-    ctx.lineTo(hexagon.vertices[1].x, hexagon.vertices[1].y);
-    ctx.lineTo(hexagon.vertices[2].x, hexagon.vertices[2].y);
-    ctx.lineTo(hexagon.vertices[3].x, hexagon.vertices[3].y);
-    ctx.lineTo(hexagon.vertices[4].x, hexagon.vertices[4].y);
-    ctx.lineTo(hexagon.vertices[5].x, hexagon.vertices[5].y);
-    ctx.closePath();
-
-// 線の色と太さを設定
-    ctx.strokeStyle = 'lime';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    hexagon.vertices.forEach(vertex => {
-        ctx.beginPath();
-        ctx.arc(vertex.x, vertex.y, 5, 0, 2 * Math.PI);
-        ctx.shadowColor = 'rgba(255, 255, 0, 0.5)'; // 黄色の半透明
-        ctx.shadowBlur = 20; // ぼかし具合
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-        ctx.fillStyle = 'rgba(255, 165, 0, 1)'; // オレンジ色
-        ctx.fill();
-    });
+window.onload = function() {
+    let network = new HorrorGameNetwork();
+    network.start();
 }
