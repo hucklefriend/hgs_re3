@@ -250,10 +250,10 @@ class ChildNode extends DOMNode
         ctx.shadowBlur = 10; // 影のぼかし効果
         ctx.stroke();
 
-        ctx.fillStyle = "rgba(0, 2550, 0, 0.8)";
-        ctx.shadowColor = "lime"; // 影の色
-        ctx.shadowBlur = 10; // 影のぼかし効果
-        super.setShapeVertexArc(ctx, 3)
+        // ctx.fillStyle = "rgba(0, 2550, 0, 0.8)";
+        // ctx.shadowColor = "lime"; // 影の色
+        // ctx.shadowBlur = 10; // 影のぼかし効果
+        // super.setShapeVertexArc(ctx, 3)
     }
 }
 
@@ -462,7 +462,29 @@ class Background3Maker
 
     draw()
     {
+        this.drawLight();
         this.draw1();
+    }
+
+    drawLight()
+    {
+        this.ctx.beginPath();
+        this.ctx.ellipse(this.canvas.width/2, this.canvas.height/2, this.canvas.width / 3, this.canvas.height, 0, 0, MATH_PI_2);
+        this.ctx.closePath();
+
+// グラデーションを作成
+        var gradient = this.ctx.createRadialGradient(this.canvas.width/2, this.canvas.height/2, 0, this.canvas.width/2, this.canvas.height/2, 150);
+        gradient.addColorStop(0, 'rgba(80, 80, 80, 0.7)');
+        gradient.addColorStop(0.3, 'rgba(30, 60, 30, 0.4)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+
+// グラデーションを塗りつぶしスタイルに設定
+        this.ctx.fillStyle = gradient;
+
+        this.ctx.shadowColor = "rgba(50, 100, 50, 0.4)"; // 影の色
+        this.ctx.shadowBlur = 20; // 影のぼかし効果
+// 楕円形を塗りつぶす
+        this.ctx.fill();
     }
 
     draw2()
@@ -531,7 +553,7 @@ class Background3Maker
         });
 
         points.forEach(node => {
-            this.drawArc(node);
+            //this.drawArc(node);
         });
     }
 
