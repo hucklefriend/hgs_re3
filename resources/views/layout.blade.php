@@ -8,6 +8,14 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+<div>
 @yield('content')
+    <canvas id="main-canvas"></canvas>
+    <canvas id="bg1" style=""></canvas>
+    <canvas id="bg2" style="position: absolute;top:0;left:0; z-index: -1002;"></canvas>
+    <div id="bg3c">
+        <canvas id="bg3"></canvas>
+    </div>
+</div>
 </body>
 </html>

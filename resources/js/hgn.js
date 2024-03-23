@@ -1,7 +1,7 @@
 
-import {MainNetwork} from "./hgn/main-network.js";
+import {Network} from "./hgn/network.js";
 
 window.onload = function() {
-    let network = new MainNetwork();
+    let network = new Network();
     network.start();
 }

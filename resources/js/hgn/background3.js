@@ -1,11 +1,15 @@
-import {Node} from '../hgn/node.js';
+import {OctaNode} from '../hgn/node.js';
 import {Param} from '../hgn/param.js';
 import {Vertex} from '../hgn/vertex.js';
 
-export class Background3Maker
+export class Background3
 {
-    constructor(id) {
-        this.canvas = document.getElementById(id);
+    /**
+     * コンストラクタ
+     */
+    constructor()
+    {
+        this.canvas = document.querySelector('#bg3');
 
         this.canvas.width = window.innerWidth + 100;
         this.canvas.height = window.innerHeight + 100;
@@ -33,18 +37,19 @@ export class Background3Maker
         this.ctx.ellipse(this.canvas.width/2, this.canvas.height/2, this.canvas.width / 3, this.canvas.height, 0, 0, Param.MATH_PI_2);
         this.ctx.closePath();
 
-// グラデーションを作成
-        var gradient = this.ctx.createRadialGradient(this.canvas.width/2, this.canvas.height/2, 0, this.canvas.width/2, this.canvas.height/2, 150);
+        // グラデーションを作成
+        let gradient = this.ctx.createRadialGradient(this.canvas.width/2, this.canvas.height/2, 0, this.canvas.width/2, this.canvas.height/2, 150);
         gradient.addColorStop(0, 'rgba(80, 80, 80, 0.7)');
         gradient.addColorStop(0.3, 'rgba(30, 60, 30, 0.4)');
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
 
-// グラデーションを塗りつぶしスタイルに設定
+        // グラデーションを塗りつぶしスタイルに設定
         this.ctx.fillStyle = gradient;
 
         this.ctx.shadowColor = "rgba(50, 100, 50, 0.4)"; // 影の色
         this.ctx.shadowBlur = 20; // 影のぼかし効果
-// 楕円形を塗りつぶす
+
+        // 楕円形を塗りつぶす
         this.ctx.fill();
     }
 
@@ -62,7 +67,7 @@ export class Background3Maker
         let nodes = [];
         for (let i = 0; i < hexNum; i++) {
             let size = this.random(20, 40)
-            let n = new Node(this.random(100, 300), this.random(100, 300), size, size, size / 3);
+            let n = new OctaNode(this.random(100, 300), this.random(100, 300), size, size, size / 3);
             nodes.push(n);
         }
 
@@ -136,7 +141,7 @@ export class Background3Maker
         this.ctx.font = '24px Arial';
 
         let json = {octagons:[], arcs: [], lines: []};
-        let n1 = new Node(300, 300, 30, 30, 9);
+        let n1 = new OctaNode(300, 300, 30, 30, 9);
         this.drawOctagon(n1, 1);
 
         let v = 1;
@@ -144,7 +149,7 @@ export class Background3Maker
         this.drawArc(v1, v);
         this.drawLine(n1.vertices[7].x, n1.vertices[7].y, v1.x, v1.y);
 
-        let n2 = new Node(330, 250, 30, 30, 9);
+        let n2 = new OctaNode(330, 250, 30, 30, 9);
         this.drawOctagon(n2, 2);
         this.drawLine(n1.vertices[1].x, n1.vertices[1].y, n2.vertices[5].x, n2.vertices[5].y);
 
@@ -152,11 +157,11 @@ export class Background3Maker
         this.drawArc(v2, ++v);
         this.drawLine(v1.x, v1.y, v2.x, v2.y);
 
-        let n3 = new Node(350, 370, 30, 30, 9);
+        let n3 = new OctaNode(350, 370, 30, 30, 9);
         this.drawOctagon(n3, 3);
         this.drawLine(n3.vertices[0].x, n3.vertices[0].y, n1.vertices[4].x, n1.vertices[4].y);
 
-        let n4 = new Node(160, 270, 40, 40, 12);
+        let n4 = new OctaNode(160, 270, 40, 40, 12);
         this.drawOctagon(n4, 4);
         this.drawLine(n4.vertices[3].x, n4.vertices[3].y, v2.x, v2.y);
 
@@ -172,7 +177,7 @@ export class Background3Maker
         this.drawArc(v5, ++v);
         this.drawLine(v5.x, v5.y, v4.x, v4.y);
 
-        let n5 = new Node(180, 370, 25, 25, 8);
+        let n5 = new OctaNode(180, 370, 25, 25, 8);
         this.drawOctagon(n5, 5);
         this.drawLine(n5.vertices[2].x, n5.vertices[2].y, v2.x, v2.y);
 
@@ -180,7 +185,7 @@ export class Background3Maker
         this.drawArc(v6, ++v);
         this.drawLine(v6.x, v6.y, v1.x, v1.y);
 
-        let n6 = new Node(290, 170, 25, 25, 8);
+        let n6 = new OctaNode(290, 170, 25, 25, 8);
         this.drawOctagon(n6, 6);
         this.drawLine(n6.vertices[6].x, n6.vertices[6].y, v6.x, v6.y);
 
@@ -189,11 +194,11 @@ export class Background3Maker
         this.drawLine(v7.x, v7.y, v1.x, v1.y);
         this.drawLine(v7.x, v7.y, n6.vertices[3].x, n6.vertices[3].y);
 
-        let n7 = new Node(370, 170, 25, 25, 8);
+        let n7 = new OctaNode(370, 170, 25, 25, 8);
         this.drawOctagon(n7, 7);
         this.drawLine(n7.vertices[6].x, n7.vertices[6].y, v7.x, v7.y);
 
-        let n8 = new Node(410, 230, 23, 23, 7);
+        let n8 = new OctaNode(410, 230, 23, 23, 7);
         this.drawOctagon(n8, 8);
         this.drawLine(n7.vertices[4].x, n7.vertices[4].y, n8.vertices[0].x, n8.vertices[0].y);
 
