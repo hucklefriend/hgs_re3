@@ -1,5 +1,6 @@
-import {Vertex} from '../hgn/vertex.js';
-import {Param} from '../hgn/param.js';
+import {Vertex} from '../vertex.js';
+import {Param} from '../param.js';
+import {Network} from '../network.js';
 
 /**
  * 八角形ノード
@@ -168,7 +169,8 @@ export class OctaNode
 
 export class DOMNode extends OctaNode
 {
-    constructor(DOM, notchSize) {
+    constructor(DOM, notchSize)
+    {
         super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
         this.DOM = DOM;
@@ -201,14 +203,80 @@ export class TitleNode extends DOMNode
     }
 }
 
-
-export class BackNode extends DOMNode
+export class LinkNode extends DOMNode
 {
-    constructor(DOM) {
+    constructor(DOM)
+    {
+        super(DOM, 15);
+
+        this.isHover = false;
+
+        DOM.addEventListener('mouseenter', () => this.mouseEnter());
+        DOM.addEventListener('mouseleave', () => this.mouseLeave());
+        DOM.addEventListener('click', () => this.mouseClick());
+    }
+
+    mouseEnter()
+    {
+        this.isHover = true;
+        this.DOM.classList.add('active');
+
+        const network = Network.getInstance();
+        network.setRedraw();
+    }
+
+    mouseLeave()
+    {
+        this.isHover = false;
+        this.DOM.classList.remove('active');
+
+        const network = Network.getInstance();
+        network.setRedraw();
+    }
+
+    mouseClick()
+    {
+        const a = this.DOM.querySelector('a');
+        if (a) {
+            a.click();
+        }
+    }
+
+    draw(ctx)
+    {
+        if (this.isHover) {
+            ctx.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
+            ctx.shadowColor = "lime"; // 影の色
+            ctx.shadowBlur = 10; // 影のぼかし効果
+            ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+        } else {
+            ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
+            ctx.shadowBlur = 8; // 影のぼかし効果
+            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+        }
+        ctx.lineWidth = 2; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+
+        super.setShapePath(ctx);
+        ctx.stroke();
+        ctx.fill();
+    }
+}
+
+
+
+
+export class BackNode extends LinkNode
+{
+    constructor(DOM)
+    {
         super(DOM, 10);
     }
 
-    draw(ctx) {
+    draw(ctx)
+    {
         super.setShapePath(ctx);
 
         // Set line color
@@ -222,28 +290,14 @@ export class BackNode extends DOMNode
     }
 }
 
-export class LinkNode extends DOMNode
-{
-    constructor(DOM) {
-        super(DOM, 15);
-    }
-
-    draw(ctx) {
-        Param.setLinkNodeCtx(ctx);
-        super.setShapePath(ctx);
-        ctx.stroke();
-        ctx.fill();
-    }
-}
-
-
 export class ContentNode extends DOMNode
 {
     constructor(DOM) {
         super(DOM, 50);
     }
 
-    draw(ctx) {
+    draw(ctx)
+    {
         super.setShapePath(ctx);
 
         // Set line color

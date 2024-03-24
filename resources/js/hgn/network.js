@@ -1,11 +1,13 @@
+import {BackNode, TitleNode, LinkNode, ContentNode, TextNode} from './node/octa-node.js';
+import {Param} from './param.js';
+import {Background1} from './background1.js';
+import {Background2} from './background2.js';
+import {Background3} from './background3.js';
 
-import {OctaNode, DOMNode, BackNode, TitleNode, LinkNode, ContentNode, TextNode} from '../hgn/node.js';
-import {Vertex} from '../hgn/vertex.js';
-import {Param} from '../hgn/param.js';
-import {Background1} from '../hgn/background1.js';
-import {Background2} from '../hgn/background2.js';
-import {Background3} from '../hgn/background3.js';
-
+/**
+ * ネットワーク
+ * シングルトン
+ */
 export class Network
 {
     /**
@@ -13,6 +15,11 @@ export class Network
      */
     constructor()
     {
+        if (Network.instance) {
+            return Network.instance;
+        }
+        Network.instance = this;
+
         // メインのcanvas
         this.mainCanvas = document.querySelector('#main-canvas');
         this.mainCanvas.width = document.documentElement.scrollWidth;
@@ -48,7 +55,23 @@ export class Network
         this.prevScrollX = -99999;
         this.prevScrollY = -99999;
 
+        // 次の更新で再描画するフラグ
+        this.redrawFlag = false;
+
         this.update = this.update.bind(this);
+
+        this.debug = document.querySelector('#debug');
+        this.lastTime= 0;
+        this.frameCount = 0;
+        this.fps = 0;
+    }
+
+    static getInstance()
+    {
+        if (Network.instance) {
+            return Network.instance;
+        }
+        return new Network();
     }
 
     /**
@@ -112,6 +135,7 @@ export class Network
     start()
     {
         this.draw();
+        this.showDebug();
         window.requestAnimationFrame(this.update);
     }
 
@@ -120,7 +144,7 @@ export class Network
      */
     draw()
     {
-        this.mainCtx.clearRect(0, 0, this.prevScrollX, this.prevScrollY);
+        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
         this.drawEdge();
         this.drawNodes();
     }
@@ -167,11 +191,22 @@ export class Network
 
     }
 
+    setRedraw()
+    {
+        this.redrawFlag = true;
+    }
+
     update()
     {
         this.changeSize();
         this.scroll();
 
+        if (this.redrawFlag) {
+            this.draw();
+            this.redrawFlag = false;
+        }
+
+        this.showDebug();
         window.requestAnimationFrame(this.update);
     }
 
@@ -212,5 +247,28 @@ export class Network
 
         this.prevScrollX = window.scrollX;
         this.prevScrollY = window.scrollY;
+    }
+
+    showDebug()
+    {
+        let text = '';
+        const timestamp = Date.now();
+        if (this.lastTime !== 0) {
+            // 前回のフレームからの経過時間（ミリ秒）を計算
+            const delta = timestamp - this.lastTime;
+            this.frameCount++;
+
+            // 簡単なデモのため、1秒ごとにフレームレートをコンソールに表示
+            if (this.frameCount % 60 === 0) {
+                // 1秒間に何フレームあるか計算し、フレームレートとして保存
+                this.fps = 1000 / delta;
+            }
+        }
+
+        text = `FPS: ${this.fps.toFixed(2)}<br>`;
+        text += 'touch: ' + Param.IS_TOUCH_DEVICE.toString();
+
+        this.debug.innerHTML = text;
+        this.lastTime = timestamp;
     }
 }

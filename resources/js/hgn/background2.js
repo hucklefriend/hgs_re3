@@ -1,6 +1,5 @@
-import {OctaNode, LinkNode} from '../hgn/node.js';
-import {Param} from '../hgn/param.js';
-import {Vertex} from '../hgn/vertex.js';
+import {OctaNode} from './node/octa-node.js';
+import {Param} from './param.js';
 
 export class Background2
 {
@@ -11,7 +10,7 @@ export class Background2
      */
     constructor(network)
     {
-        this.scrollRate = 1.5;
+        this.scrollRate = 1.3;
 
         this.canvas = document.querySelector('#bg2');
         this.canvas.width = document.documentElement.scrollWidth;
@@ -105,8 +104,8 @@ export class Background2
 
     draw(network)
     {
-        let offsetX = window.scrollX / this.scrollRate;
-        let offsetY = window.scrollY / this.scrollRate;
+        let offsetX = window.scrollX - (window.scrollX / this.scrollRate);
+        let offsetY = window.scrollY - (window.scrollY / this.scrollRate);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawEdge(network, offsetX, offsetY);
         this.drawNode(offsetX, offsetY);
@@ -144,5 +143,6 @@ export class Background2
 
     scroll(network)
     {
+        //this.canvas.style.top = - (window.scrollY / 1.1) + 'px';
     }
 }

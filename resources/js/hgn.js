@@ -1,7 +1,6 @@
-
 import {Network} from "./hgn/network.js";
 
 window.onload = function() {
-    let network = new Network();
+    const network = Network.getInstance();
     network.start();
 }

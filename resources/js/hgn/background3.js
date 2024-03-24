@@ -1,6 +1,7 @@
-import {OctaNode} from '../hgn/node.js';
-import {Param} from '../hgn/param.js';
-import {Vertex} from '../hgn/vertex.js';
+import {OctaNode} from './node/octa-node.js';
+import {PointNode} from './node/point-node.js';
+import {Param} from './param.js';
+import {Vertex} from './vertex.js';
 
 export class Background3
 {

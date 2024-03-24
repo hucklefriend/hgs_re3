@@ -1,3 +1,6 @@
+/**
+ * 定数とかをまとめるクラス
+ */
 export class Param
 {
     static MATH_PI_2 = Math.PI * 2;
@@ -13,17 +16,8 @@ export class Param
     static LLB = 6;
     static LLT = 7;
 
-    static setLinkNodeCtx(ctx)
-    {
-        ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
-        ctx.lineWidth = 2; // 線の太さ
-        ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        ctx.lineCap = "round"; // 線の末端のスタイル
-        ctx.shadowColor = "lime"; // 影の色
-        ctx.shadowBlur = 10; // 影のぼかし効果
-        ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-    }
-
     static CONNECT_TYPE_OUTGOING = 1;
     static CONNECT_TYPE_INCOMING = 2;
+
+    static IS_TOUCH_DEVICE = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
 }

@@ -57,6 +57,27 @@ h1 {
 .link-node {
     padding: 15px 25px;
     display: inline-block;
+    cursor: pointer;
+
+    a:link, a:visited, a:hover {
+        color: gray;
+        text-decoration: none;
+    }
+
+    a:active {
+        color: green;
+    }
+}
+
+.link-node.active {
+    a:link, a:visited, a:hover {
+        color: white;
+        text-decoration: none;
+    }
+
+    a:active {
+        color: green;
+    }
 }
 
 .node {
@@ -124,4 +145,12 @@ h1 {
     position:absolute;
     top:-50px;
     left:-50px;
+}
+
+#debug {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.7);
+    display: inline-block;
 }

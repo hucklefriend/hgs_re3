@@ -17,5 +17,6 @@
         <canvas id="bg3"></canvas>
     </div>
 </div>
+<div id="debug"></div>
 </body>
 </html>

@@ -1,6 +1,6 @@
-import {OctaNode, LinkNode} from '../hgn/node.js';
-import {Param} from '../hgn/param.js';
-import {Vertex} from '../hgn/vertex.js';
+import {OctaNode, LinkNode} from './node/octa-node.js';
+import {Param} from './param.js';
+import {Vertex} from './vertex.js';
 
 /**
  * 背景1、メインと背景2のノードを繋ぐエッジや移動するアニメーションを描画
@@ -47,5 +47,6 @@ export class Background1
 
     scroll(network, bg2)
     {
+
     }
 }
