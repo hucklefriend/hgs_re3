@@ -1,14 +1,29 @@
+/**
+ * 頂点
+ */
 export class Vertex
 {
+    /**
+     * コンストラクタ
+     *
+     * @param x
+     * @param y
+     */
     constructor(x, y)
     {
         this.x = x;
         this.y = y;
     }
 
-    move(offsetX, offsetY)
+    /**
+     * 移動
+     *
+     * @param moveX
+     * @param moveY
+     */
+    move(moveX, moveY)
     {
-        this.x += offsetX;
-        this.y += offsetY;
+        this.x += moveX;
+        this.y += moveY;
     }
 }
