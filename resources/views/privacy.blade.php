@@ -1,15 +1,6 @@
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>ホラーゲームネットワーク</title>
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+@extends('layout')
 
-    <link href="{{ asset('app.css') }}?t={{ time() }}" rel="stylesheet">
-</head>
-<body>
-<div style="padding: 30px;" class="content">
-
+@section('content')
     <div style="margin-bottom: 20px;">
         <div id="back-node">&lt;&lt;</div>
     </div>
@@ -22,21 +13,22 @@
     <div class="node-list">
         <div class="content-node">
             <div class="content-node-header"><h2>クッキーの利用</h2></div>
-
-            <p>
-                ログイン状態維持のため、クッキーを使用しています。<br>
-                クッキーはブラウザの設定で利用しないようにすることもできますが、利用しない場合は当サイトの一部機能がご利用いただけなくなります。<br>
-                <br>
-                また、当サイトで利用している外部サービスにおいても、クッキーを利用して情報を収集しているものがあります。<br>
-                外部サービス毎に項目を用意しておりますので、本画面下部を参照ください。<br>
-                <br>
-                クッキーについて詳しくは、こちらを参照ください。
-            </p>
-            <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a>
+            <div class="content-node-body">
+                <p>
+                    ログイン状態維持のため、クッキーを使用しています。<br>
+                    クッキーはブラウザの設定で利用しないようにすることもできますが、利用しない場合は当サイトの一部機能がご利用いただけなくなります。<br>
+                    <br>
+                    また、当サイトで利用している外部サービスにおいても、クッキーを利用して情報を収集しているものがあります。<br>
+                    外部サービス毎に項目を用意しておりますので、本画面下部を参照ください。<br>
+                    <br>
+                    クッキーについて詳しくは、こちらを参照ください。
+                </p>
+                <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a>
+            </div>
         </div>
 
         <div class="content-node">
-                <h4>メールアドレスの取得</h4>
+            <div class="content-node-header"><h2>メールアドレスの取得</h2></div>
                 <p>
                     メール・パスワード認証を利用される場合に限り、メールアドレスを取得しています。<br>
                     メールアドレスは以下の用途に利用しています。
@@ -54,7 +46,7 @@
         </div>
 
         <div class="content-node">
-            <h4>外部サービスのアカウント情報</h4>
+            <div class="content-node-header"><h2>外部サービスのアカウント情報</h2></div>
             <p>
                 当サイトでは、外部サービスを使ってログインや新規登録を行えます。<br>
                 外部サービスを利用される場合、アカウント情報を取得しています。<br>
@@ -87,7 +79,7 @@
         </div>
 
         <div class="content-node">
-                <h4 class="card-title">アフィリエイト</h4>
+            <div class="content-node-header"><h2>アフィリエイト</h2></div>
 
                 <p>
                     下記のアフィリエイトに参加しています。<br>
@@ -106,8 +98,7 @@
         </div>
 
         <div class="content-node">
-                <h4 class="card-title">18禁ゲーム</h4>
-
+            <div class="content-node-header"><h2>18禁ゲーム</h2></div>
                 <p>
                     当サイトでは18禁ゲームも取り扱っていますが、下記の条件にあてはまらない限り、パッケージ画像や公式サイトへのリンク、アフィリエイトリンク等が表示されないように制限しています。
                 </p>
@@ -125,8 +116,7 @@
         </div>
 
         <div class="content-node">
-                <h4 class="card-title">Google Analytics</h4>
-
+            <div class="content-node-header"><h2>Google Analytics</h2></div>
                 <p>
                     アクセス情報の収集・解析のために、<a href="https://www.google.com/intl/ja_jp/analytics" target="_blank">Google Analytics <i class="fas fa-sign-out-alt"></i></a>を利用しています。<br>
                     Google Analyticsはクッキーを使っての情報収集が行われております。<br>
@@ -137,17 +127,9 @@
         </div>
 
         <div class="content-node">
-            <h4 class="card-title">免責事項</h4>
+            <div class="content-node-header"><h2>免責事項</h2></div>
 
             <p>当サイトで掲載している画像の著作権等は権利所有者のものです。</p>
             <p>当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。</p>
         </div>
-    </div>
-    <canvas id="lineCanvas" style="position: absolute;top:0;left:0; z-index: -100;"></canvas>
-    <canvas id="backgroundCanvas1" style="position: absolute;top:0;left:0; z-index: -100;"></canvas>
-    <canvas id="backgroundCanvas2" style="position: absolute;top:0;left:0; z-index: -100;"></canvas>
-    <canvas id="backgroundCanvas3" style="position: absolute;top:0;left:0; z-index: -100;"></canvas>
-</div>
-<script src="{{ asset('app.js') }}?t={{ time() }}"></script>
-</body>
-</html>
+@endsection

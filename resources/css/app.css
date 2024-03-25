@@ -1,35 +1,19 @@
 :root {
-    --content-padding: 30px;
+    --content-node-notch: 50px;
 }
-
-/* スマホ */
-@media (max-width: 400px) {
-    :root {
-        --content-padding: 15px;
-    }
-}
-
-/* ファブレット */
-@media (max-width: 550px) {
-
-}
-
-/* タブレット */
-@media (max-width: 750px) {
-
-}
-
-
-
-
 
 body {
     background-color: black;
     color: white;
 }
 
+p {
+    padding: 0;
+    margin: 0;
+}
+
 body > div:first-child {
-    padding: var(--content-padding);
+    padding: 5px;
 }
 
 h1 {
@@ -84,27 +68,42 @@ h1 {
 
 }
 
-
 #back-node {
     display:inline-block;
     padding: 10px 10px;
 }
 
 .content-node {
-    padding: 0 20px 40px 20px;
-    width: 500px;
-}
-
-.content-node h2 {
-    margin: 0;
-    font-size: 20px;
+    padding: var(--content-node-notch) 2%;
+    margin-bottom: 3rem;
+    width: 96%;
+    position: relative;
 }
 
 .content-node-header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50px;
+    height: var(--content-node-notch);
+
+    h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+}
+
+
+.content-node-body {
+
+}
+
+
+.content-node-footer {
+    height: var(--content-node-notch);
 }
 
 .text-node {
@@ -154,3 +153,29 @@ h1 {
     background-color: rgba(0,0,0,0.7);
     display: inline-block;
 }
+
+/* スマホ～ */
+@media (min-width: 400px) {
+
+    .content-node {
+        padding: 0 20px 40px 20px;
+        margin-bottom: 3rem;
+        width: 300px;
+    }
+}
+
+/* ファブレット～ */
+@media (min-width: 550px) {
+}
+
+/* タブレット～ */
+@media (min-width: 750px) {
+
+}
+/* PC～ */
+@media (min-width: 1000px) {
+
+}
+
+
+
