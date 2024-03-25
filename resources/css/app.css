@@ -38,7 +38,7 @@ h1 {
     margin-bottom: 30px;
 }
 
-.link-node {
+.link-node, #back-node {
     padding: 15px 25px;
     display: inline-block;
     cursor: pointer;
@@ -53,7 +53,7 @@ h1 {
     }
 }
 
-.link-node.active {
+.link-node.active, #back-node.active {
     a:link, a:visited, a:hover {
         color: white;
         text-decoration: none;

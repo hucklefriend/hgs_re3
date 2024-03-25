@@ -2,7 +2,9 @@
 
 @section('content')
     <div style="margin-bottom: 20px;">
-        <div id="back-node">&lt;&lt;</div>
+        <div id="back-node">
+            <a href="{{ route('HGN') }}">&lt;&lt;</a>
+        </div>
     </div>
 
     <div style="text-align: center;">
