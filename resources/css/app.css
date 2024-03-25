@@ -1,0 +1,156 @@
+:root {
+    --content-padding: 30px;
+}
+
+/* スマホ */
+@media (max-width: 400px) {
+    :root {
+        --content-padding: 15px;
+    }
+}
+
+/* ファブレット */
+@media (max-width: 550px) {
+
+}
+
+/* タブレット */
+@media (max-width: 750px) {
+
+}
+
+
+
+
+
+body {
+    background-color: black;
+    color: white;
+}
+
+body > div:first-child {
+    padding: var(--content-padding);
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: unset;
+    display: inline-block;
+}
+
+.title {
+}
+
+#title-node {
+    display:inline-block;
+    padding: 5px 25px;
+}
+
+.node-list {
+    margin-top: 40px;
+}
+
+.node {
+    margin-bottom: 30px;
+}
+
+.link-node {
+    padding: 15px 25px;
+    display: inline-block;
+    cursor: pointer;
+
+    a:link, a:visited, a:hover {
+        color: gray;
+        text-decoration: none;
+    }
+
+    a:active {
+        color: green;
+    }
+}
+
+.link-node.active {
+    a:link, a:visited, a:hover {
+        color: white;
+        text-decoration: none;
+    }
+
+    a:active {
+        color: green;
+    }
+}
+
+.node {
+
+}
+
+
+#back-node {
+    display:inline-block;
+    padding: 10px 10px;
+}
+
+.content-node {
+    padding: 0 20px 40px 20px;
+    width: 500px;
+}
+
+.content-node h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.content-node-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.text-node {
+    margin: 0 0;
+    padding: 30px;
+}
+
+#main-canvas {
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:-1000;
+    backdrop-filter: blur(1px);
+}
+
+#bg1, #bg2 {
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:-1001;
+}
+
+#bg2 {
+    z-index:-1002;
+}
+
+#bg3c {
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1003;
+    overflow:hidden;
+    width: 100vw;
+    height:100vh;
+}
+
+#bg3 {
+    position:absolute;
+    top:-50px;
+    left:-50px;
+}
+
+#debug {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.7);
+    display: inline-block;
+}

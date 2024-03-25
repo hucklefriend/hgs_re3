@@ -1,0 +1,59 @@
+
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    font-size: 25px;
+    font-weight: unset;
+    display: inline-block;
+}
+
+.title {
+}
+
+#title-node {
+    display:inline-block;
+    padding: 5px 25px;
+}
+
+.node-list {
+    margin-top: 40px;
+}
+
+.node {
+    margin-bottom: 30px;
+}
+
+.child-node {
+    padding: 15px 25px;
+    display: inline-block;
+}
+
+.node {
+
+}
+
+
+#back-node {
+    display:inline-block;
+    padding: 10px 10px;
+}
+
+.content-node {
+    padding: 0 20px 40px 20px;
+    width: 500px;
+}
+
+.content-node h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.content-node-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
