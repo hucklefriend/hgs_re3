@@ -78,6 +78,15 @@ h1 {
     margin-bottom: 3rem;
     width: 96%;
     position: relative;
+
+    a:link, a:visited {
+        color: green;
+        text-decoration: none;
+    }
+
+    a:hover, a:active {
+        color: lime;
+    }
 }
 
 .content-node-header {
@@ -157,11 +166,6 @@ h1 {
 /* スマホ～ */
 @media (min-width: 400px) {
 
-    .content-node {
-        padding: 0 20px 40px 20px;
-        margin-bottom: 3rem;
-        width: 300px;
-    }
 }
 
 /* ファブレット～ */
@@ -170,7 +174,15 @@ h1 {
 
 /* タブレット～ */
 @media (min-width: 750px) {
+    body {
+        display: flex;
+        justify-content: center;
+    }
 
+    .content-node {
+        padding: var(--content-node-notch) 15px;
+        width: 680px;
+    }
 }
 /* PC～ */
 @media (min-width: 1000px) {
