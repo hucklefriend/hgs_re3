@@ -214,6 +214,11 @@ export class LinkNode extends DOMNode
         DOM.addEventListener('mouseenter', () => this.mouseEnter());
         DOM.addEventListener('mouseleave', () => this.mouseLeave());
         DOM.addEventListener('click', () => this.mouseClick());
+
+        if (Param.IS_TOUCH_DEVICE) {
+            DOM.addEventListener('touchstart', () => this.mouseEnter());
+            DOM.addEventListener('touchend', () => this.mouseLeave());
+        }
     }
 
     mouseEnter()
@@ -240,6 +245,16 @@ export class LinkNode extends DOMNode
         if (a) {
             a.click();
         }
+    }
+
+    touchStart()
+    {
+        this.mouseEnter();
+    }
+
+    touchEnd()
+    {
+        this.mouseLeave();
     }
 
     draw(ctx)
