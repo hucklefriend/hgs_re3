@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\HgnController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -137,6 +136,6 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 
-Route::get('', [HgnController::class, 'index'])->name('HGN');
-Route::get('lineup', function (){return view('lineup');})->name('lineup');
-Route::get('privacy', function (){return view('privacy');})->name('privacy');
+Route::get('/', function () {
+    return view('suspend');
+});
