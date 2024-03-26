@@ -80,11 +80,17 @@ export class Network
     loadNodes()
     {
         let titleElem = document.querySelector('#title-node');
-        this.titleNode = new TitleNode(titleElem);
+        if (titleElem) {
+            this.titleNode = new TitleNode(titleElem);
+        }
 
         let backElem = document.querySelector('#back-node');
         if (backElem) {
             this.backNode = new BackNode(backElem);
+
+            if (this.titleNode) {
+                this.backNode.connect2OctaNode(3, this.titleNode, 0);
+            }
         }
 
         let textNodeElems = document.querySelectorAll('.text-node');
@@ -155,19 +161,29 @@ export class Network
     drawEdge()
     {
         if (this.backNode) {
-            // titleNodeとbackNodeを線でつなげる
-            this.mainCtx.beginPath();
-            this.mainCtx.moveTo(this.titleNode.vertices[0].x, this.titleNode.vertices[0].y);
-            this.mainCtx.lineTo(this.backNode.vertices[4].x, this.backNode.vertices[4].y);
-            this.mainCtx.strokeStyle = "rgba(255, 255, 0, 0.8)";
-            this.mainCtx.lineWidth = 1;
-            this.mainCtx.stroke();
+            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.mainCtx.lineWidth = 1; // 線の太さ
+            this.mainCtx.shadowColor = "lime"; // 影の色
+            this.mainCtx.shadowBlur = 5; // 影のぼかし効果
+
+            this.backNode.connects.forEach((connect, vertexNo) => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
+                    let targetVertex = connect.getVertex();
+
+                    this.mainCtx.beginPath();
+                    this.mainCtx.moveTo(this.backNode.vertices[vertexNo].x, this.backNode.vertices[vertexNo].y);
+                    this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
+                    this.mainCtx.stroke();
+                }
+            });
         }
     }
 
     drawNodes()
     {
-        this.titleNode.draw(this.mainCtx);
+        if (this.titleNode) {
+            this.titleNode.draw(this.mainCtx);
+        }
 
         if (this.backNode) {
             this.backNode.draw(this.mainCtx);

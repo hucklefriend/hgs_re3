@@ -281,27 +281,11 @@ export class LinkNode extends DOMNode
 }
 
 
-
-
 export class BackNode extends LinkNode
 {
     constructor(DOM)
     {
         super(DOM, 10);
-    }
-
-    draw(ctx)
-    {
-        super.setShapePath(ctx);
-
-        // Set line color
-        ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
-        ctx.lineWidth = 2; // 線の太さ
-        ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        ctx.lineCap = "round"; // 線の末端のスタイル
-        ctx.shadowColor = "lime"; // 影の色
-        ctx.shadowBlur = 10; // 影のぼかし効果
-        ctx.stroke();
     }
 }
 
@@ -346,80 +330,6 @@ export class TextNode extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
         ctx.fillStyle = "rgba(0,30,0,0.6)";
         ctx.fill();
-    }
-}
-
-export class PointNode
-{
-    constructor(x = 0, y = 0, r = 0)
-    {
-        this.x = x;
-        this.y = y;
-        this.r = r;
-        this.connects = [];
-    }
-
-    reload(x, y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    move(offsetX, offsetY)
-    {
-        this.x += offsetX;
-        this.y += offsetY;
-    }
-
-    /**
-     * 別のノードと接続
-     *
-     * @param targetNode
-     * @param targetNodeVertexNo
-     */
-    connect(targetNode, targetNodeVertexNo = null)
-    {
-        if (targetNode instanceof PointNode) {
-            return this.connect2PointNode(targetNode);
-        } else if (targetNode instanceof OctaNode && targetNodeVertexNo !== null) {
-            return this.connect2OctaNode(targetNode, targetNodeVertexNo);
-        }
-
-        return false;
-    }
-
-    /**
-     * 点ノードへ接続
-     *
-     * @param vertexNo
-     * @param targetNode
-     * @returns {boolean}
-     */
-    connect2PointNode(vertexNo, targetNode)
-    {
-        this.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode));
-        targetNode.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this));
-
-        return true;
-    }
-
-    /**
-     * 八角ノードへ接続
-     *
-     * @param targetNode
-     * @param targetNodeVertexNo
-     * @returns {boolean}
-     */
-    connect2OctaNode(targetNode, targetNodeVertexNo)
-    {
-        if (targetNode.isConnectedVertex(targetNodeVertexNo)) {
-            return false;
-        }
-
-        this.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode));
-        targetNode.connects[targetNodeVertexNo] = new OctaNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
-
-        return true;
     }
 }
 

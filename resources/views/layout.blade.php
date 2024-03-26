@@ -4,6 +4,7 @@
     <title>ホラーゲームネットワーク</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
     <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
