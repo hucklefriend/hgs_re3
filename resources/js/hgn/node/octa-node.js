@@ -31,6 +31,22 @@ export class OctaNode
         }
     }
 
+    get left() {
+        return this.x - this.w / 2;
+    }
+
+    get right() {
+        return this.x + this.w / 2;
+    }
+
+    get top() {
+        return this.y - this.h / 2;
+    }
+
+    get bottom() {
+        return this.y + this.h / 2;
+    }
+
     /**
      * 再ロード（再配置）
      *
@@ -129,8 +145,8 @@ export class OctaNode
             return false;
         }
 
-        this.connects[vertexNo] = new OctaNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode);
-        targetNode.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this));
+        this.connects[vertexNo] = new PointNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode);
+        targetNode.connects.push(new OctaNodeConnect(Param.CONNECT_TYPE_INCOMING, this, vertexNo));
 
         return true;
     }
@@ -164,6 +180,12 @@ export class OctaNode
     isConnectedVertex(vertexNo)
     {
         return this.connects[vertexNo] !== null;
+    }
+
+    draw(ctx)
+    {
+        this.setShapePath(ctx);
+        ctx.stroke();
     }
 }
 

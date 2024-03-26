@@ -148,6 +148,7 @@ h1 {
 
 #bg2 {
     z-index:-1002;
+    backdrop-filter: blur(2px);
 }
 
 #bg3c {

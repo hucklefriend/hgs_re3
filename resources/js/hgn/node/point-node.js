@@ -1,4 +1,5 @@
 import {Param} from '../param.js';
+import {OctaNode} from './octa-node.js';
 import {OctaNodeConnect, PointNodeConnect} from './connect.js';
 
 export class PointNode
@@ -43,11 +44,10 @@ export class PointNode
     /**
      * 点ノードへ接続
      *
-     * @param vertexNo
      * @param targetNode
      * @returns {boolean}
      */
-    connect2PointNode(vertexNo, targetNode)
+    connect2PointNode(targetNode)
     {
         this.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode));
         targetNode.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this));
@@ -68,9 +68,16 @@ export class PointNode
             return false;
         }
 
-        this.connects.push(new PointNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode));
-        targetNode.connects[targetNodeVertexNo] = new OctaNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
+        this.connects.push(new OctaNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode, targetNodeVertexNo));
+        targetNode.connects[targetNodeVertexNo] = new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
 
         return true;
+    }
+
+    draw(ctx)
+    {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, Param.MATH_PI_2, false);
+        ctx.fill();
     }
 }
