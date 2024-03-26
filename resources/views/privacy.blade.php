@@ -1,21 +1,14 @@
 @extends('layout')
 
 @section('content')
-    <div style="margin-bottom: 20px;">
-        <div id="back-node">
-            <a href="{{ route('HGN') }}">&lt;&lt;</a>
-        </div>
-    </div>
-
-    <div style="text-align: center;">
-        <div id="title-node">
+    <div class="content-node">
+        <div class="content-node-header">
             <h1>Privacy Policy</h1>
+            <div class="content-node-close"><i class="icon-close"></i></div>
         </div>
-    </div>
-    <div class="node-list">
-        <div class="content-node">
-            <div class="content-node-header"><h2>クッキーの利用</h2></div>
-            <div class="content-node-body">
+        <div class="content-node-body">
+            <section>
+                <h2>Cookieの利用</h2>
                 <p>
                     ログイン状態維持のため、クッキーを使用しています。<br>
                     クッキーはブラウザの設定で利用しないようにすることもできますが、利用しない場合は当サイトの一部機能がご利用いただけなくなります。<br>
@@ -23,14 +16,12 @@
                     また、当サイトで利用している外部サービスにおいても、クッキーを利用して情報を収集しているものがあります。<br>
                     外部サービス毎に項目を用意しておりますので、本画面下部を参照ください。<br>
                     <br>
-                    クッキーについて詳しくは、こちらを参照ください。
+                    クッキーについて詳しくはこちらを参照ください。
                 </p>
                 <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a>
-            </div>
-        </div>
-
-        <div class="content-node">
-            <div class="content-node-header"><h2>メールアドレスの取得</h2></div>
+            </section>
+            <section>
+            <h2>メールアドレスの取得</h2>
                 <p>
                     メール・パスワード認証を利用される場合に限り、メールアドレスを取得しています。<br>
                     メールアドレスは以下の用途に利用しています。
@@ -45,44 +36,42 @@
                     上記以外のことでメールアドレスの入力を求めたり、メールをお送りすることはありません。<br>
                     連絡事項がある場合は、当サイト内のメッセージ機能でご連絡します。（まだ実装していませんが…）
                 </p>
-        </div>
+            </section>
+            <section>
+               <h2>外部サービス</h2>
+                <p>
+                    当サイトでは、外部サービスを使ってログインや新規登録を行えます。<br>
+                    外部サービスを利用される場合、アカウント情報を取得しています。<br>
+                    利用できるサービスは以下の通りです。
+                </p>
+                <ul>
+                    <li><a href="https://twitter.com/" target="_blank">Twitter <i class="fas fa-sign-out-alt"></i></a></li>
+                    <li><a href="https://www.facebook.com/" target="_blank">Facebook <i class="fas fa-sign-out-alt"></i></a></li>
+                    <li><a href="https://github.com/" target="_blank">GitHub <i class="fas fa-sign-out-alt"></i></a></li>
+                    <li><a href="https://plus.google.com/" target="_blank">Google+ <i class="fas fa-sign-out-alt"></i></a></li>
+                </ul>
 
-        <div class="content-node">
-            <div class="content-node-header"><h2>外部サービスのアカウント情報</h2></div>
-            <p>
-                当サイトでは、外部サービスを使ってログインや新規登録を行えます。<br>
-                外部サービスを利用される場合、アカウント情報を取得しています。<br>
-                利用できるサービスは以下の通りです。
-            </p>
-            <ul>
-                <li><a href="https://twitter.com/" target="_blank">Twitter <i class="fas fa-sign-out-alt"></i></a></li>
-                <li><a href="https://www.facebook.com/" target="_blank">Facebook <i class="fas fa-sign-out-alt"></i></a></li>
-                <li><a href="https://github.com/" target="_blank">GitHub <i class="fas fa-sign-out-alt"></i></a></li>
-                <li><a href="https://plus.google.com/" target="_blank">Google+ <i class="fas fa-sign-out-alt"></i></a></li>
-            </ul>
+                <p>
+                    取得している情報は以下の通りです。
+                </p>
+                <ul>
+                    <li>外部サイト内でのユーザーID</li>
+                    <li>名前(ニックネームにあたるもの)</li>
+                    <li>OAuth認証に必要なトークンおよびシークレットトークン</li>
+                </ul>
 
-            <p>
-                取得している情報は以下の通りです。
-            </p>
-            <ul>
-                <li>外部サイト内でのユーザーID</li>
-                <li>名前(ニックネームにあたるもの)</li>
-                <li>OAuth認証に必要なトークンおよびシークレットトークン</li>
-            </ul>
+                <p>
+                    現在のところ、いずれのサービスにおいても新規登録とログインでのみアカウント情報の取得・利用を行っております。<br>
+                    今後、増える可能性がありますが、その場合はこちらに記載していきます。
+                </p>
+                <p>
+                    ユーザー設定の画面で連携情報の削除を行うことができます。<br>
+                    当サイト内のデータが削除されるだけで、外部サービス側には設定が残っていますので、外部サービス側での連携解除処理も行ってください。
+                </p>
+            </section>
 
-            <p>
-                現在のところ、いずれのサービスにおいても新規登録とログインでのみアカウント情報の取得・利用を行っております。<br>
-                今後、増える可能性がありますが、その場合はこちらに記載していきます。
-            </p>
-            <p>
-                ユーザー設定の画面で連携情報の削除を行うことができます。<br>
-                当サイト内のデータが削除されるだけで、外部サービス側には設定が残っていますので、外部サービス側での連携解除処理も行ってください。
-            </p>
-        </div>
-
-        <div class="content-node">
-            <div class="content-node-header"><h2>アフィリエイト</h2></div>
-
+            <section>
+                <h2>アフィリエイト</h2>
                 <p>
                     下記のアフィリエイトに参加しています。<br>
                     当サイト内において、アフィリエイトの画像の表示や商品ページへのリンクを行っている部分があります。<br>
@@ -97,10 +86,10 @@
                     </li>
                     <li class="mb-2"><a href="https://www.apple.com/jp/itunes/affiliates/" target="_blank">iTunes アフィリエイトプログラム <i class="fas fa-sign-out-alt"></i></a></li>
                 </ul>
-        </div>
+            </section>
 
-        <div class="content-node">
-            <div class="content-node-header"><h2>18禁ゲーム</h2></div>
+            <section>
+                <h2>18禁ゲーム</h2>
                 <p>
                     当サイトでは18禁ゲームも取り扱っていますが、下記の条件にあてはまらない限り、パッケージ画像や公式サイトへのリンク、アフィリエイトリンク等が表示されないように制限しています。
                 </p>
@@ -115,10 +104,10 @@
                     <li>エロゲ</li>
                     <li>日本国内で販売されていないゲームに限り、ESRB MまたはESRB AO指定のゲーム</li>
                 </ul>
-        </div>
+            </section>
 
-        <div class="content-node">
-            <div class="content-node-header"><h2>Google Analytics</h2></div>
+            <section>
+                <h2>Google Analytics</h2>
                 <p>
                     アクセス情報の収集・解析のために、<a href="https://www.google.com/intl/ja_jp/analytics" target="_blank">Google Analytics <i class="fas fa-sign-out-alt"></i></a>を利用しています。<br>
                     Google Analyticsはクッキーを使っての情報収集が行われております。<br>
@@ -126,12 +115,13 @@
                 </p>
 
                 <a href="https://policies.google.com/technologies/partner-sites?hl=ja" target="_blank">Google のサービスを使用するサイトやアプリから収集した情報の Google による使用 – ポリシーと規約 – Google <i class="fas fa-sign-out-alt"></i></a>
-        </div>
+            </section>
+            <section>
+                <h2>免責事項</h2>
 
-        <div class="content-node">
-            <div class="content-node-header"><h2>免責事項</h2></div>
-
-            <p>当サイトで掲載している画像の著作権等は権利所有者のものです。</p>
-            <p>当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。</p>
+                <p>当サイトで掲載している画像の著作権等は権利所有者のものです。</p>
+                <p>当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。</p>
+            </section>
         </div>
+    </div>
 @endsection

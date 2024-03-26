@@ -80,12 +80,17 @@ export class Network
     loadNodes()
     {
         let titleElem = document.querySelector('#title-node');
-        this.titleNode = new TitleNode(titleElem);
+        if (titleElem) {
+            this.titleNode = new TitleNode(titleElem);
+        }
 
         let backElem = document.querySelector('#back-node');
         if (backElem) {
             this.backNode = new BackNode(backElem);
-            this.backNode.connect2OctaNode(3, this.titleNode, 0);
+
+            if (this.titleNode) {
+                this.backNode.connect2OctaNode(3, this.titleNode, 0);
+            }
         }
 
         let textNodeElems = document.querySelectorAll('.text-node');
@@ -176,7 +181,9 @@ export class Network
 
     drawNodes()
     {
-        this.titleNode.draw(this.mainCtx);
+        if (this.titleNode) {
+            this.titleNode.draw(this.mainCtx);
+        }
 
         if (this.backNode) {
             this.backNode.draw(this.mainCtx);

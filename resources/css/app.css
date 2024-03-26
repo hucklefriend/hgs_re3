@@ -87,6 +87,17 @@ h1 {
     a:hover, a:active {
         color: lime;
     }
+
+    .content-node-close {
+        position: absolute;
+        right: var(--content-node-notch);
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .content-node-close:hover {
+
+    }
 }
 
 .content-node-header {
