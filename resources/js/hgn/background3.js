@@ -12,8 +12,8 @@ export class Background3
     {
         this.canvas = document.querySelector('#bg3');
 
-        this.canvas.width = window.innerWidth + 100;
-        this.canvas.height = window.innerHeight + 100;
+        this.canvas.width = document.documentElement.scrollWidth + 100;
+        this.canvas.height = document.documentElement.scrollHeight + 100;
 
         this.ctx = null;
 
@@ -21,15 +21,205 @@ export class Background3
             this.ctx = this.canvas.getContext('2d');
         }
 
+        this.nodes = [];
         this.seed = 0;
-
         this.json = {octagons:[], arcs: [], lines: []};
+
+        this.generateNodes();
+    }
+
+    generateNodes()
+    {
+        let node = null;
+        let x = this.canvas.width / 2 + this.random(-50, 50);
+        let y = this.canvas.height / 2 + this.random(-50, 50);
+
+        // 最初のノード
+        if (this.random(0, 1) === 0) {
+            node = this.generateRandomOctaNode(x, y);
+        } else {
+            node = this.generateRandomPointNode(x, y);
+        }
+        this.nodes.push(node);
+
+        // 最初のノードをべースに広げていく
+        this.addConnectedNode(node, 1);
+    }
+
+    generateRandomOctaNode(x, y)
+    {
+        let wh = this.random(30, 35);
+        return new OctaNode(x, y, wh, wh, 10);
+    }
+
+    generateRandomPointNode(x, y)
+    {
+        return new PointNode(x, y);
+    }
+
+    addConnectedNode(node, depth)
+    {
+        if (depth >= 1000) {
+            return ;
+        }
+
+        // とりあえず8方向へ
+        for (let i = 0; i < 8; i++) {
+            if (this.random(0, 1) === 0) {
+                continue;
+            }
+            let retry = 0;
+
+            let x = 0;
+            let y = 0;
+            switch (i) {
+                case 0:
+                case 7:
+                    x = -1;
+                    y = -1;
+                    break;
+                case 1:
+                case 2:
+                    x = 1;
+                    y = -1;
+                    break;
+                case 3:
+                case 4:
+                    x = 1;
+                    y = 1;
+                    break;
+                case 5:
+                case 6:
+                    x = -1;
+                    y = 1;
+                    break;
+            }
+
+            let w = node instanceof OctaNode ? node.w : node.r;
+            x = node.x + (w + this.random(10, 80)) * x;
+            y = node.y + (w + this.random(10, 80)) * y;
+
+            if (x < 0 || y < 0 || x > this.canvas.width || y > this.canvas.height) {
+                continue;
+            }
+
+            let newNode = null;
+            if (this.random(0, 2) === 0) {
+                newNode = this.generateRandomOctaNode(x, y);
+            } else {
+                newNode = this.generateRandomPointNode(x, y);
+            }
+
+            if (!this.isHitAll(newNode)) {
+                if (newNode instanceof OctaNode) {
+                    if (node instanceof OctaNode) {
+                        let nearPoint = this.findClosestVertexNo(node.vertices[i], newNode.vertices);
+                        node.connect2OctaNode(i, newNode, nearPoint);
+                    } else {
+                        let nearPoint = this.findClosestVertexNo(node, newNode.vertices);
+                        node.connect2OctaNode(newNode, nearPoint);
+                    }
+                } else {
+                    newNode = this.generateRandomPointNode(x, y);
+                    if (node instanceof OctaNode) {
+                        node.connect2PointNode(i, newNode);
+                    } else {
+                        node.connect2PointNode(newNode);
+                    }
+                }
+
+                this.nodes.push(newNode);
+                this.addConnectedNode(newNode, depth + 1);
+            } else {
+                newNode = null;
+
+                if (retry < 3) {
+                    i--;
+                    retry++;
+                }
+            }
+        }
+    }
+
+    findClosestVertexNo(v, arr)
+    {
+        let closestNo = null;
+        let minDistance = Infinity;
+
+        arr.forEach((vertex, no) => {
+            const distance = Math.sqrt((v.x - vertex.x) ** 2 + (v.y - vertex.y) ** 2);
+            if (distance < minDistance) {
+                closestNo = no;
+                minDistance = distance;
+            }
+        });
+
+        return closestNo;
+    }
+
+
+    isHitAll(newNode)
+    {
+        for (let i = 0; i < this.nodes.length; i++) {
+            if (this.isHit(this.nodes[i], newNode)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isHit(node1, node2)
+    {
+        if (node1 instanceof OctaNode) {
+            if (node2 instanceof OctaNode) {
+                return this.isRectOverlap(node1, node2);
+            } else if (node2 instanceof PointNode) {
+                return this.isVertexNearRect(node2, node1);
+            }
+        } else if (node1 instanceof PointNode) {
+            if (node2 instanceof OctaNode) {
+                return this.isVertexNearRect(node1, node2);
+            } else if (node2 instanceof PointNode) {
+                return this.isVertexNearVertex(node2, node1);
+            }
+        }
+    }
+
+    isVertexNearVertex(vertex1, vertex2, margin = 50) {
+        const distance = Math.sqrt((vertex1.x - vertex2.x) ** 2 + (vertex1.y - vertex2.y) ** 2);
+        return distance <= margin;
+    }
+
+    isVertexNearRect(vertex, rect, margin = 20) {
+        // VertexがRectの辺界+マージン内にあるか判断
+        const isWithinLeftBound = vertex.x >= (rect.left - margin);
+        const isWithinRightBound = vertex.x <= (rect.right + margin);
+        const isWithinTopBound = vertex.y >= (rect.top - margin);
+        const isWithinBottomBound = vertex.y <= (rect.bottom + margin);
+
+        return isWithinLeftBound && isWithinRightBound && isWithinTopBound && isWithinBottomBound;
+    }
+
+    isRectOverlap(rect1, rect2, margin = 15)
+    {
+        // rect1がrect2の右側にある場合（マージンを考慮）
+        if (rect1.left > rect2.right + margin) return false;
+        // rect1がrect2の左側にある場合（マージンを考慮）
+        if (rect1.right < rect2.left - margin) return false;
+        // rect1がrect2の上側にある場合（マージンを考慮）
+        if (rect1.top > rect2.bottom + margin) return false;
+        // rect1がrect2の下側にある場合（マージンを考慮）
+        if (rect1.bottom < rect2.top - margin) return false;
+
+        // どの条件も満たさなければ、少なくとも一部が重なっている
+        return true;
     }
 
     draw()
     {
         this.drawLight();
-        this.draw1();
+        this.drawNodeNetwork();
     }
 
     drawLight()
@@ -52,6 +242,35 @@ export class Background3
 
         // 楕円形を塗りつぶす
         this.ctx.fill();
+    }
+
+    drawNodeNetwork()
+    {
+        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 10; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(0, 130, 0, 0.8)"; // 線の色と透明度
+        this.nodes.forEach(node => {
+            node.draw(this.ctx);
+            node.connects.forEach((connect, vertexNo) => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
+                    let x = node.x;
+                    let y = node.y;
+                    if (node instanceof OctaNode) {
+                        x = node.vertices[vertexNo].x;
+                        y = node.vertices[vertexNo].y;
+                    }
+
+                    let targetVertex = connect.getVertex();
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y);
+                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                    this.ctx.stroke();
+                }
+            });
+        });
     }
 
     draw2()
@@ -126,8 +345,8 @@ export class Background3
 
     random(min, max)
     {
-        var x = Math.sin(this.seed++) * 10000;
-        var random = x - Math.floor(x);
+        let x = Math.sin(this.seed++) * 10000;
+        let random = x - Math.floor(x);
         return Math.floor(random * (max - min + 1)) + min;
     }
 
@@ -273,7 +492,15 @@ export class Background3
         this.ctx.stroke();
     }
 
-    scroll() {
+    resize()
+    {
+        this.canvas.width = document.documentElement.scrollWidth;
+        this.canvas.height = document.documentElement.scrollHeight;
+        this.canvas.style.top = -50 - (window.scrollY / 4) + 'px';
+    }
+
+    scroll()
+    {
         this.canvas.style.top = -50 - (window.scrollY / 4) + 'px';
     }
 }

@@ -243,6 +243,8 @@ export class Network
         this.bg2.draw(this);
         this.bg1.scroll();
         this.bg1.draw(this, this.bg2);
+        this.bg3.resize();
+        this.bg3.draw();
     }
 
     /**
