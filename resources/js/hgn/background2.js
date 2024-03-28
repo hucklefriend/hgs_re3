@@ -29,16 +29,17 @@ export class Background2
         this.nodes = [];
 
         this.init(network);
-
     }
 
     init(network)
     {
         network.linkNodes.forEach(linkNode => {
             for (let i = 0; i < 8; i++) {
-                if (this.judge()) {
+                if (true || this.judge()) {
                     this.addNode(i, linkNode);
                 }
+
+                break;
             }
         });
     }
@@ -52,6 +53,11 @@ export class Background2
         let x = linkNode.vertices[i].x;
         let y = linkNode.vertices[i].y;
         let vn = 0;
+
+        // スクロール量に合わせて調整
+        if (y > window.innerHeight) {
+            y -= (y - (window.innerHeight / 2)) - ((y - (window.innerHeight / 2)) / this.scrollRate);
+        }
 
         switch (i) {
             case 0:
