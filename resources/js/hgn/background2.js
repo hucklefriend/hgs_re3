@@ -1,4 +1,4 @@
-import {OctaNode} from './node/octa-node.js';
+import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
 
 export class Background2
@@ -50,14 +50,9 @@ export class Background2
 
     addNode(i, linkNode)
     {
-        let x = linkNode.vertices[i].x;
-        let y = linkNode.vertices[i].y;
+        let x = 0;//linkNode.vertices[i].x;
+        let y = 0;//linkNode.vertices[i].y;
         let vn = 0;
-
-        // スクロール量に合わせて調整
-        if (y > window.innerHeight) {
-            y -= (y - (window.innerHeight / 2)) - ((y - (window.innerHeight / 2)) / this.scrollRate);
-        }
 
         switch (i) {
             case 0:
@@ -102,10 +97,17 @@ export class Background2
                 break;
         }
 
-        let node = new OctaNode(x, y, 40, 40, 12);
+        let node = new Bg2OctaNode(linkNode, x, y, 40, 40, 12);
         this.nodes.push(node);
 
         linkNode.connect2OctaNode(i, node, vn);
+    }
+
+    reload()
+    {
+        this.nodes.forEach(node => {
+            node.reload();
+        });
     }
 
     draw(network)
@@ -145,10 +147,11 @@ export class Background2
     {
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = document.documentElement.scrollHeight;
+
+        this.reload();
     }
 
     scroll(network)
     {
-        //this.canvas.style.top = - (window.scrollY / 1.1) + 'px';
     }
 }

@@ -26,7 +26,7 @@ export class OctaNode
         this.vertices = [];
         this.connects = new Array(8).fill(null);
 
-        if (w > 0 && h > 0 && notchSize > 0) {
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
     }
@@ -186,6 +186,39 @@ export class OctaNode
     {
         this.setShapePath(ctx);
         ctx.stroke();
+    }
+}
+
+export class Bg2OctaNode extends OctaNode
+{
+    constructor(parent, offsetX, offsetY, w, h, notchSize)
+    {
+        super(parent.x + offsetX, parent.y + offsetY, w, h, notchSize);
+        this.parent = parent;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.reload();
+    }
+
+    /**
+     * 再ロード（再配置）
+     */
+    reload()
+    {
+        this.x = this.parent.x;
+        this.y = this.parent.y;
+
+        // スクロール量に合わせて調整
+        if (this.y > window.innerHeight) {
+            this.y -= (this.y - (window.innerHeight / 2)) - ((this.y - (window.innerHeight / 2)) / Param.BG2_SCROLL_RATE);
+        }
+
+        this.x += this.offsetX;
+        this.y += this.offsetY;
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
     }
 }
 
