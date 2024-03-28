@@ -16,7 +16,7 @@
         </div>
         <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
             <div class="link-node link-node-center">
-                <div style="font-size: 20px; margin-bottom: 1rem;">HorrorGame Search</div>
+                <div style="font-size: 18px; margin-bottom: 1rem;">HorrorGame Search</div>
 
                 <p class="title-node-text">
                     あなたの好きな恐怖を見つけましょう
@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <div class="news-node" style="margin-top: 100px;margin-bottom: 30px;">
+        <div class="news-node" style="margin-bottom: 30px;">
             <div class="node">
                 <div class="link-node">
                     Information
@@ -97,25 +97,19 @@
             </div>
         </div>
         <div class="node node-around" style="margin-top: 100px;">
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    About
-                </div>
+            <div class="link-node">
+                About
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    <a href="{{ route('privacy') }}">Privacy Policy</a>
-                </div>
+            <div class="link-node">
+                <a href="{{ route('privacy') }}">Privacy Policy</a>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    Site Map
-                </div>
+            <div class="link-node">
+                Site Map
             </div>
         </div>
         <div class="node node-center">
             <div class="text-node">
-                &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
+                &copy; ホラーゲームネットワーク since 2003
             </div>
         </div>
     </div>

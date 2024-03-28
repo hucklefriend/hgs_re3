@@ -337,7 +337,7 @@ export class TextNode extends DOMNode
 {
     constructor(DOM)
     {
-        super(DOM, 20);
+        super(DOM, 16);
     }
 
     draw(ctx)
