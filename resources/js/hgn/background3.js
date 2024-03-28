@@ -219,7 +219,7 @@ export class Background3
     draw()
     {
         this.drawLight();
-        this.drawNodeNetwork();
+        this.draw1();
     }
 
     drawLight()
