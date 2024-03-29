@@ -1,6 +1,8 @@
 import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
 import {Network} from '../network.js';
+import {PointNode} from './point-node.js';
+import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 
 /**
  * 八角形ノード
@@ -187,16 +189,37 @@ export class OctaNode
         this.setShapePath(ctx);
         ctx.stroke();
     }
+
+    getNearVertexNo(v)
+    {
+        let closestNo = null;
+        let minDistance = Infinity;
+
+        this.vertices.forEach((vertex, no) => {
+            const distance = Math.sqrt((v.x - vertex.x) ** 2 + (v.y - vertex.y) ** 2);
+            if (distance < minDistance) {
+                closestNo = no;
+                minDistance = distance;
+            }
+        });
+
+        return closestNo;
+    }
 }
 
 export class Bg2OctaNode extends OctaNode
 {
-    constructor(parent, offsetX, offsetY, w, h, notchSize)
+    constructor(parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
     {
         super(parent.x + offsetX, parent.y + offsetY, w, h, notchSize);
-        this.parent = parent;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+
+        if (nearVertexNo === null) {
+            nearVertexNo = this.getNearVertexNo(parent);
+        }
+        this.connection = new Bg2Connect(parent, vertexNo, nearVertexNo);
+console.debug(this.connection);
         this.reload();
     }
 
@@ -205,8 +228,9 @@ export class Bg2OctaNode extends OctaNode
      */
     reload()
     {
-        this.x = this.parent.x;
-        this.y = this.parent.y;
+        const v = this.connection.getVertex();
+        this.x = v.x;
+        this.y = v.y;
 
         // スクロール量に合わせて調整
         if (this.y > window.innerHeight) {
@@ -219,6 +243,12 @@ export class Bg2OctaNode extends OctaNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+    }
+
+    draw(ctx, offsetX, offsetY)
+    {
+        this.setShapePath(ctx, offsetX, offsetY);
+        ctx.stroke();
     }
 }
 
@@ -385,48 +415,5 @@ export class TextNode extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
         ctx.fillStyle = "rgba(0,30,0,0.6)";
         ctx.fill();
-    }
-}
-
-class OctaNodeConnect
-{
-    /**
-     * コンストラクタ
-     *
-     * @param type
-     * @param node
-     * @param vertexNo
-     */
-    constructor(type, node, vertexNo)
-    {
-        this.type = type;
-        this.node = node;
-        this.vertexNo = vertexNo;
-    }
-
-    getVertex()
-    {
-        return this.node.vertices[this.vertexNo];
-    }
-}
-
-
-class PointNodeConnect
-{
-    /**
-     * コンストラクタ
-     *
-     * @param type
-     * @param node
-     */
-    constructor(type, node)
-    {
-        this.type = type;
-        this.node = node;
-    }
-
-    getVertex()
-    {
-        return new Vertex(this.node.x, this.node.y);
     }
 }

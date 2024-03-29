@@ -1,6 +1,6 @@
 import {Param} from '../param.js';
 import {OctaNode} from './octa-node.js';
-import {OctaNodeConnect, PointNodeConnect} from './connect.js';
+import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 
 export class PointNode
 {
@@ -79,5 +79,35 @@ export class PointNode
         ctx.beginPath();
         ctx.arc(this.x, this.y, 3, 0, Param.MATH_PI_2, false);
         ctx.fill();
+    }
+}
+
+export class Bg2PointNode extends PointNode
+{
+    constructor(parent, vertexNo, offsetX, offsetY, r)
+    {
+        super(parent.x + offsetX, parent.y + offsetY, r);
+        this.connection = new Bg2Connect(parent, vertexNo);
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.reload();
+    }
+
+    /**
+     * 再ロード（再配置）
+     */
+    reload()
+    {
+        const v = this.connection.getVertex();
+        this.x = v.x;
+        this.y = v.y;
+
+        // スクロール量に合わせて調整
+        if (this.y > window.innerHeight) {
+            this.y -= (this.y - (window.innerHeight / 2)) - ((this.y - (window.innerHeight / 2)) / Param.BG2_SCROLL_RATE);
+        }
+
+        this.x += this.offsetX;
+        this.y += this.offsetY;
     }
 }

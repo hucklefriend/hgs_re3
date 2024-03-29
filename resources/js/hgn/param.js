@@ -22,4 +22,6 @@ export class Param
     static IS_TOUCH_DEVICE = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
 
     static BG2_SCROLL_RATE = 1.3;
+
+    static BG2_MAKE_NETWORK_MODE = true;
 }

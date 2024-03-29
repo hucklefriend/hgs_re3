@@ -15,8 +15,8 @@
             </div>
         </div>
         <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
-            <div class="link-node link-node-center">
-                <div style="font-size: 20px; margin-bottom: 1rem;">HorrorGame Search</div>
+            <div class="link-node link-node-center" id="n-HGS">
+                <div style="font-size: 20px; margin-bottom: 1rem;">HorrorGame Lineup</div>
 
                 <p class="title-node-text">
                     あなたの好きな恐怖を見つけましょう
