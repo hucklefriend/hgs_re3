@@ -74,10 +74,10 @@ export class PointNode
         return true;
     }
 
-    draw(ctx)
+    draw(ctx, offsetX, offsetY)
     {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 3, 0, Param.MATH_PI_2, false);
+        ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
     }
 }

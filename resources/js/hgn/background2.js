@@ -77,12 +77,26 @@ export class Background2
         this.addSubNode(19, Param.RRT, -40, -120, 25, 9);
         this.addSubNode(17, Param.LLT, -30, -40, 6);
         this.addSubNode(17, Param.LLT, -30, -40, 6);
-        // n = this.addSubNode(hgsNode, Param.RRT, 60, -40, 40, 40, 12);
-        // n = this.addSubNode(hgsNode, Param.RRB, 60, 30, 40, 40, 12);
-        // n = this.addSubNode(hgsNode, Param.RBB, 60, 80, 40, 40, 12);
-        // n = this.addSubNode(hgsNode, Param.LBB, -20, 100, 40, 40, 12);
-        // n = this.addSubNode(hgsNode, Param.LLB, -60, 40, 40, 40, 12);
-        // n = this.addSubNode(hgsNode, Param.LLT, -90, 0, 40, 40, 12);
+        this.addSubNode(17, Param.RRT, 40, -10, 6);
+        this.nodes[9].connect(Param.LTT, this.nodes[23]);
+        this.addSubNode(9, Param.RTT, 70, -80, 7);
+        this.addSubNode(8, Param.RTT, 60, -40, 7);
+        this.addSubNode(25, null, 60, -10, 7);
+        this.addSubNode(26, null, 30, -60, 35, 11);
+        this.addSubNode(27, Param.RTT, 60, -40, 7);
+        this.addSubNode(28, null, 30, -60, 35, 11);
+        this.addSubNode(27, Param.LTT, -10, -80, 30, 10);
+        this.addSubNode(26, null, -10, 40, 8);
+        this.addSubNode(31, null, 0, 80, 30, 10);
+        this.addSubNode(27, Param.RRB, 40, 30, 35, 11);
+
+
+        this.addSubNode(hgsNode, Param.RRT, 60, -40, 40, 12);
+        this.addSubNode(hgsNode, Param.RRB, 60, 30, 40, 12);
+        this.addSubNode(hgsNode, Param.RBB, 60, 80, 40, 12);
+        this.addSubNode(hgsNode, Param.LBB, -20, 100, 40, 12);
+        this.addSubNode(hgsNode, Param.LLB, -60, 40, 40, 12);
+        this.addSubNode(hgsNode, Param.LLT, -90, 0, 40, 12);
     }
 
 
