@@ -203,7 +203,7 @@ h1 {
 
 #bg2 {
     z-index:-1002;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
 }
 
 #bg3c {
@@ -212,14 +212,14 @@ h1 {
     left:0;
     z-index:-1003;
     overflow:hidden;
-    width: 100vw;
+    width:100vw;
     height:100vh;
+    padding:0;
+    text-align: center;
 }
 
 #bg3 {
-    position:absolute;
-    top:-50px;
-    left:-50px;
+    position:relative;
 }
 
 #debug {

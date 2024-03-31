@@ -219,7 +219,7 @@ export class Bg2OctaNode extends OctaNode
             nearVertexNo = this.getNearVertexNo(parent);
         }
         this.connection = new Bg2Connect(parent, vertexNo, nearVertexNo);
-console.debug(this.connection);
+
         this.reload();
     }
 

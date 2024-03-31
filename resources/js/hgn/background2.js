@@ -262,6 +262,13 @@ export class Background2
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = document.documentElement.scrollHeight;
 
+        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 5; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(0, 150, 0, 0.8)";
+        this.ctx.font = '20px Arial';
+
         this.reload();
     }
 

@@ -1,4 +1,4 @@
-import {OctaNode} from './node/octa-node.js';
+import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
 import {PointNode} from './node/point-node.js';
 import {Param} from './param.js';
 import {Vertex} from './vertex.js';
@@ -11,9 +11,7 @@ export class Background3
     constructor()
     {
         this.canvas = document.querySelector('#bg3');
-
-        this.canvas.width = document.documentElement.scrollWidth + 100;
-        this.canvas.height = document.documentElement.scrollHeight + 100;
+        this.setCanvasSize();
 
         this.ctx = null;
 
@@ -22,17 +20,27 @@ export class Background3
         }
 
         this.nodes = [];
-        this.seed = 0;
+        this.seed = 1;
         this.json = {octagons:[], arcs: [], lines: []};
 
+        this.nodes = [];
         this.generateNodes();
+    }
+
+    setCanvasSize()
+    {
+        this.canvas.width = 300;
+        this.canvas.height = (window.innerHeight / Param.BG3_SIZE_RATE) + Param.BG3_OFFSET
+            + (document.documentElement.scrollHeight - window.innerHeight) / Param.BG3_SCROLL_RATE;
+        this.canvas.style.width = this.canvas.width * Param.BG3_SIZE_RATE;
+        this.canvas.style.height = this.canvas.height * Param.BG3_SIZE_RATE;
     }
 
     generateNodes()
     {
         let node = null;
-        let x = this.canvas.width / 2 + this.random(-50, 50);
-        let y = this.canvas.height / 2 + this.random(-50, 50);
+        let x = this.canvas.width / Param.BG3_SIZE_RATE + this.random(-20, 20);
+        let y = this.canvas.height / Param.BG3_SIZE_RATE + this.random(-20, 20);
 
         // 最初のノード
         if (this.random(0, 1) === 0) {
@@ -48,13 +56,13 @@ export class Background3
 
     generateRandomOctaNode(x, y)
     {
-        let wh = this.random(30, 35);
-        return new OctaNode(x, y, wh, wh, 10);
+        let wh = 7;
+        return new OctaNode(x, y, wh, wh, 2);
     }
 
     generateRandomPointNode(x, y)
     {
-        return new PointNode(x, y);
+        return new PointNode(x, y, 1);
     }
 
     addConnectedNode(node, depth)
@@ -96,8 +104,8 @@ export class Background3
             }
 
             let w = node instanceof OctaNode ? node.w : node.r;
-            x = node.x + (w + this.random(10, 80)) * x;
-            y = node.y + (w + this.random(10, 80)) * y;
+            x = node.x + (w + this.random(10, 20)) * x;
+            y = node.y + (w + this.random(10, 20)) * y;
 
             if (x < 0 || y < 0 || x > this.canvas.width || y > this.canvas.height) {
                 continue;
@@ -186,12 +194,14 @@ export class Background3
         }
     }
 
-    isVertexNearVertex(vertex1, vertex2, margin = 50) {
+    isVertexNearVertex(vertex1, vertex2, margin = 15)
+    {
         const distance = Math.sqrt((vertex1.x - vertex2.x) ** 2 + (vertex1.y - vertex2.y) ** 2);
         return distance <= margin;
     }
 
-    isVertexNearRect(vertex, rect, margin = 20) {
+    isVertexNearRect(vertex, rect, margin = 7)
+    {
         // VertexがRectの辺界+マージン内にあるか判断
         const isWithinLeftBound = vertex.x >= (rect.left - margin);
         const isWithinRightBound = vertex.x <= (rect.right + margin);
@@ -219,23 +229,24 @@ export class Background3
     draw()
     {
         this.drawLight();
-        this.draw1();
+        this.drawNodeNetwork();
     }
 
     drawLight()
     {
-        this.ctx.beginPath();
-        this.ctx.ellipse(this.canvas.width/2, this.canvas.height/2, this.canvas.width / 3, this.canvas.height, 0, 0, Param.MATH_PI_2);
-        this.ctx.closePath();
+        let centerX = this.canvas.width / 2;
+        let centerY = window.innerHeight / (Param.BG3_SIZE_RATE * 2) + Param.BG3_OFFSET;
 
         // グラデーションを作成
-        let gradient = this.ctx.createRadialGradient(this.canvas.width/2, this.canvas.height/2, 0, this.canvas.width/2, this.canvas.height/2, 150);
-        gradient.addColorStop(0, 'rgba(80, 80, 80, 0.7)');
-        gradient.addColorStop(0.3, 'rgba(30, 60, 30, 0.4)');
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+        let gradient = this.ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 400 / Param.BG3_SIZE_RATE);
+        gradient.addColorStop(0, 'rgba(80, 90, 80, 0.5)');
+        gradient.addColorStop(0.3, 'rgba(10, 30, 10, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.01)');
 
         // グラデーションを塗りつぶしスタイルに設定
         this.ctx.fillStyle = gradient;
+
+        this.ctx.arc(centerX, centerY, this.canvas.width / (Param.BG3_SIZE_RATE * 1.5), 0, Param.MATH_PI_2);
 
         this.ctx.shadowColor = "rgba(50, 100, 50, 0.4)"; // 影の色
         this.ctx.shadowBlur = 20; // 影のぼかし効果
@@ -246,11 +257,12 @@ export class Background3
 
     drawNodeNetwork()
     {
-        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.strokeStyle = "rgba(30, 50, 30, 0.6)"; // 線の色と透明度
         this.ctx.lineWidth = 1; // 線の太さ
-        this.ctx.shadowColor = "lime"; // 影の色
-        this.ctx.shadowBlur = 10; // 影のぼかし効果
-        this.ctx.fillStyle = "rgba(0, 130, 0, 0.8)"; // 線の色と透明度
+        this.ctx.shadowColor = "rgb(50, 80, 50)"; // 影の色
+        this.ctx.shadowBlur = 30; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(40, 80, 40, 0.6)"; // 線の色と透明度
+
         this.nodes.forEach(node => {
             node.draw(this.ctx);
             node.connects.forEach((connect, vertexNo) => {
@@ -270,76 +282,6 @@ export class Background3
                     this.ctx.stroke();
                 }
             });
-        });
-    }
-
-    draw2()
-    {
-        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-        this.ctx.lineWidth = 1; // 線の太さ
-        this.ctx.shadowColor = "lime"; // 影の色
-        this.ctx.shadowBlur = 10; // 影のぼかし効果
-        this.ctx.fillStyle = "rgba(0, 130, 0, 0.8)"; // 線の色と透明度
-
-        this.seed = 11;
-
-        let hexNum = 15;
-        let nodes = [];
-        for (let i = 0; i < hexNum; i++) {
-            let size = this.random(20, 40)
-            let n = new OctaNode(this.random(100, 300), this.random(100, 300), size, size, size / 3);
-            nodes.push(n);
-        }
-
-        nodes[2].move(40, 40);
-        nodes[3].move(-140, -100);
-        nodes[4].move(150, -10);
-        nodes[5].move(0, -30);
-        nodes[7].move(-40, -30);
-        nodes[8].move(-60, -60);
-        nodes[9].move(30, 0);
-
-        this.seed = 200;
-        let ptNum = 3;
-        let points = [];
-        for (let i = 0; i < ptNum; i++) {
-            let v = new Vertex(this.random(100, 300), this.random(100, 300));
-
-            switch (i) {
-                case 0:
-                    v.move(-40, -60);
-                    break;
-                case 1:
-                    v.move(0, 10);
-                    break;
-            }
-
-            points.push(v);
-        }
-
-        let nn1 = 3;
-        let nn2 = 3;
-        let nv1 = 0;
-        let nv2 = 3;
-        let pn1 = 0;
-        let pn2 = 0;
-        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
-
-        nv1 = 3;
-        pn1 = 1;
-        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
-
-        nn1 = 13;
-        nv1 = 0;
-        pn1 = 1;
-        this.drawLine(nodes[nn1].vertices[nv1].x, nodes[nn1].vertices[nv1].y, points[pn1].x, points[pn1].y);
-
-        nodes.forEach(node => {
-            this.drawOctagon(node);
-        });
-
-        points.forEach(node => {
-            //this.drawArc(node);
         });
     }
 
@@ -494,14 +436,12 @@ export class Background3
 
     resize()
     {
-        this.canvas.width = document.documentElement.scrollWidth;
-        this.canvas.height = document.documentElement.scrollHeight;
-        this.canvas.style.top = -50 - (window.scrollY / 4) + 'px';
+        this.setCanvasSize();
     }
 
     scroll()
     {
-        this.canvas.style.top = -50 - (window.scrollY / 4) + 'px';
+        this.canvas.style.top = (Param.BG3_OFFSET * -1) - (window.scrollY / 6) + 'px';
     }
 }
 
