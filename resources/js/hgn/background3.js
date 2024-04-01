@@ -30,10 +30,11 @@ export class Background3
     setCanvasSize()
     {
         this.canvas.width = 300;
-        this.canvas.height = (window.innerHeight / Param.BG3_SIZE_RATE) + Param.BG3_OFFSET
-            + (document.documentElement.scrollHeight - window.innerHeight) / Param.BG3_SCROLL_RATE;
+        this.canvas.height = 800;
         this.canvas.style.width = this.canvas.width * Param.BG3_SIZE_RATE;
         this.canvas.style.height = this.canvas.height * Param.BG3_SIZE_RATE;
+
+        this.resize();
     }
 
     generateNodes()
@@ -246,7 +247,7 @@ export class Background3
         // グラデーションを塗りつぶしスタイルに設定
         this.ctx.fillStyle = gradient;
 
-        this.ctx.arc(centerX, centerY, this.canvas.width / (Param.BG3_SIZE_RATE * 1.5), 0, Param.MATH_PI_2);
+        this.ctx.arc(centerX, centerY, this.canvas.width / 3, 0, Param.MATH_PI_2);
 
         this.ctx.shadowColor = "rgba(50, 100, 50, 0.4)"; // 影の色
         this.ctx.shadowBlur = 20; // 影のぼかし効果
@@ -436,7 +437,12 @@ export class Background3
 
     resize()
     {
-        this.setCanvasSize();
+        // キャンバスのサイズよりウィンドウサイズの方が小さくなった時に、キャンバスのleftを調整して中央になるようにする
+        if (window.innerWidth < this.canvas.width * Param.BG3_SIZE_RATE) {
+            this.canvas.style.left = (window.innerWidth - this.canvas.width * Param.BG3_SIZE_RATE) / 2 + 'px';
+        } else {
+            this.canvas.style.left = 0;
+        }
     }
 
     scroll()
