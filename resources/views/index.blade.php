@@ -12,7 +12,9 @@
                 <h1>HorrorGame Network</h1>
 
                 <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
-                    Enter the horror.
+                    Enter the horror game.<br>
+                    ネットワークのノードとなって、<br>
+                    ホラーゲームと繋がりましょう！
                 </p>
             </div>
         </div>
@@ -92,7 +94,7 @@
 
         <div class="node node-center" style="margin-top: 5rem;margin-bottom: 5rem;">
             <div class="link-node link-node-center">
-                Enter the survival horror.
+                Enter the horror game.
             </div>
         </div>
 
