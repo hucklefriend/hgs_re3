@@ -1,4 +1,4 @@
-import {BackNode, TitleNode, LinkNode, ContentNode, TextNode} from './node/octa-node.js';
+import {BackNode, TitleNode, LinkNode, HgsTitleLinkNode, ContentNode, TextNode} from './node/octa-node.js';
 import {Param} from './param.js';
 import {Background1} from './background1.js';
 import {Background2} from './background2.js';
@@ -100,7 +100,11 @@ export class Network
 
         let linkNodeElems = document.querySelectorAll('.link-node');
         linkNodeElems.forEach(nodeElem => {
-            this.linkNodes.push(new LinkNode(nodeElem));
+            if (nodeElem.id === 'n-HGS') {
+                this.linkNodes.push(new HgsTitleLinkNode(nodeElem));
+            } else {
+                this.linkNodes.push(new LinkNode(nodeElem));
+            }
         });
 
         let contentNodeElems = document.querySelectorAll('.content-node');
