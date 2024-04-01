@@ -32,6 +32,10 @@ export class Background2
         this.nodes = [];
 
         this.init(network);
+
+        if (Param.BG3_MAKE_NETWORK_MODE) {
+            this.canvas.style.backdropFilter = "blur(0px)";
+        }
     }
 
     init(network)
@@ -89,7 +93,6 @@ export class Background2
         this.addSubNode(26, null, -10, 40, 8);
         this.addSubNode(31, null, 0, 80, 30, 10);
         this.addSubNode(27, Param.RRB, 40, 30, 35, 11);
-
 
         this.addSubNode(hgsNode, Param.RRT, 60, -40, 40, 12);
         this.addSubNode(hgsNode, Param.RRB, 60, 30, 40, 12);

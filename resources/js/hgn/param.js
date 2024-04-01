@@ -26,7 +26,7 @@ export class Param
     static BG3_SIZE_RATE = 4;
 
     static BG2_MAKE_NETWORK_MODE = false;
-    static BG3_MAKE_NETWORK_MODE = true;
+    static BG3_MAKE_NETWORK_MODE = false;
 
     static BG3_OFFSET = 25;
 }

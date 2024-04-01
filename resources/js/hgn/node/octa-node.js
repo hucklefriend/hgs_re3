@@ -134,6 +134,20 @@ export class OctaNode
         return false;
     }
 
+    connectNear(targetNode)
+    {
+        let vertexNo = this.getNearVertexNo(targetNode);
+
+        if (targetNode instanceof PointNode) {
+            return this.connect2PointNode(vertexNo, targetNode);
+        } else if (targetNode instanceof OctaNode) {
+            let targetNodeVertexNo = targetNode.getNearVertexNo(this);
+            return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
+        }
+
+        return false;
+    }
+
     /**
      * 点ノードへ接続
      *

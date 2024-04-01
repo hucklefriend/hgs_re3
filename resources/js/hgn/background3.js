@@ -1,5 +1,5 @@
 import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
-import {PointNode} from './node/point-node.js';
+import {Bg2PointNode, PointNode} from './node/point-node.js';
 import {Param} from './param.js';
 import {Vertex} from './vertex.js';
 
@@ -27,6 +27,9 @@ export class Background3
         this.generateNodes();
     }
 
+    /**
+     * canvasのサイズ設定
+     */
     setCanvasSize()
     {
         this.canvas.width = 300;
@@ -39,21 +42,162 @@ export class Background3
 
     generateNodes()
     {
-        let node = null;
-        let x = this.canvas.width / Param.BG3_SIZE_RATE + this.random(-20, 20);
-        let y = this.canvas.height / Param.BG3_SIZE_RATE + this.random(-20, 20);
+        let x = 140;
+        let y = 100;
 
-        // 最初のノード
-        if (this.random(0, 1) === 0) {
-            node = this.generateRandomOctaNode(x, y);
-        } else {
-            node = this.generateRandomPointNode(x, y);
-        }
+        let node = new OctaNode(x, y, 8, 8, 3);
         this.nodes.push(node);
 
-        // 最初のノードをべースに広げていく
-        this.addConnectedNode(node, 1);
+        this.addOctaNode(0, -50, -15);      // 1
+        this.addOctaNode(0, 10, -40);
+        this.addOctaNode(0, 40, -2);
+        this.addOctaNode(0, 30, 60);
+        this.addOctaNode(0, -10, 40);
+
+        this.addOctaNode(1, -30, 5);        // 6
+        this.addPointNode(1, -20, -14);
+        this.addOctaNode(1, 0, -40);
+        this.addOctaNode(1, 20, -17);
+        this.addOctaNode(1, 15, 40);
+        this.addOctaNode(1, -10, 25);
+
+        this.addPointNode(2, -20, -5);      // 12
+        this.addOctaNode(2, -20, -25);
+        this.addPointNode(2, 15, -28);
+        this.addOctaNode(2, 30, -10);
+        this.addOctaNode(2, 50, 13);
+        this.addOctaNode(2, -25, 20);
+
+        this.addOctaNode(3, -18, -18);      // 18
+        this.addPointNode(3, 8, -10);
+        this.addOctaNode(3, 25, -5);
+        this.addOctaNode(3, 30, 10);
+        this.addOctaNode(3, -5, 30);
+
+        this.addOctaNode(4, 20, -20);       // 23
+        this.addOctaNode(4, 40, 0);
+        this.addOctaNode(4, 20, 20);
+        this.addOctaNode(4, -10, 30);
+
+        this.addPointNode(5, 10, 30);       // 27
+        this.addPointNode(5, -20, 40);
+        this.addOctaNode(5, -30, 10);
+
+        this.addOctaNode(6, -30, 10);       // 30
+        this.addOctaNode(6, -3, 30);
+
+        this.addOctaNode(7, -20, -5);       // 31
+        this.addPointNode(7, -2, -20);
+
+        this.addPointNode(8, -15, -5);      // 33
+        this.addPointNode(8, -3, -25);
+        this.addOctaNode(8, 20, -13);
+        this.addOctaNode(8, 16, 5);
+
+        this.addOctaNode(9, 12, -5);         // 37
+
+        this.addOctaNode(10, 10, -15);     // 39
+
+        this.addNodeConnect(17, 38);
+        this.addNodeConnect(17, 0);
+
+        this.addOctaNode(12, -10, -10);     // 40
+        this.addNodeConnect(40, 37);
+        this.addNodeConnect(40, 36);
+
+        this.addOctaNode(15, 6, -30);     // 41
+        this.addOctaNode(15, 30, -5);
+        this.addNodeConnect(16, 42);
+        this.addNodeConnect(16, 19);
+
+        this.addOctaNode(16, 30, -5);       // 43
+
+        this.addOctaNode(18, -10, -10);     // 44
+        this.addOctaNode(18, 15, -10);
+        this.addOctaNode(18, -15, 10);
+
+        this.addPointNode(20, 30, -10);     // 47
+        this.addNodeConnect(21, 47);
+
+        this.addOctaNode(21, 40, 10);       // 48
+        this.addOctaNode(21, -20, 10);
+
+        this.addOctaNode(22, -15, -15);     // 50
+
+        this.addOctaNode(50, -1, -15);     // 51
+        this.addOctaNode(50, 10, -10);     // 52
+        this.addOctaNode(50, -14, 5);     // 53
+
+        this.addOctaNode(22, -15, 5);     // 54
+
+        this.addOctaNode(25, 15, 50);     // 55
+        this.addPointNode(55, 30, -30);     // 56
+
+        this.addNodeConnect(56,24);
+        this.addOctaNode(56, 15, 5);     // 57
+
+        this.addPointNode(26, 5, 40);
+        this.addPointNode(26, -15, 60);
+
+        this.addOctaNode(27, 10, 6);    // 60
+
+        this.addOctaNode(60, 10, -30);
+        this.addOctaNode(60, -20, 30);
+        this.addOctaNode(60, -30, 5);
+
+        this.addOctaNode(62, -30, 5);
+        this.addOctaNode(64, 10, 30);
+        this.addNodeConnect(65, 62);
+
+        this.addOctaNode(28, -30, 10);
+
+        this.addOctaNode(66, 10, 10);
+        this.addOctaNode(66, 8, 30);
+        this.addOctaNode(66, -10, 20);
+        this.addOctaNode(66, -40, 8);
+        this.addOctaNode(66, -20, -40);
+        this.addPointNode(68, -20, 30);
+
+        this.addOctaNode(39, -10, -30);
+        this.addOctaNode(39, 15, -5);
+        this.addOctaNode(39, 30, 20);
+        this.addOctaNode(74, -10, 30);
     }
+
+
+    addOctaNode(baseNodeIdx, offsetX, offsetY)
+    {
+        let baseNode = this.nodes[baseNodeIdx];
+        let newNode = new OctaNode(baseNode.x + offsetX, baseNode.y + offsetY, 6, 6, 2)
+        return this.addNode(baseNode, newNode);
+    }
+
+    addPointNode(baseNodeIdx, offsetX, offsetY)
+    {
+        let baseNode = this.nodes[baseNodeIdx];
+        let newNode = new PointNode(baseNode.x + offsetX, baseNode.y + offsetY, 2);
+        return this.addNode(baseNode, newNode);
+    }
+
+    addNode(baseNode, newNode)
+    {
+        this.nodes.push(newNode);
+
+        if (baseNode instanceof OctaNode) {
+            baseNode.connectNear(newNode);
+        } else {
+            baseNode.connectNear(newNode);
+        }
+
+        return newNode;
+    }
+
+    addNodeConnect(idx1, idx2)
+    {
+        this.nodes[idx1].connectNear(this.nodes[idx2]);
+    }
+
+
 
     generateRandomOctaNode(x, y)
     {
@@ -236,7 +380,7 @@ export class Background3
     drawLight()
     {
         let centerX = this.canvas.width / 2;
-        let centerY = window.innerHeight / (Param.BG3_SIZE_RATE * 2) + Param.BG3_OFFSET;
+        let centerY = 110;
 
         // グラデーションを作成
         let gradient = this.ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 400 / Param.BG3_SIZE_RATE);
@@ -264,7 +408,15 @@ export class Background3
         this.ctx.shadowBlur = 30; // 影のぼかし効果
         this.ctx.fillStyle = "rgba(40, 80, 40, 0.6)"; // 線の色と透明度
 
-        this.nodes.forEach(node => {
+
+        this.ctx.font = '8px Arial';
+        this.ctx.strokeStyle = "rgba(30, 50, 30, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "rgb(50, 80, 50)"; // 影の色
+        this.ctx.shadowBlur = 3; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(40, 80, 40, 0.6)"; // 線の色と透明度
+
+        this.nodes.forEach((node, i) => {
             node.draw(this.ctx);
             node.connects.forEach((connect, vertexNo) => {
                 if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
@@ -283,6 +435,10 @@ export class Background3
                     this.ctx.stroke();
                 }
             });
+
+            if (Param.BG3_MAKE_NETWORK_MODE) {
+                this.ctx.fillText(i.toString(), node.x, node.y);
+            }
         });
     }
 

@@ -41,6 +41,18 @@ export class PointNode
         return false;
     }
 
+    connectNear(targetNode)
+    {
+        if (targetNode instanceof PointNode) {
+            return this.connect2PointNode(targetNode);
+        } else if (targetNode instanceof OctaNode) {
+            let targetNodeVertexNo = targetNode.getNearVertexNo(this);
+            return this.connect2OctaNode(targetNode, targetNodeVertexNo);
+        }
+
+        return false;
+    }
+
     /**
      * 点ノードへ接続
      *
