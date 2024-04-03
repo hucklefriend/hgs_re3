@@ -3,9 +3,10 @@ import {Param} from '../param.js';
 import {Network} from '../network.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
+import {HorrorGameNetwork} from '../../hgn.js';
 
 /**
- * 八角形ノード
+ * 八角ノード
  */
 export class OctaNode
 {
@@ -33,19 +34,43 @@ export class OctaNode
         }
     }
 
-    get left() {
+    /**
+     * 左辺
+     *
+     * @returns {number}
+     */
+    get left()
+    {
         return this.x - this.w / 2;
     }
 
-    get right() {
+    /**
+     * 右辺
+     *
+     * @returns {number}
+     */
+    get right()
+    {
         return this.x + this.w / 2;
     }
 
-    get top() {
+    /**
+     * 上辺
+     *
+     * @returns {number}
+     */
+    get top()
+    {
         return this.y - this.h / 2;
     }
 
-    get bottom() {
+    /**
+     * 下辺
+     *
+     * @returns {number}
+     */
+    get bottom()
+    {
         return this.y + this.h / 2;
     }
 
@@ -64,7 +89,7 @@ export class OctaNode
         this.w = w;
         this.h = h;
 
-        if (w > 0 && h > 0 && this.notchSize > 0) {
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
     }
@@ -117,6 +142,102 @@ export class OctaNode
     }
 
     /**
+     * LTTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLTT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LTT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RTTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRTT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RTT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RRTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRRT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RRT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RRBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRRB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RRB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RBBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRBB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RBB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LBBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLBB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LBB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LLBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLLB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LLB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LLTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLLT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LLT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
      * 別のノードと接続
      *
      * @param vertexNo
@@ -125,23 +246,16 @@ export class OctaNode
      */
     connect(vertexNo, targetNode, targetNodeVertexNo = null)
     {
-        if (targetNode instanceof PointNode) {
-            return this.connect2PointNode(vertexNo, targetNode);
-        } else if (targetNode instanceof OctaNode && targetNodeVertexNo !== null) {
-            return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
+        if (vertexNo === null) {
+            vertexNo = this.getNearVertexNo(targetNode);
         }
-
-        return false;
-    }
-
-    connectNear(targetNode)
-    {
-        let vertexNo = this.getNearVertexNo(targetNode);
 
         if (targetNode instanceof PointNode) {
             return this.connect2PointNode(vertexNo, targetNode);
         } else if (targetNode instanceof OctaNode) {
-            let targetNodeVertexNo = targetNode.getNearVertexNo(this);
+            if (targetNodeVertexNo === null) {
+                targetNodeVertexNo = targetNode.getNearVertexNo(this.vertices[vertexNo]);
+            }
             return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
         }
 
@@ -198,12 +312,25 @@ export class OctaNode
         return this.connects[vertexNo] !== null;
     }
 
-    draw(ctx)
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
-        this.setShapePath(ctx);
+        this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
     }
 
+    /**
+     * 指定した頂点から一番近い頂点番号を返す
+     *
+     * @param v
+     * @returns {null}
+     */
     getNearVertexNo(v)
     {
         let closestNo = null;
@@ -218,6 +345,27 @@ export class OctaNode
         });
 
         return closestNo;
+    }
+
+    /**
+     * 幅から標準的なノッチサイズを取得
+     *
+     * @param w
+     * @returns {number}
+     */
+    static standardNotchSize(w)
+    {
+        if (w <= 10) {
+            return 5;
+        } else if (w <= 25) {
+            return 8;
+        } else if (w <= 30) {
+            return 10;
+        } else if (w <= 35) {
+            return 11;
+        } else if (w <= 40) {
+            return 12;
+        }
     }
 }
 
@@ -257,12 +405,6 @@ export class Bg2OctaNode extends OctaNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
-    }
-
-    draw(ctx, offsetX, offsetY)
-    {
-        this.setShapePath(ctx, offsetX, offsetY);
-        ctx.stroke();
     }
 }
 
@@ -318,6 +460,8 @@ export class LinkNode extends DOMNode
             DOM.addEventListener('touchstart', () => this.mouseEnter());
             DOM.addEventListener('touchend', () => this.mouseLeave());
         }
+
+        this.subNodes = [];
     }
 
     mouseEnter()
@@ -325,8 +469,8 @@ export class LinkNode extends DOMNode
         this.isHover = true;
         this.DOM.classList.add('active');
 
-        const network = Network.getInstance();
-        network.setRedraw();
+        const hgn = HorrorGameNetwork.getInstance();
+        hgn.setRedraw();
     }
 
     mouseLeave()
@@ -334,8 +478,8 @@ export class LinkNode extends DOMNode
         this.isHover = false;
         this.DOM.classList.remove('active');
 
-        const network = Network.getInstance();
-        network.setRedraw();
+        const hgn = HorrorGameNetwork.getInstance();
+        hgn.setRedraw();
     }
 
     mouseClick()
@@ -376,6 +520,9 @@ export class LinkNode extends DOMNode
         super.setShapePath(ctx);
         ctx.stroke();
         ctx.fill();
+
+
+
     }
 }
 
@@ -439,7 +586,6 @@ export class ContentNode extends DOMNode
         ctx.stroke();
     }
 }
-
 
 export class TextNode extends DOMNode
 {

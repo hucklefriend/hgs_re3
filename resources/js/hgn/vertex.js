@@ -16,6 +16,18 @@ export class Vertex
     }
 
     /**
+     * リロード
+     *
+     * @param x
+     * @param y
+     */
+    reload(x, y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
      * 移動
      *
      * @param moveX

@@ -1,27 +1,25 @@
 import {Param} from '../param.js';
+import {Vertex} from '../vertex.js';
 import {OctaNode} from './octa-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 
-export class PointNode
+/**
+ * 点ノード
+ */
+export class PointNode extends Vertex
 {
+    /**
+     * コンストラクタ
+     *
+     * @param x
+     * @param y
+     * @param r
+     */
     constructor(x = 0, y = 0, r = 0)
     {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.r = r;
         this.connects = [];
-    }
-
-    reload(x, y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    move(offsetX, offsetY)
-    {
-        this.x += offsetX;
-        this.y += offsetY;
     }
 
     /**
@@ -34,19 +32,10 @@ export class PointNode
     {
         if (targetNode instanceof PointNode) {
             return this.connect2PointNode(targetNode);
-        } else if (targetNode instanceof OctaNode && targetNodeVertexNo !== null) {
-            return this.connect2OctaNode(targetNode, targetNodeVertexNo);
-        }
-
-        return false;
-    }
-
-    connectNear(targetNode)
-    {
-        if (targetNode instanceof PointNode) {
-            return this.connect2PointNode(targetNode);
         } else if (targetNode instanceof OctaNode) {
-            let targetNodeVertexNo = targetNode.getNearVertexNo(this);
+            if (targetNodeVertexNo === null) {
+                targetNodeVertexNo = targetNode.getNearVertexNo(this);
+            }
             return this.connect2OctaNode(targetNode, targetNodeVertexNo);
         }
 
@@ -86,6 +75,13 @@ export class PointNode
         return true;
     }
 
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
     draw(ctx, offsetX, offsetY)
     {
         ctx.beginPath();
@@ -94,8 +90,20 @@ export class PointNode
     }
 }
 
+/**
+ * 背景2用の点ノード
+ */
 export class Bg2PointNode extends PointNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param parent
+     * @param vertexNo
+     * @param offsetX
+     * @param offsetY
+     * @param r
+     */
     constructor(parent, vertexNo, offsetX, offsetY, r)
     {
         super(parent.x + offsetX, parent.y + offsetY, r);
