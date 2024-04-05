@@ -11,38 +11,16 @@ export class Background2
      */
     constructor()
     {
-        this.scrollRate = 1.3;
-
         this.canvas = document.querySelector('#bg2');
         this.ctx = this.canvas.getContext('2d');
 
         this.networks = [];
-        this.init();
 
         this.resize();
 
         if (Param.BG3_MAKE_NETWORK_MODE) {
             this.canvas.style.backdropFilter = "blur(0px)";
         }
-    }
-
-    /**
-     * 初期化
-     */
-    init()
-    {
-        const hgn = HorrorGameNetwork.getInstance();
-        hgn.linkNodes.forEach(linkNode => {
-            if (linkNode.DOM.id === 'n-HGS') {
-                this.networks.push(this.createHGSNetwork(linkNode));
-            } else {
-                // for (let i = 0; i < 8; i++) {
-                //     if (this.judge()) {
-                //         this.addNode(i, linkNode);
-                //     }
-                // }
-            }
-        });
     }
 
     /**
@@ -154,96 +132,51 @@ export class Background2
         network.addOctaNode(76+p, Param.LBB, -50, 70, 25);
         network.addPointNode(79+p, Param.LBB, -50, 70);
 
-        return network;
+        this.networks.push(network);
     }
 
-
-    addSubNode(baseNode, vertexNo, offsetX, offsetY, whr, n = null)
+    createRandomNetwork(node, maxDepth)
     {
-        if (Number.isInteger(baseNode)) {
-            baseNode = this.nodes[baseNode];
-        }
+        let network = new Bg2Network(node);
 
-        let newNode = null;
-        if (n !== null) {
-            newNode = new Bg2OctaNode(baseNode, vertexNo, offsetX, offsetY, whr, whr, n, null);
-        } else {
-            newNode = new Bg2PointNode(baseNode, vertexNo, offsetX, offsetY, whr);
-        }
+        this.addRandomNode(network, node, 0, maxDepth);
 
-        this.nodes.push(newNode);
-
-        let targetVertexNo = null;
-        if (newNode instanceof OctaNode) {
-            targetVertexNo = newNode.getNearVertexNo(baseNode);
-        }
-
-        if (baseNode instanceof OctaNode) {
-            baseNode.connect(vertexNo, newNode, targetVertexNo);
-        } else {
-            baseNode.connect(newNode, targetVertexNo);
-        }
-
-        return newNode;
+        this.networks.push(network);
     }
 
-    judge(rate = 50) {
+    addRandomNode(network, node, depth, maxDepth)
+    {
+        for (let vertexNo = 0; vertexNo < 8; vertexNo++) {
+            if (this.judge(40 / depth)) {
+                let x = 0; let y = 0;
+                switch (vertexNo) {
+                    case Param.LTT: x = -30; y = -80; break;
+                    case Param.RTT: x = 40; y = -100; break;
+                    case Param.RRT: x = 50; y = -30; break;
+                    case Param.RRB: x = 40; y = 40; break;
+                    case Param.RBB: x = 10; y = 40; break;
+                    case Param.LBB: x = -40; y = 50; break;
+                    case Param.LLB: x = -90; y = 20; break;
+                    case Param.LLT: x = -80; y = -90; break;
+                }
+
+                let newNode = null;
+                if (this.judge(60)) {
+                    newNode = network.addOctaNode(node, vertexNo, x, y, 30);
+                } else {
+                    newNode = network.addPointNode(node, vertexNo, x, y);
+                }
+
+                if (depth + 1 < maxDepth) {
+                    this.addRandomNode(network, newNode, depth + 1, maxDepth);
+                }
+            }
+        }
+    }
+
+    judge(rate = 50)
+    {
         return Math.random() * 100 <= rate;
-    }
-
-    addNode(i, linkNode)
-    {
-        let x = 0;//linkNode.vertices[i].x;
-        let y = 0;//linkNode.vertices[i].y;
-        let vn = 0;
-
-        switch (i) {
-            case 0:
-                x -= 80;
-                y -= 80;
-                vn = 4
-                break;
-            case 1:
-                x += 80;
-                y -= 80;
-                vn = 6;
-                break;
-            case 2:
-                x += 80;
-                y -= 40;
-                vn = 7;
-                break;
-            case 3:
-                x += 100;
-                y += 30;
-                vn = 0;
-                break;
-            case 4:
-                x += 10;
-                y += 40;
-                vn = 0;
-                break;
-            case 5:
-                x -= 10;
-                y += 40;
-                vn = 2;
-                break;
-            case 6:
-                x -= 30;
-                y += 70;
-                vn = 2;
-                break;
-            case 7:
-                x -= 40;
-                y += 40;
-                vn = 1;
-                break;
-        }
-
-        let node = new Bg2OctaNode(linkNode, i, x, y, 40, 40, 12);
-        this.nodes.push(node);
-
-        linkNode.connect2OctaNode(i, node, vn);
     }
 
     reload()
@@ -255,65 +188,11 @@ export class Background2
 
     draw()
     {
-        let offsetX = window.scrollX - (window.scrollX / this.scrollRate);
-        let offsetY = window.scrollY - (window.scrollY / this.scrollRate);
+        let offsetX = window.scrollX - (window.scrollX / Param.BG2_SCROLL_RATE);
+        let offsetY = window.scrollY - (window.scrollY / Param.BG2_SCROLL_RATE);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.networks.forEach(network => {
             network.draw(this.ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
-        });
-    }
-
-    drawNode(offsetX, offsetY)
-    {
-        this.networks.forEach(node => {
-            node.draw(this.ctx, offsetX, offsetY);
-        });
-    }
-
-    drawEdge(offsetX, offsetY)
-    {
-        const hgn = HorrorGameNetwork.getInstance();
-        hgn.linkNodes.forEach(linkNode => {
-            linkNode.connects.forEach((connect, vertexNo) => {
-                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                    let targetVertex = connect.getVertex();
-
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(linkNode.vertices[vertexNo].x, linkNode.vertices[vertexNo].y);
-                    this.ctx.lineTo(targetVertex.x + offsetX, targetVertex.y + offsetY);
-                    this.ctx.stroke();
-
-                    this.drawEdge2(connect.node, offsetX, offsetY);
-                }
-            });
-        });
-
-        if (Param.BG2_MAKE_NETWORK_MODE) {
-            this.nodes.forEach((node, i) => {
-                this.ctx.fillText(i.toString(), node.x, node.y);
-            });
-        }
-    }
-
-    drawEdge2(node, offsetX, offsetY) {
-        node.connects.forEach((connect, vertexNo) => {
-            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                let targetVertex = connect.getVertex();
-
-                let x = node.x;
-                let y = node.y;
-                if (node instanceof Bg2OctaNode) {
-                    x = node.vertices[vertexNo].x;
-                    y = node.vertices[vertexNo].y;
-                }
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(x + offsetX, y + offsetY);
-                this.ctx.lineTo(targetVertex.x + offsetX, targetVertex.y + offsetY);
-                this.ctx.stroke();
-
-                this.drawEdge2(connect.node, offsetX, offsetY);
-            }
         });
     }
 

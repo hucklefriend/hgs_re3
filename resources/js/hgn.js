@@ -38,19 +38,17 @@ export class HorrorGameNetwork
         this.textNodes = [];
         this.contentNodes = [];
 
+        // 背景の生成
+        this.bg1 = new Background1();
+        this.bg2 = new Background2();
+        // this.bg3 = new Background3();
+
         // ノードの読み取り
         this.loadNodes();
 
-        // 背景2の生成（背景1に背景2の情報が必要なので先にこっちを生成）
-        this.bg2 = new Background2(this);
-        this.bg2.draw(this);
-
-        // 背景1の生成
-        this.bg1 = new Background1();
-        this.bg1.draw(this, this.bg2);
-
-        // 背景3の生成
-        // this.bg3 = new Background3()
+        // 背景を描画
+        this.bg2.draw();
+        //this.bg1.draw(this.bg2);
         // this.bg3.draw();
 
         // スクロールの変更検知用
@@ -62,10 +60,12 @@ export class HorrorGameNetwork
 
         this.update = this.update.bind(this);
 
-        this.debug = document.querySelector('#debug');
-        this.lastTime= 0;
-        this.frameCount = 0;
-        this.fps = 0;
+        if (Param.SHOW_DEBUG) {
+            this.debug = document.querySelector('#debug');
+            this.lastTime= 0;
+            this.frameCount = 0;
+            this.fps = 0;
+        }
     }
 
     static getInstance()
@@ -102,17 +102,24 @@ export class HorrorGameNetwork
 
         let linkNodeElems = document.querySelectorAll('.link-node');
         linkNodeElems.forEach(nodeElem => {
+            let newNode = null;
             if (nodeElem.id === 'n-HGS') {
-                this.linkNodes.push(new HgsTitleLinkNode(nodeElem));
+                newNode = new HgsTitleLinkNode(nodeElem);
+                this.bg2.createHGSNetwork(newNode);
             } else {
-                this.linkNodes.push(new LinkNode(nodeElem));
+                newNode = new LinkNode(nodeElem);
+                this.bg2.createRandomNetwork(newNode, 2)
             }
+
+            this.linkNodes.push(newNode);
         });
 
         let contentNodeElems = document.querySelectorAll('.content-node');
         contentNodeElems.forEach(nodeElem =>  {
             this.contentNodes.push(new ContentNode(nodeElem));
         });
+
+        this.bg2.reload();
     }
 
     /**
@@ -147,7 +154,10 @@ export class HorrorGameNetwork
     start()
     {
         this.draw();
-        this.showDebug();
+
+        if (Param.SHOW_DEBUG) {
+            this.showDebug();
+        }
         window.requestAnimationFrame(this.update);
     }
 
@@ -185,6 +195,9 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * ノードの描画
+     */
     drawNodes()
     {
         if (this.titleNode) {
@@ -208,16 +221,18 @@ export class HorrorGameNetwork
         });
     }
 
-    drawBackground3()
-    {
 
-    }
-
+    /**
+     * 再描画フラグの設定
+     */
     setRedraw()
     {
         this.redrawFlag = true;
     }
 
+    /**
+     * 更新
+     */
     update()
     {
         this.changeSize();
@@ -228,10 +243,15 @@ export class HorrorGameNetwork
             this.redrawFlag = false;
         }
 
-        this.showDebug();
+        if (Param.SHOW_DEBUG) {
+            this.showDebug();
+        }
         window.requestAnimationFrame(this.update);
     }
 
+    /**
+     * ウィンドウサイズの変更
+     */
     changeSize()
     {
         if (this.mainCanvas.width === document.documentElement.scrollWidth &&
@@ -272,6 +292,9 @@ export class HorrorGameNetwork
         this.prevScrollY = window.scrollY;
     }
 
+    /**
+     * デバッグ描画
+     */
     showDebug()
     {
         let text = '';
@@ -289,16 +312,12 @@ export class HorrorGameNetwork
         }
 
         text = `FPS: ${this.fps.toFixed(2)}<br>`;
-        text += 'touch: ' + Param.IS_TOUCH_DEVICE.toString();
+        text += 'touch: ' + Param.IS_TOUCH_DEVICE.toString() + '<br>';
 
         this.debug.innerHTML = text;
         this.lastTime = timestamp;
     }
 }
-
-
-
-
 
 window.onload = function() {
     const hgn = HorrorGameNetwork.getInstance();

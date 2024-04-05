@@ -106,11 +106,24 @@ export class Bg2PointNode extends PointNode
      */
     constructor(parent, vertexNo, offsetX, offsetY, r)
     {
-        super(parent.x + offsetX, parent.y + offsetY, r);
+
+        let x = parent.x;
+        let y = parent.y;
+        if (parent instanceof OctaNode) {
+            x = parent.vertices[vertexNo].x;
+            y = parent.vertices[vertexNo].y;
+        }
+
+        super(x + offsetX, y + offsetY, r);
         this.connection = new Bg2Connect(parent, vertexNo);
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.reload();
+        this.drawOffsetY = 0;
+
+        if (this.connection.node.y > window.innerHeight) {
+            let distance = this.connection.node.y - (window.innerHeight / 2);
+            this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
+        }
     }
 
     /**
@@ -119,15 +132,7 @@ export class Bg2PointNode extends PointNode
     reload()
     {
         const v = this.connection.getVertex();
-        this.x = v.x;
-        this.y = v.y;
-
-        // スクロール量に合わせて調整
-        if (this.y > window.innerHeight) {
-            this.y -= (this.y - (window.innerHeight / 2)) - ((this.y - (window.innerHeight / 2)) / Param.BG2_SCROLL_RATE);
-        }
-
-        this.x += this.offsetX;
-        this.y += this.offsetY;
+        this.x = v.x + this.offsetX;
+        this.y = v.y + this.offsetY;
     }
 }

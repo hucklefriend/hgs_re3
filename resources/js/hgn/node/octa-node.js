@@ -373,7 +373,14 @@ export class Bg2OctaNode extends OctaNode
 {
     constructor(parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
     {
-        super(parent.x + offsetX, parent.y + offsetY, w, h, notchSize);
+        let x = parent.x;
+        let y = parent.y;
+        if (parent instanceof OctaNode) {
+            x = parent.vertices[vertexNo].x;
+            y = parent.vertices[vertexNo].y;
+        }
+
+        super(x + offsetX, y + offsetY, w, h, notchSize);
         this.offsetX = offsetX;
         this.offsetY = offsetY;
 
@@ -381,8 +388,16 @@ export class Bg2OctaNode extends OctaNode
             nearVertexNo = this.getNearVertexNo(parent);
         }
         this.connection = new Bg2Connect(parent, vertexNo, nearVertexNo);
+        this.drawOffsetY = 0;
 
-        this.reload();
+        if (this.connection.node.y > window.innerHeight) {
+            let distance = this.connection.node.y - (window.innerHeight / 2);
+            this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
+        }
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
     }
 
     /**
@@ -390,21 +405,20 @@ export class Bg2OctaNode extends OctaNode
      */
     reload()
     {
-        const v = this.connection.getVertex();
-        this.x = v.x;
-        this.y = v.y;
+        this.x = this.connection.node.x + this.offsetX;
+        this.y = this.connection.node.y + this.offsetY;
+    }
 
-        // スクロール量に合わせて調整
-        if (this.y > window.innerHeight) {
-            this.y -= (this.y - (window.innerHeight / 2)) - ((this.y - (window.innerHeight / 2)) / Param.BG2_SCROLL_RATE);
-        }
-
-        this.x += this.offsetX;
-        this.y += this.offsetY;
-
-        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
-            this.setOctagon();
-        }
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX = 0, offsetY = 0)
+    {
+        super.draw(ctx, offsetX, offsetY);
     }
 }
 

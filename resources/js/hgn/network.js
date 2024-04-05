@@ -146,9 +146,14 @@ export class Network
         }
 
         this.nodes.forEach((node, i) => {
-            this.drawEdge(ctx, node, offsetX, offsetY, offsetX, offsetY);
+            let offsetY1 = offsetY;
+            if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
+                offsetY1 -= node.drawOffsetY;
+            }
 
-            node.draw(ctx, offsetX, offsetY);
+            this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
+
+            node.draw(ctx, offsetX, offsetY1);
 
             if (drawIdxText) {
                 ctx.fillText(i.toString(), node.x, node.y);
@@ -169,9 +174,14 @@ export class Network
                     y = node.vertices[vertexNo].y;
                 }
 
+                let drawOffsetY2 = 0;
+                if (connect.node instanceof Bg2OctaNode || connect.node instanceof Bg2PointNode) {
+                    drawOffsetY2 = connect.node.drawOffsetY;
+                }
+
                 ctx.beginPath();
                 ctx.moveTo(x + offsetX1, y + offsetY1);
-                ctx.lineTo(targetVertex.x + offsetX2, targetVertex.y + offsetY2);
+                ctx.lineTo(targetVertex.x + offsetX2, targetVertex.y + offsetY2 - drawOffsetY2);
                 ctx.stroke();
             }
         });
