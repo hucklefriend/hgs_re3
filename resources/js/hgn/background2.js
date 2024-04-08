@@ -139,15 +139,46 @@ export class Background2
     {
         let network = new Bg2Network(node);
 
-        this.addRandomNode(network, node, 0, maxDepth);
+        this.addRandomNode(network, node, maxDepth);
 
         this.networks.push(network);
     }
 
-    addRandomNode(network, node, depth, maxDepth)
+    addRandomNode(network, node, maxDepth)
     {
+        let pattern = 1;//Math.floor((Math.random() * 2)) + 1;
+        switch (pattern) {
+            case 1:
+                this.addRandomNodePatter1(network, node, maxDepth);
+                break;
+        }
+    }
+
+    addRandomNodePatter1(network, node, depth, maxDepth)
+    {
+        let newNode = null;
+        let newNodeD1 = null;
+        let newNodeD2 = null;
+        let newNodeD3 = null;
+
+        newNodeD1 = network.addOctaNode(node, Param.LTT, -30, -80, 30);
+        newNodeD2 = network.addOctaNode(newNodeD1, Param.LLT, -80, -60, 30);
+
+
+
+        return;
+
+        let forceVertexNo = Math.floor((Math.random() * 8));
+
         for (let vertexNo = 0; vertexNo < 8; vertexNo++) {
-            if (this.judge(40 / depth)) {
+            let isCreate = true;
+            if (depth === 1 && forceVertexNo === vertexNo) {
+                isCreate = true;
+            } else {
+                isCreate = this.judge(40 / depth);
+            }
+
+            if (isCreate) {
                 let x = 0; let y = 0;
                 switch (vertexNo) {
                     case Param.LTT: x = -30; y = -80; break;
@@ -167,14 +198,14 @@ export class Background2
                     newNode = network.addPointNode(node, vertexNo, x, y);
                 }
 
-                if (depth + 1 < maxDepth) {
+                if (depth + 1 <= maxDepth) {
                     this.addRandomNode(network, newNode, depth + 1, maxDepth);
                 }
             }
         }
     }
 
-    judge(rate = 50)
+    judge(rate)
     {
         return Math.random() * 100 <= rate;
     }
