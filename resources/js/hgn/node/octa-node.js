@@ -1,9 +1,12 @@
 import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
 import {Network} from '../network.js';
+import {PointNode} from './point-node.js';
+import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
+import {HorrorGameNetwork} from '../../hgn.js';
 
 /**
- * 八角形ノード
+ * 八角ノード
  */
 export class OctaNode
 {
@@ -26,24 +29,48 @@ export class OctaNode
         this.vertices = [];
         this.connects = new Array(8).fill(null);
 
-        if (w > 0 && h > 0 && notchSize > 0) {
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
     }
 
-    get left() {
+    /**
+     * 左辺
+     *
+     * @returns {number}
+     */
+    get left()
+    {
         return this.x - this.w / 2;
     }
 
-    get right() {
+    /**
+     * 右辺
+     *
+     * @returns {number}
+     */
+    get right()
+    {
         return this.x + this.w / 2;
     }
 
-    get top() {
+    /**
+     * 上辺
+     *
+     * @returns {number}
+     */
+    get top()
+    {
         return this.y - this.h / 2;
     }
 
-    get bottom() {
+    /**
+     * 下辺
+     *
+     * @returns {number}
+     */
+    get bottom()
+    {
         return this.y + this.h / 2;
     }
 
@@ -62,7 +89,7 @@ export class OctaNode
         this.w = w;
         this.h = h;
 
-        if (w > 0 && h > 0 && this.notchSize > 0) {
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
     }
@@ -115,6 +142,102 @@ export class OctaNode
     }
 
     /**
+     * LTTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLTT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LTT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RTTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRTT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RTT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RRTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRRT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RRT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RRBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRRB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RRB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * RBBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectRBB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.RBB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LBBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLBB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LBB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LLBと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLLB(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LLB, targetNode, targetNodeVertexNo);
+    }
+
+    /**
+     * LLTと接続
+     *
+     * @param targetNode
+     * @param targetNodeVertexNo
+     * @returns {*}
+     */
+    connectLLT(targetNode, targetNodeVertexNo = null)
+    {
+        return this.connect(Param.LLT, targetNode, targetNodeVertexNo);
+    }
+
+    /**
      * 別のノードと接続
      *
      * @param vertexNo
@@ -123,9 +246,16 @@ export class OctaNode
      */
     connect(vertexNo, targetNode, targetNodeVertexNo = null)
     {
+        if (vertexNo === null) {
+            vertexNo = this.getNearVertexNo(targetNode);
+        }
+
         if (targetNode instanceof PointNode) {
             return this.connect2PointNode(vertexNo, targetNode);
-        } else if (targetNode instanceof OctaNode && targetNodeVertexNo !== null) {
+        } else if (targetNode instanceof OctaNode) {
+            if (targetNodeVertexNo === null) {
+                targetNodeVertexNo = targetNode.getNearVertexNo(this.vertices[vertexNo]);
+            }
             return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
         }
 
@@ -182,10 +312,113 @@ export class OctaNode
         return this.connects[vertexNo] !== null;
     }
 
-    draw(ctx)
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
-        this.setShapePath(ctx);
+        this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
+    }
+
+    /**
+     * 指定した頂点から一番近い頂点番号を返す
+     *
+     * @param v
+     * @returns {null}
+     */
+    getNearVertexNo(v)
+    {
+        let closestNo = null;
+        let minDistance = Infinity;
+
+        this.vertices.forEach((vertex, no) => {
+            const distance = Math.sqrt((v.x - vertex.x) ** 2 + (v.y - vertex.y) ** 2);
+            if (distance < minDistance) {
+                closestNo = no;
+                minDistance = distance;
+            }
+        });
+
+        return closestNo;
+    }
+
+    /**
+     * 幅から標準的なノッチサイズを取得
+     *
+     * @param w
+     * @returns {number}
+     */
+    static standardNotchSize(w)
+    {
+        if (w <= 10) {
+            return 5;
+        } else if (w <= 25) {
+            return 8;
+        } else if (w <= 30) {
+            return 10;
+        } else if (w <= 35) {
+            return 11;
+        } else if (w <= 40) {
+            return 12;
+        }
+    }
+}
+
+export class Bg2OctaNode extends OctaNode
+{
+    constructor(parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
+    {
+        let x = parent.x;
+        let y = parent.y;
+        if (parent instanceof OctaNode) {
+            x = parent.vertices[vertexNo].x;
+            y = parent.vertices[vertexNo].y;
+        }
+
+        super(x + offsetX, y + offsetY, w, h, notchSize);
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+
+        if (nearVertexNo === null) {
+            nearVertexNo = this.getNearVertexNo(parent);
+        }
+        this.connection = new Bg2Connect(parent, vertexNo, nearVertexNo);
+        this.drawOffsetY = 0;
+
+        if (this.connection.node.y > window.innerHeight) {
+            let distance = this.connection.node.y - (window.innerHeight / 2);
+            this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
+        }
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
+    }
+
+    /**
+     * 再ロード（再配置）
+     */
+    reload()
+    {
+        this.x = this.connection.node.x + this.offsetX;
+        this.y = this.connection.node.y + this.offsetY;
+    }
+
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX = 0, offsetY = 0)
+    {
+        super.draw(ctx, offsetX, offsetY);
     }
 }
 
@@ -227,9 +460,9 @@ export class TitleNode extends DOMNode
 
 export class LinkNode extends DOMNode
 {
-    constructor(DOM)
+    constructor(DOM, notchSize = 15)
     {
-        super(DOM, 15);
+        super(DOM, notchSize);
 
         this.isHover = false;
 
@@ -241,6 +474,8 @@ export class LinkNode extends DOMNode
             DOM.addEventListener('touchstart', () => this.mouseEnter());
             DOM.addEventListener('touchend', () => this.mouseLeave());
         }
+
+        this.subNodes = [];
     }
 
     mouseEnter()
@@ -248,8 +483,8 @@ export class LinkNode extends DOMNode
         this.isHover = true;
         this.DOM.classList.add('active');
 
-        const network = Network.getInstance();
-        network.setRedraw();
+        const hgn = HorrorGameNetwork.getInstance();
+        hgn.setRedraw();
     }
 
     mouseLeave()
@@ -257,8 +492,8 @@ export class LinkNode extends DOMNode
         this.isHover = false;
         this.DOM.classList.remove('active');
 
-        const network = Network.getInstance();
-        network.setRedraw();
+        const hgn = HorrorGameNetwork.getInstance();
+        hgn.setRedraw();
     }
 
     mouseClick()
@@ -299,6 +534,40 @@ export class LinkNode extends DOMNode
         super.setShapePath(ctx);
         ctx.stroke();
         ctx.fill();
+
+
+
+    }
+}
+
+export class HgsTitleLinkNode extends LinkNode
+{
+
+    constructor(DOM)
+    {
+        super(DOM, 20);
+    }
+
+    draw(ctx)
+    {
+        if (this.isHover) {
+            ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
+            ctx.shadowColor = "lime"; // 影の色
+            ctx.shadowBlur = 15; // 影のぼかし効果
+            ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+        } else {
+            ctx.strokeStyle = "rgba(0, 200, 0, 0.6)"; // 線の色と透明度
+            ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
+            ctx.shadowBlur = 8; // 影のぼかし効果
+            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+        }
+        ctx.lineWidth = 7; // 線の太さ
+        ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        ctx.lineCap = "round"; // 線の末端のスタイル
+
+        super.setShapePath(ctx);
+        ctx.stroke();
+        ctx.fill();
     }
 }
 
@@ -332,7 +601,6 @@ export class ContentNode extends DOMNode
     }
 }
 
-
 export class TextNode extends DOMNode
 {
     constructor(DOM)
@@ -352,48 +620,5 @@ export class TextNode extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
         ctx.fillStyle = "rgba(0,30,0,0.6)";
         ctx.fill();
-    }
-}
-
-class OctaNodeConnect
-{
-    /**
-     * コンストラクタ
-     *
-     * @param type
-     * @param node
-     * @param vertexNo
-     */
-    constructor(type, node, vertexNo)
-    {
-        this.type = type;
-        this.node = node;
-        this.vertexNo = vertexNo;
-    }
-
-    getVertex()
-    {
-        return this.node.vertices[this.vertexNo];
-    }
-}
-
-
-class PointNodeConnect
-{
-    /**
-     * コンストラクタ
-     *
-     * @param type
-     * @param node
-     */
-    constructor(type, node)
-    {
-        this.type = type;
-        this.node = node;
-    }
-
-    getVertex()
-    {
-        return new Vertex(this.node.x, this.node.y);
     }
 }

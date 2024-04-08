@@ -1,13 +1,6 @@
 @extends('layout')
 
 @section('content')
-    <div id="title-node">
-        <h1>HorrorGame Network</h1>
-        <p class="title-node-text">
-            ホラーゲームの最新情報や詳細データをお届けします。<br>
-            さらにユーザー登録すればレビューや二次創作など自分の怖い！好き！を発信できます。
-        </p>
-    </div>
     <div class="node-list">
         <div class="node node-right">
             <div class="link-node">
@@ -15,11 +8,13 @@
             </div>
         </div>
         <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
-            <div class="link-node link-node-center">
-                <div style="font-size: 20px; margin-bottom: 1rem;">HorrorGame Search</div>
+            <div class="link-node link-node-center" id="n-HGS">
+                <h1>HorrorGame Network</h1>
 
-                <p class="title-node-text">
-                    あなたの好きな恐怖を見つけましょう
+                <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
+                    Enter the horror game.<br>
+                    ネットワークのノードとなって、<br>
+                    ホラーゲームと繋がりましょう！
                 </p>
             </div>
         </div>
@@ -96,6 +91,14 @@
                 </div>
             </div>
         </div>
+        <div style="height: 1200px;"></div>
+
+        <div class="node node-center" style="margin-top: 5rem;margin-bottom: 5rem;">
+            <div class="link-node link-node-center">
+                Enter the horror game.
+            </div>
+        </div>
+
         <div class="node node-around" style="margin-top: 100px;">
             <div style="margin-bottom: 20px;">
                 <div class="link-node link-node-small">

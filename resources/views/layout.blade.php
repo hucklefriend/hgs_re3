@@ -14,12 +14,13 @@
 <body>
 <div id="container">
 @yield('content')
-    <div style="height: 30px;"></div>
+    <div style="height: 600px;"></div>
     <canvas id="main-canvas"></canvas>
     <canvas id="bg1" style=""></canvas>
     <canvas id="bg2" style="position: absolute;top:0;left:0; z-index: -1002;"></canvas>
     <div id="bg3c">
         <canvas id="bg3"></canvas>
+        <div style="width:100vw;height:50vh;background-color:rgba(255, 255, 255, 0.1);position:fixed;left:0;bottom:0;"></div>
     </div>
 </div>
 <div id="debug" style="visibility: hidden;"></div>

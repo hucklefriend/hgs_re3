@@ -9,7 +9,7 @@ body {
     font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "Noto Serif JP", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", serif;
     font-weight: 300;
     font-style: normal;
-    font-size: 16px;
+    font-size: 15px;
     padding: 2px;
 }
 
@@ -29,7 +29,7 @@ body > div:first-child {
 }
 
 h1 {
-    font-size: 25px;
+    font-size: 22px;
     font-weight: unset;
     display: inline-block;
     padding: 0;
@@ -203,7 +203,7 @@ h1 {
 
 #bg2 {
     z-index:-1002;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
 }
 
 #bg3c {
@@ -212,14 +212,14 @@ h1 {
     left:0;
     z-index:-1003;
     overflow:hidden;
-    width: 100vw;
+    width:100vw;
     height:100vh;
+    padding:0;
+    text-align: center;
 }
 
 #bg3 {
-    position:absolute;
-    top:-50px;
-    left:-50px;
+    position:relative;
 }
 
 #debug {
