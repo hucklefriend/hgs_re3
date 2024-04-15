@@ -30,5 +30,7 @@ export class Param
 
     static BG3_OFFSET = 25;
 
+    static CONTENT_NODE_NOTCH_SIZE = 70;
+
     static SHOW_DEBUG = true;
 }

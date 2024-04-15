@@ -1,6 +1,8 @@
 import {Network} from "./hgn/network.js";
 
-import {BackNode, TitleNode, LinkNode, HgsTitleLinkNode, ContentNode, TextNode} from './hgn/node/octa-node.js';
+import {TitleNode, TextNode} from './hgn/node/octa-node.js';
+import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
+import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Param} from './hgn/param.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
@@ -30,13 +32,15 @@ export class HorrorGameNetwork
         if (this.mainCanvas.getContext) {
             this.mainCtx = this.mainCanvas.getContext('2d');
         }
+        this.main = document.querySelector('#main');
 
         // ノード
         this.titleNode = null;
         this.backNode = null;
+        this.contentNode = null;
         this.linkNodes = [];
         this.textNodes = [];
-        this.contentNodes = [];
+        this.contentLinkNodes = [];
 
         // 背景の生成
         this.bg1 = new Background1();
@@ -49,7 +53,7 @@ export class HorrorGameNetwork
         // 背景を描画
         this.bg2.draw();
         //this.bg1.draw(this.bg2);
-        // this.bg3.draw();
+        //this.bg3.draw();
 
         // スクロールの変更検知用
         this.prevScrollX = -99999;
@@ -95,6 +99,11 @@ export class HorrorGameNetwork
             }
         }
 
+        this.contentNodeDOM = document.querySelector('#content-node');
+        if (this.contentNodeDOM) {
+            this.contentNode = new ContentNode(this.contentNodeDOM);
+        }
+
         let textNodeElems = document.querySelectorAll('.text-node');
         textNodeElems.forEach(nodeElem => {
             this.textNodes.push(new TextNode(nodeElem));
@@ -114,9 +123,9 @@ export class HorrorGameNetwork
             this.linkNodes.push(newNode);
         });
 
-        let contentNodeElems = document.querySelectorAll('.content-node');
-        contentNodeElems.forEach(nodeElem =>  {
-            this.contentNodes.push(new ContentNode(nodeElem));
+        let contentLinkNodeElems = document.querySelectorAll('.content-link-node');
+        contentLinkNodeElems.forEach(nodeElem =>  {
+            this.contentLinkNodes.push(new ContentLinkNode(nodeElem));
         });
 
         this.bg2.reload();
@@ -135,6 +144,10 @@ export class HorrorGameNetwork
             this.backNode.reload();
         }
 
+        if (this.contentNode) {
+            this.contentNode.reload();
+        }
+
         this.linkNodes.forEach(linkNode => {
             linkNode.reload();
         });
@@ -143,7 +156,7 @@ export class HorrorGameNetwork
             textNode.reload();
         });
 
-        this.contentNodes.forEach(contentNode =>  {
+        this.contentLinkNodes.forEach(contentNode =>  {
             contentNode.reload();
         });
     }
@@ -216,9 +229,13 @@ export class HorrorGameNetwork
             textNode.draw(this.mainCtx);
         });
 
-        this.contentNodes.forEach(contentNode => {
-            contentNode.draw(this.mainCtx);
+        this.contentLinkNodes.forEach(contentLinkNode => {
+            contentLinkNode.draw(this.mainCtx);
         });
+
+        if (this.contentNode.isOpened()) {
+            this.contentNode.draw();
+        }
     }
 
 
@@ -270,6 +287,12 @@ export class HorrorGameNetwork
         this.bg1.scroll();
         this.bg1.draw(this, this.bg2);
         //this.bg3.resize();
+
+
+        if (this.contentNode.isOpened()) {
+            // this.contentNode.scroll();
+            // this.contentNode.draw();
+        }
     }
 
     /**
@@ -287,6 +310,10 @@ export class HorrorGameNetwork
         this.bg1.scroll();
         this.bg1.draw(this, this.bg2);
         //this.bg3.scroll();
+
+        if (this.contentNode.isOpened()) {
+            this.contentNode.scroll();
+        }
 
         this.prevScrollX = window.scrollX;
         this.prevScrollY = window.scrollY;
@@ -316,6 +343,11 @@ export class HorrorGameNetwork
 
         this.debug.innerHTML = text;
         this.lastTime = timestamp;
+    }
+
+    openContentNode(data)
+    {
+        this.contentNode.open(data);
     }
 }
 
