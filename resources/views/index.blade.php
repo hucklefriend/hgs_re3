@@ -91,7 +91,6 @@
                 </div>
             </div>
         </div>
-        <div style="height: 1200px;"></div>
 
         <div class="node node-center" style="margin-top: 5rem;margin-bottom: 5rem;">
             <div class="link-node link-node-center">
@@ -106,8 +105,8 @@
                 </div>
             </div>
             <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    <a href="{{ route('privacy') }}">Privacy Policy</a>
+                <div class="content-link-node link-node-small">
+                    <a href="{{ route('PrivacyPolicy') }}">Privacy Policy</a>
                 </div>
             </div>
             <div style="margin-bottom: 20px;">

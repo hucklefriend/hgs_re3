@@ -1,4 +1,4 @@
-import {OctaNode, LinkNode} from './node/octa-node.js';
+
 import {Param} from './param.js';
 import {Vertex} from './vertex.js';
 
