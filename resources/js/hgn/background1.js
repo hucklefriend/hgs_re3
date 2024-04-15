@@ -39,7 +39,7 @@ export class Background1
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    resize(network)
+    resize()
     {
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = document.documentElement.scrollHeight;

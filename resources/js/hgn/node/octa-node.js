@@ -405,8 +405,8 @@ export class Bg2OctaNode extends OctaNode
      */
     reload()
     {
-        this.x = this.connection.node.x + this.offsetX;
-        this.y = this.connection.node.y + this.offsetY;
+        super.reload(this.connection.node.x + this.offsetX,
+            this.connection.node.y + this.offsetY, this.w, this.h);
     }
 
     /**
