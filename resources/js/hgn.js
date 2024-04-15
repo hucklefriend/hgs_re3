@@ -45,7 +45,7 @@ export class HorrorGameNetwork
         // 背景の生成
         this.bg1 = new Background1();
         this.bg2 = new Background2();
-        // this.bg3 = new Background3();
+        this.bg3 = new Background3();
 
         // ノードの読み取り
         this.loadNodes();
@@ -53,7 +53,7 @@ export class HorrorGameNetwork
         // 背景を描画
         this.bg2.draw();
         //this.bg1.draw(this.bg2);
-        //this.bg3.draw();
+        this.bg3.draw();
 
         // スクロールの変更検知用
         this.prevScrollX = -99999;
@@ -286,13 +286,7 @@ export class HorrorGameNetwork
         this.bg2.draw();
         this.bg1.resize();
         this.bg1.draw(this, this.bg2);
-        //this.bg3.resize();
-
-
-        if (this.contentNode.isOpened()) {
-            // this.contentNode.scroll();
-            // this.contentNode.draw();
-        }
+        this.bg3.resize();
     }
 
     /**
@@ -309,7 +303,7 @@ export class HorrorGameNetwork
         this.bg2.draw();
         this.bg1.scroll();
         this.bg1.draw(this, this.bg2);
-        //this.bg3.scroll();
+        this.bg3.scroll();
 
         if (this.contentNode.isOpened()) {
             this.contentNode.scroll();
