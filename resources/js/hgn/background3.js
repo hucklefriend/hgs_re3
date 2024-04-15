@@ -184,9 +184,9 @@ export class Background3
         this.nodes.push(newNode);
 
         if (baseNode instanceof OctaNode) {
-            baseNode.connectNear(newNode);
+            baseNode.connect(null, newNode);
         } else {
-            baseNode.connectNear(newNode);
+            baseNode.connect(newNode);
         }
 
         return newNode;
@@ -194,7 +194,12 @@ export class Background3
 
     addNodeConnect(idx1, idx2)
     {
-        this.nodes[idx1].connectNear(this.nodes[idx2]);
+
+        if (this.nodes[idx1] instanceof OctaNode) {
+            this.nodes[idx1].connect(null, this.nodes[idx2]);
+        } else {
+            this.nodes[idx1].connect(this.nodes[idx2]);
+        }
     }
 
 
