@@ -284,7 +284,7 @@ export class HorrorGameNetwork
 
         this.bg2.resize();
         this.bg2.draw();
-        this.bg1.scroll();
+        this.bg1.resize();
         this.bg1.draw(this, this.bg2);
         //this.bg3.resize();
 

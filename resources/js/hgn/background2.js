@@ -162,7 +162,7 @@ export class Background2
         let newNodeD3 = null;
 
         newNodeD1 = network.addOctaNode(node, Param.LTT, -30, -80, 30);
-        newNodeD2 = network.addOctaNode(newNodeD1, Param.LLT, -80, -60, 30);
+        //newNodeD2 = network.addOctaNode(newNodeD1, Param.LLT, -80, -60, 30);
 
 
 
@@ -229,8 +229,11 @@ export class Background2
 
     resize()
     {
+
+
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = document.documentElement.scrollHeight;
+
 
         this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
         this.ctx.lineWidth = 1; // 線の太さ
