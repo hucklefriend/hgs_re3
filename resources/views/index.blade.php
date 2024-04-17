@@ -12,7 +12,7 @@
                 <h1>HorrorGame Network</h1>
 
                 <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
-                    Enter the horror game.<br>
+                    <a href="{{ route('lineup') }}">Enter the horror game.</a><br>
                     ネットワークのノードとなって、<br>
                     ホラーゲームと繋がりましょう！
                 </p>

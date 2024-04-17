@@ -298,13 +298,13 @@ export class HorrorGameNetwork
             this.prevScrollY === window.scrollY) {
             return;
         }
+        this.bg3.scroll();
+
 
         this.bg2.scroll();
         this.bg2.draw();
         this.bg1.scroll();
         this.bg1.draw(this, this.bg2);
-        this.bg3.scroll();
-
         if (this.contentNode.isOpened()) {
             this.contentNode.scroll();
         }

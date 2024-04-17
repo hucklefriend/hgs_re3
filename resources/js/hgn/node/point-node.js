@@ -23,6 +23,15 @@ export class PointNode extends Vertex
     }
 
     /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.connects = null;
+    }
+
+    /**
      * 別のノードと接続
      *
      * @param targetNode
@@ -124,6 +133,17 @@ export class Bg2PointNode extends PointNode
             let distance = this.connection.node.y - (window.innerHeight / 2);
             this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
         }
+    }
+
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        super.delete();
+        this.connection.delete();
+        this.connection = null;
     }
 
     /**

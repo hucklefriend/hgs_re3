@@ -9,6 +9,12 @@ import {DOMNode} from './octa-node.js';
 
 export class LinkNode extends DOMNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     * @param notchSize
+     */
     constructor(DOM, notchSize = 15)
     {
         super(DOM, notchSize);
@@ -27,6 +33,9 @@ export class LinkNode extends DOMNode
         this.subNodes = [];
     }
 
+    /**
+     * マウスが乗った時の処理
+     */
     mouseEnter()
     {
         this.isHover = true;
@@ -36,6 +45,9 @@ export class LinkNode extends DOMNode
         hgn.setRedraw();
     }
 
+    /**
+     * マウスが離れた時の処理
+     */
     mouseLeave()
     {
         this.isHover = false;
@@ -45,6 +57,9 @@ export class LinkNode extends DOMNode
         hgn.setRedraw();
     }
 
+    /**
+     * マウスクリック時の処理
+     */
     mouseClick()
     {
         const a = this.DOM.querySelector('a');
@@ -53,16 +68,27 @@ export class LinkNode extends DOMNode
         }
     }
 
+    /**
+     * タッチ開始時の処理
+     */
     touchStart()
     {
         this.mouseEnter();
     }
 
+    /**
+     * タッチ終了時の処理
+     */
     touchEnd()
     {
         this.mouseLeave();
     }
 
+    /**
+     * 描画
+     *
+     * @param ctx
+     */
     draw(ctx)
     {
         if (this.isHover) {
@@ -83,12 +109,12 @@ export class LinkNode extends DOMNode
         super.setShapePath(ctx);
         ctx.stroke();
         ctx.fill();
-
-
-
     }
 }
 
+/**
+ * トップページの特別なリンクノード
+ */
 export class HgsTitleLinkNode extends LinkNode
 {
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterData\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -25,6 +26,12 @@ class HgnController extends Controller
         }
 
         return view('index');
+    }
+
+    public function lineup(): Application|Factory|View
+    {
+        $franchises = GameFranchise::all(['id', 'name']);
+        return view('lineup', ['franchises' => $franchises]);
     }
 
     public function privacyPolicy(Request $request): JsonResponse|Application|Factory|View
