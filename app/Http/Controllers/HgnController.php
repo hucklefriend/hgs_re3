@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterData\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -16,29 +17,26 @@ class HgnController extends Controller
     /**
      * トップページ
      *
-     * @return Application|Factory|View
+     * @return JsonResponse|Application|Factory|View
      */
-    public function index(): Application|Factory|View
+    public function index(): JsonResponse|Application|Factory|View
     {
         if (!App::environment('local')) {
             return view('suspend');
         }
 
-        return view('index');
+        return $this->network('index');
     }
 
-    public function privacyPolicy(Request $request): JsonResponse|Application|Factory|View
+    public function lineup(): JsonResponse|Application|Factory|View
     {
-        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
-        if ($request->ajax()) {
-            $rendered = \Illuminate\Support\Facades\View::make('privacy_policy')->renderSections();
-            return response()->json([
-                'title'  => $rendered['content-node-title'],
-                'body'   => $rendered['content-node-body'],
-                'footer' => $rendered['content-node-footer'] ?? '',
-            ]);
-        }
+        $franchises = GameFranchise::all(['id', 'name']);
 
-        return view('privacy_policy');
+        return $this->network('lineup', ['franchises' => $franchises]);
+    }
+
+    public function privacyPolicy(): JsonResponse|Application|Factory|View
+    {
+        return $this->contentNode('privacy_policy');
     }
 }

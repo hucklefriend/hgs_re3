@@ -217,6 +217,15 @@ export class Background2
         });
     }
 
+    clear()
+    {
+        this.networks.forEach(network => {
+            network.delete();
+        });
+
+        this.networks = [];
+    }
+
     draw()
     {
         let offsetX = window.scrollX - (window.scrollX / Param.BG2_SCROLL_RATE);

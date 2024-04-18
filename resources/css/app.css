@@ -10,7 +10,7 @@ body {
     font-weight: 300;
     font-style: normal;
     font-size: 15px;
-    margin: 0;
+    margin-bottom: 30px;
 }
 
 .container {
@@ -210,6 +210,26 @@ h1 {
     z-index: -1;
 }
 
+.node-lineup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .link-node {
+        margin: 15px;
+    }
+
+    div {
+        display: inline-block;
+    }
+}
+.node-lineup div:nth-child(2n) {
+    padding-top: 40px;
+}
+.node-lineup div:nth-child(3n) {
+    padding-top: 25px;
+}
+
 #content-node-blur {
     display:none;
     position: fixed;
@@ -289,7 +309,7 @@ h1 {
 /* タブレット～ */
 @media (min-width: 750px) {
     body {
-        display: flex;
+        display: grid;
         justify-content: center;
     }
     .container {

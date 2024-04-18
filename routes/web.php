@@ -139,5 +139,5 @@ Route::group(['prefix' => 'admin'], function () {
 
 $class = HgnController::class;
 Route::get('', [$class, 'index'])->name('HGN');
-Route::get('lineup', function (){return view('lineup');})->name('lineup');
+Route::get('lineup', [$class, 'lineup'])->name('lineup');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');

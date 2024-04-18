@@ -24,6 +24,19 @@ export class Network
     }
 
     /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.parentNode = null;
+        this.nodes.forEach(node => {
+            node.delete();
+        });
+        this.nodes = null;
+    }
+
+    /**
      * 八角ノードの追加
      *
      * @param baseNode
@@ -163,6 +176,7 @@ export class Network
 
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
+        const maxY = window.scrollY + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
                 let targetVertex = connect.getVertex();
@@ -179,9 +193,19 @@ export class Network
                     drawOffsetY2 = connect.node.drawOffsetY;
                 }
 
+                const drawY1 = y + offsetY1;
+                const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
+
+                if (drawY1 < window.scrollY && drawY2 < window.scrollY) {
+                    return;
+                }
+                if (drawY1 > maxY && drawY2 > maxY) {
+                    return;
+                }
+
                 ctx.beginPath();
-                ctx.moveTo(x + offsetX1, y + offsetY1);
-                ctx.lineTo(targetVertex.x + offsetX2, targetVertex.y + offsetY2 - drawOffsetY2);
+                ctx.moveTo(x + offsetX1, drawY1);
+                ctx.lineTo(targetVertex.x + offsetX2, drawY2);
                 ctx.stroke();
             }
         });

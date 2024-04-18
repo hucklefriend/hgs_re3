@@ -5,11 +5,19 @@ import {DOMNode, OctaNode} from './octa-node.js';
 import {LinkNode} from './link-node.js';
 import {HorrorGameNetwork} from '../../hgn.js';
 
+/**
+ * コンテンツノードへのリンクノード
+ */
 export class ContentLinkNode extends LinkNode
 {
     static STATE_CLOSED = 0;
     static STATE_OPENED = 1;
 
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
         super(DOM);
@@ -28,11 +36,9 @@ export class ContentLinkNode extends LinkNode
         }
     }
 
-    draw(ctx)
-    {
-        super.draw(ctx);
-    }
-
+    /**
+     * マウスクリック
+     */
     mouseClick()
     {
         const a = this.DOM.querySelector('a');
@@ -43,6 +49,11 @@ export class ContentLinkNode extends LinkNode
         }
     }
 
+    /**
+     * データの取得
+     *
+     * @param url
+     */
     fetch(url)
     {
         fetch(url, {
@@ -68,6 +79,9 @@ export class ContentLinkNode extends LinkNode
     }
 }
 
+/**
+ * コンテンツノード
+ */
 export class ContentNode extends OctaNode
 {
     static STATE_CLOSED = 0;
@@ -75,6 +89,11 @@ export class ContentNode extends OctaNode
     static STATE_OPENING = 10;
     static STATE_CLOSING = 20;
 
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
         // この時点では正しく作成しない
@@ -96,6 +115,23 @@ export class ContentNode extends OctaNode
         });
     }
 
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        super.delete();
+        this.canvas = null;
+        this.ctx = null;
+        this.DOM = null;
+        this.titleDOM = null;
+        this.bodyDOM = null;
+    }
+
+    /**
+     * 再配置
+     */
     reload()
     {
         const height = this.DOM.offsetHeight;//this.bodyDOM.offsetHeight + Param.CONTENT_NODE_NOTCH_SIZE * 2;
@@ -105,16 +141,31 @@ export class ContentNode extends OctaNode
         this.canvas.height = height;
     }
 
+    /**
+     * 閉じているか
+     *
+     * @returns {boolean}
+     */
     isClosed()
     {
         return this.state === ContentNode.STATE_CLOSED;
     }
 
+    /**
+     * 開いているか
+     *
+     * @returns {boolean}
+     */
     isOpened()
     {
         return this.state === ContentNode.STATE_OPENED;
     }
 
+    /**
+     * 開く
+     *
+     * @param data
+     */
     open(data)
     {
         this.state = ContentNode.STATE_OPENED;
@@ -132,6 +183,9 @@ export class ContentNode extends OctaNode
         this.draw();
     }
 
+    /**
+     * 閉じる
+     */
     close()
     {
         this.state = ContentNode.STATE_CLOSED;
@@ -145,6 +199,9 @@ export class ContentNode extends OctaNode
         window.scrollTo(0, this.openScrollY);
     }
 
+    /**
+     * 描画
+     */
     draw()
     {
         this.reload();
@@ -160,6 +217,9 @@ export class ContentNode extends OctaNode
         this.ctx.stroke();
     }
 
+    /**
+     * スクロール
+     */
     scroll()
     {
         // let rect = this.DOM.getBoundingClientRect();

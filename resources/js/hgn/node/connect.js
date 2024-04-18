@@ -18,6 +18,20 @@ export class OctaNodeConnect
         this.vertexNo = vertexNo;
     }
 
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.node = null;
+    }
+
+    /**
+     * 接続先の頂点を取得
+     *
+     * @returns {Vertex}
+     */
     getVertex()
     {
         return this.node.vertices[this.vertexNo];
@@ -38,12 +52,29 @@ export class PointNodeConnect
         this.node = node;
     }
 
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.node = null;
+    }
+
+    /**
+     * 接続先の頂点を取得
+     *
+     * @returns {Vertex}
+     */
     getVertex()
     {
         return new Vertex(this.node.x, this.node.y);
     }
 }
 
+/**
+ * 背景2用のコネクション
+ */
 export class Bg2Connect
 {
     /**
@@ -60,6 +91,20 @@ export class Bg2Connect
         this.myVertexNo = myVertexNo;
     }
 
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.node = null;
+    }
+
+    /**
+     * 接続先の頂点を取得
+     *
+     * @returns {Vertex}
+     */
     getVertex()
     {
         if (this.node instanceof OctaNode) {

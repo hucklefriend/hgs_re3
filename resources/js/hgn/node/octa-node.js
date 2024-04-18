@@ -35,6 +35,21 @@ export class OctaNode
     }
 
     /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        this.vertices = null;
+        this.connects.forEach(connect => {
+            if (connect !== null) {
+                connect.delete();
+            }
+        });
+        this.connects = null;
+    }
+
+    /**
      * 左辺
      *
      * @returns {number}
@@ -321,6 +336,16 @@ export class OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
+        const drawTop = this.vertices[0].y + offsetY;
+        const drawBottom = this.vertices[0].y + offsetY;
+
+        if (drawBottom < window.scrollY - 100) {
+            return;
+        }
+        if (drawTop > window.scrollY + window.innerHeight +100) {
+            return;
+        }
+
         this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
     }
@@ -369,8 +394,23 @@ export class OctaNode
     }
 }
 
+/**
+ * 背景2用の八角形ノード
+ */
 export class Bg2OctaNode extends OctaNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param parent
+     * @param vertexNo
+     * @param offsetX
+     * @param offsetY
+     * @param w
+     * @param h
+     * @param notchSize
+     * @param nearVertexNo
+     */
     constructor(parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
     {
         let x = parent.x;
@@ -401,6 +441,17 @@ export class Bg2OctaNode extends OctaNode
     }
 
     /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        super.delete();
+        this.connection.delete();
+        this.connection = null;
+    }
+
+    /**
      * 再ロード（再配置）
      */
     reload()
@@ -422,8 +473,17 @@ export class Bg2OctaNode extends OctaNode
     }
 }
 
+/**
+ * DOMの要素サイズに合わせて配置するノード
+ */
 export class DOMNode extends OctaNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     * @param notchSize
+     */
     constructor(DOM, notchSize)
     {
         super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
@@ -431,19 +491,35 @@ export class DOMNode extends OctaNode
         this.DOM = DOM;
     }
 
+    /**
+     * 再配置
+     */
     reload()
     {
         super.reload(this.DOM.offsetLeft, this.DOM.offsetTop, this.DOM.offsetWidth, this.DOM.offsetHeight);
     }
 }
 
+/**
+ * タイトルノード
+ */
 export class TitleNode extends DOMNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
         super(DOM, 15);
     }
 
+    /**
+     * 描画
+     *
+     * @param ctx
+     */
     draw(ctx)
     {
         super.setShapePath(ctx);
@@ -458,13 +534,26 @@ export class TitleNode extends DOMNode
     }
 }
 
+/**
+ * テキストノード
+ */
 export class TextNode extends DOMNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
         super(DOM, 16);
     }
 
+    /**
+     * 描画
+     *
+     * @param ctx
+     */
     draw(ctx)
     {
         super.setShapePath(ctx);
