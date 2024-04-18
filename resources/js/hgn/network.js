@@ -31,9 +31,9 @@ export class Network
     {
         this.parentNode = null;
         this.nodes.forEach(node => {
-            node.clear();
+            node.delete();
         });
-        this.nodes = [];
+        this.nodes = null;
     }
 
     /**

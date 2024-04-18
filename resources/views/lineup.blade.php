@@ -4,7 +4,7 @@
     <div class="node-list">
         <div class="node node-around">
             <div class="link-node">
-                <i class="icon-arrow-left"></i>
+                <a href="{{ route('HGN') }}"><i class="icon-arrow-left"></i></a>
             </div>
             <div class="link-node">
                 <i class="bi bi-search"></i>

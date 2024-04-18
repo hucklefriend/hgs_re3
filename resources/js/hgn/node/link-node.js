@@ -31,6 +31,14 @@ export class LinkNode extends DOMNode
         }
 
         this.subNodes = [];
+
+        this.url = null;
+        const a = this.DOM.querySelector('a');
+        if (a) {
+            this.url = a.getAttribute('href');
+            // aのクリックイベントを無効化
+            a.addEventListener('click', (e) => e.preventDefault());
+        }
     }
 
     /**
@@ -62,9 +70,9 @@ export class LinkNode extends DOMNode
      */
     mouseClick()
     {
-        const a = this.DOM.querySelector('a');
-        if (a) {
-            a.click();
+        if (this.url) {
+            HorrorGameNetwork.getInstance()
+                .changeNetwork(this.url);
         }
     }
 

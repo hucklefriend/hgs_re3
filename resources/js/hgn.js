@@ -32,7 +32,7 @@ export class HorrorGameNetwork
         if (this.mainCanvas.getContext) {
             this.mainCtx = this.mainCanvas.getContext('2d');
         }
-        this.main = document.querySelector('#main');
+        this.mainDOM = document.querySelector('main');
 
         // ノード
         this.titleNode = null;
@@ -64,6 +64,10 @@ export class HorrorGameNetwork
 
         this.update = this.update.bind(this);
 
+        window.addEventListener('popstate', (e) => {
+            this.popState(e);
+        });
+
         if (Param.SHOW_DEBUG) {
             this.debug = document.querySelector('#debug');
             this.lastTime= 0;
@@ -72,6 +76,11 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * インスタンスの取得
+     *
+     * @returns {HorrorGameNetwork}
+     */
     static getInstance()
     {
         if (HorrorGameNetwork.instance) {
@@ -162,6 +171,41 @@ export class HorrorGameNetwork
     }
 
     /**
+     * ノードのクリア
+     */
+    clearNodes()
+    {
+        if (this.titleNode) {
+            this.titleNode.delete();
+            this.titleNode = null;
+        }
+
+        if (this.backNode) {
+            this.backNode.delete();
+            this.backNode = null;
+        }
+
+        if (this.contentNode) {
+            // コンテンツノードは消さない
+        }
+
+        this.linkNodes.forEach(linkNode => {
+            linkNode.delete();
+        });
+        this.linkNodes = [];
+
+        this.textNodes.forEach(textNode => {
+            textNode.delete();
+        });
+        this.textNodes = [];
+
+        this.contentLinkNodes.forEach(contentNode =>  {
+            contentNode.delete();
+        });
+        this.contentLinkNodes = [];
+    }
+
+    /**
      * 開始
      */
     start()
@@ -238,7 +282,6 @@ export class HorrorGameNetwork
         }
     }
 
-
     /**
      * 再描画フラグの設定
      */
@@ -300,7 +343,6 @@ export class HorrorGameNetwork
         }
         this.bg3.scroll();
 
-
         this.bg2.scroll();
         this.bg2.draw();
         this.bg1.scroll();
@@ -339,9 +381,72 @@ export class HorrorGameNetwork
         this.lastTime = timestamp;
     }
 
+    /**
+     * コンテンツノードの表示
+     *
+     * @param data
+     */
     openContentNode(data)
     {
         this.contentNode.open(data);
+    }
+
+    /**
+     * 表示ネットワークの切り替え
+     * つまりページ遷移
+     */
+    changeNetwork(url)
+    {
+        // pushStateにつっこむ
+        window.history.pushState({type: 'network'}, null, url);
+        this.fetch(url, (data) => {
+            this.showNewNetwork(data);
+        });
+        this.clearNodes();
+        this.bg2.clear();
+    }
+
+    showNewNetwork(data)
+    {
+        // this.clearNodes();
+        // this.bg2.clear();
+
+        this.mainDOM.innerHTML = data.network;
+        this.loadNodes();
+    }
+
+    /**
+     * データの取得
+     *
+     * @param url
+     * @param callback
+     */
+    fetch(url, callback)
+    {
+        fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // JSON形式のレスポンスを取得
+        }).then((data) => {
+            // データの取得が成功した場合の処理
+            callback(data);
+        }).catch((error) => {
+            // エラーが発生した場合の処理
+            console.error('There was a problem with the fetch operation:');
+            console.error(error);
+        });
+    }
+
+    popState(e)
+    {
+        if (e.state && e.state.type === 'network') {
+            this.changeNetwork(location.href);
+        }
     }
 }
 
