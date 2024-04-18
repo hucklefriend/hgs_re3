@@ -26,13 +26,12 @@ export class ContentLinkNode extends LinkNode
         this.blurDOM = document.querySelector('#content-node-blur');
         this.openScrollY = 0;
 
+        this.url = null;
         const a = this.DOM.querySelector('a');
         if (a) {
-            // aのリンククリックしても画面遷移しないようにする
-            a.addEventListener('click', function (e){
-                e.preventDefault();
-                return false;
-            });
+            this.url = a.getAttribute('href');
+            // aのクリックイベントを無効化
+            a.addEventListener('click', (e) => e.preventDefault());
         }
     }
 
@@ -41,11 +40,9 @@ export class ContentLinkNode extends LinkNode
      */
     mouseClick()
     {
-        const a = this.DOM.querySelector('a');
-        if (a) {
-            // aからhrefを取得
-            const url = a.getAttribute('href');
-            this.fetch(url);
+        if (this.url) {
+            HorrorGameNetwork.getInstance()
+                .openContentNode(this.url);
         }
     }
 
@@ -113,6 +110,9 @@ export class ContentNode extends OctaNode
                 this.close();
             });
         });
+
+        this.historyUrl = null;
+        this.historyState = null;
     }
 
     /**
@@ -186,7 +186,7 @@ export class ContentNode extends OctaNode
     /**
      * 閉じる
      */
-    close()
+    close(isPopState = false)
     {
         this.state = ContentNode.STATE_CLOSED;
         this.DOM.classList.add('content-node-closed');
@@ -197,6 +197,16 @@ export class ContentNode extends OctaNode
         this.bodyDOM.innerHTML = '';
 
         window.scrollTo(0, this.openScrollY);
+
+        if (!isPopState) {
+            if (this.historyUrl) {
+                window.pushState(this.historyState, null, this.historyUrl);
+                this.historyUrl = null;
+                this.historyState = null;
+            } else {
+                window.pushState({type: 'network'}, null, window.baseUrl);
+            }
+        }
     }
 
     /**

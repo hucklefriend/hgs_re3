@@ -384,11 +384,19 @@ export class HorrorGameNetwork
     /**
      * コンテンツノードの表示
      *
-     * @param data
+     * @param url
      */
-    openContentNode(data)
+    openContentNode(url)
+    {        // pushStateにつっこむ
+        window.history.pushState({type: 'contentNode'}, null, url);
+        this.fetch(url, (data) => {
+            this.showContentNode(data);
+        });
+    }
+
+    showContentNode(data)
     {
-        this.contentNode.open(data);
+        this.contentNode.open(data)
     }
 
     /**
@@ -397,6 +405,9 @@ export class HorrorGameNetwork
      */
     changeNetwork(url)
     {
+        this.contentNode.historyUrl = location.href;
+        this.contentNode.historyState = window.history.state;
+
         // pushStateにつっこむ
         window.history.pushState({type: 'network'}, null, url);
         this.fetch(url, (data) => {
@@ -444,8 +455,16 @@ export class HorrorGameNetwork
 
     popState(e)
     {
-        if (e.state && e.state.type === 'network') {
-            this.changeNetwork(location.href);
+        if (this.contentNode.isOpened()) {
+            this.contentNode.close(true);
+        } else {
+            if (e.state) {
+                if (e.state.type === 'network') {
+                    this.changeNetwork(location.href);
+                } else if (e.state.type === 'contentNode') {
+                    this.openContentNode(location.href);
+                }
+            }
         }
     }
 }
