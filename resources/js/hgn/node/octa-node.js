@@ -336,8 +336,8 @@ export class OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
-        const drawTop = this.vertices[0].y + offsetY;
-        const drawBottom = this.vertices[0].y + offsetY;
+        const drawTop = this.vertices[Param.LTT].y + offsetY;
+        const drawBottom = this.vertices[Param.LBB].y + offsetY;
 
         if (drawBottom < window.scrollY - 100) {
             return;
