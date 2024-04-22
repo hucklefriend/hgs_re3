@@ -11,11 +11,11 @@
             </div>
         </div>
         <div class="node-lineup">
-        @foreach ($franchises as $franchise)
+        @foreach ($titles as $title)
             <div>
-            <div class="link-node link-node-center">
-                {!! $franchise->node_title !!}
-            </div>
+                <div class="link-node link-node-center">
+                    <a href="{{ route('Game.TitleNetwork', $title) }}">{!! $title->node_title !!}</a>
+                </div>
             </div>
         @endforeach
         </div>

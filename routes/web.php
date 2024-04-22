@@ -148,6 +148,8 @@ Route::group(['prefix' => 'game'], function () {
     Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
     // フランチャイズネットワーク
     Route::get('/franchise/{franchise}', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
+    // タイトルネットワーク
+    Route::get('/title/{title}', [$class, 'titleNetwork'])->name('Game.TitleNetwork');
 
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameMaker;
+use App\Models\MasterData\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -34,9 +35,21 @@ class GameController extends Controller
 
     public function franchiseNetwork(Request $request, GameFranchise $franchise): JsonResponse|Application|Factory|View
     {
-        $nodes = $franchise->series()->select(['id', 'node_title'])->orderBy('phonetic')->get();
-        $nodes2 = $franchise->titles()->select(['id', 'node_title'])->orderBy('phonetic')->get();
+        $titles = [];
+        foreach ($franchise->series as $series) {
+            foreach ($series->titles as $title) {
+                $titles[] = $title;
+            }
+        }
+        foreach ($franchise->titles as $title) {
+            $titles[] = $title;
+        }
 
-        return $this->network(view('game.franchise_network', ['franchises' => $franchises]));
+        return $this->network(view('game.franchise_network', ['titles' => $titles]));
+    }
+
+    public function titleNetwork(Request $request, GameTitle $title): JsonResponse|Application|Factory|View
+    {
+        return $this->network(view('game.title_network', ['title' => $title]));
     }
 }
