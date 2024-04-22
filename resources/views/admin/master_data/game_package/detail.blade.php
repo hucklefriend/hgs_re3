@@ -24,6 +24,10 @@
                     <td>{{ $model->acronym }}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用</th>
+                    <td>{!! $model->node_title !!}</td>
+                </tr>
+                <tr>
                     <th>メーカー</th>
                     <td>{{ $model->maker->name ?? '' }}</td>
                 </tr>

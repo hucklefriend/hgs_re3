@@ -14,23 +14,23 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    protected function network(string $view, array $data = [], array $mergeData = []): JsonResponse|Application|Factory|View
+    protected function network(Factory|View $view): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (request()->ajax()) {
-            $rendered = \Illuminate\Support\Facades\View::make($view, $data, $mergeData)->renderSections();
+            $rendered = $view->renderSections();
             return response()->json([
                 'network' => $rendered['content'],
             ]);
         }
 
-        return view($view, $data, $mergeData);
+        return $view;
     }
 
-    protected function contentNode(string $view, array $data = [], array $mergeData = [])
+    protected function contentNode(Factory|View $view)
     {
         if (request()->ajax()) {
-            $rendered = \Illuminate\Support\Facades\View::make($view, $data, $mergeData)->renderSections();
+            $rendered = $view->renderSections();
             return response()->json([
                 'title'  => $rendered['content-node-title'],
                 'body'   => $rendered['content-node-body'],
@@ -38,6 +38,6 @@ class Controller extends BaseController
             ]);
         }
 
-        return view($view, $data, $mergeData);
+        return $view;
     }
 }

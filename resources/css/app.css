@@ -37,6 +37,10 @@ h1 {
 
 #title-node {
     padding: 15px 25px;
+    display: inline-block;
+
+    h1 {
+    }
 
     .title-node-text {
         margin-top: 15px;

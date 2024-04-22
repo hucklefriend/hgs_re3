@@ -27,6 +27,10 @@
                     <td>{!! nl2br(e($model->synonymsStr)); !!}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用</th>
+                    <td>{!! $model->node_title !!}</td>
+                </tr>
+                <tr>
                     <th>ジャンル</th>
                     <td>{{ $model->genre }}</td>
                 </tr>

@@ -23,6 +23,10 @@
                     <td>{{ $model->phonetic }}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用</th>
+                    <td>{!! $model->node_title !!}</td>
+                </tr>
+                <tr>
                     <th>フランチャイズ</th>
                     <td>
                         @if ($model->franchise())

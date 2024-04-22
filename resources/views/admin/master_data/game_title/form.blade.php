@@ -24,6 +24,12 @@
         </td>
     </tr>
     <tr>
+        <th>ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
         <th>ジャンル</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'genre', 'options' => ['maxlength' => 150]])

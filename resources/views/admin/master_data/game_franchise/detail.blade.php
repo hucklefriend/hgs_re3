@@ -23,6 +23,10 @@
                     <td>{{ $model->phonetic }}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用名称</th>
+                    <td>{!! $model->node_title !!}</td>
+                </tr>
+                <tr>
                     <th>シリーズ</th>
                     <td>
                         <ul class="list-group">

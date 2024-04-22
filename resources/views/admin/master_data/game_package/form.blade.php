@@ -12,6 +12,12 @@
         </td>
     </tr>
     <tr>
+        <th>ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
         <th>メーカー</th>
         <td>
             @include ('admin.common.form.select_game_maker', ['name' => 'game_maker_id', 'value' => $model->game_maker_id, 'withBlank' => true])
