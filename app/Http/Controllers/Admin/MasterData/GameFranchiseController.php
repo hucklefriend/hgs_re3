@@ -131,7 +131,7 @@ class GameFranchiseController extends AbstractAdminController
         $franchise->fill($request->validated());
         $franchise->save();
 
-        return redirect()->route('Admin.MasterData.Franchise');
+        return redirect()->route('Admin.MasterData.Franchise.Detail', $franchise);
     }
 
     /**

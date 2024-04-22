@@ -25,18 +25,18 @@ class HgnController extends Controller
             return view('suspend');
         }
 
-        return $this->network('index');
+        return $this->network(view('index'));
     }
 
     public function lineup(): JsonResponse|Application|Factory|View
     {
-        $franchises = GameFranchise::all(['id', 'name']);
+        $franchises = GameFranchise::all(['id', 'node_title']);
 
-        return $this->network('lineup', ['franchises' => $franchises]);
+        return $this->network(view('lineup', ['franchises' => $franchises]));
     }
 
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode('privacy_policy');
+        return $this->contentNode(view('privacy_policy'));
     }
 }

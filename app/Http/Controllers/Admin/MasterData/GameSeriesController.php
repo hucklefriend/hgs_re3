@@ -72,7 +72,7 @@ class GameSeriesController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
-        return view('admin.master_data.game_franchise.add', [
+        return view('admin.master_data.game_series.add', [
             'model' => new GameSeries(),
         ]);
     }

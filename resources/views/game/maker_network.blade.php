@@ -11,10 +11,10 @@
             </div>
         </div>
         <div class="node-lineup">
-        @foreach ($franchises as $franchise)
+        @foreach ($makers as $maker)
             <div>
             <div class="link-node link-node-center">
-                {!! $franchise->node_title !!}
+                {!! $maker->name !!}
             </div>
             </div>
         @endforeach

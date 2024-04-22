@@ -29,6 +29,12 @@
         </td>
     </tr>
     <tr>
+        <th>ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
         <th>俗称</th>
         <td>
             @include ('admin.common.form.textarea', ['name' => 'synonymsStr'])

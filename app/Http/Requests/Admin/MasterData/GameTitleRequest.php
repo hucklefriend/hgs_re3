@@ -43,6 +43,7 @@ class GameTitleRequest extends FormRequest
         return [
             'name'                      => 'required|max:200',
             'phonetic'                  => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
+            'node_title'                => 'required|max:200',
             'genre'                     => 'nullable|max:150',
             'original_package_id'       => 'nullable|exists:game_packages,id',
             'introduction'              => 'nullable|max:1000',

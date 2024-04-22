@@ -18,17 +18,10 @@
         </td>
     </tr>
     <tr>
-        <th>フランチャイズ</th>
+        <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.select', ['name' => 'franchise_id', 'list' => $franchises])
+            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
         </td>
     </tr>
 </table>
 
-@section('js')
-    <script>
-        $(()=>{
-            $("#franchise_id").select2();
-        });
-    </script>
-@endsection

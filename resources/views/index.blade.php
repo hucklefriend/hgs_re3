@@ -12,7 +12,7 @@
                 <h1>HorrorGame Network</h1>
 
                 <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
-                    <a href="{{ route('lineup') }}">Enter the horror game.</a><br>
+                    <a href="{{ route('Game.HorrorGameNetwork') }}">Enter the horror game.</a><br>
                     ネットワークのノードとなって、<br>
                     ホラーゲームと繋がりましょう！
                 </p>
@@ -91,14 +91,42 @@
                 </div>
             </div>
         </div>
-
-        <div class="node node-center" style="margin-top: 5rem;margin-bottom: 5rem;">
-            <div class="link-node link-node-center">
-                Enter the horror game.
+        <div style="margin-top:100px;">
+        <div class="node-lineup">
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    ゲームタイトル
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    ゲームメーカー
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    プラットフォーム
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    ジャンル
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    レビュー
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <div class="link-node link-node-small">
+                    日記
+                </div>
             </div>
         </div>
 
-        <div class="node node-around" style="margin-top: 100px;">
+            <div style="margin-top:100px;">
+                <div class="node-lineup">
             <div style="margin-bottom: 20px;">
                 <div class="link-node link-node-small">
                     About
@@ -114,6 +142,7 @@
                     Site Map
                 </div>
             </div>
+        </div>
         </div>
         <div class="node node-center">
             <div class="text-node">

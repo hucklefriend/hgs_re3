@@ -17,6 +17,12 @@
         </td>
     </tr>
     <tr>
+        <th>ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
         <th>R指定</th>
         <td>
             @include ('admin.common.form.select', ['name' => 'rated_r', 'list' => \App\Enums\RatedR::selectList()])

@@ -23,6 +23,10 @@
                     <td>{{ $model->acronym }}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用</th>
+                    <td>{!! $model->node_title !!}</td>
+                </tr>
+                <tr>
                     <th>R指定</th>
                     <td>{{ \App\Enums\RatedR::from($model->rated_r)->text() }}</td>
                 </tr>

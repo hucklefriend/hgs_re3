@@ -139,5 +139,26 @@ Route::group(['prefix' => 'admin'], function () {
 
 $class = HgnController::class;
 Route::get('', [$class, 'index'])->name('HGN');
-Route::get('lineup', [$class, 'lineup'])->name('lineup');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
+
+// マスター
+Route::group(['prefix' => 'game'], function () {
+    $class = \App\Http\Controllers\GameController::class;
+    // ホラーゲームネットワーク
+    Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    // フランチャイズネットワーク
+    Route::get('/franchise/{franchise}', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
+
+
+
+//    // メーカー
+//    Route::get('maker', [$class, 'maker'])->name('Game.Maker');
+//    // プラットフォーム
+//    Route::get('platform', [$class, 'platform'])->name('Game.Platform');
+//    // シリーズ
+//    Route::get('series', [$class, 'series'])->name('Game.Series');
+//    // タイトル
+//    Route::get('title', [$class, 'title'])->name('Game.Title');
+//    // パッケージ
+//    Route::get('package', [$class, 'package'])->name('Game.Package');
+});
