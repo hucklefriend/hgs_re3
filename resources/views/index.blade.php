@@ -93,56 +93,56 @@
         </div>
         <div style="margin-top:100px;">
         <div class="node-lineup">
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    ゲームタイトル
+            <div>
+                <div class="link-node">
+                    フランチャイズ
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    ゲームメーカー
+            <div>
+                <div class="link-node">
+                    メーカー
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
+            <div>
+                <div class="link-node">
                     プラットフォーム
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
+            <div>
+                <div class="link-node">
                     ジャンル
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
+            <div>
+                <div class="link-node">
                     レビュー
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
+            <div>
+                <div class="link-node">
                     日記
                 </div>
             </div>
         </div>
 
-            <div style="margin-top:100px;">
-                <div class="node-lineup">
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    About
+        <div style="margin-top:50px;margin-bottom:50px;">
+            <div class="node-lineup">
+                <div>
+                    <div class="content-link-node">
+                        About
+                    </div>
+                </div>
+                <div>
+                    <div class="content-link-node">
+                        <a href="{{ route('PrivacyPolicy') }}">Privacy Policy</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="link-node">
+                        Site Map
+                    </div>
                 </div>
             </div>
-            <div style="margin-bottom: 20px;">
-                <div class="content-link-node link-node-small">
-                    <a href="{{ route('PrivacyPolicy') }}">Privacy Policy</a>
-                </div>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <div class="link-node link-node-small">
-                    Site Map
-                </div>
-            </div>
-        </div>
         </div>
         <div class="node node-center">
             <div class="text-node">
