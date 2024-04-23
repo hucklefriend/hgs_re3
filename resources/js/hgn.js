@@ -410,11 +410,11 @@ export class HorrorGameNetwork
 
         // pushStateにつっこむ
         window.history.pushState({type: 'network'}, null, url);
+        this.clearNodes();
+        this.bg2.clear();
         this.fetch(url, (data) => {
             this.showNewNetwork(data);
         });
-        this.clearNodes();
-        this.bg2.clear();
     }
 
     showNewNetwork(data)
@@ -422,8 +422,12 @@ export class HorrorGameNetwork
         // this.clearNodes();
         // this.bg2.clear();
 
+        window.scrollTo(0, 0);
         this.mainDOM.innerHTML = data.network;
         this.loadNodes();
+        this.draw();
+        this.bg2.draw();
+        //this.setRedraw();
     }
 
     /**
@@ -434,6 +438,10 @@ export class HorrorGameNetwork
      */
     fetch(url, callback)
     {
+        let urlObj = new URL(url); // URLオブジェクトを作成
+        urlObj.searchParams.append('a', '1'); // クエリパラメータ'a'を追加
+        url = urlObj.toString(); // URLオブジェクトを文字列に戻す
+
         fetch(url, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",

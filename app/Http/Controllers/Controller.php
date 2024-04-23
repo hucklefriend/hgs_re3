@@ -14,10 +14,15 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    private static function isAjax(): bool
+    {
+        return request()->ajax() || (request()->query('a', 0) == 1);
+    }
+
     protected function network(Factory|View $view): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
-        if (request()->ajax()) {
+        if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
                 'network' => $rendered['content'],
@@ -29,7 +34,7 @@ class Controller extends BaseController
 
     protected function contentNode(Factory|View $view)
     {
-        if (request()->ajax()) {
+        if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
                 'title'  => $rendered['content-node-title'],
