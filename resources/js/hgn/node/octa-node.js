@@ -28,6 +28,7 @@ export class OctaNode
         this.notchSize = notchSize;
         this.vertices = [];
         this.connects = new Array(8).fill(null);
+        this.forceDraw = false;
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -141,6 +142,14 @@ export class OctaNode
             ctx.lineTo(this.vertices[i].x + offsetX, this.vertices[i].y + offsetY);
         }
         ctx.closePath();
+    }
+
+    /**
+     * 範囲外でも描画を強制する
+     */
+    setForceDraw()
+    {
+        this.forceDraw = true;
     }
 
     /**
@@ -336,14 +345,15 @@ export class OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
-        const drawTop = this.vertices[Param.LTT].y + offsetY;
-        const drawBottom = this.vertices[Param.LBB].y + offsetY;
-
-        if (drawBottom < window.scrollY - 100) {
-            return;
-        }
-        if (drawTop > window.scrollY + window.innerHeight +100) {
-            return;
+        if (!this.forceDraw) {
+            const drawTop = this.vertices[Param.LTT].y + offsetY;
+            const drawBottom = this.vertices[Param.LBB].y + offsetY;
+            if (drawBottom < window.scrollY - 100) {
+                return;
+            }
+            if (drawTop > window.scrollY + window.innerHeight +100) {
+                return;
+            }
         }
 
         this.setShapePath(ctx, offsetX, offsetY);

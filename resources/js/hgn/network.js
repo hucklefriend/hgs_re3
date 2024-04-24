@@ -1,12 +1,13 @@
 import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
-import {PointNode, Bg2PointNode} from "./node/point-node.js";
+import {PointNode, Bg2PointNode, Bg3PointNode} from "./node/point-node.js";
 
 const NodeClasses = {
     'OctaNode': OctaNode,
     'Bg2OctaNode': Bg2OctaNode,
     'PointNode': PointNode,
     'Bg2PointNode': Bg2PointNode,
+    'Bg3PointNode': Bg3PointNode,
 };
 
 /**
@@ -17,9 +18,10 @@ export class Network
     /**
      * コンストラクタ
      */
-    constructor(parentNode)
+    constructor(parentNode, drawParent = false)
     {
         this.parentNode = parentNode;
+        this.drawParent = drawParent;
         this.nodes = [];
     }
 
@@ -154,6 +156,10 @@ export class Network
      */
     draw(ctx, offsetX, offsetY, drawIdxText = false)
     {
+        if (this.drawParent) {
+            this.parentNode.draw(ctx, offsetX, offsetY);
+        }
+
         if (this.parentNode !== null) {
             this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
         }
@@ -281,5 +287,48 @@ export class Bg2Network extends Network
         this.addNodeConnection(baseNode, newNode, vertexNo);
 
         return newNode;
+    }
+}
+
+
+/**
+ * 背景3用ネットワーク
+ */
+export class Bg3Network extends Network
+{
+    /**
+     * コンストラクタ
+     */
+    constructor(parentNode)
+    {
+        super(parentNode, true);
+    }
+
+    /**
+     * 八角ノードの追加
+     *
+     * @param baseNode
+     * @param offsetX
+     * @param offsetY
+     * @returns number
+     */
+    addOctaNode(baseNode, offsetX, offsetY)
+    {
+        super.addOctaNode(baseNode, null, offsetX, offsetY, 5, 5, 2);
+        return this.nodes.length - 1;
+    }
+
+    /**
+     * 点ノードの追加
+     *
+     * @param baseNode
+     * @param offsetX
+     * @param offsetY
+     * @returns number
+     */
+    addPointNode(baseNode, offsetX, offsetY)
+    {
+        super.addPointNode(baseNode, null, offsetX, offsetY, 1, 'Bg3PointNode');
+        return this.nodes.length - 1;
     }
 }

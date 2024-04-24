@@ -20,6 +20,7 @@ export class PointNode extends Vertex
         super(x, y);
         this.r = r;
         this.connects = [];
+        this.forceDraw = false;
     }
 
     /**
@@ -29,6 +30,14 @@ export class PointNode extends Vertex
     delete()
     {
         this.connects = null;
+    }
+
+    /**
+     * 範囲外でも強制的に描画する
+     */
+    setForceDraw()
+    {
+        this.forceDraw = true;
     }
 
     /**
@@ -93,6 +102,16 @@ export class PointNode extends Vertex
      */
     draw(ctx, offsetX, offsetY)
     {
+        if (!this.forceDraw) {
+            const drawY = this.y + offsetY;
+            if (drawY < window.scrollY - 100) {
+                return;
+            }
+            if (drawY > window.scrollY + window.innerHeight +100) {
+                return;
+            }
+        }
+
         ctx.beginPath();
         ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
@@ -154,5 +173,24 @@ export class Bg2PointNode extends PointNode
         const v = this.connection.getVertex();
         this.x = v.x + this.offsetX;
         this.y = v.y + this.offsetY;
+    }
+}
+
+
+/**
+ * 背景3用の点ノード
+ */
+export class Bg3PointNode extends PointNode
+{
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX, offsetY)
+    {
+        // 見えないので背景3は点ノードを描画しない
     }
 }
