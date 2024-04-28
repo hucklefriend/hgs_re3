@@ -19,7 +19,7 @@ body {
     width: calc(100% - 10px);
 }
 
-p {
+p, blockquote {
     padding: 0;
     margin: 0;
 }
@@ -30,6 +30,17 @@ h1 {
     display: inline-block;
     padding: 0;
     margin: 0;
+}
+
+
+
+a:link, a:visited {
+    color: #AAFFAA;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: white;
 }
 
 .title {
@@ -72,6 +83,20 @@ h1 {
 
 .node-between {
     justify-content: space-between;
+}
+
+.dom-node {
+    padding: 15px 25px;
+    display: inline-block;
+
+    a:link, a:visited {
+        color: #AAFFAA;
+        text-decoration: none;
+    }
+
+    a:hover, a:active {
+        color: white;
+    }
 }
 
 .link-node, #back-node, .content-link-node {
@@ -124,15 +149,6 @@ h1 {
     left: 0;
     top: 0;
     z-index: 100;
-
-    a:link, a:visited {
-        color: #AAFFAA;
-        text-decoration: none;
-    }
-
-    a:hover, a:active {
-        color: white;
-    }
 
     .content-node-close {
         position: absolute;
@@ -205,12 +221,12 @@ h1 {
     flex-wrap: wrap;
     justify-content: center;
 
-    .link-node, .content-link-node {
-        margin: 15px;
-    }
-
-    div {
+    > div {
         display: inline-block;
+
+        .link-node, .content-link-node, .dom-node {
+            margin: 15px;
+        }
     }
 }
 .node-lineup > div:nth-child(2n) {

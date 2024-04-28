@@ -50,6 +50,18 @@ class GameController extends Controller
 
     public function titleNetwork(Request $request, GameTitle $title): JsonResponse|Application|Factory|View
     {
-        return $this->network(view('game.title_network', ['title' => $title]));
+        $packages = $title->packages;
+        $makers = [];
+        foreach ($packages as $package) {
+            if ($package->maker) {
+                $makers[] = $package->maker;
+            }
+        }
+
+        return $this->network(view('game.title_network', [
+            'title' => $title,
+            'packages' => $packages,
+            'makers' => $makers,
+        ]));
     }
 }

@@ -8,37 +8,115 @@
         <div class="node node-center">
             <div id="title-node" style="margin-top: 30px;">
                 <h1>{{ $title->name }}</h1>
+
+                <section style="margin-top:2rem;">
+                    <h3>あらすじ</h3>
+                    <blockquote>
+                        {!! nl2br(e($title->introduction))  !!}
+
+                        <footer style="text-align: right;margin-top:1rem;">— <cite>{!! $title->introduction_from  !!}</cite></footer>
+                    </blockquote>
+                </section>
+
+                <section style="margin-top:2rem;">
+                    <h3>レビュー</h3>
+                    <div>
+                        怖さ：★★★★☆
+                    </div>
+                </section>
             </div>
         </div>
 
-        <div>
-            ゲーム情報
+        <div class="node">
+            <div class="dom-node">
+                パッケージ
+            </div>
+        </div>
+        <div class="node-lineup">
+            @foreach ($packages as $package)
+                <div>
+                    <div class="content-link-node">
+                        <a href="#test">
+                            {{ $package->acronym }}
+                        </a>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
-        <div>
-            タグ
+
+
+        <div class="node">
+            <div class="content-link-node">
+                タグ
+            </div>
+        </div>
+        <div class="node-lineup">
+            <div>
+                <div class="link-node">
+                    <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
         </div>
 
-        <div>
-            レビュー
+
+
+
+        <div class="node">
+            <div class="dom-node">
+                タグ
+            </div>
+        </div>
+        <div class="node-lineup">
+            <div>
+                <div class="link-node">
+                    <a href="#test">レビュー</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">攻略</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">日記</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">辞書</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">二次創作</a>
+                </div>
+            </div>
         </div>
 
-        <div>
-            攻略
+        <div class="node">
+            <div class="content-link-node">
+                関連商品
+            </div>
         </div>
-
-        <div>
-            日記
+        <div class="node-lineup">
+            <div>
+                <div class="link-node">
+                    <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
         </div>
-
-        <div>
-            辞書
-        </div>
-
-        <div>
-            二次創作
-        </div>
-
     </div>
 
 
