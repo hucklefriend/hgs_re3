@@ -1,6 +1,6 @@
 import {Network} from "./hgn/network.js";
 
-import {TitleNode, TextNode} from './hgn/node/octa-node.js';
+import {DOMNode, TitleNode, TextNode} from './hgn/node/octa-node.js';
 import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Param} from './hgn/param.js';
@@ -41,6 +41,7 @@ export class HorrorGameNetwork
         this.linkNodes = [];
         this.textNodes = [];
         this.contentLinkNodes = [];
+        this.domNodes = [];
 
         // 背景の生成
         this.bg1 = new Background1();
@@ -137,6 +138,11 @@ export class HorrorGameNetwork
             this.contentLinkNodes.push(new ContentLinkNode(nodeElem));
         });
 
+        let domNodeElems = document.querySelectorAll('.dom-node');
+        domNodeElems.forEach(nodeElem =>  {
+            this.domNodes.push(new DOMNode(nodeElem, 15));
+        });
+
         this.bg2.reload();
     }
 
@@ -165,8 +171,12 @@ export class HorrorGameNetwork
             textNode.reload();
         });
 
-        this.contentLinkNodes.forEach(contentNode =>  {
+        this.contentLinkNodes.forEach(contentNode => {
             contentNode.reload();
+        });
+
+        this.domNodes.forEach(domNode => {
+            domNode.reload();
         });
     }
 
@@ -203,6 +213,11 @@ export class HorrorGameNetwork
             contentNode.delete();
         });
         this.contentLinkNodes = [];
+
+        this.domNodes.forEach(domNode => {
+            domNode.delete();
+        });
+        this.domNodes = [];
     }
 
     /**
@@ -275,6 +290,10 @@ export class HorrorGameNetwork
 
         this.contentLinkNodes.forEach(contentLinkNode => {
             contentLinkNode.draw(this.mainCtx);
+        });
+
+        this.domNodes.forEach(domNode => {
+            domNode.draw(this.mainCtx);
         });
 
         if (this.contentNode.isOpened()) {
