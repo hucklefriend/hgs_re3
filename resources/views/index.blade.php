@@ -1,31 +1,27 @@
 @extends('layout')
 
 @section('content')
-    <div class="node-list">
-        <div class="node node-right">
-            <div class="link-node">
-                Sign In / Sign Up
-            </div>
+    <div class="node node-right">
+        <div class="link-node">
+            Sign In / Sign Up
         </div>
-        <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
-            <div class="link-node link-node-center" id="n-HGS">
-                <h1>HorrorGame Network</h1>
+    </div>
+    <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
+        <div class="link-node link-node-center" id="n-HGS">
+            <h1>HorrorGame Network</h1>
 
-                <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
-                    <a href="{{ route('Game.HorrorGameNetwork') }}">Enter the horror game.</a><br>
-                    ネットワークのノードとなって、<br>
-                    ホラーゲームと繋がりましょう！
-                </p>
-            </div>
+            <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
+                <a href="{{ route('Game.HorrorGameNetwork') }}">Enter the horror game.</a><br>
+                ネットワークのノードとなって、<br>
+                ホラーゲームと繋がりましょう！
+            </p>
         </div>
-        <div class="news-node" style="margin-bottom: 30px;">
-            <div class="node">
-                <div class="link-node">
-                    News
-                </div>
-            </div>
+    </div>
 
-            <div style="margin-left: 30px;">
+    <section style="margin-bottom: 30px;">
+        <h2 class="head2">News</h2>
+        <div class="news-node">
+            <div>
                 <div class="node">
                     <div class="link-node">
                         日本の都市伝説「きさらぎ駅」をベースにしたホラーアドベンチャー「嵐と山の彼方」，3月29日にSteamでリリース
@@ -57,41 +53,41 @@
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="news-node" style="margin-top: 100px;margin-bottom: 30px;">
+    <section class="news-node" style="margin-top: 100px;margin-bottom: 30px;">
+        <h2 class="head2">Information</h2>
+
+        <div>
             <div class="node">
                 <div class="link-node">
-                    Information
+                    メンテナス実施のお知らせ
                 </div>
             </div>
 
-            <div style="margin-left: 30px;">
-                <div class="node">
-                    <div class="link-node">
-                        メンテナス実施のお知らせ
-                    </div>
+            <div class="node">
+                <div class="link-node">
+                    メンテナス実施のお知らせ
                 </div>
+            </div>
 
-                <div class="node">
-                    <div class="link-node">
-                        メンテナス実施のお知らせ
-                    </div>
+            <div class="node">
+                <div class="link-node">
+                    メンテナス実施のお知らせ
                 </div>
+            </div>
 
-                <div class="node">
-                    <div class="link-node">
-                        メンテナス実施のお知らせ
-                    </div>
-                </div>
-
-                <div class="node">
-                    <div class="link-node">
-                        メンテナス実施のお知らせ
-                    </div>
+            <div class="node">
+                <div class="link-node">
+                    メンテナス実施のお知らせ
                 </div>
             </div>
         </div>
-        <div style="margin-top:100px;">
+    </section>
+
+    <section style="margin-top:100px;">
+        <h2 class="head2">Network Map</h2>
+
         <div class="node-lineup">
             <div>
                 <div class="link-node">
@@ -144,10 +140,13 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <footer style="margin: 50px 0;">
         <div class="node node-center">
             <div class="text-node">
                 &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
             </div>
         </div>
-    </div>
+    </footer>
 @endsection

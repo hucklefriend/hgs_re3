@@ -24,15 +24,9 @@ p, blockquote {
     margin: 0;
 }
 
-h1 {
-    font-size: 22px;
-    font-weight: unset;
-    display: inline-block;
-    padding: 0;
-    margin: 0;
+main {
+    margin-top: 50px;
 }
-
-
 
 a:link, a:visited {
     color: #AAFFAA;

@@ -3,6 +3,7 @@ import {Network} from "./hgn/network.js";
 import {DOMNode, TitleNode, TextNode} from './hgn/node/octa-node.js';
 import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
+import {Head1Node, Head2Node} from './hgn/node/head-node.js';
 import {Param} from './hgn/param.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
@@ -141,6 +142,16 @@ export class HorrorGameNetwork
         let domNodeElems = document.querySelectorAll('.dom-node');
         domNodeElems.forEach(nodeElem =>  {
             this.domNodes.push(new DOMNode(nodeElem, 15));
+        });
+
+        let h1Elems = document.querySelectorAll('.head1');
+        h1Elems.forEach(nodeElem =>  {
+            this.domNodes.push(new Head1Node(nodeElem, 10));
+        });
+
+        let h2Elems = document.querySelectorAll('.head2');
+        h2Elems.forEach(nodeElem =>  {
+            this.domNodes.push(new Head2Node(nodeElem, 10));
         });
 
         this.bg2.reload();
