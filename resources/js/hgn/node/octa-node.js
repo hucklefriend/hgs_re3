@@ -90,6 +90,11 @@ export class OctaNode
         return this.y + this.h / 2;
     }
 
+    get center()
+    {
+        return new Vertex(this.x + this.w / 2, this.y + this.h / 2);
+    }
+
     /**
      * 再ロード（再配置）
      *

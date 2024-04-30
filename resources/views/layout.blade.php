@@ -13,7 +13,7 @@
         window.Laravel = {!! json_encode(['csrfToken' => csrf_token()]) !!};
         window.baseUrl = '{{ url('/') }}';
     </script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/js/app.js'])
 </head>
 <body>
 <div class="container">
