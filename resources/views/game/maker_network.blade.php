@@ -13,9 +13,9 @@
         <div class="node-lineup">
         @foreach ($makers as $maker)
             <div>
-            <div class="link-node link-node-center">
-                {!! $maker->name !!}
-            </div>
+                <div class="link-node link-node-center">
+                    {!! $maker->name !!}
+                </div>
             </div>
         @endforeach
         </div>
