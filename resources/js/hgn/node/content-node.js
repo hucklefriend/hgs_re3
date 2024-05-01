@@ -200,11 +200,11 @@ export class ContentNode extends OctaNode
 
         if (!isPopState) {
             if (this.historyUrl) {
-                window.pushState(this.historyState, null, this.historyUrl);
+                window.history.pushState(this.historyState, null, this.historyUrl);
                 this.historyUrl = null;
                 this.historyState = null;
             } else {
-                window.pushState({type: 'network'}, null, window.baseUrl);
+                window.history.pushState({type: 'network'}, null, window.baseUrl);
             }
         }
     }

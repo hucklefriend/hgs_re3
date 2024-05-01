@@ -76,6 +76,9 @@ export class HorrorGameNetwork
             this.frameCount = 0;
             this.fps = 0;
         }
+
+        this.contentNodeOpenCnt = 0;
+        this.isFirstNetwork = true;
     }
 
     /**
@@ -101,7 +104,7 @@ export class HorrorGameNetwork
             this.titleNode = new TitleNode(titleElem);
         }
 
-        let backElem = document.querySelector('#back-node');
+        let backElem = document.querySelector('.back-node');
         if (backElem) {
             this.backNode = new BackNode(backElem);
 
@@ -236,6 +239,8 @@ export class HorrorGameNetwork
      */
     start()
     {
+        window.history.pushState({type: 'network', contentNodeOpenCnt: 0}, '');
+
         this.draw();
 
         if (Param.SHOW_DEBUG) {
@@ -417,29 +422,40 @@ export class HorrorGameNetwork
      * @param url
      */
     openContentNode(url)
-    {        // pushStateにつっこむ
-        window.history.pushState({type: 'contentNode'}, null, url);
+    {
+        // pushStateにつっこむ
+        window.history.pushState({type: 'contentNode', contentNodeOpenCnt: 0}, '', url);
         this.fetch(url, (data) => {
             this.showContentNode(data);
         });
     }
 
+    /**
+     * コンテンツノードを表示
+     *
+     * @param data
+     */
     showContentNode(data)
     {
-        this.contentNode.open(data)
+        this.contentNode.open(data);
+        this.contentNodeOpenCnt++;
     }
 
     /**
      * 表示ネットワークの切り替え
      * つまりページ遷移
      */
-    changeNetwork(url)
+    changeNetwork(url, isBack = false)
     {
         this.contentNode.historyUrl = location.href;
         this.contentNode.historyState = window.history.state;
 
-        // pushStateにつっこむ
-        window.history.pushState({type: 'network'}, null, url);
+        if (!isBack) {
+            // pushStateにつっこむ
+            window.history.pushState({type: 'network', contentNodeOpenCnt: this.contentNodeOpenCnt}, null, url);
+            this.isFirstNetwork = false;
+        }
+        this.contentNodeOpenCnt = 0;
         this.clearNodes();
         this.bg2.clear();
         this.fetch(url, (data) => {
@@ -491,16 +507,26 @@ export class HorrorGameNetwork
         });
     }
 
+    back()
+    {
+        console.log('back: ' + (-1 - this.contentNodeOpenCnt).toString());
+        window.history.go(-1 - this.contentNodeOpenCnt);
+    }
+
     popState(e)
     {
         if (this.contentNode.isOpened()) {
             this.contentNode.close(true);
         } else {
+            console.log('popState: ');
+            console.log(e);
             if (e.state) {
                 if (e.state.type === 'network') {
-                    this.changeNetwork(location.href);
+                    this.changeNetwork(location.href, true);
+
+                    this.contentNodeOpenCnt = e.state.contentNodeOpenCnt;
                 } else if (e.state.type === 'contentNode') {
-                    this.openContentNode(location.href);
+                    this.openContentNode(location.href, true);
                 }
             }
         }

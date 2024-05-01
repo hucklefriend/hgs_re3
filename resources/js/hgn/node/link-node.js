@@ -125,12 +125,21 @@ export class LinkNode extends DOMNode
  */
 export class HgsTitleLinkNode extends LinkNode
 {
-
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
         super(DOM, 20);
     }
 
+    /**
+     * 描画
+     *
+     * @param ctx
+     */
     draw(ctx)
     {
         if (this.isHover) {
@@ -154,11 +163,18 @@ export class HgsTitleLinkNode extends LinkNode
     }
 }
 
-
+/**
+ * 戻るノード
+ */
 export class BackNode extends LinkNode
 {
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     */
     constructor(DOM)
     {
-        super(DOM, 10);
+        super(DOM, 15);
     }
 }

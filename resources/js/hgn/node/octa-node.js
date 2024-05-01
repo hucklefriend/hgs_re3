@@ -504,6 +504,14 @@ export class DOMNode extends OctaNode
         super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
         this.DOM = DOM;
+
+        // DOMからdata-sub-sizeを取得
+        this.subNetworkSize = this.DOM.getAttribute('data-sub-size');
+        if (this.subNetworkSize === null || isNaN(this.subNetworkSize)) {
+            this.subNetworkSize = 0;
+        } else {
+            this.subNetworkSize = parseInt(this.subNetworkSize);
+        }
     }
 
     /**
