@@ -110,7 +110,7 @@ export class Head2Node extends DOMNode
 
 
         ctx.strokeStyle = "rgba(0, 180, 0)"; // 線の色と透明度
-        ctx.lineWidth = 3; // 線の太さ
+        ctx.lineWidth = 1; // 線の太さ
         ctx.lineJoin = "round"; // 線の結合部分のスタイル
         ctx.lineCap = "round"; // 線の末端のスタイル
 
@@ -132,8 +132,5 @@ export class Head2Node extends DOMNode
         ctx.lineTo(this.vertices[Param.RBB].x, this.vertices[Param.RBB].y);
         ctx.lineTo(this.vertices[Param.RBB].x - this.notchSize, this.vertices[Param.RBB].y);
         ctx.stroke();
-
-
-
     }
 }

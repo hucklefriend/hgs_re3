@@ -15,7 +15,7 @@ export class LinkNode extends DOMNode
      * @param DOM
      * @param notchSize
      */
-    constructor(DOM, notchSize = 15)
+    constructor(DOM, notchSize = 13)
     {
         super(DOM, notchSize);
 
@@ -175,6 +175,6 @@ export class BackNode extends LinkNode
      */
     constructor(DOM)
     {
-        super(DOM, 15);
+        super(DOM, 13);
     }
 }
