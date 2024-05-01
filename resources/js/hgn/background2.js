@@ -137,6 +137,10 @@ export class Background2
 
     createRandomNetwork(node, maxDepth)
     {
+        console.log(node.subNetworkSize);
+        if (node.subNetworkSize === 0) {
+            return;
+        }
         let network = new Bg2Network(node);
 
         this.addRandomNode(network, node, maxDepth);

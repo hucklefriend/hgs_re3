@@ -2,11 +2,6 @@
 
 @section('content')
     <div class="node-list">
-        <div class="link-node">
-            <a href="{{ route('HGN') }}"><i class="icon-arrow-left"></i></a>
-        </div>
-
-
         <div style="text-align:center; margin: 20px 0;">
             <h1 class="head1">{{ $title->name }}</h1>
         </div>
@@ -18,18 +13,6 @@
 
                     <footer style="text-align: right;margin-top:1rem;">— <cite>{!! $title->introduction_from  !!}</cite></footer>
                 </blockquote>
-            </div>
-        </div>
-        <div class="node-lineup">
-            <div>
-                <div class="link-node">
-                    <a href="#test">アドベンチャー</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">アドベンチャー</a>
-                </div>
             </div>
         </div>
 
@@ -52,10 +35,29 @@
             </div>
         </div>
 
+        <div class="node">
+            <h2 class="head2">
+                タグネットワーク
+            </h2>
+        </div>
+
+        <div class="node-lineup">
+            <div>
+                <div class="link-node">
+                    <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">和風</a>
+                </div>
+            </div>
+        </div>
+
 
         <div class="node">
             <h2 class="head2">
-                コンテンツ
+                ユーザーコンテンツネットワーク
             </h2>
         </div>
         <div class="node-lineup">
@@ -111,6 +113,27 @@
             <div>
                 <div class="link-node">
                     <a href="#test">アドベンチャー</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="node">
+            <h2 class="head2">
+                関連ネットワーク
+            </h2>
+        </div>
+        <div class="node-lineup">
+            <div>
+                <div class="link-node link-node-center">
+                    <a href="{{ route('Game.FranchiseNetwork', $title->franchise()) }}">
+                        {{ $title->franchise()->node_title }}<br>
+                        フランチャイズ
+                    </a>
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    <a href="#test">シリーズ</a>
                 </div>
             </div>
         </div>

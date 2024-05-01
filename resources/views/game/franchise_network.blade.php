@@ -3,8 +3,8 @@
 @section('content')
     <div class="node-list">
         <div class="node node-around">
-            <div class="link-node">
-                <a href="{{ route('HGN') }}"><i class="icon-arrow-left"></i></a>
+            <div class="back-node">
+                <a href="{{ route('Game.HorrorGameNetwork') }}"><i class="icon-arrow-left"></i></a>
             </div>
             <div class="link-node">
                 <i class="bi bi-search"></i>
