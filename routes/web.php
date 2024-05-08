@@ -146,8 +146,10 @@ Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // ホラーゲームネットワーク
     Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    // フランチャイズ詳細ネットワーク
+    Route::get('/franchise/{franchise}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク
-    Route::get('/franchise/{franchise}', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
+    Route::get('/franchise', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
     // タイトルネットワーク
     Route::get('/title/{title}', [$class, 'titleNetwork'])->name('Game.TitleNetwork');
 

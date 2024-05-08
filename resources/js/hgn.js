@@ -8,6 +8,7 @@ import {Param} from './hgn/param.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
 import {Background3} from './hgn/background3.js';
+import {HR} from './hgn/hr.js';
 
 /**
  * ホラーゲームネットワーク
@@ -37,12 +38,16 @@ export class HorrorGameNetwork
 
         // ノード
         this.titleNode = null;
-        this.backNode = null;
         this.contentNode = null;
         this.linkNodes = [];
-        this.textNodes = [];
         this.contentLinkNodes = [];
         this.domNodes = [];
+
+        this.nodesIdHash = {};
+
+        // hr
+        this.hrList = [];
+
 
         // 背景の生成
         this.bg1 = new Background1();
@@ -76,9 +81,6 @@ export class HorrorGameNetwork
             this.frameCount = 0;
             this.fps = 0;
         }
-
-        this.contentNodeOpenCnt = 0;
-        this.isFirstNetwork = true;
     }
 
     /**
@@ -99,17 +101,15 @@ export class HorrorGameNetwork
      */
     loadNodes()
     {
+        let connections = [];
+
         let titleElem = document.querySelector('#title-node');
         if (titleElem) {
             this.titleNode = new TitleNode(titleElem);
-        }
+            if (titleElem.id.length > 0) {
+                this.nodesIdHash[titleElem.id] = this.titleNode;
 
-        let backElem = document.querySelector('.back-node');
-        if (backElem) {
-            this.backNode = new BackNode(backElem);
-
-            if (this.titleNode) {
-                this.backNode.connect2OctaNode(3, this.titleNode, 0);
+                this.loadConnection(titleElem, connections);
             }
         }
 
@@ -120,7 +120,11 @@ export class HorrorGameNetwork
 
         let textNodeElems = document.querySelectorAll('.text-node');
         textNodeElems.forEach(nodeElem => {
-            this.textNodes.push(new TextNode(nodeElem));
+            this.domNodes.push(new TextNode(nodeElem));
+            if (nodeElem.id.length > 0) {
+                this.nodesIdHash[nodeElem.id] = this.domNodes[this.domNodes.length - 1];
+                this.loadConnection(nodeElem, connections);
+            }
         });
 
         let linkNodeElems = document.querySelectorAll('.link-node');
@@ -135,16 +139,28 @@ export class HorrorGameNetwork
             }
 
             this.linkNodes.push(newNode);
+            if (nodeElem.id.length > 0) {
+                this.nodesIdHash[nodeElem.id] = newNode;
+                this.loadConnection(nodeElem, connections);
+            }
         });
 
         let contentLinkNodeElems = document.querySelectorAll('.content-link-node');
         contentLinkNodeElems.forEach(nodeElem =>  {
             this.contentLinkNodes.push(new ContentLinkNode(nodeElem));
+            if (nodeElem.id.length > 0) {
+                this.nodesIdHash[nodeElem.id] = this.contentLinkNodes[this.contentLinkNodes.length - 1];
+                this.loadConnection(nodeElem, connections);
+            }
         });
 
         let domNodeElems = document.querySelectorAll('.dom-node');
         domNodeElems.forEach(nodeElem =>  {
             this.domNodes.push(new DOMNode(nodeElem, 15));
+            if (nodeElem.id.length > 0) {
+                this.nodesIdHash[nodeElem.id] = this.domNodes[this.domNodes.length - 1];
+                this.loadConnection(nodeElem, connections);
+            }
         });
 
         let h1Elems = document.querySelectorAll('.head1');
@@ -158,6 +174,32 @@ export class HorrorGameNetwork
         });
 
         this.bg2.reload();
+
+        // 接続の設定
+        connections.forEach((c) => {
+            let node1 = this.nodesIdHash[c[0]];
+            let node2 = this.nodesIdHash[c[1]];
+            if (node1 && node2) {
+                node1.connect(null, node2);
+            }
+        });
+
+
+        let hrElems = document.querySelectorAll('hr');
+        hrElems.forEach(hrElem =>  {
+            this.hrList.push(new HR(hrElem));
+        });
+    }
+
+    loadConnection(nodeElem, connections)
+    {
+        if (nodeElem.dataset.connect) {
+            // カンマ区切り文字列を配列に分解
+            let connect = JSON.parse(nodeElem.dataset.connect);
+            connect.forEach((c)=> {
+                connections.push([nodeElem.id, c]);
+            });
+        }
     }
 
     /**
@@ -181,10 +223,6 @@ export class HorrorGameNetwork
             linkNode.reload();
         });
 
-        this.textNodes.forEach(textNode => {
-            textNode.reload();
-        });
-
         this.contentLinkNodes.forEach(contentNode => {
             contentNode.reload();
         });
@@ -199,6 +237,8 @@ export class HorrorGameNetwork
      */
     clearNodes()
     {
+        this.nodesIdHash = {};
+
         if (this.titleNode) {
             this.titleNode.delete();
             this.titleNode = null;
@@ -218,11 +258,6 @@ export class HorrorGameNetwork
         });
         this.linkNodes = [];
 
-        this.textNodes.forEach(textNode => {
-            textNode.delete();
-        });
-        this.textNodes = [];
-
         this.contentLinkNodes.forEach(contentNode =>  {
             contentNode.delete();
         });
@@ -232,6 +267,11 @@ export class HorrorGameNetwork
             domNode.delete();
         });
         this.domNodes = [];
+
+        this.hrList.forEach(hr => {
+            hr.delete();
+        });
+        this.hrList = [];
     }
 
     /**
@@ -239,7 +279,7 @@ export class HorrorGameNetwork
      */
     start()
     {
-        window.history.pushState({type: 'network', contentNodeOpenCnt: 0}, '');
+        window.history.pushState({type: 'network'}, '');
 
         this.draw();
 
@@ -257,6 +297,10 @@ export class HorrorGameNetwork
         this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
         this.drawEdge();
         this.drawNodes();
+
+        this.hrList.forEach(hr => {
+            hr.draw(this.mainCtx);
+        });
     }
 
     /**
@@ -264,21 +308,25 @@ export class HorrorGameNetwork
      */
     drawEdge()
     {
-        if (this.backNode) {
+        let keys = Object.keys(this.nodesIdHash);
+        if (keys.length > 0) {
             this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
             this.mainCtx.lineWidth = 1; // 線の太さ
             this.mainCtx.shadowColor = "lime"; // 影の色
             this.mainCtx.shadowBlur = 5; // 影のぼかし効果
 
-            this.backNode.connects.forEach((connect, vertexNo) => {
-                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                    let targetVertex = connect.getVertex();
+            keys.forEach((key) => {
+                let node = this.nodesIdHash[key];
+                node.connects.forEach((connect, vertexNo) => {
+                    if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
+                        let targetVertex = connect.getVertex();
 
-                    this.mainCtx.beginPath();
-                    this.mainCtx.moveTo(this.backNode.vertices[vertexNo].x, this.backNode.vertices[vertexNo].y);
-                    this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
-                    this.mainCtx.stroke();
-                }
+                        this.mainCtx.beginPath();
+                        this.mainCtx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                        this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
+                        this.mainCtx.stroke();
+                    }
+                });
             });
         }
     }
@@ -298,10 +346,6 @@ export class HorrorGameNetwork
 
         this.linkNodes.forEach(linkNode => {
             linkNode.draw(this.mainCtx);
-        });
-
-        this.textNodes.forEach(textNode => {
-            textNode.draw(this.mainCtx);
         });
 
         this.contentLinkNodes.forEach(contentLinkNode => {
@@ -424,7 +468,7 @@ export class HorrorGameNetwork
     openContentNode(url)
     {
         // pushStateにつっこむ
-        window.history.pushState({type: 'contentNode', contentNodeOpenCnt: 0}, '', url);
+        window.history.pushState({type: 'contentNode'}, '', url);
         this.fetch(url, (data) => {
             this.showContentNode(data);
         });
@@ -438,7 +482,6 @@ export class HorrorGameNetwork
     showContentNode(data)
     {
         this.contentNode.open(data);
-        this.contentNodeOpenCnt++;
     }
 
     /**
@@ -452,10 +495,9 @@ export class HorrorGameNetwork
 
         if (!isBack) {
             // pushStateにつっこむ
-            window.history.pushState({type: 'network', contentNodeOpenCnt: this.contentNodeOpenCnt}, null, url);
+            window.history.pushState({type:'network'}, null, url);
             this.isFirstNetwork = false;
         }
-        this.contentNodeOpenCnt = 0;
         this.clearNodes();
         this.bg2.clear();
         this.fetch(url, (data) => {
@@ -507,12 +549,6 @@ export class HorrorGameNetwork
         });
     }
 
-    back()
-    {
-        console.log('back: ' + (-1 - this.contentNodeOpenCnt).toString());
-        window.history.go(-1 - this.contentNodeOpenCnt);
-    }
-
     popState(e)
     {
         if (this.contentNode.isOpened()) {
@@ -523,8 +559,6 @@ export class HorrorGameNetwork
             if (e.state) {
                 if (e.state.type === 'network') {
                     this.changeNetwork(location.href, true);
-
-                    this.contentNodeOpenCnt = e.state.contentNodeOpenCnt;
                 } else if (e.state.type === 'contentNode') {
                     this.openContentNode(location.href, true);
                 }

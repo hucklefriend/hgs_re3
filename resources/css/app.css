@@ -33,6 +33,11 @@ a:hover, a:active {
     color: white;
 }
 
+hr {
+    border: none;
+    height: 1px;
+}
+
 #main-canvas {
     position: absolute;
     top:0;

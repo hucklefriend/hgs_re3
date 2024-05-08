@@ -49,6 +49,7 @@ class GameTitleRequest extends FormRequest
             'introduction'              => 'nullable|max:1000',
             'introduction_from'         => 'required_with:introduction|max:1000',
             'introduction_from_rated_r' => [new Enum(RatedR::class)],
+            'first_release_int'         => 'required|numeric|max:99999999',
         ];
     }
 }

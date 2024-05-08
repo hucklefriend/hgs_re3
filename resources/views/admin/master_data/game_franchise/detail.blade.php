@@ -24,7 +24,11 @@
                 </tr>
                 <tr>
                     <th>ノード表示用名称</th>
-                    <td>{!! $model->node_title !!}</td>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->node_title !!}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <th>シリーズ</th>
@@ -51,12 +55,22 @@
             </table>
         </div>
         <div class="panel-footer">
-            <div class="text-end">
-                <form method="POST" action="{{ route('Admin.MasterData.Franchise.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
-                </form>
+            <div class="d-flex justify-content-between">
+                <div>
+                    @if ($model->prev())
+                        <a href="{{ route('Admin.MasterData.Franchise.Detail', $model->prev()) }}" class="btn btn-default"><i class="fas fa-caret-left"></i></a>
+                    @endif
+                    @if ($model->next())
+                        <a href="{{ route('Admin.MasterData.Franchise.Detail', $model->next()) }}" class="btn btn-default"><i class="fas fa-caret-right"></i></a>
+                    @endif
+                </div>
+                <div class="text-end">
+                    <form method="POST" action="{{ route('Admin.MasterData.Franchise.Delete', $model) }}" onsubmit="return confirm('削除します');">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

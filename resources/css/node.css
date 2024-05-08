@@ -7,6 +7,7 @@
     display: inline-block;
 
     h1 {
+        font-size: 20px;
     }
 
     .title-node-text {
@@ -22,6 +23,22 @@
 .node {
     margin-bottom: 30px;
     display: flex;
+}
+
+.node-review-ge {
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    div:first-child {
+        width: 100%;
+    }
+
+    div:last-child {
+        margin-top: 1rem;
+        width: 100%;
+    }
 }
 
 .node-right {
@@ -217,6 +234,19 @@
 
 /* ファブレット～ */
 @media (min-width: 550px) {
+    .node-review-ge {
+        flex-wrap: nowrap;
+
+        div:first-child {
+            width: auto;
+        }
+
+        div:last-child {
+            margin-left:1rem;
+            min-width:300px;
+            width: 100%;
+        }
+    }
 }
 
 /* タブレット～ */

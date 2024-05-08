@@ -30,8 +30,11 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Title.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+            <div class="d-flex justify-content-between">
+                <div>{{ $titles->appends($search)->links() }}</div>
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Title.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                </div>
             </div>
 
             <table class="table table-hover">
@@ -57,7 +60,12 @@
                 </tbody>
             </table>
 
-            <div>{{ $titles->appends($search)->links() }}</div>
+            <div class="d-flex justify-content-between">
+                <div>{{ $titles->appends($search)->links() }}</div>
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Title.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

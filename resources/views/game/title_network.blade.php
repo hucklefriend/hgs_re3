@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('title', 'タイトルネットワーク.HGN')
+
 @section('content')
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">
@@ -21,7 +23,7 @@
                 レビュー総評
             </h2>
         </div>
-        <div class="node">
+        <div class="node-review-ge">
             <div class="text-node" style="white-space: nowrap;">
                 怖さ：★★★★☆<br>
                 グラフィック：★★★★☆<br>
@@ -29,7 +31,7 @@
                 ストーリー：★★★★☆<br>
                 ゲーム性：★★★★☆
             </div>
-            <div class="text-node" style="margin-left:1rem;min-width:300px;">
+            <div class="text-node">
                 要約<br>
                 このゲームはとても怖いです。グラフィックもサウンドも素晴らしいです。ストーリーも面白いです。ゲーム性も高いです。
             </div>
@@ -123,21 +125,30 @@
             </h2>
         </div>
         <div class="node-lineup">
-            <div>
-                <div class="link-node link-node-center">
-                    <a href="{{ route('Game.FranchiseNetwork', $title->franchise()) }}">
-                        {{ $title->franchise()->node_title }}<br>
-                        フランチャイズ
-                    </a>
+            @if ($title->franchise()->getTitleNum() > 1)
+                <div>
+                    <div class="link-node link-node-center">
+                        <a href="{{ route('Game.FranchiseDetailNetwork', $title->franchise()) }}">
+                            {{ $title->franchise()->node_title }}<br>
+                            フランチャイズ
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">シリーズ</a>
+            @endif
+
+            @foreach ($makers as $maker)
+                <div>
+                    <div class="link-node link-node-center">
+                        <a href="#test">
+                            {{ $maker->node_title }}
+                        </a>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
 
+
+    @include('footer')
 @endsection

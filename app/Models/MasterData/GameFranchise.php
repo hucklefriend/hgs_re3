@@ -40,4 +40,49 @@ class GameFranchise extends \Eloquent
     {
         return $this->belongsToMany(GameTitle::class, GameFranchiseTitleLink::class);
     }
+
+    /**
+     * 前のフランチャイズを取得
+     *
+     * @return self
+     */
+    public function prev(): self
+    {
+        $prev = self::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+        if ($prev !== null) {
+            return $prev;
+        } else {
+            // idが最大のデータを取得
+            return self::orderBy('id', 'desc')->first();
+        }
+    }
+
+    /**
+     * 次のフランチャイズを取得
+     *
+     * @return self
+     */
+    public function next(): self
+    {
+        $next = self::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+        if ($next !== null) {
+            return $next;
+        } else {
+            // idが最小のデータを取得
+            return self::orderBy('id', 'asc')->first();
+        }
+    }
+
+    public function getTitleNum(): int
+    {
+        $num = 0;
+
+        $this->series()->each(function (GameSeries $series) use (&$num) {
+            $num += $series->titles()->count();
+        });
+
+        $num += $this->titles()->count();
+
+        return $num;
+    }
 }

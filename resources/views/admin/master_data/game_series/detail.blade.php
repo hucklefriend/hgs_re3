@@ -24,7 +24,11 @@
                 </tr>
                 <tr>
                     <th>ノード表示用</th>
-                    <td>{!! $model->node_title !!}</td>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->node_title !!}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <th>フランチャイズ</th>

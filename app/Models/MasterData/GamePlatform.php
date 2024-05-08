@@ -107,4 +107,36 @@ class GamePlatform extends Model
             throw $e;
         }
     }
+
+    /**
+     * 前のプラットフォームを取得
+     *
+     * @return self
+     */
+    public function prev(): self
+    {
+        $prev = self::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+        if ($prev !== null) {
+            return $prev;
+        } else {
+            // idが最大のデータを取得
+            return self::orderBy('id', 'desc')->first();
+        }
+    }
+
+    /**
+     * 次のプラットフォームを取得
+     *
+     * @return self
+     */
+    public function next(): self
+    {
+        $next = self::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+        if ($next !== null) {
+            return $next;
+        } else {
+            // idが最小のデータを取得
+            return self::orderBy('id', 'asc')->first();
+        }
+    }
 }

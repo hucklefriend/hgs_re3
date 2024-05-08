@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('title', 'Entrance.hgn')
+
 @section('content')
     <div class="node node-right">
         <div class="link-node">
@@ -91,32 +93,32 @@
         <div class="node-lineup">
             <div>
                 <div class="link-node">
-                    フランチャイズ
+                    Franchise
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    メーカー
+                    Maker
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    プラットフォーム
+                    Platform
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    ジャンル
+                    Tag
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    レビュー
+                    Review
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    日記
+                    User
                 </div>
             </div>
         </div>
@@ -130,12 +132,7 @@
                 </div>
                 <div>
                     <div class="content-link-node">
-                        <a href="{{ route('PrivacyPolicy') }}">Privacy Policy</a>
-                    </div>
-                </div>
-                <div>
-                    <div class="link-node">
-                        Site Map
+                        <a href="{{ route('PrivacyPolicy') }}">PrivacyPolicy</a>
                     </div>
                 </div>
             </div>
