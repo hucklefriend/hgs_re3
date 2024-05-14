@@ -26,7 +26,13 @@
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+            @include ('admin.common.form.textarea', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
+        <th>H1ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.textarea', ['name' => 'h1_node_name', 'options' => ['required', 'maxlength' => 200]])
         </td>
     </tr>
     <tr>

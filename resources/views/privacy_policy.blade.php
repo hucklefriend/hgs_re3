@@ -4,8 +4,7 @@
     <section>
         <h2><i class="bi bi-octagon"></i>Cookieの利用</h2>
         <p>
-            ログイン状態維持のため、クッキーを使用しています。<br>
-            クッキーはブラウザの設定で利用しないようにすることもできますが、利用しない場合は当サイトの一部機能がご利用いただけなくなります。<br>
+            当サイトではログイン状態維持のためCookieを利用しています。<br>
             <br>
             また、当サイトで利用している外部サービスにおいても、クッキーを利用して情報を収集しているものがあります。<br>
             外部サービス毎に項目を用意しておりますので、本画面下部を参照ください。<br>
@@ -67,7 +66,7 @@
         <p>
             下記のアフィリエイトに参加しています。<br>
             当サイト内において、アフィリエイトの画像の表示や商品ページへのリンクを行っている部分があります。<br>
-            また、各サービスにおいて、クッキーを使ってのデータ収集が行われている場合があります。
+            また、各サービスにおいてCookieを使ってのデータ収集が行われている場合があります。
         </p>
         <ul class="mb-4">
             <li class="mb-2"><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト <i class="fas fa-sign-out-alt"></i></a></li>
@@ -77,6 +76,9 @@
                 <a href="https://affiliate.dmm.com/api/" target="_blank" class="ml-1"><img src="https://pics.dmm.com/af/web_service/r18_135_17.gif" width="135" height="17" alt="WEB SERVICE BY DMM.R18"></a>
             </li>
         </ul>
+        <p>
+            アフィリエイトを含むサイトへ遷移するリンクに <i class="bi bi-person"></i> アイコンを表示しています。
+        </p>
     </section>
 
     <section>

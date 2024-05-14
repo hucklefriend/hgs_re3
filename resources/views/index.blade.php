@@ -93,17 +93,17 @@
         <div class="node-lineup">
             <div>
                 <div class="link-node">
-                    Franchise
+                    <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    Maker
+                    <a href="{{ route('Game.MakerNetwork') }}">Maker</a>
                 </div>
             </div>
             <div>
                 <div class="link-node">
-                    Platform
+                    <a href="{{ route('Game.PlatformNetwork') }}">Platform</a>
                 </div>
             </div>
             <div>

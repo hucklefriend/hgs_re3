@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameMaker;
+use App\Models\MasterData\GamePackage;
+use App\Models\MasterData\GamePlatform;
 use App\Models\MasterData\GameTitle;
+use App\Models\MasterData\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -73,7 +76,7 @@ class GameController extends Controller
                     $games[] = (object)[
                         'title'       => $title,
                         'dom_id'      => $id . $title->id,
-                        'node_title'  => $title->node_title,
+                        'node_name'   => $title->node_name,
                         'connections' => is_null($prevId) ? [] : [$prevId],
                     ];
 
@@ -85,7 +88,7 @@ class GameController extends Controller
                 $games[] = (object)[
                     'title'       => $title,
                     'dom_id'      => $id . $title->id,
-                    'node_title'  => $title->node_title,
+                    'node_name'   => $title->node_name,
                     'connections' => [],
                 ];
             }
@@ -109,9 +112,40 @@ class GameController extends Controller
 
     public function makerNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $makers = GameMaker::select(['id', 'node_title'])->orderBy('phonetic')->get();
+        $makers = GameMaker::select(['id', 'node_name'])->orderBy('phonetic')->get();
 
         return $this->network(view('game.maker_network', ['makers' => $makers]));
+    }
+
+    public function makerDetailNetwork(Request $request, GameMaker $maker): JsonResponse|Application|Factory|View
+    {
+        $packages = GamePackage::select(['id'])->where('game_maker_id', $maker->id)->get();
+        $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
+        $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
+
+        return $this->network(view('game.maker_detail_network', [
+            'maker'  => $maker,
+            'titles' => $titles,
+        ]));
+    }
+
+    public function platformNetwork(Request $request): JsonResponse|Application|Factory|View
+    {
+        $platforms = GamePlatform::select(['id', 'node_name'])->orderBy('sort_order')->get();
+
+        return $this->network(view('game.platform_network', ['platforms' => $platforms]));
+    }
+
+    public function platformDetailNetwork(Request $request, GamePlatform $platform): JsonResponse|Application|Factory|View
+    {
+        $packages = GamePackage::select(['id'])->where('game_platform_id', $platform->id)->get();
+        $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
+        $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
+
+        return $this->network(view('game.platform_detail_network', [
+            'platform'  => $platform,
+            'titles' => $titles,
+        ]));
     }
 
     public function franchiseNetwork(Request $request): JsonResponse|Application|Factory|View
@@ -153,6 +187,13 @@ class GameController extends Controller
             'title'    => $title,
             'packages' => $packages,
             'makers'   => $makers,
+        ]));
+    }
+
+    public function packageNetwork(Request $request, GamePackage $pkg): JsonResponse|Application|Factory|View
+    {
+        return $this->network(view('game.package_network', [
+            'pkg'    => $pkg
         ]));
     }
 }

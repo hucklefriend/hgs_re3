@@ -20,7 +20,7 @@
             @foreach ($games as $game)
                 <div>
                     <div class="link-node link-node-center" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">
-                        <a href="{{ route('Game.TitleNetwork',  $game->title) }}">{!! $game->title->node_title !!}</a>
+                        <a href="{{ route('Game.TitleNetwork',  $game->title) }}">{!! $game->title->node_name !!}</a>
                     </div>
                 </div>
             @endforeach

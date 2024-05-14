@@ -20,7 +20,7 @@
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+            @include ('admin.common.form.input', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
         </td>
     </tr>
 </table>

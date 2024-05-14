@@ -12,7 +12,7 @@
         @foreach ($franchises as $franchise)
             <div>
                 <div class="link-node link-node-center">
-                    <a href="{{ route('Game.FranchiseDetailNetwork', $franchise) }}">{!! $franchise->node_title !!}</a>
+                    <a href="{{ route('Game.FranchiseDetailNetwork', $franchise) }}">{!! $franchise->node_name !!}</a>
                 </div>
             </div>
         @endforeach

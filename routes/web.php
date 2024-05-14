@@ -125,10 +125,17 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
-                Route::get('{package}/copy', [$class, 'copy'])->name("{$basename}.Copy");
-                Route::post('{package}/copy', [$class, 'makeCopy'])->name("{$basename}.MakeCopy");
+                Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
+                Route::post('{' . $prefix . '}/copy', [$class, 'makeCopy'])->name("{$basename}.MakeCopy");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+
+                Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
+                Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
+                Route::get('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
+                Route::put('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'updateSHop'])->name("{$basename}.UpdateShop");
+                Route::delete('{' . $prefix . '}/shop/{shop_id}', [$class, 'deleteShop'])->name("{$basename}.DeleteShop");
+
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -152,17 +159,15 @@ Route::group(['prefix' => 'game'], function () {
     Route::get('/franchise', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
     // タイトルネットワーク
     Route::get('/title/{title}', [$class, 'titleNetwork'])->name('Game.TitleNetwork');
+    // パッケージネットワーク
+    Route::get('/package/{pkg}', [$class, 'packageNetwork'])->name('Game.PackageNetwork');
 
-
-
-//    // メーカー
-//    Route::get('maker', [$class, 'maker'])->name('Game.Maker');
-//    // プラットフォーム
-//    Route::get('platform', [$class, 'platform'])->name('Game.Platform');
-//    // シリーズ
-//    Route::get('series', [$class, 'series'])->name('Game.Series');
-//    // タイトル
-//    Route::get('title', [$class, 'title'])->name('Game.Title');
-//    // パッケージ
-//    Route::get('package', [$class, 'package'])->name('Game.Package');
+    // メーカー詳細ネットワーク
+    Route::get('/maker/{maker}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
+    // メーカーネットワーク
+    Route::get('/maker', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
+    // プラットフォーム詳細ネットワーク
+    Route::get('/platform/{platform}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
+    // プラットフォームネットワーク
+    Route::get('/platform', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
 });

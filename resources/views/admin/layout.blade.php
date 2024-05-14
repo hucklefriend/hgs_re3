@@ -19,7 +19,7 @@
     <!-- ================== END core-css ================== -->
 
     <!-- オリジナルCSS -->
-    <link href="{{ asset('admin_assets/style.css') }}" rel="stylesheet" />
+    <link href="{{ asset('admin_assets/style.css') }}?{{ time() }}" rel="stylesheet" />
 
     <!-- ================== BEGIN page-css ================== -->
     <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />

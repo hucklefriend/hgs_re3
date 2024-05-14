@@ -3,14 +3,14 @@
 @section('content')
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">Maker Network</h1>
+            <h1 class="head1">Platform Network</h1>
         </div>
 
         <div class="node-lineup">
-            @foreach ($makers as $maker)
+            @foreach ($platforms as $platform)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">{!! $maker->node_name !!}</a>
+                        <a href="{{ route('Game.PlatformDetailNetwork', $platform) }}">{!! $platform->node_name !!}</a>
                     </div>
                 </div>
             @endforeach

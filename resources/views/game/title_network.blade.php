@@ -38,9 +38,7 @@
         </div>
 
         <div class="node">
-            <h2 class="head2">
-                タグネットワーク
-            </h2>
+            <h2 class="head2">タグ</h2>
         </div>
 
         <div class="node-lineup">
@@ -58,9 +56,7 @@
 
 
         <div class="node">
-            <h2 class="head2">
-                ユーザーコンテンツネットワーク
-            </h2>
+            <h2 class="head2">ユーザーコンテンツ</h2>
         </div>
         <div class="node-lineup">
             <div>
@@ -91,20 +87,31 @@
         </div>
 
         <div class="node">
-            <h2 class="head2">
-                パッケージ・関連商品
-            </h2>
+            <h2 class="head2">パッケージ</h2>
         </div>
-        <div class="node-lineup">
-            @foreach ($packages as $package)
-                <div>
-                    <div class="content-link-node">
-                        <a href="#test">
-                            {{ $package->acronym }}
-                        </a>
+            @foreach ($packages as $pkg)
+                <div style="display:flex;margin-bottom:1rem;">
+                    <div>
+                        <div class="text-node" style="white-space: nowrap;">
+                            【{{ $pkg->platform->acronym }}】{{ $pkg->acronym }}<br>
+                            {{ $pkg->release_at }}発売
+                        </div>
+                    </div>
+                    <div class="node-lineup" style="width:100%">
+                        <div>
+                            <div class="link-node">
+                                <a href="#">
+                                    amazon
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             @endforeach
+
+        <div class="node">
+            <h2 class="head2">関連商品</h2>
         </div>
         <div class="node-lineup">
             <div>
@@ -129,7 +136,7 @@
                 <div>
                     <div class="link-node link-node-center">
                         <a href="{{ route('Game.FranchiseDetailNetwork', $title->franchise()) }}">
-                            {{ $title->franchise()->node_title }}<br>
+                            {{ $title->franchise()->node_name }}<br>
                             フランチャイズ
                         </a>
                     </div>
@@ -139,8 +146,8 @@
             @foreach ($makers as $maker)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="#test">
-                            {{ $maker->node_title }}
+                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">
+                            {!! $maker->node_name !!}
                         </a>
                     </div>
                 </div>
