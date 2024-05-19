@@ -2,22 +2,20 @@
 
 @section('content')
     <div class="node-list">
-        <div class="node node-around">
-            <div class="link-node">
-                <a href="{{ route('HGN') }}"><i class="icon-arrow-left"></i></a>
-            </div>
-            <div class="link-node">
-                <i class="bi bi-search"></i>
-            </div>
+        <div style="text-align:center; margin: 20px 0;">
+            <h1 class="head1">Maker Network</h1>
         </div>
+
         <div class="node-lineup">
-        @foreach ($makers as $maker)
-            <div>
-                <div class="link-node link-node-center">
-                    {!! $maker->name !!}
+            @foreach ($makers as $maker)
+                <div>
+                    <div class="link-node link-node-center">
+                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">{!! $maker->node_name !!}</a>
+                    </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
         </div>
     </div>
+
+    @include('footer')
 @endsection

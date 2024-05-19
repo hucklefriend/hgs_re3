@@ -28,13 +28,11 @@ class HgnController extends Controller
         return $this->network(view('index'));
     }
 
-    public function lineup(): JsonResponse|Application|Factory|View
-    {
-        $franchises = GameFranchise::all(['id', 'node_title']);
-
-        return $this->network(view('lineup', ['franchises' => $franchises]));
-    }
-
+    /**
+     * プライバシーポリシー
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
         return $this->contentNode(view('privacy_policy'));

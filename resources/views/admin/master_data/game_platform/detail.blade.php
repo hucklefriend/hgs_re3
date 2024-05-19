@@ -9,7 +9,7 @@
             <div class="text-end">
                 <a href="{{ route('Admin.MasterData.Platform.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
             </div>
-            <table class="table admin-form-table" id="platform-table">
+            <table class="table admin-detail-table" id="platform-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
@@ -23,8 +23,20 @@
                     <td>{{ $model->acronym }}</td>
                 </tr>
                 <tr>
-                    <th>ノード表示用</th>
-                    <td>{!! $model->node_title !!}</td>
+                    <th>ノード表示用名称</th>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->node_name !!}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>H1ノード表示用名称</th>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->h1_node_name !!}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <th>R指定</th>
@@ -45,6 +57,12 @@
                 <tr>
                     <th>俗称</th>
                     <td>{!! nl2br(e($model->synonymsStr)); !!}</td>
+                </tr>
+                <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.explain', ['model' => $model])
+                    </td>
                 </tr>
             </table>
         </div>

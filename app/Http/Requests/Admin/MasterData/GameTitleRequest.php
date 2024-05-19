@@ -43,12 +43,14 @@ class GameTitleRequest extends FormRequest
         return [
             'name'                      => 'required|max:200',
             'phonetic'                  => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
-            'node_title'                => 'required|max:200',
+            'node_name'                 => 'required|max:200',
+            'h1_node_name'              => 'required|max:200',
             'genre'                     => 'nullable|max:150',
             'original_package_id'       => 'nullable|exists:game_packages,id',
             'introduction'              => 'nullable|max:1000',
             'introduction_from'         => 'required_with:introduction|max:1000',
             'introduction_from_rated_r' => [new Enum(RatedR::class)],
+            'first_release_int'         => 'required|numeric|max:99999999',
         ];
     }
 }

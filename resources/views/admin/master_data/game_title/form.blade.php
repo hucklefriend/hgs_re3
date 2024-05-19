@@ -26,7 +26,13 @@
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'node_title', 'options' => ['required', 'maxlength' => 200]])
+            @include ('admin.common.form.textarea', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+        </td>
+    </tr>
+    <tr>
+        <th>H1ノード表示用の名前</th>
+        <td>
+            @include ('admin.common.form.textarea', ['name' => 'h1_node_name', 'options' => ['required', 'maxlength' => 200]])
         </td>
     </tr>
     <tr>
@@ -51,6 +57,12 @@
         <th>あらすじ引用元のR指定</th>
         <td>
             @include ('admin.common.form.select', ['name' => 'introduction_from_rated_r', 'list' => \App\Enums\RatedR::selectList()])
+        </td>
+    </tr>
+    <tr>
+        <th>最初のパッケージ発売日</th>
+        <td>
+            @include ('admin.common.form.input', ['type' => 'number', 'min' => 0, 'max' => '99999999', 'name' => 'first_release_int'])
         </td>
     </tr>
 </table>

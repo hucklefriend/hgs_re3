@@ -24,11 +24,15 @@ class GameMakerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => 'required|max:100',
-            'acronym'     => 'required|max:100',
-            'phonetic'    => 'required|max:100|regex:/^[あ-ん][ぁ-んー0-9]*/u',
-            'node_title'  => 'required|max:200',
-            'synonymsStr' => '',
+            'name'                => 'required|max:100',
+            'acronym'             => 'required|max:100',
+            'phonetic'            => 'required|max:100|regex:/^[あ-ん][ぁ-んー0-9]*/u',
+            'node_name'           => 'required|max:200',
+            'h1_node_name'        => 'required|max:200',
+            'synonymsStr'         => '',
+            'explain'             => 'required',
+            'explain_source_name' => 'max:100',
+            'explain_source_url'  => 'max:100',
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class GameMaker extends \Eloquent
@@ -24,7 +25,12 @@ class GameMaker extends \Eloquent
      */
     public string $synonymsStr = '';
 
-    public function synonyms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    /**
+     * 俗称
+     *
+     * @return HasMany
+     */
+    public function synonyms(): HasMany
     {
         return $this->hasMany(GameMakerSynonym::class, 'game_maker_id');
     }

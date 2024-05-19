@@ -24,9 +24,10 @@ class GameFranchiseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => 'required|max:200',
-            'phonetic'   => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/u',
-            'node_title' => 'required|max:200',
+            'name'         => 'required|max:200',
+            'phonetic'     => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/u',
+            'node_name'    => 'required|max:200',
+            'h1_node_name' => 'required|max:200',
         ];
     }
 }
