@@ -92,20 +92,26 @@
             @foreach ($packages as $pkg)
                 <div style="display:flex;margin-bottom:1rem;">
                     <div>
-                        <div class="text-node" style="white-space: nowrap;">
+                        <div class="text-node" style="white-space: nowrap;text-align: center;">
+                            @if ($pkg->img_s_url !== null)
+                                <div>
+                                    <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}" style="max-width:100px;max-height:100px;">
+                                </div>
+                            @endif
                             【{{ $pkg->platform->acronym }}】{{ $pkg->acronym }}<br>
                             {{ $pkg->release_at }}発売
                         </div>
                     </div>
                     <div class="node-lineup" style="width:100%">
-                        <div>
-                            <div class="link-node">
-                                <a href="#">
-                                    amazon
-                                </a>
+                        @foreach($pkg->shops as $shop)
+                            <div>
+                                <div class="link-node">
+                                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
+                                        <i class="bi bi-shop"></i> {{ $shop->shop()->name }}
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-
+                        @endforeach
                     </div>
                 </div>
             @endforeach

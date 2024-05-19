@@ -123,6 +123,12 @@
                         <div class="menu-item {{ menu_active("Admin.MasterData.Package") }}">
                             <a href="{{ route("Admin.MasterData.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
                         </div>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.RelatedProduct") }}">
+                            <a href="{{ route("Admin.MasterData.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.MasterData.MediaMix") }}">
+                            <a href="{{ route("Admin.MasterData.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
+                        </div>
                     </div>
                 </div>
 
@@ -195,7 +201,10 @@
 <script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
 
 <script src="{{ asset('admin_assets/common.js') }}"></script>
-
+<script>
+    $(".default-select2").select2();
+    $(".multiple-select2").select2();
+</script>
 @hasSection('js') @yield('js') @endif
 
 <!-- ================== END page-js ================== -->

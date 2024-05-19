@@ -12,11 +12,21 @@ class GameTitlePackageLink extends \Eloquent
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
-    public function soft(): BelongsTo
+    /**
+     * タイトル
+     *
+     * @return BelongsTo
+     */
+    public function title(): BelongsTo
     {
         return $this->belongsTo(GameTitle::class);
     }
 
+    /**
+     * パッケージ
+     *
+     * @return BelongsTo
+     */
     public function package(): BelongsTo
     {
         return $this->belongsTo(GamePackage::class);

@@ -186,6 +186,12 @@ class GamePackageController extends AbstractAdminController
         return redirect()->route('Admin.MasterData.Package');
     }
 
+    /**
+     * ショップの登録
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
+     */
     public function addShop(GamePackage $package)
     {
         return view('admin.master_data.game_package.add_shop', [
@@ -194,9 +200,15 @@ class GamePackageController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * ショップの登録処理
+     *
+     * @param GamePackageShopRequest $request
+     * @param GamePackage $package
+     * @return RedirectResponse
+     */
     public function storeShop(GamePackageShopRequest $request, GamePackage $package)
     {
-        Log::debug(print_r($request->validated(), true));
         $shop = new GamePackageShop();
         $shop->game_package_id = $package->id;
         $shop->fill($request->validated());
@@ -204,6 +216,13 @@ class GamePackageController extends AbstractAdminController
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
     }
 
+    /**
+     * ショップの編集
+     *
+     * @param GamePackage $package
+     * @param $shop_id
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
+     */
     public function editShop(GamePackage $package, $shop_id)
     {
         $shop = $package->shops()->firstWhere('shop_id', $shop_id);
@@ -213,6 +232,14 @@ class GamePackageController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * ショップの編集処理
+     *
+     * @param GamePackageShopRequest $request
+     * @param GamePackage $package
+     * @param $shop_id
+     * @return RedirectResponse
+     */
     public function updateShop(GamePackageShopRequest $request, GamePackage $package, $shop_id)
     {
         $shop = $package->shops()->firstWhere('shop_id', $shop_id);
@@ -222,6 +249,13 @@ class GamePackageController extends AbstractAdminController
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
     }
 
+    /**
+     * ショップの削除
+     *
+     * @param GamePackage $package
+     * @param $shop_id
+     * @return RedirectResponse
+     */
     public function deleteShop(GamePackage $package, $shop_id)
     {
         $package->shops()->where('shop_id', $shop_id)->delete();

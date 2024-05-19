@@ -62,10 +62,25 @@ class GameTitle extends \Eloquent
     }
 
     /**
+     * 関連商品
+     *
+     * @return BelongsToMany
+     */
+    public function titles(): BelongsToMany
+    {
+        return $this->belongsToMany(GameRelatedProduct::class, GameTitleRelatedProductLink::class);
+    }
+
+    /**
      * @var string 俗称の改行区切り文字列
      */
     public string $synonymsStr = '';
 
+    /**
+     * 俗称
+     *
+     * @return HasMany
+     */
     public function synonyms(): HasMany
     {
         return $this->hasMany(GameTitleSynonym::class, 'game_title_id');

@@ -133,9 +133,48 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
                 Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
                 Route::get('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
-                Route::put('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'updateSHop'])->name("{$basename}.UpdateShop");
+                Route::put('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'updateShop'])->name("{$basename}.UpdateShop");
                 Route::delete('{' . $prefix . '}/shop/{shop_id}', [$class, 'deleteShop'])->name("{$basename}.DeleteShop");
 
+                Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+                Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+            });
+
+            // 関連商品
+            $prefix = 'related_product';
+            Route::group(['prefix' => $prefix], function () use ($prefix) {
+                $basename = 'Admin.MasterData.RelatedProduct';
+                $class = Admin\MasterData\GameRelatedProductController::class;
+                Route::get('/', [$class, 'index'])->name($basename);
+                Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+                Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+                Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+                Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
+                Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+                Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
+                Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
+                Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
+                Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
+                Route::get('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
+                Route::put('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'updateShop'])->name("{$basename}.UpdateShop");
+                Route::delete('{' . $prefix . '}/shop/{shop_id}', [$class, 'deleteShop'])->name("{$basename}.DeleteShop");
+                Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+                Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+            });
+
+            // メディアミックス
+            $prefix = 'media_mix';
+            Route::group(['prefix' => $prefix], function () use ($prefix) {
+                $basename = 'Admin.MasterData.MediaMix';
+                $class = Admin\MasterData\GameMediaMixController::class;
+                Route::get('/', [$class, 'index'])->name($basename);
+                Route::get('add', [$class, 'add'])->name("{$basename}.Add");
+                Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
+                Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+                Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
+                Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
