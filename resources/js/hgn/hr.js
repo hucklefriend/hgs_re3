@@ -31,8 +31,6 @@ export class HR
      */
     draw(ctx)
     {
-        console.log('hr: ' + this.dom.offsetLeft + ', ' + this.dom.offsetTop);
-
         ctx.beginPath();
         ctx.moveTo(this.dom.offsetLeft, this.dom.offsetTop);
         ctx.lineTo(this.dom.offsetLeft + this.dom.offsetWidth, this.dom.offsetTop);

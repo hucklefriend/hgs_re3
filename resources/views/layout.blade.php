@@ -16,10 +16,12 @@
     @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/css/node.css', 'resources/js/app.js'])
 </head>
 <body>
-<div class="container">
-    <main>
-        @yield('content')
-    </main>
+<div id="scroller">
+    <div class="container">
+        <main>
+            @yield('content')
+        </main>
+    </div>
     <canvas id="main-canvas"></canvas>
     <canvas id="bg1" style=""></canvas>
     <canvas id="bg2" style="position: absolute;top:0;left:0; z-index: -1002;"></canvas>
@@ -38,6 +40,9 @@
     <div id="content-node-footer">
         <div class="content-node-close"><i class="icon-close"></i></div>
     </div>
+</div>
+<div id="popups">
+    @yield('popup')
 </div>
 <div id="debug" style="visibility: hidden;"></div>
 </body>
