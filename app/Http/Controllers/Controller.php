@@ -26,6 +26,7 @@ class Controller extends BaseController
             $rendered = $view->renderSections();
             return response()->json([
                 'network' => $rendered['content'],
+                'popup'   => $rendered['popup'] ?? '',
             ]);
         }
 

@@ -6,7 +6,22 @@ body {
     font-weight: 300;
     font-style: normal;
     font-size: 14px;
-    margin-bottom: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+#scroller {
+    position: absolute;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#scroller.self-scroll {
+    height: 100vh;
+    overflow: scroll;
+    scrollbar-width: none;
 }
 
 .container {
@@ -15,13 +30,18 @@ body {
     width: calc(100% - 10px);
 }
 
+#scroller.self-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+
 p, blockquote {
     padding: 0;
     margin: 0;
 }
 
 main {
-    margin-top: 50px;
+    padding-top: 50px;
 }
 
 a:link, a:visited {
@@ -36,6 +56,24 @@ a:hover, a:active {
 hr {
     border: none;
     height: 1px;
+}
+
+.horrorgame_search {
+
+    > form {
+        > div {
+            margin: 1rem 0;
+        }
+    }
+
+    #platform_check, #rating_check {
+        line-height: 2rem;
+
+        label {
+            white-space: nowrap;
+            margin-right: 20px;
+        }
+    }
 }
 
 #main-canvas {

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterData\GameFranchise;
+use App\Models\MasterData\GameFranchiseSeriesLink;
+use App\Models\MasterData\GameFranchiseTitleLink;
 use App\Models\MasterData\GameMaker;
 use App\Models\MasterData\GamePackage;
 use App\Models\MasterData\GamePlatform;
+use App\Models\MasterData\GameSeriesTitleLink;
 use App\Models\MasterData\GameTitle;
 use App\Models\MasterData\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
@@ -13,9 +16,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
@@ -30,8 +30,39 @@ class GameController extends Controller
     public function horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
     {
         $page = $request->get('page', 1);
+        $queries = [];
+        $search = ['n' => '', 'p' => [], 'r' => []];
 
-        $franchiseNum = GameFranchise::count();
+        $franchisesQuery = GameFranchise::orderBy('phonetic');
+
+        $name = $request->get('n', '');
+        if (strlen($name) > 0) {
+            $search['n'] = $name;
+            $franchisesQuery->where('name', 'like', '%' . $name . '%');
+        }
+
+        $platforms = $request->get('p', '');
+        $titleIds = [];
+        if (!empty($platforms)) {
+            $queries['p'] = $platforms;
+            $platforms = explode(',', $platforms);
+            $search['p'] = $platforms;
+            $packages = GamePackage::select(['id'])->whereIn('game_platform_id', $platforms)->get()->pluck('id');
+            $titles = GameTitlePackageLink::whereIn('game_package_id', $packages)->distinct()->get()->pluck('game_title_id');
+            $series = GameSeriesTitleLink::whereIn('game_title_id', $titles)->distinct()->pluck('game_series_id');
+            $franchisesBySeries = GameFranchiseSeriesLink::whereIn('game_series_id', $series)->distinct()->pluck('game_franchise_id');
+            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $series)->distinct()->pluck('game_franchise_id');
+            $linkedFranchiseIds = $franchisesBySeries->merge($franchisesByTitle)->unique();
+            $franchisesQuery->whereIn('id', $linkedFranchiseIds);
+
+            $titleIds = $titles;
+            if (!empty($series)) {
+                $titleIds->merge(GameSeriesTitleLink::whereIn('game_series_id', $series)
+                    ->distinct()->pluck('game_title_id')->toArray());
+            }
+        }
+
+        $franchiseNum = $franchisesQuery->count();
         $maxPage = ceil($franchiseNum / self::ITEM_PER_PAGE);
 
         if ($page < 1) {
@@ -49,7 +80,7 @@ class GameController extends Controller
             $nextPage = null;
         }
 
-        $franchises = GameFranchise::orderBy('phonetic')
+        $franchises = $franchisesQuery
             ->limit(self::ITEM_PER_PAGE)
             ->offset(($page - 1) * self::ITEM_PER_PAGE)
             ->get();
@@ -61,9 +92,9 @@ class GameController extends Controller
 
             $titleNum = 0;
             foreach ($franchise->series as $series) {
-                $titleNum = count($series->titles);
+                $titleNum = count($series->titles->whereIn('id', $titleIds));
             }
-            $titleNum += count($franchise->titles);
+            $titleNum += count($franchise->titles->whereIn('id', $titleIds));
 
             if ($titleNum > 1) {
                 $groups[] = $games;
@@ -72,7 +103,7 @@ class GameController extends Controller
 
             foreach ($franchise->series as $series) {
                 $prevId = null;
-                foreach ($series->titles as $title) {
+                foreach ($series->titles->whereIn('id', $titleIds) as $title) {
                     $games[] = (object)[
                         'title'       => $title,
                         'dom_id'      => $id . $title->id,
@@ -84,7 +115,7 @@ class GameController extends Controller
                 }
             }
 
-            foreach ($franchise->titles as $title) {
+            foreach ($franchise->titles->whereIn('id', $titleIds) as $title) {
                 $games[] = (object)[
                     'title'       => $title,
                     'dom_id'      => $id . $title->id,
@@ -103,10 +134,12 @@ class GameController extends Controller
         }
 
         return $this->network(view('game.horrorgame_network', [
+            'platforms' => GamePlatform::select(['id', 'acronym'])->orderBy('sort_order')->get(),
             'groups' => $groups,
             'page'   => $page,
-            'prev'   => $prevPage,
-            'next'   => $nextPage,
+            'prev'   => array_merge($queries, ['page' => $prevPage]),
+            'next'   => array_merge($queries, ['page' => $nextPage]),
+            'search' => $search,
         ]));
     }
 

@@ -137,7 +137,6 @@ export class Background2
 
     createRandomNetwork(node, maxDepth)
     {
-        console.log(node.subNetworkSize);
         if (node.subNetworkSize === 0) {
             return;
         }
@@ -242,8 +241,6 @@ export class Background2
 
     resize()
     {
-
-
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = document.documentElement.scrollHeight;
 
