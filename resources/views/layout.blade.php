@@ -12,6 +12,13 @@
     <script>
         window.Laravel = {!! json_encode(['csrfToken' => csrf_token()]) !!};
         window.baseUrl = '{{ url('/') }}';
+
+        @isset($contentNode)
+            window.contentNode = @json($contentNode);
+        @else
+            window.contentNode = null;
+        @endif
+
     </script>
     @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/css/node.css', 'resources/js/app.js'])
 </head>
@@ -31,14 +38,16 @@
 </div>
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
-    <canvas id="content-node-canvas"></canvas>
-    <div id="content-node-header">
-        <h1 id="content-node-title"></h1>
-        <div class="content-node-close"><i class="icon-close"></i></div>
-    </div>
-    <div id="content-node-body"></div>
-    <div id="content-node-footer">
-        <div class="content-node-close"><i class="icon-close"></i></div>
+    <div id="content-node-container">
+        <canvas id="content-node-canvas"></canvas>
+        <div id="content-node-header">
+            <h1 id="content-node-title"></h1>
+            <div class="content-node-close"><i class="icon-close"></i></div>
+        </div>
+        <div id="content-node-body"></div>
+        <div id="content-node-footer">
+            <div class="content-node-close"><i class="icon-close"></i></div>
+        </div>
     </div>
 </div>
 <div id="popups">

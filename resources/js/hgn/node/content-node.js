@@ -102,6 +102,7 @@ export class ContentNode extends OctaNode
         this.ctx = this.canvas.getContext('2d');
 
         this.DOM = DOM;
+        this.containerDOM = this.DOM.querySelector('#content-node-container');
         this.titleDOM = this.DOM.querySelector('#content-node-title');
         this.bodyDOM = this.DOM.querySelector('#content-node-body');
 
@@ -134,11 +135,10 @@ export class ContentNode extends OctaNode
      */
     reload()
     {
-        const height = this.DOM.offsetHeight;//this.bodyDOM.offsetHeight + Param.CONTENT_NODE_NOTCH_SIZE * 2;
-        super.reload(0, 0, this.DOM.offsetWidth, height);
+        super.reload(3, 3, this.containerDOM.offsetWidth - 6, this.containerDOM.offsetHeight - 6);
 
-        this.canvas.width = this.DOM.offsetWidth;
-        this.canvas.height = height;
+        this.canvas.width = this.containerDOM.offsetWidth;
+        this.canvas.height = this.containerDOM.offsetHeight;
     }
 
     /**
@@ -168,6 +168,7 @@ export class ContentNode extends OctaNode
      */
     open(data)
     {
+
         this.state = ContentNode.STATE_OPENED;
         this.openScrollY = window.scrollY;
 
@@ -176,7 +177,7 @@ export class ContentNode extends OctaNode
 
         document.querySelector('#content-node-blur').style.display = 'block';
 
-        window.scrollTo(0, 0);
+        HorrorGameNetwork.getInstance().setContainerScrollMode(0, 0);
 
         this.titleDOM.innerHTML = data.title;
         this.bodyDOM.innerHTML = data.body;
@@ -196,7 +197,11 @@ export class ContentNode extends OctaNode
         this.titleDOM.innerHTML = '';
         this.bodyDOM.innerHTML = '';
 
-        window.scrollTo(0, this.openScrollY);
+        // こうやっとけばメモリ節約になるかな？
+        this.canvas.width = 1;
+        this.canvas.height = 1;
+
+        HorrorGameNetwork.getInstance().setBodyScrollMode(0, this.openScrollY);
 
         if (!isPopState) {
             if (this.historyUrl) {
@@ -210,6 +215,24 @@ export class ContentNode extends OctaNode
     }
 
     /**
+     * ウィンドウサイズの変更
+     */
+    changeSize()
+    {
+        if (this.isClosed()) {
+            return;
+        }
+
+        if (this.canvas.width === this.containerDOM.offsetWidth &&
+            this.canvas.height === this.containerDOM.offsetHeight) {
+            return;
+        }
+
+        this.reload();
+        this.draw();
+    }
+
+    /**
      * 描画
      */
     draw()
@@ -219,11 +242,11 @@ export class ContentNode extends OctaNode
 
         // Set line color
         this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
-        this.ctx.lineWidth = 5; // 線の太さ
+        this.ctx.lineWidth = 3; // 線の太さ
         this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
         this.ctx.lineCap = "round"; // 線の末端のスタイル
         this.ctx.shadowColor = "lime"; // 影の色
-        this.ctx.shadowBlur = 10; // 影のぼかし効果
+        this.ctx.shadowBlur = 5; // 影のぼかし効果
         this.ctx.stroke();
     }
 

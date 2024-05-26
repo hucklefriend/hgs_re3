@@ -2,7 +2,7 @@
 body {
     background-color: black;
     color: white;
-    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "Noto Serif JP", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", serif;
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
     font-weight: 300;
     font-style: normal;
     font-size: 14px;
@@ -20,8 +20,8 @@ body {
 
 #scroller.self-scroll {
     height: 100vh;
-    overflow: scroll;
-    scrollbar-width: none;
+    overflow: hidden;
+    /*scrollbar-width: none;*/
 }
 
 .container {

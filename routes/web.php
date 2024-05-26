@@ -184,8 +184,9 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 $class = HgnController::class;
-Route::get('', [$class, 'index'])->name('HGN');
+Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
+Route::get('about', [$class, 'about'])->name('About');
 
 // マスター
 Route::group(['prefix' => 'game'], function () {

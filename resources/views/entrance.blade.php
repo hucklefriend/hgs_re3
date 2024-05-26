@@ -5,7 +5,7 @@
 @section('content')
     <div class="node node-right">
         <div class="link-node">
-            Sign In / Sign Up
+            SignIn
         </div>
     </div>
     <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
@@ -20,6 +20,7 @@
         </div>
     </div>
 
+    {{--
     <section style="margin-bottom: 30px;">
         <h2 class="head2">News</h2>
         <div class="news-node">
@@ -56,7 +57,7 @@
             </div>
         </div>
     </section>
-
+--}}
     <section class="news-node" style="margin-top: 100px;margin-bottom: 30px;">
         <h2 class="head2">Information</h2>
 
@@ -118,7 +119,17 @@
             </div>
             <div>
                 <div class="link-node">
-                    User
+                    SignIn
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    SighUp
+                </div>
+            </div>
+            <div>
+                <div class="link-node">
+                    MyPage
                 </div>
             </div>
         </div>
@@ -127,7 +138,7 @@
             <div class="node-lineup">
                 <div>
                     <div class="content-link-node">
-                        About
+                        <a href="{{ route('About') }}">About</a>
                     </div>
                 </div>
                 <div>
