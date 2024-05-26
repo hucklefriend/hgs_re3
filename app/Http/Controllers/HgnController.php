@@ -18,20 +18,33 @@ class HgnController extends Controller
      * トップページ
      *
      * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
      */
-    public function index(): JsonResponse|Application|Factory|View
+    public function entrance(): JsonResponse|Application|Factory|View
     {
         if (!App::environment('local')) {
             return view('suspend');
         }
 
-        return $this->network(view('index'));
+        return $this->network(view('entrance'));
+    }
+
+    /**
+     * 当サイトについて
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function about(): JsonResponse|Application|Factory|View
+    {
+        return $this->contentNode(view('about'));
     }
 
     /**
      * プライバシーポリシー
      *
      * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
      */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {

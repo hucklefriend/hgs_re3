@@ -4,7 +4,7 @@
 <div class="node-lineup" style="margin-top:50px;margin-bottom: 50px;">
     <div>
         <div class="link-node link-node-center">
-            <a href="{{ route('HGN') }}">Entrance</a>
+            <a href="{{ route('Entrance') }}">Entrance</a>
         </div>
     </div>
     <div>
@@ -14,12 +14,12 @@
     </div>
     <div>
         <div class="link-node link-node-center">
-            <a href="{{ route('HGN') }}">Sign In / Sign Up</a>
+            <a href="{{ route('Entrance') }}">Sign In / Sign Up</a>
         </div>
     </div>
     <div>
         <div class="link-node">
-            <a href="{{ route('HGN') }}">My Page</a>
+            <a href="{{ route('Entrance') }}">My Page</a>
         </div>
     </div>
 </div>

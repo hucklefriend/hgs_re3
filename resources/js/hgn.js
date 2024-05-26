@@ -335,6 +335,11 @@ export class HorrorGameNetwork
 
         this.draw();
 
+        if (window.contentNode !== null) {
+            this.showContentNode(window.contentNode);
+            window.contentNode = null;
+        }
+
         if (Param.SHOW_DEBUG) {
             this.showDebug();
         }
@@ -435,6 +440,7 @@ export class HorrorGameNetwork
     update()
     {
         this.changeSize();
+        this.contentNode.changeSize();
         this.scroll();
 
         if (this.redrawFlag) {
@@ -652,6 +658,7 @@ export class HorrorGameNetwork
         this.scroller.classList.add('self-scroll');
 
         // スクロール位置をリセット
+        window.scrollTo(x, y);
         this.scroller.scrollTo(x, y);
     }
 }
