@@ -114,6 +114,11 @@ export class HorrorGameNetwork
         return new HorrorGameNetwork();
     }
 
+    getHeight()
+    {
+        return this.mainDOM.offsetHeight;
+    }
+
     /**
      * DOMからノードの読み取り
      */
@@ -571,6 +576,7 @@ export class HorrorGameNetwork
             window.history.pushState({type:'network'}, null, url);
         }
         this.clearNodes();
+        this.mainDOM.innerHTML = '';
         this.bg2.clear();
         this.fetch(url, (data) => {
             this.showNewNetwork(data);

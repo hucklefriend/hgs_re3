@@ -91,7 +91,6 @@ export class Background2
         network.addOctaNode(502, Param.LLT, 505, -50, -30, 25);
         network.addOctaNode(505, Param.LLT, 506, -70, -10, 25);
 
-
         network.addOctaNode(hgsNode, Param.LLT, 601, -60, 0, 25);
         network.addOctaNode(601, Param.LLB, 602, -80, 0, 30);
         network.addPointNode(602, Param.LTT, 603, -5, -50, 5);
@@ -227,7 +226,7 @@ export class Background2
     resize()
     {
         this.canvas.width = document.documentElement.scrollWidth;
-        this.canvas.height = document.documentElement.scrollHeight;
+        this.canvas.height = window.hgn.getHeight();
 
 
         this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度

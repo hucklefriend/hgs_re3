@@ -93,9 +93,17 @@ class GameController extends Controller
 
             $titleNum = 0;
             foreach ($franchise->series as $series) {
-                $titleNum = count($series->titles->whereIn('id', $titleIds));
+                if (empty($titleIds)) {
+                    $titleNum = $series->titles->count();
+                } else {
+                    $titleNum = $series->titles->whereIn('id', $titleIds)->count();
+                }
             }
-            $titleNum += count($franchise->titles->whereIn('id', $titleIds));
+            if (empty($titleIds)) {
+                $titleNum = $franchise->titles->count();
+            } else {
+                $titleNum = $franchise->titles->whereIn('id', $titleIds)->count();
+            }
 
             if ($titleNum > 1) {
                 $groups[] = $games;
@@ -104,7 +112,13 @@ class GameController extends Controller
 
             foreach ($franchise->series as $series) {
                 $prevId = null;
-                foreach ($series->titles->whereIn('id', $titleIds) as $title) {
+                if (empty($titleIds)) {
+                    $titles = $series->titles;
+                } else {
+                    $titles = $series->titles->whereIn('id', $titleIds);
+                }
+
+                foreach ($titles as $title) {
                     $games[] = (object)[
                         'title'       => $title,
                         'dom_id'      => $id . $title->id,
@@ -116,7 +130,12 @@ class GameController extends Controller
                 }
             }
 
-            foreach ($franchise->titles->whereIn('id', $titleIds) as $title) {
+            if (empty($titleIds)) {
+                $titles = $franchise->titles;
+            } else {
+                $titles = $franchise->titles->whereIn('id', $titleIds);
+            }
+            foreach ($titles as $title) {
                 $games[] = (object)[
                     'title'       => $title,
                     'dom_id'      => $id . $title->id,
