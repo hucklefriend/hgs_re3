@@ -111,17 +111,17 @@ export class Background3
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.drawLight();
-        this.networks.forEach(network => {
-
-            this.ctx.font = '8px Arial';
-            this.ctx.strokeStyle = "rgba(30, 50, 30, 0.8)"; // 線の色と透明度
-            this.ctx.lineWidth = 1; // 線の太さ
-            this.ctx.shadowColor = "rgb(50, 80, 50)"; // 影の色
-            this.ctx.shadowBlur = 3; // 影のぼかし効果
-            this.ctx.fillStyle = "rgba(40, 80, 40, 0.6)"; // 線の色と透明度
-
-            network.draw(this.ctx, 0, 0, Param.BG3_MAKE_NETWORK_MODE);
-        });
+        // this.networks.forEach(network => {
+        //
+        //     this.ctx.font = '8px Arial';
+        //     this.ctx.strokeStyle = "rgba(30, 50, 30, 0.8)"; // 線の色と透明度
+        //     this.ctx.lineWidth = 1; // 線の太さ
+        //     this.ctx.shadowColor = "rgb(50, 80, 50)"; // 影の色
+        //     this.ctx.shadowBlur = 3; // 影のぼかし効果
+        //     this.ctx.fillStyle = "rgba(40, 80, 40, 0.6)"; // 線の色と透明度
+        //
+        //     network.draw(this.ctx, 0, 0, Param.BG3_MAKE_NETWORK_MODE);
+        // });
     }
 
     drawLight()

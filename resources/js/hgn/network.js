@@ -238,6 +238,7 @@ export class Bg2Network extends Network
      * @param baseNode
      * @param vertexNo
      * @param offsetX
+     * @param myNo
      * @param offsetY
      * @param w
      * @param h
@@ -245,7 +246,7 @@ export class Bg2Network extends Network
      * @param newNodeVertexNo
      * @returns {Bg2OctaNode}
      */
-    addOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
+    addOctaNode(baseNode, vertexNo, myNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
     {
         if (Number.isInteger(baseNode)) {
             baseNode = this.nodes[baseNode];
@@ -259,7 +260,8 @@ export class Bg2Network extends Network
         }
 
         let newNode = new Bg2OctaNode(baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
-        this.nodes.push(newNode);
+        this.nodes[myNo] = newNode;
+        //this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
 
         return newNode;
@@ -270,20 +272,22 @@ export class Bg2Network extends Network
      *
      * @param baseNode
      * @param vertexNo
+     * @param myNo
      * @param offsetX
      * @param offsetY
      * @param r
      * @param newNodeClass
      * @returns {Bg2PointNode}
      */
-    addPointNode(baseNode, vertexNo, offsetX, offsetY, r = 5, newNodeClass = null)
+    addPointNode(baseNode, vertexNo, myNo, offsetX, offsetY, r = 5, newNodeClass = null)
     {
         if (Number.isInteger(baseNode)) {
             baseNode = this.nodes[baseNode];
         }
 
         let newNode = new Bg2PointNode(baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
-        this.nodes.push(newNode);
+        this.nodes[myNo] = newNode;
+        //this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo);
 
         return newNode;

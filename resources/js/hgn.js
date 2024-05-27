@@ -1,6 +1,7 @@
 import {Network} from "./hgn/network.js";
 
-import {DOMNode, TitleNode, TextNode} from './hgn/node/octa-node.js';
+import {DOMNode, TitleNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
+import {Bg2PointNode} from './hgn/node/point-node.js';
 import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Head1Node, Head2Node} from './hgn/node/head-node.js';
@@ -375,7 +376,8 @@ export class HorrorGameNetwork
             keys.forEach((key) => {
                 let node = this.nodesIdHash[key];
                 node.connects.forEach((connect, vertexNo) => {
-                    if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
+                    if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING &&
+                        !(connect.node instanceof Bg2OctaNode) && !(connect.node instanceof Bg2PointNode)){
                         let targetVertex = connect.getVertex();
 
                         this.mainCtx.beginPath();
@@ -500,6 +502,9 @@ export class HorrorGameNetwork
         if (this.contentNode.isOpened()) {
             this.contentNode.scroll();
         }
+
+        this.prevScrollX = window.scrollX;
+        this.prevScrollY = window.scrollY;
     }
 
     /**
