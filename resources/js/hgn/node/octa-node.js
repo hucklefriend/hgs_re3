@@ -400,7 +400,7 @@ export class OctaNode
      */
     static standardNotchSize(w)
     {
-        if (w <= 10) {
+        if (w <= 20) {
             return 5;
         } else if (w <= 25) {
             return 8;
@@ -476,8 +476,8 @@ export class Bg2OctaNode extends OctaNode
      */
     reload()
     {
-        super.reload(this.connection.node.x + this.offsetX,
-            this.connection.node.y + this.offsetY, this.w, this.h);
+        super.reload(this.connection.getVertex().x + this.offsetX,
+            this.connection.getVertex().y + this.offsetY, this.w, this.h);
     }
 
     /**

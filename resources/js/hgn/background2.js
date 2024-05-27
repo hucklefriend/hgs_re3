@@ -33,104 +33,77 @@ export class Background2
     {
         let network = new Bg2Network(hgsNode);
         let p = 0;
-        network.addOctaNode(hgsNode, Param.LTT, -80, -80, 40);
+        network.addOctaNode(hgsNode, Param.LTT, 0, -80, -80, 40);
 
-        network.addOctaNode(0, Param.LTT, -50, -80, 40);
-        network.addPointNode(1, Param.LTT, -40, -20);
-        network.addPointNode(2, null, -10, -40);
-        network.addOctaNode(2, null, -70, 20, 30);
-        network.addPointNode(4, Param.LTT, -60, -60);
-        network.addPointNode(4, Param.LLB, -30, -20);
-        network.addOctaNode(6, null, -60, -20, 30);
-        network.addNodeConnection(5, 7, null, Param.LTT)
+        network.addOctaNode(0, Param.LTT, 1, -50, -80, 40);
+        network.addPointNode(1, Param.LTT, 2, -40, -20);
+        network.addOctaNode(2, null, 3, -70, 20, 30);
+        network.addOctaNode(2, null, 4, -10, -60, 30);
+        network.addPointNode(3, Param.LTT, 5, -40, -30);
+        network.addOctaNode(5, null, 6, -30, -60, 25);
+        network.addOctaNode(5, null, 7, -70, 30, 20);
 
-        network.addOctaNode(hgsNode, Param.RTT, 30, -80, 40);
-        network.addOctaNode(8, Param.LTT, -70, -40, 35);
-        network.addPointNode(9, Param.LLB, -70, 40, 7);
-        network.addOctaNode(10, null, -90, -40, 35);
-        network.addOctaNode(11, Param.LLT, -100, -40, 30);
-        network.addNodeConnection(12, 0, Param.LLB, Param.RRT);
-        network.addPointNode(12, Param.LLT, -40, -80, 5);
-        network.addPointNode(12, Param.RTT, 10, -40, 5);
-        network.addPointNode(14, Param.RTT, -10, -70, 5);
-        network.addPointNode(11, Param.LTT, -10, -40, 5);
-        network.addOctaNode(16, null, 30, -60, 40);
-        network.addOctaNode(17, Param.RBB, 20, 20, 30);
-        network.addOctaNode(17, Param.RTT, 60, -60, 30);
-        network.addOctaNode(19, Param.RRT, -40, -120, 25);
-        network.addPointNode(17, Param.LLT, -30, -40, 5);
-        network.addPointNode(17, Param.RRT, 40, -10, 5);
-        network.addNodeConnection(9, 23, Param.LTT);
-        network.addPointNode(9, Param.RTT, 70, -80, 5);
-        network.addPointNode(8, Param.RTT, 60, -40, 5);
-        network.addPointNode(24, Param.LLT, 60, -10, 5);
-        network.addOctaNode(25, null, 30, -60, 35);
-        network.addOctaNode(26, Param.RTT, 60, -40, 35);
-        network.addOctaNode(27, Param.RRT, 30, -60, 35);
-        network.addOctaNode(26, Param.LTT, -10, -80, 30);
-        network.addPointNode(26, Param.RBB, -10, 40, 5);
-        network.addOctaNode(30, null, 0, 80, 30);
-        network.addOctaNode(28, Param.RRB, 40, 30, 35);
-        network.addOctaNode(32, Param.RRT, 30, -50, 30);
-        network.addOctaNode(32, Param.RBB, 25, 50, 30);
-        network.addPointNode(34, Param.RRT, 60, -20, 5);
-        network.addPointNode(31, Param.RRT, 30, -20, 5);
-        network.addPointNode(36, Param.RRT, 5, -60, 5);
-        network.addNodeConnection(32, 37, Param.LBB);
-        network.addNodeConnection(34, 36, Param.LLB);
-        network.addOctaNode(hgsNode, Param.RRT, 60, -40, 40);
-        network.addOctaNode(hgsNode, Param.RRB, 60, 30, 40);
-        network.addOctaNode(hgsNode, Param.RBB, 60, 80, 40);
-        network.addOctaNode(hgsNode, Param.LBB, -20, 100, 40);
-        network.addOctaNode(hgsNode, Param.LLB, -80, 0, 40);
-        network.addNodeConnection(32, 39, Param.LLT, Param.RRT);
+        network.addOctaNode(hgsNode, Param.RTT, 8, 30, -80, 40);
+        network.addOctaNode(8, Param.LTT, 9, -60, -60, 35);
+        network.addPointNode(9, Param.LLB, 10, -70, 40, 7);
+        network.addOctaNode(10, null, 11, -90, -40, 35);
+        network.addOctaNode(11, Param.LLT, 12, -50, -40, 30);
+        network.addPointNode(11, Param.RTT, 13, 10, -30, 5);
+        network.addOctaNode(13, null, 14, -30, -60, 25);
+        network.addOctaNode(13, null, 15, 50, -40, 35);
+        network.addOctaNode(9, Param.RRT, 16, 50, -40, 35);
 
-        network.addOctaNode(38, Param.RBB, 20, 50, 35);
-        network.addOctaNode(39, Param.LTT, -30, -80, 30);
-        network.addNodeConnection(38, 45, Param.LBB, Param.RTT);
-        network.addNodeConnection(43, 45, Param.LLB, Param.RRT);
+        network.addOctaNode(hgsNode, Param.RRT, 101, 50, -20, 35);
+        network.addPointNode(101, Param.RTT, 102, 40, -40, 7);
+        network.addOctaNode(102, null, 103, 10, -80, 20);
+        network.addOctaNode(102, null, 104, 50, -20, 35);
+        network.addOctaNode(104, Param.RTT, 105, 50, -40, 35);
+        network.addOctaNode(104, Param.RRB, 106, 60, 20, 35);
 
-        network.addOctaNode(44-1, Param.RRT, 40, -40, 25);
-        network.addOctaNode(46-1, Param.RRB, 30, 10, 25);
-        network.addPointNode(44-1, Param.RBB, 40, 40, 6);
-        network.addNodeConnection(35-1, 46, Param.LBB, Param.RTT);
-        network.addNodeConnection(40-1, 48, Param.RRT);
-        network.addOctaNode(40-1, Param.RRB, 40, 0, 25);
-        network.addPointNode(49-1, Param.RTT, 60, -10, 5);
-        network.addOctaNode(50-1, Param.RRB, 80, 10, 30);
-        p--;
-        network.addOctaNode(41+p, Param.RRB, 70, 10, 30);
-        network.addOctaNode(52+p, Param.LLB, -60, 20, 30);
-        network.addPointNode(52+p, Param.RRT, 60, -20);
-        network.addPointNode(53+p, Param.LLB, -45, 40);
-        network.addOctaNode(55+p, null, -120, -70, 40);
-        network.addOctaNode(56+p, Param.LLT, -40, -120, 30);
-        network.addOctaNode(57+p, Param.RRB, 50, 30, 30);
-        network.addPointNode(57+p, Param.LLB, -45, -40);
-        network.addNodeConnection(42+p, 59+p, Param.RRT);
-        network.addOctaNode(42+p, Param.RRB, 40, 10, 35);
-        network.addPointNode(60+p, Param.RRT, 40, -40);
-        network.addPointNode(60+p, Param.RRB, 40, 30);
-        network.addPointNode(60+p, Param.LLB, -40, 40);
-        network.addPointNode(42+p, Param.LLT, -40, -40);
-        network.addOctaNode(42+p, Param.LLB, -40, 40, 35);
-        network.addOctaNode(65+p, Param.LLT, -70, -30, 35);
-        network.addPointNode(66+p, Param.LBB, -70, 70);
-        network.addPointNode(43+p, Param.LLB, -60, 30);
-        network.addNodeConnection(64+p, 68+p);
-        network.addOctaNode(68+p, null, -40, 40, 35);
-        network.addPointNode(69+p, Param.LBB, -20, 60);
-        network.addOctaNode(69+p, Param.LTT, -20, -60, 25);
-        network.addOctaNode(43+p, Param.LTT, -20, -60, 25);
-        network.addOctaNode(43+p, Param.LLT, -60, -20, 30);
-        network.addOctaNode(72+p, Param.RRT, 30, -50, 30);
-        network.addPointNode(72+p, Param.LTT, -30, -50);
-        network.addNodeConnection(0, 75+p, Param.LBB);
-        network.addOctaNode(75+p, null, -100, -5, 40);
-        network.addOctaNode(76+p, Param.LTT, -100, -80, 25);
-        network.addOctaNode(76+p, Param.LLT, -50, -20, 25);
-        network.addOctaNode(76+p, Param.LBB, -50, 70, 25);
-        network.addPointNode(79+p, Param.LBB, -50, 70);
+
+        network.addOctaNode(hgsNode, Param.RRB, 201, 50, -20, 35);
+        network.addOctaNode(201, Param.RTT, 202, 50, -40, 25);
+        network.addPointNode(201, Param.RRB, 203, 60, 20, 5);
+        network.addOctaNode(203, Param.RTT, 204, 50, -40, 25);
+        network.addOctaNode(203, Param.RBB, 205, 10, 80, 35);
+        network.addOctaNode(205, Param.RRT, 206, 50, -20, 30);
+        network.addOctaNode(205, Param.LBB, 207, -40, 60, 30);
+
+        network.addOctaNode(hgsNode, Param.RBB, 301, 20, 60, 30, null, null, Param.LTT);
+        network.addOctaNode(301, Param.LLT, 302, -80, -20, 30);
+        network.addOctaNode(302, Param.LLT, 303, -80, -20, 25);
+        network.addOctaNode(302, Param.LBB, 304, -60, 40, 30);
+        network.addPointNode(302, Param.RBB, 305, 40, 80, 5);
+        network.addOctaNode(305, null, 306, 40, 10, 25);
+        network.addOctaNode(305, null, 307, -30, 70, 30);
+
+        network.addOctaNode(hgsNode, Param.LBB, 401, -40, 60, 30);
+        network.addOctaNode(401, Param.LLT, 402, -80, -20, 30);
+        network.addOctaNode(401, Param.RRB, 403, 40, 60, 30);
+        network.addPointNode(401, Param.LBB, 404, -20, 40, 5);
+        network.addOctaNode(404, Param.RRB, 405, 20, 60, 20);
+        network.addOctaNode(404, Param.RRB, 406, -50, 30, 25, null, null, Param.RTT);
+
+        network.addPointNode(hgsNode, Param.LLB, 501, -40, 20, 5);
+        network.addOctaNode(501, null, 502, -80, 0, 30);
+        network.addOctaNode(501, null, 503, -80, -80, 35, null, null, Param.RBB);
+        network.addOctaNode(502, Param.LBB, 504, -80, 60, 30);
+        network.addOctaNode(502, Param.LLT, 505, -50, -30, 25);
+        network.addOctaNode(505, Param.LLT, 506, -70, -10, 25);
+
+
+        network.addOctaNode(hgsNode, Param.LLT, 601, -60, 0, 25);
+        network.addOctaNode(601, Param.LLB, 602, -80, 0, 30);
+        network.addPointNode(602, Param.LTT, 603, -5, -50, 5);
+        network.addPointNode(602, Param.LLT, 604, -50, -10, 5);
+        network.addOctaNode(603, null, 605, 30, -30, 25);
+        network.addOctaNode(603, null, 606, -50, -60, 25);
+        network.addOctaNode(604, null, 607, -80, -80, 30);
+        network.addOctaNode(604, null, 608, -120, 10, 25);
+
+
+
+
 
         this.networks.push(network);
     }
@@ -213,6 +186,9 @@ export class Background2
         return Math.random() * 100 <= rate;
     }
 
+    /**
+     * リロード
+     */
     reload()
     {
         this.networks.forEach(network => {
@@ -220,6 +196,9 @@ export class Background2
         });
     }
 
+    /**
+     * 表示クリア
+     */
     clear()
     {
         this.networks.forEach(network => {
@@ -229,6 +208,9 @@ export class Background2
         this.networks = [];
     }
 
+    /**
+     * 描画
+     */
     draw()
     {
         let offsetX = window.scrollX - (window.scrollX / Param.BG2_SCROLL_RATE);
@@ -239,6 +221,9 @@ export class Background2
         });
     }
 
+    /**
+     * ウィンドウサイズの変更
+     */
     resize()
     {
         this.canvas.width = document.documentElement.scrollWidth;
@@ -255,6 +240,9 @@ export class Background2
         this.reload();
     }
 
+    /**
+     * スクロール
+     */
     scroll()
     {
     }
