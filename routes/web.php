@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HgnController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+if (App::environment('production')) {
+    Route::get('', [HgnController::class, 'entrance'])->name('Entrance');
+    return;
+}
+
 
 
 use App\Http\Controllers\Admin;

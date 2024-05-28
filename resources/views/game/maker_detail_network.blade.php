@@ -14,7 +14,7 @@
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
                 <h2 class="head2">関連タイトル</h2>
-                <div class="node-lineup">
+                <div class="node-map">
                     @foreach ($titles as $title)
                         <div>
                             <div class="link-node link-node-center">

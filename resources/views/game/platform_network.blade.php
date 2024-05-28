@@ -6,7 +6,7 @@
             <h1 class="head1">Platform Network</h1>
         </div>
 
-        <div class="node-lineup">
+        <div class="node-map">
             @foreach ($platforms as $platform)
                 <div>
                     <div class="link-node link-node-center">

@@ -91,19 +91,19 @@
     <section style="margin-top:100px;">
         <h2 class="head2">Network Map</h2>
 
-        <div class="node-lineup">
+        <div class="node-map">
             <div>
-                <div class="link-node">
+                <div class="link-node" data-sub="m">
                     <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
                 </div>
             </div>
             <div>
-                <div class="link-node">
+                <div class="link-node" data-sub="m">
                     <a href="{{ route('Game.MakerNetwork') }}">Maker</a>
                 </div>
             </div>
             <div>
-                <div class="link-node">
+                <div class="link-node" data-sub="m">
                     <a href="{{ route('Game.PlatformNetwork') }}">Platform</a>
                 </div>
             </div>
@@ -135,7 +135,7 @@
         </div>
 
         <div style="margin-top:50px;margin-bottom:50px;">
-            <div class="node-lineup">
+            <div class="node-map">
                 <div>
                     <div class="content-link-node">
                         <a href="{{ route('About') }}">About</a>

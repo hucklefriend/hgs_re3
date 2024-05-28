@@ -1,14 +1,25 @@
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>ホラーゲームネットワーク</title>
-</head>
-<body>
-<h1>ホラーゲームネットワーク 休止中</h1>
-<p>
-    忙しくなってきてサービスを運営できそうもないので休止しています。<br>
-    暇になってきたら再開予定です。<br>
-    あまり書いてないけど、<a href="https://dev.horrorgame.net">こちらのブログ</a>で状況はお知らせするかもしれません。
-</p>
-</body>
-</html>
+@extends('layout')
+
+@section('title', 'Suspend.hgn')
+
+@section('content')
+    <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
+        <div class="link-node link-node-center">
+            <h1>HorrorGame Network</h1>
+
+            <p style="margin-top: 1.5rem;margin-bottom: 0.5rem;">
+                現在、休止中です。<br>
+                再開に向け頑張って開発しています。<br>
+                時々、様子を見に来てくれると嬉しいです。
+            </p>
+        </div>
+    </div>
+
+    <footer style="margin: 50px 0;">
+        <div class="node node-center">
+            <div class="text-node">
+                &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
+            </div>
+        </div>
+    </footer>
+@endsection

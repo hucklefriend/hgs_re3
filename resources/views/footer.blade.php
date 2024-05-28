@@ -1,7 +1,7 @@
 
 <hr>
 
-<div class="node-lineup" style="margin-top:50px;margin-bottom: 50px;">
+<div class="node-map" style="margin-top:50px;margin-bottom: 50px;">
     <div>
         <div class="link-node link-node-center">
             <a href="{{ route('Entrance') }}">Entrance</a>

@@ -41,7 +41,7 @@
             <h2 class="head2">タグ</h2>
         </div>
 
-        <div class="node-lineup">
+        <div class="node-map">
             <div>
                 <div class="link-node">
                     <a href="#test">アドベンチャー</a>
@@ -58,7 +58,7 @@
         <div class="node">
             <h2 class="head2">ユーザーコンテンツ</h2>
         </div>
-        <div class="node-lineup">
+        <div class="node-map">
             <div>
                 <div class="link-node">
                     <a href="#test">レビュー</a>
@@ -102,7 +102,7 @@
                             {{ $pkg->release_at }}発売
                         </div>
                     </div>
-                    <div class="node-lineup" style="width:100%">
+                    <div class="node-map" style="width:100%">
                         @foreach($pkg->shops as $shop)
                             <div>
                                 <div class="link-node">
@@ -119,7 +119,7 @@
         <div class="node">
             <h2 class="head2">関連商品</h2>
         </div>
-        <div class="node-lineup">
+        <div class="node-map">
             <div>
                 <div class="link-node">
                     <a href="#test">アドベンチャー</a>
@@ -137,7 +137,7 @@
                 関連ネットワーク
             </h2>
         </div>
-        <div class="node-lineup">
+        <div class="node-map">
             @if ($title->franchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center">

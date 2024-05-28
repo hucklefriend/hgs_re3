@@ -107,74 +107,181 @@ export class Background2
         this.networks.push(network);
     }
 
-    createRandomNetwork(node, maxDepth)
+    createRandomNetwork(node)
     {
-        if (node.subNetworkSize === 0) {
+        if (node.subNetworkSize === 'n') {
             return;
         }
         let network = new Bg2Network(node);
+        let maxDepth = 1;
+        let appearRate = 0;
+        switch (node.subNetworkSize) {
+            case 's': maxDepth = 1; appearRate = 30; break;
+            case 'm': maxDepth = 2; appearRate = 30; break;
+            case 'l': maxDepth = 3; appearRate = 40; break;
+        }
 
-        this.addRandomNode(network, node, maxDepth);
+        let pattern = 1;//Math.floor((Math.random() * 2)) + 1;
+        switch (pattern) {
+            case 1:
+                this.addRandomNodePatter1(network, node, maxDepth, appearRate);
+                break;
+        }
 
         this.networks.push(network);
     }
 
-    addRandomNode(network, node, maxDepth)
+    addRandomNodePatter1(network, node, maxDepth, appearRate)
     {
-        let pattern = 1;//Math.floor((Math.random() * 2)) + 1;
-        switch (pattern) {
-            case 1:
-                this.addRandomNodePatter1(network, node, maxDepth);
-                break;
-        }
-    }
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.LTT, 101, -50, -60, 30);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addPointNode(101, Param.LTT, 111, -40, -30, 4);
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(111, Param.RTT, 121, -40, -60, 25);
+                        }
 
-    addRandomNodePatter1(network, node, depth, maxDepth)
-    {
-        let newNode = null;
-        let newNodeD1 = null;
-        let newNodeD2 = null;
-        let newNodeD3 = null;
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(111, Param.RTT, 122, 20, -60, 25);
+                        }
+                    }
+                }
 
-        newNodeD1 = network.addOctaNode(node, Param.LTT, -30, -80, 30);
-        //newNodeD2 = network.addOctaNode(newNodeD1, Param.LLT, -80, -60, 30);
-
-
-
-        return;
-
-        let forceVertexNo = Math.floor((Math.random() * 8));
-
-        for (let vertexNo = 0; vertexNo < 8; vertexNo++) {
-            let isCreate = true;
-            if (depth === 1 && forceVertexNo === vertexNo) {
-                isCreate = true;
-            } else {
-                isCreate = this.judge(40 / depth);
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(101, Param.RTT, 113, 20, -40, 25);
+                }
             }
+        }
 
-            if (isCreate) {
-                let x = 0; let y = 0;
-                switch (vertexNo) {
-                    case Param.LTT: x = -30; y = -80; break;
-                    case Param.RTT: x = 40; y = -100; break;
-                    case Param.RRT: x = 50; y = -30; break;
-                    case Param.RRB: x = 40; y = 40; break;
-                    case Param.RBB: x = 10; y = 40; break;
-                    case Param.LBB: x = -40; y = 50; break;
-                    case Param.LLB: x = -90; y = 20; break;
-                    case Param.LLT: x = -80; y = -90; break;
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.RTT, 201, 30, -60, 30);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addPointNode(201, Param.LTT, 211, -10, -30, 4);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(211, Param.RTT, 221, -30, -60, 30);
+                        }
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(211, Param.RTT, 222, 30, -60, 30);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.RRT, 301, 30, -30, 30);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(301, Param.RTT, 311, 40, -60, 25);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(311, Param.RRT, 321, 30, -30, 20);
+                        }
+                    }
                 }
 
-                let newNode = null;
-                if (this.judge(60)) {
-                    newNode = network.addOctaNode(node, vertexNo, x, y, 30);
-                } else {
-                    newNode = network.addPointNode(node, vertexNo, x, y);
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(301, Param.RRB, 312, 30, 0, 30);
+                }
+            }
+        }
+
+
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.RRB, 401, 30, 0, 30);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addPointNode(401, Param.RRB, 411, 40, 30, 4);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(411, null, 421, 30, -10, 30);
+                        }
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(411, null, 422, 10, 60, 30);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.RBB, 501, 10, 10, 30, null, null, Param.LTT);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addPointNode(501, Param.LLB, 511, -30, 40, 3);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(511, null, 521, 10, 30, 30);
+                        }
+
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(511, null, 522, -40, 60, 30);
+                        }
+                    }
                 }
 
-                if (depth + 1 <= maxDepth) {
-                    this.addRandomNode(network, newNode, depth + 1, maxDepth);
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(501, Param.RBB, 512, 25, 50, 35);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(512, Param.LBB, 523, -10, 50, 35);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.LBB, 601, -30, 40, 30);
+            if (maxDepth >= 2 && this.judge(appearRate)) {
+                network.addOctaNode(601, Param.LLB, 611, -45, 30, 35);
+            }
+        }
+
+
+        if (this.judge(appearRate)) {
+            network.addOctaNode(node, Param.LLB, 701, -40, 10, 35);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(701, Param.LLB, 711, -45, 30, 20);
+
+                    if (maxDepth >= 3) {
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(711, Param.LLT, 721, -50, -10, 25);
+                        }
+
+                        if (this.judge(appearRate)) {
+                            network.addOctaNode(711, Param.LLB, 722, -45, 30, 25);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (this.judge(appearRate)) {
+            network.addPointNode(node, Param.LLT, 801, -30, 0, 4);
+            if (maxDepth >= 2) {
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(801, null, 811, -50, -40, 30);
+
+                    if (maxDepth >= 3 && this.judge(appearRate)) {
+                        network.addOctaNode(811, Param.LLT, 821, -45, -10, 25);
+                    }
+                }
+
+                if (this.judge(appearRate)) {
+                    network.addOctaNode(801, null, 812, -45, 20, 25);
                 }
             }
         }
