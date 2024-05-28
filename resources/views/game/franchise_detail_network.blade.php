@@ -14,7 +14,7 @@
         @foreach($franchise->series as $series)
             <section style="margin-top: 50px;margin-bottom: 30px;">
                 <h2 class="head2">{{ $series->name }}シリーズ</h2>
-                <div class="node-lineup">
+                <div class="node-map">
                     @foreach ($series->titles as $title)
                         <div>
                             <div class="link-node link-node-center">
@@ -29,7 +29,7 @@
         @if ($franchise->titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
                 <h2 class="head2">単体タイトル</h2>
-                <div class="node-lineup">
+                <div class="node-map">
                     @foreach ($franchise->titles as $title)
                         <div>
                             <div class="link-node link-node-center">
@@ -41,7 +41,7 @@
             </section>
         @endif
 
-        <div class="node-lineup">
+        <div class="node-map">
         </div>
     </div>
 

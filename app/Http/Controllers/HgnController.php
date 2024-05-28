@@ -22,7 +22,7 @@ class HgnController extends Controller
      */
     public function entrance(): JsonResponse|Application|Factory|View
     {
-        if (!App::environment('local')) {
+        if (App::environment('production')) {
             return view('suspend');
         }
 

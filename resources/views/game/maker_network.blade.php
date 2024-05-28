@@ -6,7 +6,7 @@
             <h1 class="head1">Maker Network</h1>
         </div>
 
-        <div class="node-lineup">
+        <div class="node-map">
             @foreach ($makers as $maker)
                 <div>
                     <div class="link-node link-node-center">

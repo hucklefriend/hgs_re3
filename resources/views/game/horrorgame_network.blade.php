@@ -3,6 +3,12 @@
 @section('title', 'HorrorGameNetwork.hgn')
 
 @section('content')
+    <style>
+        .node-map {
+            justify-content: center;
+        }
+    </style>
+
 
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">
@@ -16,7 +22,7 @@
         </div>
 
         @foreach ($groups as $games)
-        <div class="node-lineup">
+        <div class="node-map">
             @foreach ($games as $game)
                 <div>
                     <div class="link-node link-node-center" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">

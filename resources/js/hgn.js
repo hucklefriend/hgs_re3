@@ -158,7 +158,7 @@ export class HorrorGameNetwork
                 this.bg2.createHGSNetwork(newNode);
             } else {
                 newNode = new LinkNode(nodeElem);
-                this.bg2.createRandomNetwork(newNode, 2)
+                this.bg2.createRandomNetwork(newNode)
             }
 
             this.linkNodes.push(newNode);
@@ -170,7 +170,9 @@ export class HorrorGameNetwork
 
         let contentLinkNodeElems = document.querySelectorAll('.content-link-node');
         contentLinkNodeElems.forEach(nodeElem =>  {
-            this.contentLinkNodes.push(new ContentLinkNode(nodeElem));
+            let newNode = new ContentLinkNode(nodeElem);
+            this.contentLinkNodes.push(newNode);
+            this.bg2.createRandomNetwork(newNode)
             if (nodeElem.id.length > 0) {
                 this.nodesIdHash[nodeElem.id] = this.contentLinkNodes[this.contentLinkNodes.length - 1];
                 this.loadConnection(nodeElem, connections);
@@ -179,7 +181,9 @@ export class HorrorGameNetwork
 
         let popupLinkNodeElems = document.querySelectorAll('.popup-link-node');
         popupLinkNodeElems.forEach(nodeElem =>  {
-            this.popupLinkNodes.push(new PopupLinkNode(nodeElem));
+            let newNode = new PopupLinkNode(nodeElem);
+            this.popupLinkNodes.push(newNode);
+            this.bg2.createRandomNetwork(newNode);
             if (nodeElem.id.length > 0) {
                 this.nodesIdHash[nodeElem.id] = this.popupLinkNodes[this.popupLinkNodes.length - 1];
                 this.loadConnection(nodeElem, connections);
@@ -196,7 +200,9 @@ export class HorrorGameNetwork
 
         let domNodeElems = document.querySelectorAll('.dom-node');
         domNodeElems.forEach(nodeElem =>  {
-            this.domNodes.push(new DOMNode(nodeElem, 15));
+            let newNode = new DOMNode(nodeElem, 15);
+            this.domNodes.push(newNode);
+            this.bg2.createRandomNetwork(newNode);
             if (nodeElem.id.length > 0) {
                 this.nodesIdHash[nodeElem.id] = this.domNodes[this.domNodes.length - 1];
                 this.loadConnection(nodeElem, connections);

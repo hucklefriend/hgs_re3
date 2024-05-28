@@ -31,7 +31,7 @@
 
 
 
-    <div class="node-lineup">
+    <div class="node-map">
         <div>
             <div class="dom-node link-node-center">
                 <a href="https://amzn.to/3QF3xDZ" target="_blank">amazon</a>
@@ -45,7 +45,7 @@
             関連ネットワーク
         </h2>
     </div>
-    <div class="node-lineup">
+    <div class="node-map">
         @foreach ($pkg->titles as $title)
             <div>
                 <div class="link-node link-node-center">

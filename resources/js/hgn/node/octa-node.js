@@ -510,13 +510,11 @@ export class DOMNode extends OctaNode
 
         this.DOM = DOM;
 
-        // DOMからdata-sub-sizeを取得
-        if ('subSize' in this.DOM.dataset) {
-            // subSizeが存在する場合の処理
-            this.subNetworkSize = parseInt(this.DOM.dataset.subSize);
+        // DOMからdata-subを取得
+        if ('sub' in this.DOM.dataset) {
+            this.subNetworkSize = this.DOM.dataset.sub;
         } else {
-            // subSizeが存在しない場合の処理
-            this.subNetworkSize = 0;
+            this.subNetworkSize = 'n';
         }
     }
 

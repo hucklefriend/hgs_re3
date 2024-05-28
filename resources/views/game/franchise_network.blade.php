@@ -8,7 +8,7 @@
             <h1 class="head1">Franchise Network</h1>
         </div>
 
-        <div class="node-lineup">
+        <div class="node-map">
         @foreach ($franchises as $franchise)
             <div>
                 <div class="link-node link-node-center">

@@ -94,18 +94,18 @@ class GameController extends Controller
             $titleNum = 0;
             foreach ($franchise->series as $series) {
                 if (empty($titleIds)) {
-                    $titleNum = $series->titles->count();
+                    $titleNum += $series->titles->count();
                 } else {
-                    $titleNum = $series->titles->whereIn('id', $titleIds)->count();
+                    $titleNum += $series->titles->whereIn('id', $titleIds)->count();
                 }
             }
             if (empty($titleIds)) {
-                $titleNum = $franchise->titles->count();
+                $titleNum += $franchise->titles->count();
             } else {
-                $titleNum = $franchise->titles->whereIn('id', $titleIds)->count();
+                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
             }
 
-            if ($titleNum > 1) {
+            if ($titleNum > 2) {
                 $groups[] = $games;
                 $games = [];
             }
@@ -144,7 +144,7 @@ class GameController extends Controller
                 ];
             }
 
-            if ($titleNum > 1) {
+            if ($titleNum > 2) {
                 $groups[] = $games;
                 $games = [];
             }
