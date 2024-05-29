@@ -28,7 +28,7 @@ Route::group(['prefix' => 'admin'], function () {
     // ログイン系
     Route::get('login', [Admin\AdminController::class, 'login'])->name('Admin.Login');
     Route::post('auth', [Admin\AdminController::class, 'auth'])->name('Admin.Auth');
-    Route::post('logout', [Admin\AdminController::class, 'logout'])->name('Admin.Logout');
+    Route::get('logout', [Admin\AdminController::class, 'logout'])->name('Admin.Logout');
 
     // ここからは認証が必要
     Route::group(['middleware' => ['auth', 'can:admin', 'admin']], function () {
