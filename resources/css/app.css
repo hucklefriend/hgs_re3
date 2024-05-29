@@ -1,0 +1,148 @@
+
+body {
+    background-color: black;
+    color: white;
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+}
+
+#scroller {
+    position: absolute;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#scroller.self-scroll {
+    height: 100vh;
+    overflow: hidden;
+    /*scrollbar-width: none;*/
+}
+
+.container {
+    margin: 0;
+    padding: 0 5px;
+    width: calc(100% - 10px);
+}
+
+#scroller.self-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+
+p, blockquote {
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    padding-top: 50px;
+}
+
+a:link, a:visited {
+    color: #AAFFAA;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: white;
+}
+
+hr {
+    border: none;
+    height: 1px;
+}
+
+.horrorgame_search {
+
+    > form {
+        > div {
+            margin: 1rem 0;
+        }
+    }
+
+    #platform_check, #rating_check {
+        line-height: 2rem;
+
+        label {
+            white-space: nowrap;
+            margin-right: 20px;
+        }
+    }
+}
+
+#main-canvas {
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:-1000;
+    backdrop-filter: blur(1px);
+}
+
+#bg1, #bg2 {
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:-1001;
+}
+
+#bg2 {
+    z-index:-1002;
+    backdrop-filter: blur(4px);
+}
+
+#bg3c {
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1003;
+    overflow:hidden;
+    width:100vw;
+    height:100vh;
+    padding:0;
+    text-align: center;
+}
+
+#bg3 {
+    position:relative;
+}
+
+#debug {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.7);
+    display: inline-block;
+}
+
+/* スマホ～ */
+@media (min-width: 400px) {
+
+}
+
+/* ファブレット～ */
+@media (min-width: 550px) {
+}
+
+/* タブレット～ */
+@media (min-width: 750px) {
+    body {
+        display: grid;
+        justify-content: center;
+    }
+    .container {
+        width: 680px;
+    }
+}
+/* PC～ */
+@media (min-width: 1000px) {
+}
+
+
+

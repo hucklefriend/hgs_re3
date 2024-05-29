@@ -24,6 +24,14 @@
                     <td>{{ $model->acronym }}</td>
                 </tr>
                 <tr>
+                    <th>ノード表示用名称</th>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->node_name !!}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <th>メーカー</th>
                     <td>{{ $model->maker->name ?? '' }}</td>
                 </tr>
@@ -34,6 +42,36 @@
                 <tr>
                     <th>発売日</th>
                     <td>{{ $model->release_at }}</td>
+                </tr>
+                <tr>
+                    <th>レーティング</th>
+                    <td>{{ $model->rating->text() }}</td>
+                </tr>
+                <tr>
+                    <th>発売日</th>
+                    <td>{{ $model->release_at }}</td>
+                </tr>
+                <tr>
+                    <th>画像(小)</th>
+                    <td>
+                        @if ($model->img_s_url)
+                            <img src="{{ $model->img_s_url }}">
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>画像(中)</th>
+                    <td>
+                        @if ($model->img_m_url)
+                            <img src="{{ $model->img_m_url }}">
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.explain', ['model' => $model])
+                    </td>
                 </tr>
                 <tr>
                     <th>タイトル</th>
@@ -49,6 +87,24 @@
                 <tr>
                     <th>ショップ</th>
                     <td>
+                        <table>
+                            @foreach ($model->shops as $shop)
+                            <tr>
+                                <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name }}</a></td>
+                                <td>
+                                    <a href="{{ route('Admin.MasterData.Package.EditShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
+                                </td>
+                                <td>
+                                    <form method="post" action="{{ route('Admin.MasterData.Package.DeleteShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
+                                        {{ csrf_field() }}
+                                        {{ method_field('DELETE') }}
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                        <a href="{{ route('Admin.MasterData.Package.AddShop', $model) }}" class="btn btn-sm btn-default"><i class="fas fa-plus"></i> Add</a>
                     </td>
                 </tr>
             </table>

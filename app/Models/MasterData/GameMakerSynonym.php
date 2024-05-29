@@ -14,7 +14,7 @@ class GameMakerSynonym extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
-     * メーカーを取得
+     * メーカー
      *
      * @return BelongsTo
      */

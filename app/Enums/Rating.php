@@ -1,37 +1,40 @@
 <?php
 /**
- * メーカーの属性
+ * レーティング
  */
 
-namespace App\Enums\Game\Maker;
+namespace App\Enums;
 
-
-enum Kind: int
+enum Rating: int
 {
     case None = 0;
-    case Company = 1;
+    // 諸事情で1は欠番
+    case R18Z = 2;
+    case R18A = 3;
 
     /**
-     * テキスト
+     * テキストを取得
      *
      * @return string
      */
     public function text(): string
     {
         return match($this) {
-            Kind::None    => '未指定',
-            Kind::Company => '会社',
+            Rating::None => '全年齢',
+            Rating::R18Z => 'R-18Z',
+            Rating::R18A => 'R-18A',
         };
     }
 
     /**
      * input[type=select]に渡す用のリスト作成
      *
+     * @param array $prepend
      * @return string[]
      */
-    public static function selectList(): array
+    public static function selectList(array $prepend = []): array
     {
-        $result = [];
+        $result = $prepend;
 
         foreach (self::cases() as $case) {
             $result[$case->value] = $case->text();

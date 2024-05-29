@@ -1,3 +1,16 @@
+table.admin-detail-table {
+    width: 100%;
+
+    th {
+        width: auto;
+        white-space: nowrap;
+    }
+
+    td {
+        width: 100%;
+    }
+}
+
 .admin-form-table th {
     white-space: nowrap;
 }

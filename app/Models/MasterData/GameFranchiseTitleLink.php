@@ -12,12 +12,22 @@ class GameFranchiseTitleLink extends Model
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
+    /**
+     * フランチャイズ
+     *
+     * @return BelongsTo
+     */
     public function franchise(): BelongsTo
     {
         return $this->belongsTo(GameFranchise::class);
     }
 
-    public function soft(): BelongsTo
+    /**
+     * タイトル
+     *
+     * @return BelongsTo
+     */
+    public function title(): BelongsTo
     {
         return $this->belongsTo(GameTitle::class);
     }

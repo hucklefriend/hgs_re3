@@ -62,10 +62,25 @@ class GameTitle extends \Eloquent
     }
 
     /**
+     * 関連商品
+     *
+     * @return BelongsToMany
+     */
+    public function titles(): BelongsToMany
+    {
+        return $this->belongsToMany(GameRelatedProduct::class, GameTitleRelatedProductLink::class);
+    }
+
+    /**
      * @var string 俗称の改行区切り文字列
      */
     public string $synonymsStr = '';
 
+    /**
+     * 俗称
+     *
+     * @return HasMany
+     */
     public function synonyms(): HasMany
     {
         return $this->hasMany(GameTitleSynonym::class, 'game_title_id');
@@ -131,6 +146,38 @@ class GameTitle extends \Eloquent
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    /**
+     * 前のタイトルを取得
+     *
+     * @return self
+     */
+    public function prev(): self
+    {
+        $prev = self::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+        if ($prev !== null) {
+            return $prev;
+        } else {
+            // idが最大のデータを取得
+            return self::orderBy('id', 'desc')->first();
+        }
+    }
+
+    /**
+     * 次のタイトルを取得
+     *
+     * @return self
+     */
+    public function next(): self
+    {
+        $next = self::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+        if ($next !== null) {
+            return $next;
+        } else {
+            // idが最小のデータを取得
+            return self::orderBy('id', 'asc')->first();
         }
     }
 }

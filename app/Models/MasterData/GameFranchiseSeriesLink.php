@@ -12,11 +12,21 @@ class GameFranchiseSeriesLink extends Model
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
+    /**
+     * フランチャイズ
+     *
+     * @return BelongsTo
+     */
     public function franchise(): BelongsTo
     {
         return $this->belongsTo(GameFranchise::class);
     }
 
+    /**
+     * シリーズ
+     *
+     * @return BelongsTo
+     */
     public function series(): BelongsTo
     {
         return $this->belongsTo(GameSeries::class);

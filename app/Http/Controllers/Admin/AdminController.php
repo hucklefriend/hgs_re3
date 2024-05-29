@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +25,10 @@ class AdminController extends AbstractAdminController
     public function login()
     {
         // ローカル環境でのみ、id:1で自動ログインする
-        if (App::environment('local')) {
-            Auth::loginUsingId(1, true);
-            return redirect()->route('Admin');
-        }
+//        if (App::environment('local')) {
+//            Auth::loginUsingId(1, true);
+//            return redirect()->route('Admin');
+//        }
 
         return view('admin.login');
     }
@@ -35,20 +36,25 @@ class AdminController extends AbstractAdminController
     public function auth(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $rememberMe = $request->input('remember_me', 0);
 
-        if (Auth::attempt($credentials, true)) {
+        if (Auth::attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
             return redirect()->route('Admin');
-        }
-        else {
+        } else {
             // 認証に失敗したときの処理
-            return back()->withInput()->withErrors(['email' => 'These credentials do not match our records.']);
+            return back()->withInput()->withErrors(['login' => '認証に失敗しました。再度やり直してください。']);
         }
     }
 
-    public function logout()
+    /**
+     * ログアウト
+     *
+     * @return RedirectResponse
+     */
+    public function logout(): RedirectResponse
     {
-        Auth::logout();;
+        Auth::logout();
         return redirect()->route('Admin.Login');
     }
 }
