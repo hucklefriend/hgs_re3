@@ -11,6 +11,10 @@ body {
     overflow-y: scroll;
 }
 
+table {
+    font-size: 14px;
+}
+
 #scroller {
     position: absolute;
     margin: 0;
@@ -43,6 +47,10 @@ p, blockquote {
 
 main {
     padding-top: 50px;
+
+    section {
+        margin-bottom: 50px;
+    }
 }
 
 a:link, a:visited {
@@ -121,6 +129,82 @@ hr {
     display: inline-block;
 }
 
+
+.title-review {
+    margin-bottom: 30px;
+
+
+    > div:last-child {
+        margin-top: 1rem;
+    }
+}
+
+.title-packages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    > .title-package-info {
+        width: 190px;
+        margin-right: 5px;
+        margin-bottom: 1rem;
+
+        > .text-node {
+            text-align: center;
+
+            img {
+                max-width:100px;
+                max-height:100px;
+            }
+        }
+    }
+}
+
+.shop-link {
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+
+    > a {
+        margin-bottom: 5px;
+    }
+}
+
+.review-score {
+    white-space: nowrap;
+    text-align: center;
+
+    .review-score-fear {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .review-score-other {
+        display:flex;
+        flex-wrap:wrap;
+
+        > div {
+            width: 50%;
+        }
+
+        > div:first-child {
+            margin-bottom: 20px;
+        }
+    }
+
+    .review-score-fear, .review-score-other > div {
+        span:first-child {
+            display: inline-block;
+            width: 100px;
+            text-align: center;
+        }
+
+        span:last-child {
+
+        }
+    }
+}
+
 /* スマホ～ */
 @media (min-width: 400px) {
 
@@ -137,7 +221,34 @@ hr {
         justify-content: center;
     }
     .container {
-        width: 680px;
+        width: 700px;
+    }
+
+    .title-packages {
+
+        > .title-package-info {
+            max-width: 200px;
+            margin-right: 10px;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .review-score {
+        .review-score-other {
+            > div {
+                width: 25%;
+            }
+
+            > div:first-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .review-score-other > div {
+            span:first-child {
+                text-align: right;
+            }
+        }
     }
 }
 /* PC～ */
