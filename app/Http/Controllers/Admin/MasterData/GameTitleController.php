@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameSeriesFranchiseLinkRequest;
+use App\Http\Requests\Admin\MasterData\GameTitleMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameTitlePackageLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameTitleRequest;
 use App\Http\Requests\Admin\MasterData\GameTitleSeriesLinkRequest;
@@ -29,6 +30,17 @@ class GameTitleController extends AbstractAdminController
      * @return Application|Factory|View
      */
     public function index(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_title.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
     {
         $titles = GameTitle::orderBy('id');
 
@@ -60,12 +72,12 @@ class GameTitleController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_title', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_title.index', [
+        return [
             'titles' => $titles->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
-        ]);
+        ];
     }
 
     /**
@@ -109,6 +121,40 @@ class GameTitleController extends AbstractAdminController
         $title->save();
 
         return redirect()->route('Admin.MasterData.Title.Detail', $title);
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_title.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GameTitleMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GameTitleMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $maker = GameTitle::find($id);
+            if ($maker !== null) {
+                $maker->node_name = $nodeName;
+                $maker->h1_node_name = $h1NodeNames[$id];
+                $maker->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

@@ -34,6 +34,7 @@
                 <div>{{ $franchises->appends($search)->links() }}</div>
                 <div class="text-end">
                     <a href="{{ route('Admin.MasterData.Franchise.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Franchise.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
                 </div>
             </div>
             <table class="table table-hover">

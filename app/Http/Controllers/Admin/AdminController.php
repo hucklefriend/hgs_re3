@@ -22,18 +22,29 @@ class AdminController extends AbstractAdminController
         return view('admin.top');
     }
 
-    public function login()
+    /**
+     * ログイン
+     *
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function login(): Application|Factory|View|RedirectResponse
     {
         // ローカル環境でのみ、id:1で自動ログインする
-//        if (App::environment('local')) {
-//            Auth::loginUsingId(1, true);
-//            return redirect()->route('Admin');
-//        }
+        if (App::environment('local')) {
+            Auth::loginUsingId(1, true);
+            return redirect()->route('Admin');
+        }
 
         return view('admin.login');
     }
 
-    public function auth(Request $request)
+    /**
+     * 認証
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function auth(Request $request): RedirectResponse
     {
         $credentials = $request->only('email', 'password');
         $rememberMe = $request->input('remember_me', 0);

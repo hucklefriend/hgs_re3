@@ -117,10 +117,10 @@
                         <div class="text-node">
                             @if ($pkg->img_s_url !== null)
                                 <div>
-                                    <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->node_name }}">
+                                    <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}">
                                 </div>
                             @endif
-                            {{ $pkg->name }}
+                            {!! $pkg->node_name !!}
                             <div style="margin-top: 10px;">
                                 {{ $pkg->platform->name }}<br>
                                 {{ $pkg->release_at }}
