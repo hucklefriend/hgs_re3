@@ -142,10 +142,10 @@ hr {
 .title-packages {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: start;
 
     > .title-package-info {
-        width: 190px;
+        width: 180px;
         margin-right: 5px;
         margin-bottom: 1rem;
 
@@ -225,6 +225,7 @@ hr {
     }
 
     .title-packages {
+        justify-content: center;
 
         > .title-package-info {
             max-width: 200px;
