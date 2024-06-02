@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
-use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Models\MasterData\GameMaker;
+use App\Http\Requests\Admin\MasterData\GameMakerMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameMakerRequest;
+use App\Models\MasterData\GameMaker;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class GameMakerController extends AbstractAdminController
+class GameMakerController extends AbstractMasterDataController
 {
     /**
      * インデックス
@@ -22,10 +22,20 @@ class GameMakerController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
-        $makers = GameMaker::orderByDesc('id');
+        return view('admin.master_data.game_maker.index', $this->search($request));
+    }
 
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
+        $makers = GameMaker::orderByDesc('id');
         $searchName = trim($request->query('name', ''));
-        $search = ['name' => ''];
+        $search = [];
 
         if (!empty($searchName)) {
             $search['name'] = $searchName;
@@ -53,12 +63,12 @@ class GameMakerController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_maker', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_maker.index', [
+        return [
             'search' => $search,
             'makers' => $makers->paginate(AdminDefine::ITEMS_PER_PAGE)
-        ]);
+        ];
     }
 
     /**
@@ -119,6 +129,40 @@ class GameMakerController extends AbstractAdminController
         $maker->save();
 
         return redirect()->route('Admin.MasterData.Maker');
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_maker.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GameMakerMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GameMakerMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $maker = GameMaker::find($id);
+            if ($maker !== null) {
+                $maker->node_name = $nodeName;
+                $maker->h1_node_name = $h1NodeNames[$id];
+                $maker->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

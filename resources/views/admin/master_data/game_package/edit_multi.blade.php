@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Package') }}" method="GET">
+            <form action="{{ route('Admin.MasterData.Package.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
@@ -36,35 +36,31 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Package.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
-                <a href="{{ route('Admin.MasterData.Package.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
-            </div>
-
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>タイトル</th>
-                    <th>略称</th>
-                    <th>プラットフォーム</th>
-                    <th>発売日</th>
-                    <td></td>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($packages as $package)
+            <form method="POST" action="{{ route('Admin.MasterData.Package.UpdateMulti', $search) }}">
+                {{ csrf_field() }}
+                {{ method_field('PUT') }}
+                <table class="table table-hover">
+                    <thead>
                     <tr>
-                        <td>{{ $package->id }}</td>
-                        <td>{{ $package->name }}</td>
-                        <td>{{ $package->acronym }}</td>
-                        <td>{{ $package->platform->acronym ?? '' }}</td>
-                        <td>{{ $package->release_at }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
+                        <th>ID</th>
+                        <th>タイトル</th>
+                        <th>ノード名</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach ($packages as $pkg)
+                        <tr>
+                            <td>{{ $pkg->id }}</td>
+                            <td>{{ $pkg->name }}</td>
+                            <td>{{ Form::textarea("node_name[{$pkg->id}]", old("node_name[{$pkg->id}]", $pkg->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                <div class="my-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
 
             <div>{{ $packages->appends($search)->links() }}</div>
         </div>

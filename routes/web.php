@@ -36,7 +36,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
 
         // マスター
-        Route::group(['prefix' => 'master'], function () {
+        Route::group(['prefix' => 'master', 'middleware' => 'admin.search.breadcrumb'], function () {
             // メーカー
             $prefix = 'maker';
             Route::group(['prefix' => 'maker'], function () use ($prefix) {
@@ -45,6 +45,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
@@ -59,6 +61,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
@@ -73,6 +77,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_series', [$class, 'linkSeries'])->name("{$basename}.LinkSeries");
@@ -110,6 +116,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_franchise', [$class, 'linkFranchise'])->name("{$basename}.LinkFranchise");
@@ -130,6 +138,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
@@ -155,6 +165,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
@@ -178,6 +190,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");

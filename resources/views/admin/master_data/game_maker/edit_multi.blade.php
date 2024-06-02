@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Maker') }}" method="GET">
+            <form action="{{ route('Admin.MasterData.Maker.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
@@ -30,38 +30,36 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Maker.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
-                <a href="{{ route('Admin.MasterData.Maker.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
-            </div>
-
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>名前</th>
-                    <th>略称</th>
-                    <th>ふりがな</th>
-                    <td></td>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($makers as $maker)
+            <form method="POST" action="{{ route('Admin.MasterData.Maker.UpdateMulti', $search) }}">
+                {{ csrf_field() }}
+                {{ method_field('PUT') }}
+                <table class="table table-hover">
+                    <thead>
                     <tr>
-                        <td>{{ $maker->id }}</td>
-                        <td>{{ $maker->name }}</td>
-                        <td>{{ $maker->acronym }}</td>
-                        <td>{{ $maker->phonetic }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('Admin.MasterData.Maker.Edit', $maker) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit</a>
-                        </td>
+                        <th>ID</th>
+                        <th>タイトル</th>
+                        <th>ノード名</th>
+                        <th>H1ノード名</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach ($makers as $model)
+                        <tr>
+                            <td>{{ $model->id }}</td>
+                            <td>{{ $model->name }}</td>
+                            <td>{{ Form::textarea("node_name[{$model->id}]", old("node_name[{$model->id}]", $model->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                            <td>{{ Form::textarea("h1_node_name[{$model->id}]", old("node_name[{$model->id}]", $model->h1_node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                <div class="my-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
 
             <div>{{ $makers->appends($search)->links() }}</div>
         </div>
     </div>
-
 @endsection
+

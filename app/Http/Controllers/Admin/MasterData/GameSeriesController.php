@@ -27,6 +27,17 @@ class GameSeriesController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
+        return view('admin.master_data.game_series.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
         $series = GameSeries::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
@@ -44,12 +55,12 @@ class GameSeriesController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_series', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_series.index', [
+        return  [
             'series' => $series->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
-        ]);
+        ];
     }
 
     /**

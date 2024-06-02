@@ -25,3 +25,7 @@ table.admin-detail-table {
     height:28px;
     margin-right:10px
 }
+
+.edit-multi-textarea {
+    height: 4rem;
+}

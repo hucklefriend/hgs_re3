@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GamePlatformMultiUpdateRequest;
 use App\Models\MasterData\GamePlatform;
 use App\Http\Requests\Admin\MasterData\GamePlatformRequest;
 use Illuminate\Contracts\Foundation\Application;
@@ -22,8 +23,18 @@ class GamePlatformController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
-        $platforms = GamePlatform::orderByDesc('id')
-            ->paginate(AdminDefine::ITEMS_PER_PAGE);
+        return view('admin.master_data.game_platform.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
+        $platforms = GamePlatform::orderByDesc('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -53,12 +64,12 @@ class GamePlatformController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_platform', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_platform.index', [
-            'platforms' => $platforms,
+        return [
             'search' => $search,
-        ]);
+            'platforms' => $platforms->paginate(AdminDefine::ITEMS_PER_PAGE),
+        ];
     }
 
     /**
@@ -102,6 +113,40 @@ class GamePlatformController extends AbstractAdminController
         $platform->save();
 
         return redirect()->route('Admin.MasterData.Platform.Detail', $platform);
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_platform.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GamePlatformMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GamePlatformMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $maker = GamePlatform::find($id);
+            if ($maker !== null) {
+                $maker->node_name = $nodeName;
+                $maker->h1_node_name = $h1NodeNames[$id];
+                $maker->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

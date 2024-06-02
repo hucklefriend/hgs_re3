@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GameFranchiseMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameFranchiseTitleLinkRequest;
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameSeries;
@@ -26,6 +27,17 @@ class GameFranchiseController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
+        return view('admin.master_data.game_franchise.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
         $franchises = GameFranchise::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
@@ -43,12 +55,12 @@ class GameFranchiseController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_franchise', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_franchise.index', [
+        return [
             'franchises' => $franchises->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
-        ]);
+        ];
     }
 
     /**
@@ -103,6 +115,40 @@ class GameFranchiseController extends AbstractAdminController
         $franchise->save();
 
         return redirect()->route('Admin.MasterData.Franchise');
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_franchise.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GameFranchiseMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GameFranchiseMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $maker = GameFranchise::find($id);
+            if ($maker !== null) {
+                $maker->node_name = $nodeName;
+                $maker->h1_node_name = $h1NodeNames[$id];
+                $maker->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

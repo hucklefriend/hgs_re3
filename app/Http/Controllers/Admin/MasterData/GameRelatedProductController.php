@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GameRelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductShopRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductTitleLinkRequest;
@@ -27,6 +28,17 @@ class GameRelatedProductController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
+        return view('admin.master_data.game_related_product.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
         $relatedProducts = GameRelatedProduct::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
@@ -43,12 +55,12 @@ class GameRelatedProductController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_related_product', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_related_product.index', [
+        return [
             'relatedProducts' => $relatedProducts->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search'          => $search
-        ]);
+        ];
     }
 
     /**
@@ -90,6 +102,40 @@ class GameRelatedProductController extends AbstractAdminController
         $relatedProduct->save();
 
         return redirect()->route('Admin.MasterData.RelatedProduct.Detail', $relatedProduct);
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_related_product.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GameRelatedProductMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GameRelatedProductMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $maker = GameRelatedProduct::find($id);
+            if ($maker !== null) {
+                $maker->node_name = $nodeName;
+                $maker->h1_node_name = $h1NodeNames[$id];
+                $maker->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**
