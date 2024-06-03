@@ -32,9 +32,6 @@
     <canvas id="main-canvas"></canvas>
     <canvas id="bg1"></canvas>
     <canvas id="bg2"></canvas>
-    <div id="bg3c">
-        <canvas id="bg3"></canvas>
-    </div>
 </div>
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
@@ -54,5 +51,6 @@
     @yield('popup')
 </div>
 <div id="debug" style="visibility: hidden;"></div>
+<div id="bg3"></div>
 </body>
 </html>

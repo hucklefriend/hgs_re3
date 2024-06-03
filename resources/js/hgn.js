@@ -82,7 +82,6 @@ export class HorrorGameNetwork
         // 背景を描画
         this.bg2.draw();
         //this.bg1.draw(this.bg2);
-        this.bg3.draw();
 
         // 次の更新で再描画するフラグ
         this.redrawFlag = false;
@@ -487,7 +486,6 @@ export class HorrorGameNetwork
         this.bg2.draw();
         this.bg1.resize();
         this.bg1.draw(this, this.bg2);
-        this.bg3.resize();
     }
 
     /**
