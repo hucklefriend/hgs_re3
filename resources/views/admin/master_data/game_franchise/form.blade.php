@@ -12,6 +12,12 @@
         </td>
     </tr>
     <tr>
+        <th>key</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'key', 'options' => ['required', 'maxlength' => 50]])
+        </td>
+    </tr>
+    <tr>
         <th>よみがな</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'phonetic', 'options' => ['required', 'maxlength' => 150]])

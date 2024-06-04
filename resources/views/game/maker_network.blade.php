@@ -10,7 +10,7 @@
             @foreach ($makers as $maker)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">{!! $maker->node_name !!}</a>
+                        <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">{!! $maker->node_name !!}</a>
                     </div>
                 </div>
             @endforeach

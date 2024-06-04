@@ -38,6 +38,7 @@
                     <tr>
                         <th>ID</th>
                         <th>タイトル</th>
+                        <th>キー</th>
                         <th>ノード名</th>
                         <th>H1ノード名</th>
                     </tr>
@@ -47,8 +48,9 @@
                         <tr>
                             <td>{{ $model->id }}</td>
                             <td>{{ $model->name }}</td>
+                            <td>{{ Form::textarea("key[{$model->id}]", old("key[{$model->id}]", $model->key), ['class' => 'form-control edit-multi-textarea']) }}</td>
                             <td>{{ Form::textarea("node_name[{$model->id}]", old("node_name[{$model->id}]", $model->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
-                            <td>{{ Form::textarea("h1_node_name[{$model->id}]", old("node_name[{$model->id}]", $model->h1_node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                            <td>{{ Form::textarea("h1_node_name[{$model->id}]", old("h1_node_name[{$model->id}]", $model->h1_node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
                         </tr>
                     @endforeach
                     </tbody>

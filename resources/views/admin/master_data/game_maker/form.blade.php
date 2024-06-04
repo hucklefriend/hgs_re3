@@ -17,6 +17,12 @@
         </td>
     </tr>
     <tr>
+        <th>key</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'key', 'options' => ['required', 'maxlength' => 50]])
+        </td>
+    </tr>
+    <tr>
         <th>略称</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'acronym', 'options' => ['required', 'maxlength' => 100]])

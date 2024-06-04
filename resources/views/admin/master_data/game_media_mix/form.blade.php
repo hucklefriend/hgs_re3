@@ -18,6 +18,12 @@
         </td>
     </tr>
     <tr>
+        <th>key</th>
+        <td>
+            @include ('admin.common.form.input', ['name' => 'key', 'options' => ['required', 'maxlength' => 50]])
+        </td>
+    </tr>
+    <tr>
         <th>ノード表示用の名前</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])

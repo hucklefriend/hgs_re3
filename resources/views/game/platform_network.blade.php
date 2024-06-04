@@ -10,7 +10,7 @@
             @foreach ($platforms as $platform)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.PlatformDetailNetwork', $platform) }}">{!! $platform->node_name !!}</a>
+                        <a href="{{ route('Game.PlatformDetailNetwork', ['platformKey' => $platform->key]) }}">{!! $platform->node_name !!}</a>
                     </div>
                 </div>
             @endforeach

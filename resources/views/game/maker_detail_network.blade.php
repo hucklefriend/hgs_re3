@@ -18,7 +18,7 @@
                     @foreach ($titles as $title)
                         <div>
                             <div class="link-node link-node-center">
-                                <a href="{{ route('Game.TitleNetwork', $title) }}">{!! $title->node_name !!}</a>
+                                <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
                             </div>
                         </div>
                     @endforeach

@@ -30,6 +30,7 @@ class GameMediaMixRequest extends FormRequest
         return [
             'type'                => ['required', new Enum(MediaMixType::class)],
             'name'                => 'required|max:200',
+            'key'                 => 'required|max:50',
             'node_name'           => 'required|max:200',
             'h1_node_name'        => 'required|max:200',
             'game_franchise_id'   => 'nullable|exists:game_franchises,id',
