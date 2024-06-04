@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class GameFranchise extends \Eloquent
 {
+    use KeyFindTrait;
+
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 

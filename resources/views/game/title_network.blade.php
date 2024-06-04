@@ -175,7 +175,7 @@
             @if ($title->franchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.FranchiseDetailNetwork', $title->franchise()) }}">
+                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->franchise()->key]) }}">
                             {{ $title->franchise()->node_name }}<br>
                             フランチャイズ
                         </a>
@@ -186,7 +186,7 @@
             @foreach ($makers as $maker)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">
+                        <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">
                             {!! $maker->node_name !!}
                         </a>
                     </div>
@@ -194,8 +194,6 @@
             @endforeach
         </div>
     </section>
-
-
 
     @include('footer')
 @endsection

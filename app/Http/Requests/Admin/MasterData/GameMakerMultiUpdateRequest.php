@@ -31,6 +31,8 @@ class GameMakerMultiUpdateRequest extends FormRequest
             'node_name.*'    => 'string|max:200',
             'h1_node_name'   => 'array',
             'h1_node_name.*' => 'string|max:200',
+            'key'            => 'array',
+            'key.*'          => 'string|max:50',
         ];
     }
 }

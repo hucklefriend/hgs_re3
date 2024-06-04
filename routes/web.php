@@ -215,20 +215,18 @@ Route::group(['prefix' => 'game'], function () {
     // ホラーゲームネットワーク
     Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
     // フランチャイズ詳細ネットワーク
-    Route::get('/franchise/{franchise}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
+    Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク
     Route::get('/franchise', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
-    // タイトルネットワーク
-    Route::get('/title/{title}', [$class, 'titleNetwork'])->name('Game.TitleNetwork');
-    // パッケージネットワーク
-    Route::get('/package/{pkg}', [$class, 'packageNetwork'])->name('Game.PackageNetwork');
+    // タイトル詳細ネットワーク
+    Route::get('/title/{titleKey}', [$class, 'titleDetailNetwork'])->name('Game.TitleDetailNetwork');
 
     // メーカー詳細ネットワーク
-    Route::get('/maker/{maker}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
+    Route::get('/maker/{makerKey}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
     // メーカーネットワーク
     Route::get('/maker', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
     // プラットフォーム詳細ネットワーク
-    Route::get('/platform/{platform}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
+    Route::get('/platform/{platformKey}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
     // プラットフォームネットワーク
     Route::get('/platform', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
 });

@@ -153,12 +153,14 @@ class GameMakerController extends AbstractMasterDataController
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
+        $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
-            $maker = GameMaker::find($id);
-            if ($maker !== null) {
-                $maker->node_name = $nodeName;
-                $maker->h1_node_name = $h1NodeNames[$id];
-                $maker->save();
+            $model = GameMaker::find($id);
+            if ($model !== null) {
+                $model->node_name = $nodeName;
+                $model->h1_node_name = $h1NodeNames[$id];
+                $model->key = $keys[$id];
+                $model->save();
             }
         }
 

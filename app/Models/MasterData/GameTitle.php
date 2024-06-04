@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class GameTitle extends \Eloquent
 {
+    use KeyFindTrait;
+
     protected $guarded = ['id', 'synonymsStr'];
     protected $hidden = ['created_at', 'updated_at'];
 

@@ -28,6 +28,7 @@ class GamePlatformRequest extends FormRequest
     {
         return [
             'name'                => 'required|max:200',
+            'key'                 => 'required|max:50',
             'acronym'             => 'required|max:30',
             'node_name'           => 'required|max:200',
             'h1_node_name'        => 'required|max:200',
