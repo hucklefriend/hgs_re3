@@ -173,9 +173,56 @@ class GameController extends Controller
      */
     public function makerNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $makers = GameMaker::select(['id', 'key', 'node_name'])->orderBy('phonetic')->get();
+        $page = $request->get('page', 1);
+        $num = GameMaker::count();
+        $maxPage = ceil($num / self::ITEM_PER_PAGE);
 
-        return $this->network(view('game.maker_network', ['makers' => $makers]));
+        if ($page < 1) {
+            $page = 1;
+        } else if ($page > $maxPage) {
+            $page = $maxPage;
+        }
+
+        $prevPage = $page - 1;
+        if ($prevPage < 1) {
+            $prevPage = null;
+        }
+        $nextPage = $page + 1;
+        if ($nextPage > $maxPage) {
+            $nextPage = null;
+        }
+
+        $makers = GameMaker::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+            ->orderBy('phonetic')
+            ->limit(self::ITEM_PER_PAGE)
+            ->offset(($page - 1) * self::ITEM_PER_PAGE)
+            ->get();
+
+        // game_maker_idとcount(id)を取得
+        GamePackage::whereIn('game_maker_id', $makers->pluck('id'))
+            ->select(['game_maker_id', \DB::raw('count(id) as count')])
+            ->groupBy('game_maker_id')
+            ->get()
+            ->each(function ($item) use ($makers) {
+                $maker = $makers->where('id', $item->game_maker_id)->first();
+
+                if ($item->count >= 10) {
+                    $maker->sub_net = 'l';
+                } else if ($item->count >= 5) {
+                    $maker->sub_net = 'm';
+                } else if ($item->count >= 1) {
+                    $maker->sub_net = 's';
+                }
+            });
+
+        $queries = [];
+
+        return $this->network(view('game.maker_network', [
+            'makers' => $makers,
+            'page'   => $page,
+            'prev'   => array_merge($queries, ['page' => $prevPage]),
+            'next'   => array_merge($queries, ['page' => $nextPage]),
+        ]));
     }
 
     /**
@@ -209,9 +256,56 @@ class GameController extends Controller
      */
     public function platformNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $platforms = GamePlatform::select(['id', 'key', 'node_name'])->orderBy('sort_order')->get();
+        $page = $request->get('page', 1);
+        $num = GamePlatform::count();
+        $maxPage = ceil($num / self::ITEM_PER_PAGE);
 
-        return $this->network(view('game.platform_network', ['platforms' => $platforms]));
+        if ($page < 1) {
+            $page = 1;
+        } else if ($page > $maxPage) {
+            $page = $maxPage;
+        }
+
+        $prevPage = $page - 1;
+        if ($prevPage < 1) {
+            $prevPage = null;
+        }
+        $nextPage = $page + 1;
+        if ($nextPage > $maxPage) {
+            $nextPage = null;
+        }
+
+        $platforms = GamePlatform::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+            ->orderBy('sort_order')
+            ->limit(self::ITEM_PER_PAGE)
+            ->offset(($page - 1) * self::ITEM_PER_PAGE)
+            ->get();
+
+        // game_maker_idとcount(id)を取得
+        GamePackage::whereIn('game_platform_id', $platforms->pluck('id'))
+            ->select(['game_platform_id', \DB::raw('count(id) as count')])
+            ->groupBy('game_platform_id')
+            ->get()
+            ->each(function ($item) use ($platforms) {
+                $platform = $platforms->where('id', $item->game_platform_id)->first();
+
+                if ($item->count >= 30) {
+                    $platform->sub_net = 'l';
+                } else if ($item->count >= 15) {
+                    $platform->sub_net = 'm';
+                } else if ($item->count >= 1) {
+                    $platform->sub_net = 's';
+                }
+            });
+
+        $queries = [];
+
+        return $this->network(view('game.platform_network', [
+            'platforms' => $platforms,
+            'page'   => $page,
+            'prev'   => array_merge($queries, ['page' => $prevPage]),
+            'next'   => array_merge($queries, ['page' => $nextPage]),
+        ]));
     }
 
     /**
@@ -245,8 +339,62 @@ class GameController extends Controller
      */
     public function franchiseNetwork(Request $request): JsonResponse|Application|Factory|View
     {
+        $page = $request->get('page', 1);
+        $num = GameFranchise::count();
+        $maxPage = ceil($num / self::ITEM_PER_PAGE);
+
+        if ($page < 1) {
+            $page = 1;
+        } else if ($page > $maxPage) {
+            $page = $maxPage;
+        }
+
+        $prevPage = $page - 1;
+        if ($prevPage < 1) {
+            $prevPage = null;
+        }
+        $nextPage = $page + 1;
+        if ($nextPage > $maxPage) {
+            $nextPage = null;
+        }
+
+        $franchises = GameFranchise::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+            ->orderBy('phonetic')
+            ->limit(self::ITEM_PER_PAGE)
+            ->offset(($page - 1) * self::ITEM_PER_PAGE)
+            ->get()
+            ->each(function ($franchise) {
+                $titleNum = 0;
+                foreach ($franchise->series as $series) {
+                    if (empty($titleIds)) {
+                        $titleNum += $series->titles->count();
+                    } else {
+                        $titleNum += $series->titles->whereIn('id', $titleIds)->count();
+                    }
+                }
+                if (empty($titleIds)) {
+                    $titleNum += $franchise->titles->count();
+                } else {
+                    $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
+                }
+
+                if ($titleNum >= 10) {
+                    $franchise->sub_net = 'l';
+                } else if ($titleNum >= 5) {
+                    $franchise->sub_net = 'm';
+                } else if ($titleNum >= 1) {
+                    $franchise->sub_net = 's';
+                }
+
+                // レビュー、お気に入りユーザー数なども加味してゆく
+            });
+
+
         return $this->network(view('game.franchise_network', [
-            'franchises' => GameFranchise::orderBy('phonetic')->get(),
+            'franchises' => $franchises,
+            'page'   => $page,
+            'prev'   => ['page' => $prevPage],
+            'next'   => ['page' => $nextPage],
         ]));
     }
 

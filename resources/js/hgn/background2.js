@@ -118,7 +118,7 @@ export class Background2
         switch (node.subNetworkSize) {
             case 's': maxDepth = 1; appearRate = 30; break;
             case 'm': maxDepth = 2; appearRate = 30; break;
-            case 'l': maxDepth = 3; appearRate = 40; break;
+            case 'l': maxDepth = 3; appearRate = 70; break;
         }
 
         let pattern = 1;//Math.floor((Math.random() * 2)) + 1;

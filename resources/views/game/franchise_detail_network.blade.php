@@ -40,9 +40,6 @@
                 </div>
             </section>
         @endif
-
-        <div class="node-map">
-        </div>
     </div>
 
     @include('footer')
