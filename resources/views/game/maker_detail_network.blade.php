@@ -10,6 +10,11 @@
             </h1>
         </div>
 
+        @if (!empty($maker->description))
+            <div class="node-text">
+                {!! $maker->description !!}
+            </div>
+        @endif
 
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">

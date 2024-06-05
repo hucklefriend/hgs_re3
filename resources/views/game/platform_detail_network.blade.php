@@ -10,24 +10,27 @@
             </h1>
         </div>
 
+        @if (!empty($platform->description))
+            <div class="node node-center">
+                <div class="text-node">
+                    <blockquote>
+                        {!! nl2br(e($platform->explain))  !!}
 
-        <div class="node node-center">
-            <div class="text-node">
-                <blockquote>
-                    {!! nl2br(e($platform->explain))  !!}
-
-                    @if ($platform->explain_source_name !== null)
-                        <footer style="text-align: right;margin-top:1rem;">— <cite>
-                                @if ($platform->explain_source_url !== null)
-                                    <a href="{{ $platform->explain_source_url }}" target="_blank">{{ $platform->explain_source_name }}</a>
-                                @else
-                                    {{ $platform->explain_source_name }}
-                                @endif
-                            </cite></footer>
-                    @endif
-                </blockquote>
-            </div>
+                        @if ($platform->explain_source_name !== null)
+                            <footer style="text-align: right;margin-top:1rem;">
+                                — <cite>
+                                    @if ($platform->explain_source_url !== null)
+                                        <a href="{{ $platform->explain_source_url }}" target="_blank">{{ $platform->explain_source_name }}</a>
+                                    @else
+                                        {{ $platform->explain_source_name }}
+                                    @endif
+                                </cite>
+                            </footer>
+                        @endif
+                    </blockquote>
+                </div>
         </div>
+        @endif
 
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
