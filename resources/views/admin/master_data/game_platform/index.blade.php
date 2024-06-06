@@ -32,8 +32,9 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>タイトル</th>
-                    <th>表示期間</th>
+                    <th>名前</th>
+                    <th>key</th>
+                    <th>略称</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -42,6 +43,7 @@
                     <tr>
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
+                        <td>{{ $platform->key }}</td>
                         <td>{{ $platform->acronym }}</td>
                         <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
                     </tr>

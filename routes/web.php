@@ -67,6 +67,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+                Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
+                Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
+
             });
 
             // フランチャイズ

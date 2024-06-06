@@ -24,13 +24,13 @@
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(小)URL</th>
+        <th>小画像URL</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'img_s_url', 'options' => ['maxlength' => 250]])
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(中)URL</th>
+        <th>中画像URL</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'img_m_url', 'options' => ['maxlength' => 250]])
         </td>

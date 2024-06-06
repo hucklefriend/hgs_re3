@@ -139,12 +139,12 @@ hr {
     }
 }
 
-.title-packages {
+.product-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: start;
 
-    > .title-package-info {
+    > .product-info {
         width: 180px;
         margin-right: 5px;
         margin-bottom: 1rem;

@@ -6,7 +6,7 @@
                 {{ $model->shop()->name() }}
                 <input type="hidden" name="shop_id" id="shop_id" value="{{ $model->shop_id }}">
             @else
-                @include ('admin.common.form.select', ['name' => 'shop_id', 'list' => \App\Enums\Game\Shop::selectList()])
+                @include ('admin.common.form.select', ['name' => 'shop_id', 'list' => \App\Enums\Shop::selectList()])
             @endif
         </td>
     </tr>
@@ -26,12 +26,6 @@
         <th>パラメーター2</th>
         <td>
             @include ('admin.common.form.input', ['name' => 'param2'])
-        </td>
-    </tr>
-    <tr>
-        <th>パラメーター3</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'param3'])
         </td>
     </tr>
 </table>
