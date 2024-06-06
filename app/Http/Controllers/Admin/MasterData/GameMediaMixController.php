@@ -212,7 +212,7 @@ class GameMediaMixController extends AbstractAdminController
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      */
-    public function syncTitle(GameMediaMixRelatedProductLinkRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function syncRelatedProduct(GameMediaMixRelatedProductLinkRequest $request, GameMediaMix $mediaMix): RedirectResponse
     {
         $mediaMix->relatedProducts()->sync($request->validated('related_product_id'));
         return redirect()->route('Admin.MasterData.MediaMix.Detail', $mediaMix);

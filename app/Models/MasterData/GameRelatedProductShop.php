@@ -2,7 +2,7 @@
 
 namespace App\Models\MasterData;
 
-use App\Enums\Game\Shop;
+use App\Enums\Shop;
 
 class GameRelatedProductShop extends \Eloquent
 {

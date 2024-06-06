@@ -61,27 +61,20 @@
     <tr>
         <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
+            @include ('admin.common.form.textarea', ['name' => 'description'])
         </td>
     </tr>
     <tr>
         <th>説明文の引用元名称</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
+            @include ('admin.common.form.input', ['name' => 'description_source_name', 'options' => ['maxlength' => 100]])
         </td>
     </tr>
     <tr>
         <th>説明文の引用元URL</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
+            @include ('admin.common.form.input', ['name' => 'description_source_url', 'options' => ['maxlength' => 100]])
         </td>
     </tr>
 </table>
 
-@section('js')
-    <script>
-        $(()=>{
-            $(".default-select2").select2();
-        });
-    </script>
-@endsection

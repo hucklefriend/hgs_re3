@@ -39,14 +39,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>R指定</th>
-                    <td>{{ \App\Enums\RatedR::from($model->rated_r)->text() }}</td>
-                </tr>
-                <tr>
-                    <th>URL</th>
-                    <td>{{ $model->url }}</td>
-                </tr>
-                <tr>
                     <th>メーカー</th>
                     <td>{{ $model?->maker->name ?? '' }}</td>
                 </tr>
@@ -61,7 +53,18 @@
                 <tr>
                     <th>説明</th>
                     <td>
-                        @include('common.explain', ['model' => $model])
+                        @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
+                    <th>関連商品</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->relatedProducts as $rp)
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.MasterData.Platform.LinkRelatedProduct', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
                     </td>
                 </tr>
             </table>

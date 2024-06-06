@@ -41,6 +41,22 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>小画像</th>
+                    <td>
+                        @if (!empty($model->img_s_url))
+                            <img src="{{ conv_asset_url($model->img_s_url) }}">
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>中画像</th>
+                    <td>
+                        @if (!empty($model->img_m_url))
+                            <img src="{{ conv_asset_url($model->img_m_url) }}">
+                        @endif
+                    </td>
+                </tr>
+                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">
