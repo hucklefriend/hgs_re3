@@ -11,11 +11,13 @@
         </div>
 
         @if (!empty($platform->description))
-            <div class="node node-center">
-                <div class="text-node">
-                    @include('common.description', ['model' => $platform])
+            <section>
+                <div class="node node-center">
+                    <div class="text-node">
+                        @include('common.description', ['model' => $platform])
+                    </div>
                 </div>
-            </div>
+            </section>
         @endif
 
         @if ($platform->relatedProducts->count() > 0)

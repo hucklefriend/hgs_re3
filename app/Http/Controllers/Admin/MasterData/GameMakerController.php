@@ -97,7 +97,21 @@ class GameMakerController extends AbstractMasterDataController
         $maker->synonymsStr = $request->post('synonymsStr', '');
         $maker->save();
 
-        return redirect()->route('Admin.MasterData.Maker');
+        return redirect()->route('Admin.MasterData.Maker.Detail', $maker);
+    }
+
+    /**
+     * 詳細
+     *
+     * @param GameMaker $maker
+     * @return Application|Factory|View
+     */
+    public function detail(GameMaker $maker): Application|Factory|View
+    {
+        $maker->loadSynonyms();
+        return view('admin.master_data.game_maker.detail', [
+            'model' => $maker
+        ]);
     }
 
     /**
@@ -128,7 +142,7 @@ class GameMakerController extends AbstractMasterDataController
         $maker->synonymsStr = $request->validated('synonymsStr', '');
         $maker->save();
 
-        return redirect()->route('Admin.MasterData.Maker');
+        return redirect()->route('Admin.MasterData.Maker.Detail', $maker);
     }
 
     /**

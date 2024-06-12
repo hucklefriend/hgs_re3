@@ -55,19 +55,19 @@
     <tr>
         <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
+            @include ('admin.common.form.textarea', ['name' => 'description'])
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元名称</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
+            @include ('admin.common.form.description_source', ['name' => 'description_source'])
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元URL</th>
+        <th>関連メーカー</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
+            @include ('admin.common.form.select_game_maker', ['name' => 'related_game_maker_id', 'value' => $model->related_game_maker_id, 'withBlank' => true])
         </td>
     </tr>
 </table>

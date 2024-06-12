@@ -11,9 +11,13 @@
         </div>
 
         @if (!empty($maker->description))
-            <div class="node-text">
-                {!! $maker->description !!}
-            </div>
+            <section>
+                <div class="node node-center">
+                    <div class="text-node">
+                        @include('common.description', ['model' => $maker])
+                    </div>
+                </div>
+            </section>
         @endif
 
         @if ($titles->count() > 0)

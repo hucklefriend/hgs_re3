@@ -50,3 +50,16 @@ $(()=>{
         });
     }
 });
+
+
+function descriptionFormat(type, name)
+{
+    let format = '';
+    switch (type) {
+        case 'wikipedia':
+            format = '<a href="" target="_blank">「」ウィキペディア日本語版()</a>';
+            break;
+    }
+
+    $('#' + name).val(format);
+}

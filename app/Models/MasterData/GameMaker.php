@@ -3,6 +3,7 @@
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
@@ -45,6 +46,26 @@ class GameMaker extends \Eloquent
     public function loadSynonyms(): void
     {
         $this->synonymsStr = $this->synonyms()->pluck('synonym')->implode("\r\n");
+    }
+
+    /**
+     * 関連メーカーを取得
+     *
+     * @return BelongsTo
+     */
+    public function related_maker(): BelongsTo
+    {
+        return $this->belongsTo(GameMaker::class, 'related_game_maker_id');
+    }
+
+    /**
+     * 紐づけ元の関連メーカーを取得
+     *
+     * @return HasMany
+     */
+    public function related_children(): HasMany
+    {
+        return $this->hasMany(GameMaker::class, 'related_game_maker_id');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\MasterData;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GameMakerRequest extends FormRequest
 {
@@ -13,7 +14,20 @@ class GameMakerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
+    }
+
+    /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->description === null) {
+            $this->merge(['description' => '']);
+        }
+        if ($this->synonymsStr === null) {
+            $this->merge(['synonymsStr' => '']);
+        }
     }
 
     /**
@@ -24,15 +38,15 @@ class GameMakerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                => 'required|max:100',
-            'acronym'             => 'required|max:100',
-            'phonetic'            => 'required|max:100|regex:/^[あ-ん][ぁ-んー0-9]*/u',
-            'node_name'           => 'required|max:200',
-            'h1_node_name'        => 'required|max:200',
-            'synonymsStr'         => '',
-            'explain'             => 'required',
-            'explain_source_name' => 'max:100',
-            'explain_source_url'  => 'max:100',
+            'name'                  => 'required|max:100',
+            'acronym'               => 'required|max:100',
+            'phonetic'              => 'required|max:100|regex:/^[あ-ん][ぁ-んー0-9]*/u',
+            'node_name'             => 'required|max:200',
+            'h1_node_name'          => 'required|max:200',
+            'related_game_maker_id' => 'nullable|exists:game_makers,id',
+            'synonymsStr'           => '',
+            'description'           => 'nullable',
+            'description_source'    => 'nullable',
         ];
     }
 }
