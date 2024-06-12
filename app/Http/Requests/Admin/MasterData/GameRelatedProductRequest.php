@@ -20,6 +20,18 @@ class GameRelatedProductRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->description === null) {
+            $this->merge([
+                'description' => '',
+            ]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -27,14 +39,13 @@ class GameRelatedProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                => 'required|max:200',
-            'node_name'           => 'required|max:200',
-            'img_s_url'           => 'nullable|max:250',
-            'img_m_url'           => 'nullable|max:250',
-            'rating'              => ['required', new Enum(Rating::class)],
-            'explain'             => 'nullable',
-            'explain_source_name' => 'nullable|max:100',
-            'explain_source_url'  => 'nullable|max:100',
+            'name'               => 'required|max:200',
+            'node_name'          => 'required|max:200',
+            'img_s_url'          => 'nullable|max:250',
+            'img_m_url'          => 'nullable|max:250',
+            'rating'             => ['required', new Enum(Rating::class)],
+            'description'        => '',
+            'description_source' => 'nullable',
         ];
     }
 }

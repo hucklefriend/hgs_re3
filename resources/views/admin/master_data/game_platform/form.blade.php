@@ -65,15 +65,9 @@
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元名称</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'description_source_name', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元URL</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'description_source_url', 'options' => ['maxlength' => 100]])
+            @include ('admin.common.form.description_source', ['name' => 'description_source'])
         </td>
     </tr>
 </table>

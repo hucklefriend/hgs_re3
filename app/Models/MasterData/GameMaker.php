@@ -18,9 +18,9 @@ class GameMaker extends \Eloquent
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'        => '',
-        'acronym'     => '',
-        'phonetic'    => '',
+        'name'     => '',
+        'acronym'  => '',
+        'phonetic' => '',
     ];
 
     /**
@@ -53,7 +53,7 @@ class GameMaker extends \Eloquent
      *
      * @return BelongsTo
      */
-    public function related_maker(): BelongsTo
+    public function relatedMaker(): BelongsTo
     {
         return $this->belongsTo(GameMaker::class, 'related_game_maker_id');
     }
@@ -63,7 +63,7 @@ class GameMaker extends \Eloquent
      *
      * @return HasMany
      */
-    public function related_children(): HasMany
+    public function relatedChildren(): HasMany
     {
         return $this->hasMany(GameMaker::class, 'related_game_maker_id');
     }

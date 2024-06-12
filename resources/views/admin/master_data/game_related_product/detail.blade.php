@@ -37,7 +37,7 @@
                 <tr>
                     <th>説明</th>
                     <td>
-                        @include('common.explain', ['model' => $model])
+                        @include('common.description', ['model' => $model])
                     </td>
                 </tr>
                 <tr>

@@ -68,12 +68,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>説明</th>
-                    <td>
-                        @include('common.explain', ['model' => $model])
-                    </td>
-                </tr>
-                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">

@@ -37,17 +37,16 @@ class GamePlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                    => 'required|max:200',
-            'key'                     => 'required|max:50',
-            'acronym'                 => 'required|max:30',
-            'node_name'               => 'required|max:200',
-            'h1_node_name'            => 'required|max:200',
-            'sort_order'              => 'required|integer|min:0|max:99999999',
-            'game_maker_id'           => 'nullable|exists:game_makers,id',
-            'rated_r'                 => ['required', new Enum(RatedR::class)],
-            'description'             => '',
-            'description_source_name' => 'max:100',
-            'description_source_url'  => 'max:100',
+            'name'               => 'required|max:200',
+            'key'                => 'required|max:50',
+            'acronym'            => 'required|max:30',
+            'node_name'          => 'required|max:200',
+            'h1_node_name'       => 'required|max:200',
+            'sort_order'         => 'required|integer|min:0|max:99999999',
+            'game_maker_id'      => 'nullable|exists:game_makers,id',
+            'rated_r'            => ['required', new Enum(RatedR::class)],
+            'description'        => '',
+            'description_source' => 'nullable',
         ];
     }
 }

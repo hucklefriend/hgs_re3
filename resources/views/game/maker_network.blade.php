@@ -16,9 +16,9 @@
                     </div>
                 </div>
 
-                @foreach ($maker->related_children as $childMaker)
+                @foreach ($maker->relatedChildren as $childMaker)
                     <div>
-                        <div class="link-node link-node-center" data-sub="s" id="{{ $childMaker->key }}" data-connect="{{ json_encode([$childMaker->related_maker->key]) }}">
+                        <div class="link-node link-node-center" data-sub="s" id="{{ $childMaker->key }}" data-connect="{{ json_encode([$childMaker->relatedMaker->key]) }}">
                             <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $childMaker->key]) }}">
                                 {!! $childMaker->node_name !!}
                             </a>

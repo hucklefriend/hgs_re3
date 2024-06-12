@@ -48,14 +48,14 @@
                 </tr>
                 <tr>
                     <th>関連メーカー(親)</th>
-                    <td>{{ $model->related_maker?->name ?? '' }}</td>
+                    <td>{{ $model->relatedMaker?->name ?? '' }}</td>
                 </tr>
                 <tr>
                     <th>関連メーカー(子)</th>
                     <td>
                         @if ($model->related_children()->count() > 0)
                             <ul>
-                                @foreach ($model->related_children as $child)
+                                @foreach ($model->relatedChildren as $child)
                                     <li>{{ $child->name }}</li>
                                 @endforeach
                             </ul>

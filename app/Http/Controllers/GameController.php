@@ -216,14 +216,6 @@ class GameController extends Controller
                 }
             });
 
-        foreach ($makers as $maker) {
-            if ($maker->related_children->count() > 0) {
-                $maker->connections = $maker->related_children->pluck('key')->toArray();
-            } else {
-                $maker->connections = [];
-            }
-        }
-
         return $this->network(view('game.maker_network', [
             'makers' => $makers,
             'page'   => $page,

@@ -35,23 +35,17 @@
             @include ('admin.common.form.input', ['name' => 'img_m_url', 'options' => ['maxlength' => 250]])
         </td>
     </tr>
-    <tr>
-        <th>説明文</th>
-        <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元名称</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元URL</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
+        <tr>
+            <th>説明文</th>
+            <td>
+                @include ('admin.common.form.textarea', ['name' => 'description'])
+            </td>
+        </tr>
+        <tr>
+            <th>説明文の引用元</th>
+            <td>
+                @include ('admin.common.form.description_source', ['name' => 'description_source'])
+            </td>
+        </tr>
 </table>
 
