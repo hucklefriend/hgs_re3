@@ -51,12 +51,10 @@
                     <td>{{ $model->originalPackage->name ?? '-' }}</td>
                 </tr>
                 <tr>
-                    <th>あらすじ</th>
-                    <td>{!! nl2br(e($model->introduction)) !!}</td>
-                </tr>
-                <tr>
-                    <th>あらすじ引用元</th>
-                    <td>{!! $model->introduction_from !!}</td>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
+                    </td>
                 </tr>
                 <tr>
                     <th>シリーズ</th>

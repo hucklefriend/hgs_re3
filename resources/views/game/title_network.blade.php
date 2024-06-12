@@ -7,17 +7,15 @@
         <h1 class="head1">{{ $title->name }}</h1>
     </div>
 
-    <section>
-        <div class="node node-center">
-            <div class="text-node">
-                <blockquote>
-                    {!! nl2br(e($title->introduction))  !!}
-
-                    <footer style="text-align: right;margin-top:1rem;">— <cite>{!! $title->introduction_from  !!}</cite></footer>
-                </blockquote>
+    @if (!empty($title->description))
+        <section>
+            <div class="node node-center">
+                <div class="text-node">
+                    @include('common.description', ['model' => $title])
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     <section>
     <div class="node">

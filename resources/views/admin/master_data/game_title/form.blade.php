@@ -48,21 +48,15 @@
         </td>
     </tr>
     <tr>
-        <th>あらすじ</th>
+        <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'introduction'])
+            @include ('admin.common.form.textarea', ['name' => 'description'])
         </td>
     </tr>
     <tr>
-        <th>あらすじの引用元</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'introduction_from'])
-        </td>
-    </tr>
-    <tr>
-        <th>あらすじ引用元のR指定</th>
-        <td>
-            @include ('admin.common.form.select', ['name' => 'introduction_from_rated_r', 'list' => \App\Enums\RatedR::selectList()])
+            @include ('admin.common.form.description_source', ['name' => 'description_source'])
         </td>
     </tr>
     <tr>
