@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\MasterData;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GameFranchiseSeriesLinkRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
     /**

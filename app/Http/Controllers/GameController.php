@@ -193,12 +193,13 @@ class GameController extends Controller
         }
 
         $makers = GameMaker::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+            ->whereNull('related_game_maker_id')
             ->orderBy('phonetic')
             ->limit(self::ITEM_PER_PAGE)
             ->offset(($page - 1) * self::ITEM_PER_PAGE)
             ->get();
 
-        // game_maker_idとcount(id)を取得
+        // game_maker_idと紐づくパッケージの数を検索
         GamePackage::whereIn('game_maker_id', $makers->pluck('id'))
             ->select(['game_maker_id', \DB::raw('count(id) as count')])
             ->groupBy('game_maker_id')
@@ -206,22 +207,28 @@ class GameController extends Controller
             ->each(function ($item) use ($makers) {
                 $maker = $makers->where('id', $item->game_maker_id)->first();
 
-                if ($item->count >= 10) {
+                if ($item->count >= 30) {
                     $maker->sub_net = 'l';
-                } else if ($item->count >= 5) {
+                } else if ($item->count >= 10) {
                     $maker->sub_net = 'm';
                 } else if ($item->count >= 1) {
                     $maker->sub_net = 's';
                 }
             });
 
-        $queries = [];
+        foreach ($makers as $maker) {
+            if ($maker->related_children->count() > 0) {
+                $maker->connections = $maker->related_children->pluck('key')->toArray();
+            } else {
+                $maker->connections = [];
+            }
+        }
 
         return $this->network(view('game.maker_network', [
             'makers' => $makers,
             'page'   => $page,
-            'prev'   => array_merge($queries, ['page' => $prevPage]),
-            'next'   => array_merge($queries, ['page' => $nextPage]),
+            'prev'   => ['page' => $prevPage],
+            'next'   => ['page' => $nextPage],
         ]));
     }
 

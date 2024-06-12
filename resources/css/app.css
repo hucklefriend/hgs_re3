@@ -205,6 +205,13 @@ hr {
     }
 }
 
+.description {
+    > footer {
+        text-align: right;
+        margin-top:1rem;
+    }
+}
+
 /* スマホ～ */
 @media (min-width: 400px) {
 
