@@ -67,6 +67,16 @@ hr {
     height: 1px;
 }
 
+.info {
+    margin-top: 100px;
+    margin-bottom: 30px;
+
+    > .node:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+}
+
+
 .horrorgame_search {
 
     > form {

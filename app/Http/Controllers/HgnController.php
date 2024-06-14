@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Information;
 use App\Models\MasterData\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -26,7 +27,40 @@ class HgnController extends Controller
             return view('suspend');
         }
 
-        return $this->network(view('entrance'));
+        $infoList = Information::where('open_at', '<', now())
+            ->where('close_at', '>=', now())
+            ->orderBy('priority', 'desc')
+            ->orderBy('open_at', 'desc')
+            ->get();
+
+        return $this->network(view('entrance', compact('infoList')));
+    }
+
+    /**
+     * お知らせネットワーク
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function infoNetwork(): JsonResponse|Application|Factory|View
+    {
+        $infoList = Information::where('open_at', '<=', now())
+            ->orderBy('open_at', 'desc')
+            ->paginate(30);
+
+        return $this->network(view('info_network', compact('infoList')));
+    }
+
+    /**
+     * お知らせ
+     *
+     * @param Information $info
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function info(Information $info): JsonResponse|Application|Factory|View
+    {
+        return $this->contentNode(view('info', ['info' => $info]));
     }
 
     /**

@@ -31,12 +31,26 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('logout', [Admin\AdminController::class, 'logout'])->name('Admin.Logout');
 
     // ここからは認証が必要
-    Route::group(['middleware' => ['auth', 'can:admin', 'admin']], function () {
+    Route::group(['middleware' => ['auth', 'can:admin', 'admin', 'admin.search.breadcrumb']], function () {
         // 管理トップ
         Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
 
+        // 運営
+        Route::group(['prefix' => 'manage'], function () {
+            // お知らせ
+            Route::resource('information', Admin\Manage\InformationController::class)->names([
+                'index'   => 'Admin.Manage.Information',
+                'create'  => 'Admin.Manage.Information.Create',
+                'store'   => 'Admin.Manage.Information.Store',
+                'show'    => 'Admin.Manage.Information.Show',
+                'edit'    => 'Admin.Manage.Information.Edit',
+                'update'  => 'Admin.Manage.Information.Update',
+                'destroy' => 'Admin.Manage.Information.Destroy',
+            ]);
+        });
+
         // マスター
-        Route::group(['prefix' => 'master', 'middleware' => 'admin.search.breadcrumb'], function () {
+        Route::group(['prefix' => 'master'], function () {
             // メーカー
             $prefix = 'maker';
             Route::group(['prefix' => 'maker'], function () use ($prefix) {
@@ -211,6 +225,8 @@ $class = HgnController::class;
 Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
+Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
+Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 
 // マスター
 Route::group(['prefix' => 'game'], function () {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Information;
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameFranchiseSeriesLink;
 use App\Models\MasterData\GameFranchiseTitleLink;
@@ -154,13 +155,14 @@ class GameController extends Controller
             $groups[] = $games;
         }
 
+
         return $this->network(view('game.horrorgame_network', [
             'platforms' => GamePlatform::select(['id', 'acronym'])->orderBy('sort_order')->get(),
-            'groups' => $groups,
-            'page'   => $page,
-            'prev'   => array_merge($queries, ['page' => $prevPage]),
-            'next'   => array_merge($queries, ['page' => $nextPage]),
-            'search' => $search,
+            'groups'    => $groups,
+            'page'      => $page,
+            'prev'      => array_merge($queries, ['page' => $prevPage]),
+            'next'      => array_merge($queries, ['page' => $nextPage]),
+            'search'    => $search,
         ]));
     }
 
