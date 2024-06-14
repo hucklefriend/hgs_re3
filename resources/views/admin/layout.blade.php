@@ -101,6 +101,20 @@
                         <div class="menu-text">Top</div>
                     </a>
                 </div>
+                <div class="menu-item has-sub {{ menu_active("Admin.Manage") }}">
+                    <a href="javascript:;" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-sitemap"></i>
+                        </div>
+                        <div class="menu-text">Manage</div>
+                        <div class="menu-caret"></div>
+                    </a>
+                    <div class="menu-submenu">
+                        <div class="menu-item  {{ menu_active("Admin.Manage.Information") }}">
+                            <a href="{{ route("Admin.Manage.Information") }}" class="menu-link"><div class="menu-text">Information</div></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="menu-item has-sub {{ menu_active("Admin.MasterData") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">

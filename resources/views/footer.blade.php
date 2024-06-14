@@ -12,6 +12,7 @@
             <a href="{{ route('Game.HorrorGameNetwork') }}">HorrorGame Network</a>
         </div>
     </div>
+    {{--
     <div>
         <div class="link-node link-node-center">
             <a href="{{ route('Entrance') }}">Sign In / Sign Up</a>
@@ -22,4 +23,5 @@
             <a href="{{ route('Entrance') }}">My Page</a>
         </div>
     </div>
+    --}}
 </div>

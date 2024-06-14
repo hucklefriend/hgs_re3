@@ -3,11 +3,13 @@
 @section('title', 'Entrance.hgn')
 
 @section('content')
+    {{--
     <div class="node node-right">
         <div class="link-node">
             SignIn
         </div>
     </div>
+    --}}
     <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
         <div class="link-node link-node-center" id="n-HGS">
             <h1>HorrorGame Network</h1>
@@ -58,32 +60,28 @@
         </div>
     </section>
 --}}
-    <section class="news-node" style="margin-top: 100px;margin-bottom: 30px;">
+    <section class="info">
         <h2 class="head2">Information</h2>
 
-        <div>
+        @empty($infoList)
             <div class="node">
-                <div class="link-node">
-                    メンテナス実施のお知らせ
+                <div class="text-node">
+                    現在、お知らせはありません。
                 </div>
             </div>
-
-            <div class="node">
-                <div class="link-node">
-                    メンテナス実施のお知らせ
+        @else
+            @foreach ($infoList as $info)
+                <div class="node">
+                    <div class="content-link-node">
+                        <a href="{{ route('Info', $info) }}">{{ $info->head }}</a>
+                    </div>
                 </div>
-            </div>
+            @endforeach
+        @endempty
 
-            <div class="node">
-                <div class="link-node">
-                    メンテナス実施のお知らせ
-                </div>
-            </div>
-
-            <div class="node">
-                <div class="link-node">
-                    メンテナス実施のお知らせ
-                </div>
+        <div class="node node-right">
+            <div class="link-node link-node-small">
+                <a href="{{ route('InfoNetwork') }}">More</a>
             </div>
         </div>
     </section>
@@ -107,6 +105,7 @@
                     <a href="{{ route('Game.PlatformNetwork') }}">Platform</a>
                 </div>
             </div>
+            {{--
             <div>
                 <div class="link-node">
                     Tag
@@ -132,6 +131,7 @@
                     MyPage
                 </div>
             </div>
+            --}}
         </div>
 
         <div style="margin-top:50px;margin-bottom:50px;">
