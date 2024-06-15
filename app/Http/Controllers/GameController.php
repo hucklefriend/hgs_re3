@@ -175,39 +175,18 @@ class GameController extends Controller
      */
     public function makerNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $page = $request->get('page', 1);
-        $num = GameMaker::count();
-        $maxPage = ceil($num / self::ITEM_PER_PAGE);
-
-        if ($page < 1) {
-            $page = 1;
-        } else if ($page > $maxPage) {
-            $page = $maxPage;
-        }
-
-        $prevPage = $page - 1;
-        if ($prevPage < 1) {
-            $prevPage = null;
-        }
-        $nextPage = $page + 1;
-        if ($nextPage > $maxPage) {
-            $nextPage = null;
-        }
-
         $makers = GameMaker::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
             ->whereNull('related_game_maker_id')
             ->orderBy('phonetic')
-            ->limit(self::ITEM_PER_PAGE)
-            ->offset(($page - 1) * self::ITEM_PER_PAGE)
-            ->get();
+            ->paginate(self::ITEM_PER_PAGE);
 
         // game_maker_idと紐づくパッケージの数を検索
-        GamePackage::whereIn('game_maker_id', $makers->pluck('id'))
+        GamePackage::whereIn('game_maker_id', $makers->getCollection()->pluck('id'))
             ->select(['game_maker_id', \DB::raw('count(id) as count')])
             ->groupBy('game_maker_id')
             ->get()
             ->each(function ($item) use ($makers) {
-                $maker = $makers->where('id', $item->game_maker_id)->first();
+                $maker = $makers->getCollection()->where('id', $item->game_maker_id)->first();
 
                 if ($item->count >= 30) {
                     $maker->sub_net = 'l';
@@ -218,12 +197,7 @@ class GameController extends Controller
                 }
             });
 
-        return $this->network(view('game.maker_network', [
-            'makers' => $makers,
-            'page'   => $page,
-            'prev'   => ['page' => $prevPage],
-            'next'   => ['page' => $nextPage],
-        ]));
+        return $this->network(view('game.maker_network', compact('makers')));
     }
 
     /**
@@ -257,38 +231,17 @@ class GameController extends Controller
      */
     public function platformNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $page = $request->get('page', 1);
-        $num = GamePlatform::count();
-        $maxPage = ceil($num / self::ITEM_PER_PAGE);
-
-        if ($page < 1) {
-            $page = 1;
-        } else if ($page > $maxPage) {
-            $page = $maxPage;
-        }
-
-        $prevPage = $page - 1;
-        if ($prevPage < 1) {
-            $prevPage = null;
-        }
-        $nextPage = $page + 1;
-        if ($nextPage > $maxPage) {
-            $nextPage = null;
-        }
-
         $platforms = GamePlatform::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
             ->orderBy('sort_order')
-            ->limit(self::ITEM_PER_PAGE)
-            ->offset(($page - 1) * self::ITEM_PER_PAGE)
-            ->get();
+            ->paginate(self::ITEM_PER_PAGE);
 
         // game_maker_idとcount(id)を取得
-        GamePackage::whereIn('game_platform_id', $platforms->pluck('id'))
+        GamePackage::whereIn('game_platform_id', $platforms->getCollection()->pluck('id'))
             ->select(['game_platform_id', \DB::raw('count(id) as count')])
             ->groupBy('game_platform_id')
             ->get()
             ->each(function ($item) use ($platforms) {
-                $platform = $platforms->where('id', $item->game_platform_id)->first();
+                $platform = $platforms->getCollection()->where('id', $item->game_platform_id)->first();
 
                 if ($item->count >= 30) {
                     $platform->sub_net = 'l';
@@ -299,14 +252,7 @@ class GameController extends Controller
                 }
             });
 
-        $queries = [];
-
-        return $this->network(view('game.platform_network', [
-            'platforms' => $platforms,
-            'page'   => $page,
-            'prev'   => array_merge($queries, ['page' => $prevPage]),
-            'next'   => array_merge($queries, ['page' => $nextPage]),
-        ]));
+        return $this->network(view('game.platform_network', compact('platforms')));
     }
 
     /**
@@ -340,30 +286,13 @@ class GameController extends Controller
      */
     public function franchiseNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $page = $request->get('page', 1);
-        $num = GameFranchise::count();
-        $maxPage = ceil($num / self::ITEM_PER_PAGE);
-
-        if ($page < 1) {
-            $page = 1;
-        } else if ($page > $maxPage) {
-            $page = $maxPage;
-        }
-
-        $prevPage = $page - 1;
-        if ($prevPage < 1) {
-            $prevPage = null;
-        }
-        $nextPage = $page + 1;
-        if ($nextPage > $maxPage) {
-            $nextPage = null;
-        }
-
         $franchises = GameFranchise::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
             ->orderBy('phonetic')
-            ->limit(self::ITEM_PER_PAGE)
-            ->offset(($page - 1) * self::ITEM_PER_PAGE)
-            ->get()
+            ->paginate(self::ITEM_PER_PAGE);
+
+        // フランチャイズに紐づくタイトル数を取得
+        $franchises
+            ->getCollection()
             ->each(function ($franchise) {
                 $titleNum = 0;
                 foreach ($franchise->series as $series) {
@@ -391,12 +320,7 @@ class GameController extends Controller
             });
 
 
-        return $this->network(view('game.franchise_network', [
-            'franchises' => $franchises,
-            'page'   => $page,
-            'prev'   => ['page' => $prevPage],
-            'next'   => ['page' => $nextPage],
-        ]));
+        return $this->network(view('game.franchise_network', compact('franchises')));
     }
 
     /**

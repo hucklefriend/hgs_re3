@@ -29,22 +29,7 @@
         </div>
     </div>
 
-    <div class="node-list node-around" style="margin-top:100px;margin-bottom: 50px;">
-        <div>
-            @isset($prev['page'])
-                <div class="link-node link-node-center">
-                    <a href="{{ route('Game.MakerNetwork', $prev) }}">&lt;&lt; Prev</a>
-                </div>
-            @endif
-        </div>
-        <div>
-            @isset($next['page'])
-                <div class="link-node link-node-center">
-                    <a href="{{ route('Game.MakerNetwork', $next) }}">Next &gt;&gt;</a>
-                </div>
-            @endif
-        </div>
-    </div>
+    @include('common.paging', ['pager' => $makers])
 
     @include('footer')
 @endsection
