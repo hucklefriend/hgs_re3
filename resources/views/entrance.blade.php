@@ -91,7 +91,7 @@
 
         <div class="node-map">
             <div>
-                <div class="link-node">
+                <div class="link-node" data-sub="m">
                     <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
                 </div>
             </div>
