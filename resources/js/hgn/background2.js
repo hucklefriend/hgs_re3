@@ -100,10 +100,6 @@ export class Background2
         network.addOctaNode(604, null, 607, -80, -80, 30);
         network.addOctaNode(604, null, 608, -120, 10, 25);
 
-
-
-
-
         this.networks.push(network);
     }
 
@@ -116,7 +112,7 @@ export class Background2
         let maxDepth = 1;
         let appearRate = 0;
         switch (node.subNetworkSize) {
-            case 's': maxDepth = 1; appearRate = 30; break;
+            case 's': maxDepth = 1; appearRate = 20; break;
             case 'm': maxDepth = 2; appearRate = 30; break;
             case 'l': maxDepth = 3; appearRate = 70; break;
         }
@@ -133,7 +129,9 @@ export class Background2
 
     addRandomNodePatter1(network, node, maxDepth, appearRate)
     {
-        if (this.judge(appearRate)) {
+        let forceVertex = this.getRandomInt(Param.LTT, Param.LLT);
+
+        if (forceVertex === Param.LTT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LTT, 101, -50, -60, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -155,7 +153,7 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RTT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RTT, 201, 30, -60, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -174,7 +172,7 @@ export class Background2
         }
 
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RRT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRT, 301, 30, -30, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -194,7 +192,7 @@ export class Background2
         }
 
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRB, 401, 30, 0, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -212,7 +210,7 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RBB, 501, 10, 10, 30, null, null, Param.LTT);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -241,7 +239,7 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LBB, 601, -30, 40, 30);
             if (maxDepth >= 2 && this.judge(appearRate)) {
                 network.addOctaNode(601, Param.LLB, 611, -45, 30, 35);
@@ -249,7 +247,7 @@ export class Background2
         }
 
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LLB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LLB, 701, -40, 10, 35);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -269,7 +267,7 @@ export class Background2
         }
 
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LLT || this.judge(appearRate)) {
             network.addPointNode(node, Param.LLT, 801, -30, 0, 4);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -291,6 +289,25 @@ export class Background2
     {
         return Math.random() * 100 <= rate;
     }
+
+    /**
+     * ランダムな整数を生成
+     *
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    getRandomInt(min, max)
+    {
+        // minとmaxが整数であることを保証
+        min = Math.ceil(min);
+        max = Math.floor(max);
+
+        // minからmaxまでの範囲の整数をランダムに生成して返す
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
 
     /**
      * リロード
