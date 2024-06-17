@@ -3,7 +3,7 @@
 @section('content')
     <div class="panel panel-inverse">
         <form method="POST" action="{{ route('Admin.MasterData.Platform.Store') }}">
-            {{ csrf_field() }}
+            @csrf
             <div class="panel-heading">
                 <h4 class="panel-title">New Platform</h4>
             </div>

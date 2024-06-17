@@ -30,8 +30,9 @@
             </div>
         </div>
         <div class="panel-body">
+            @include ('admin.common.form.all_errors')
             <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.UpdateMulti', $search) }}">
-                {{ csrf_field() }}
+                @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">
                     <thead>

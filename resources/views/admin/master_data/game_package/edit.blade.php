@@ -9,7 +9,7 @@
             <li>{{$error}}</li>
         @endforeach
         <form method="POST" action="{{ route('Admin.MasterData.Package.Update', $model) }}">
-            {{ csrf_field() }}
+            @csrf
             {{ method_field('PUT') }}
 
             <div class="panel-body">

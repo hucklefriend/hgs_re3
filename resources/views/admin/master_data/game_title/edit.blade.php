@@ -7,7 +7,7 @@
         </div>
 
         <form method="POST" action="{{ route('Admin.MasterData.Title.Update', $model) }}">
-            {{ csrf_field() }}
+            @csrf
             {{ method_field('PUT') }}
 
             <div class="panel-body">

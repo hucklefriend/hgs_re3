@@ -3,6 +3,7 @@
         width: 150px;
     }
 </style>
+@include ('admin.common.form.all_errors')
 <table class="table" id="platform-table">
     <tr>
         <th>名前</th>

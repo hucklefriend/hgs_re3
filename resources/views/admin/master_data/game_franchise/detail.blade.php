@@ -74,7 +74,7 @@
                 </div>
                 <div class="text-end">
                     <form method="POST" action="{{ route('Admin.MasterData.Franchise.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                        {{ csrf_field() }}
+                        @csrf
                         {{ method_field('DELETE') }}
                         <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                     </form>

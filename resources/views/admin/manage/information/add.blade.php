@@ -6,7 +6,7 @@
             <h4 class="panel-title">New Information</h4>
         </div>
         <form method="POST" action="{{ route('Admin.Manage.Information.Store') }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body">
                 @include('admin.manage.information.form')

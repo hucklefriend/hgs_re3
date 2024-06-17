@@ -6,7 +6,7 @@
             <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.Maker.Update', $model) }}">
-            {{ csrf_field() }}
+            @csrf
             {{ method_field('PUT') }}
 
             <div class="panel-body">

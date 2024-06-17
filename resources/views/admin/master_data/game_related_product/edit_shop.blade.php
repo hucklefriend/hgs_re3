@@ -7,7 +7,7 @@
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.UpdateShop', ['relatedProduct' => $relatedProduct, 'shop_id' => $model->shop_id]) }}">
             {{ method_field('PUT') }}
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body">
                 @include('admin.master_data.game_related_product.form_shop')

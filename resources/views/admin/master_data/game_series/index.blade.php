@@ -30,8 +30,13 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+
+            <div class="d-flex justify-content-between">
+                <div>{{ $series->appends($search)->links() }}</div>
+
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                </div>
             </div>
 
             <table class="table table-hover">

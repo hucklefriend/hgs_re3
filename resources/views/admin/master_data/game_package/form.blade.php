@@ -1,4 +1,5 @@
-<table class="table admin-form-table" id="platform-table">
+@include ('admin.common.form.all_errors')
+<table class="table admin-form-table" id="package-table">
     <tr>
         <th>名前</th>
         <td>

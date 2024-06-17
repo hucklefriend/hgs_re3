@@ -9,7 +9,7 @@
             <li>{{$error}}</li>
         @endforeach
         <form method="POST" action="{{ route('Admin.MasterData.Package.MakeCopy', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body">
                 @include('admin.master_data.game_package.form', ['isAdd' => false])
