@@ -6,7 +6,7 @@
             <h4 class="panel-title">New Title</h4>
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.Title.Store') }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body">
                 @include('admin.master_data.game_title.form')

@@ -9,7 +9,7 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.Title.SyncSeries', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">

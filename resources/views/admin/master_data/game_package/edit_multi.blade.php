@@ -36,8 +36,9 @@
             </div>
         </div>
         <div class="panel-body">
+            <div>{{ $packages->appends($search)->links() }}</div>
             <form method="POST" action="{{ route('Admin.MasterData.Package.UpdateMulti', $search) }}">
-                {{ csrf_field() }}
+                @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">
                     <thead>
@@ -52,7 +53,7 @@
                         <tr>
                             <td>{{ $pkg->id }}</td>
                             <td>{{ $pkg->name }}</td>
-                            <td>{{ Form::textarea("node_name[{$pkg->id}]", old("node_name[{$pkg->id}]", $pkg->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $pkg, 'name' => 'node_name'])</td>
                         </tr>
                     @endforeach
                     </tbody>

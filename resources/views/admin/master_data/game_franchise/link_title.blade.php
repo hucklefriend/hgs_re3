@@ -11,7 +11,7 @@
         </div>
 
         <form method="POST" action="{{ route('Admin.MasterData.Franchise.SyncTitle', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">

@@ -30,9 +30,13 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.RelatedProduct.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
-                <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+            <div class="d-flex justify-content-between">
+                <div>{{ $relatedProducts->appends($search)->links() }}</div>
+
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.RelatedProduct.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                </div>
             </div>
 
             <table class="table table-hover">

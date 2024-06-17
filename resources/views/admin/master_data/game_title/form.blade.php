@@ -1,3 +1,4 @@
+@include ('admin.common.form.all_errors')
 <table class="table admin-form-table" id="title-table">
     @if ($model->exists)
     <tr>

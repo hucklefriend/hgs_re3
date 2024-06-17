@@ -30,8 +30,10 @@
             </div>
         </div>
         <div class="panel-body">
+            <div>{{ $mediaMixes->appends($search)->links() }}</div>
+            @include ('admin.common.form.all_errors')
             <form method="POST" action="{{ route('Admin.MasterData.MediaMix.UpdateMulti', $search) }}">
-                {{ csrf_field() }}
+                @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">
                     <thead>
@@ -48,9 +50,9 @@
                         <tr>
                             <td>{{ $model->id }}</td>
                             <td>{{ $model->name }}</td>
-                            <td>{{ Form::textarea("key[{$model->id}]", old("key[{$model->id}]", $model->key), ['class' => 'form-control edit-multi-textarea']) }}</td>
-                            <td>{{ Form::textarea("node_name[{$model->id}]", old("node_name[{$model->id}]", $model->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
-                            <td>{{ Form::textarea("h1_node_name[{$model->id}]", old("h1_node_name[{$model->id}]", $model->h1_node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'key'])</td>
+                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'node_name'])</td>
+                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'h1_node_name'])</td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -72,7 +72,7 @@
         <div class="panel-footer">
             <div class="text-end">
                 <form method="POST" action="{{ route('Admin.MasterData.Platform.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                    {{ csrf_field() }}
+                    @csrf
                     {{ method_field('DELETE') }}
                     <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>

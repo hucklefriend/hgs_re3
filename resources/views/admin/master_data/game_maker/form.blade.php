@@ -3,6 +3,7 @@
         width: 150px;
     }
 </style>
+@include ('admin.common.form.all_errors')
 <table class="table" id="maker-table">
     @if ($model->exists)
         <tr>

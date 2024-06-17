@@ -113,7 +113,7 @@
                 <div class="text-end">
                     @if ($model->packages()->count() === 0)
                         <form method="POST" action="{{ route('Admin.MasterData.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                            {{ csrf_field() }}
+                            @csrf
                             {{ method_field('DELETE') }}
                             <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                         </form>
