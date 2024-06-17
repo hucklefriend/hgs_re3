@@ -229,7 +229,6 @@ export class HorrorGameNetwork
             }
         });
 
-
         let hrElems = document.querySelectorAll('hr');
         hrElems.forEach(hrElem =>  {
             this.hrList.push(new HR(hrElem));
