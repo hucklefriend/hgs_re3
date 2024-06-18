@@ -12,12 +12,15 @@
     --}}
     <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
         <div class="link-node link-node-center" id="n-HGS">
-            <h1 style="margin-top: 10px;">HorrorGame Network</h1>
+            <a href="{{ route('Game.HorrorGameNetwork') }}">
+                <h1>HorrorGame Network</h1>
 
-            <p style="margin-top: 1.5rem;margin-bottom: 20px;">
-                <a href="{{ route('Game.HorrorGameNetwork') }}">Enter the horror game.</a><br>
-                ここからネットワークへアクセス！
-            </p>
+                <p>
+                    Enter the horror game.
+                </p>
+            </a>
+
+            <canvas id="n-HGS-c"></canvas>
         </div>
     </div>
 
