@@ -31,7 +31,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('logout', [Admin\AdminController::class, 'logout'])->name('Admin.Logout');
 
     // ここからは認証が必要
-    Route::group(['middleware' => ['auth', 'can:admin', 'admin', 'admin.search.breadcrumb']], function () {
+    Route::middleware (['admin'])->group(function () {
         // 管理トップ
         Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
 

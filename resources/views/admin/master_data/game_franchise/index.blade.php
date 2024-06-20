@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or よみがな(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->text('name')->value( $search['name'])->class('form-control')->placeholder('名前 or よみがな(半角スペースで単語区切り)')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">

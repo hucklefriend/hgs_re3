@@ -15,7 +15,7 @@
                 <div class="list-group" id="admin-link-list">
                 @foreach ($relatedProducts as $rp)
                     <label class="list-group-item">
-                        {{ Form::checkbox('related_product_id[]', $rp->id, in_array($rp->id, $linkedRelatedProductIds), ['class' => 'form-check-input me-1']) }}
+                        <input type="checkbox" name="related_product_id[]" value="{{ $rp->id }}" class="form-check-input me-1" @checked(in_array($rp->id, $linkedRelatedProductIds))>
                         {{ $rp->name }}
                     </label>
                 @endforeach

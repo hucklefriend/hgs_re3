@@ -15,7 +15,7 @@
                 <div class="list-group" id="admin-link-list">
                 @foreach ($franchises as $franchise)
                     <label class="list-group-item">
-                        {{ Form::radio('franchise_id', $franchise->id, $franchise->id == ($model->franchise()->id ?? null), ['class' => 'form-check-input me-1']) }}
+                        <input type="radio" name="franchise_id" value="{{ $franchise->id }}" class="form-check-input me-1" @checked($franchise->id == ($model->franchise()->id ?? null))>
                         {{ $franchise->name }}
                     </label>
                 @endforeach

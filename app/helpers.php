@@ -10,8 +10,6 @@ function menu_active(string $match, bool $isPerfectMatch = false): string
 }
 
 
-
-
 /**
  * checkboxとradioボタンのchecked判定
  *

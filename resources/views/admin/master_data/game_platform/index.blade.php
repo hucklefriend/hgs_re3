@@ -7,16 +7,17 @@
         </div>
         <div class="panel-body">
             <form action="{{ route('Admin.MasterData.Platform') }}" method="GET">
-                <table class="table table-borderless table-sm">
-                    <tr>
-                        <th class="align-middle">Name</th>
-                        <td>{{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or 略称 or 俗称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}</td>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <td><button type="submit" class="btn btn-sm btn-primary w-100px me-5px">Search</button></td>
-                    </tr>
-                </table>
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-3">Name</label>
+                    <div class="col-md-9">
+                        {{ html()->input('name')->value($search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7 offset-md-3">
+                        <button type="submit" class="btn btn-sm btn-primary w-100px me-5px">Search</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

@@ -11,7 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->redirectGuestsTo('/');
+
+        $middleware->appendToGroup('admin', [
+            \App\Http\Middleware\Admin::class,
+            \App\Http\Middleware\AdminSearchBreadcrumb::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
