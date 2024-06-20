@@ -26,11 +26,12 @@
         <div class="panel-heading">
             <h4 class="panel-title">List</h4>
             <div class="panel-heading-btn">
-                <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+                <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i
+                            class="fa fa-expand"></i></a>
             </div>
         </div>
         <div class="panel-body">
-            @include ('admin.common.form.all_errors')
+            @include ('admin.all_errors')
             <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}

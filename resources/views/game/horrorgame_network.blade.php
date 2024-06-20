@@ -69,7 +69,7 @@
                 <div id="platform_check" style="padding-left:1rem;">
                     @foreach ($platforms as $platform)
                         <label>
-                            {{ Form::checkbox('platform', $platform->id, in_array($platform->id, $search['p']))}}
+                            {{ html()->checkbox('platform')->value($platform->id)->checked(in_array($platform->id, $search['p'])) }}
                             {{ $platform->acronym }}
                         </label>
                     @endforeach

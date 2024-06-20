@@ -1,75 +1,67 @@
-@include ('admin.common.form.all_errors')
+@include ('admin.all_errors')
 <table class="table admin-form-table" id="package-table">
     <tr>
         <th>名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'name', 'options' => ['required', 'maxlength' => 100]])
+            <x-admin.input name="name" :model="$model" required maxlength="100" />
         </td>
     </tr>
     <tr>
         <th>略称</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'acronym', 'options' => ['required', 'maxlength' => 100]])
+            <x-admin.input name="acronym" :model="$model" required maxlength="100" />
         </td>
     </tr>
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>メーカー</th>
         <td>
-            @include ('admin.common.form.select_game_maker', ['name' => 'game_maker_id', 'value' => $model->game_maker_id, 'withBlank' => true])
+            <x-admin.select-game-maker name="game_maker_id" :model="$model" />
         </td>
     </tr>
     @if ($isAdd)
         <tr>
             <th>プラットフォーム</th>
             <td>
-                @include ('admin.common.form.select_game_platform_multi', ['name' => 'game_platform_ids[]'])
+                <x-admin.select-game-platform-multi name="game_platform_ids[]" :model="$model" />
             </td>
         </tr>
     @else
         <tr>
             <th>プラットフォーム</th>
             <td>
-                @include ('admin.common.form.select_game_platform', ['name' => 'game_platform_id', 'value' => $model->game_platform_id])
+                <x-admin.select-game-platform name="game_platform_id" :model="$model" />
             </td>
         </tr>
     @endif
     <tr>
         <th>リリース日</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'release_at', 'options' => ['required', 'maxlength' => 100]])
+            <x-admin.input name="release_at" :model="$model" required maxlength="100" />
         </td>
     </tr>
     <tr>
         <th>レーティング</th>
         <td>
-            @include ('admin.common.form.select_enum', ['name' => 'rating', 'list' => App\Enums\Rating::selectList()])
+            <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
     <tr>
         <th>パッケージ画像(小)URL</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'img_s_url', 'options' => ['maxlength' => 250]])
+            <x-admin.input name="img_s_url" :model="$model" maxlength="250" />
         </td>
     </tr>
     <tr>
         <th>パッケージ画像(中)URL</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'img_m_url', 'options' => ['maxlength' => 250]])
+            <x-admin.input name="img_m_url" :model="$model" maxlength="250" />
         </td>
     </tr>
 </table>
 
-@section('js')
-    <script>
-        $(()=> {
-            $(".default-select2").select2();
-            $(".multiple-select2").select2();
-        });
-    </script>
-@endsection

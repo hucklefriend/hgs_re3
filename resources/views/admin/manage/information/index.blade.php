@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::datetimeLocal('datetime', $search['datetime'], ['class' => 'form-control w-auto']) }}
+                        <input type="datetime-local" name="datetime" value="{{ $search['datetime'] }}" class="form-control w-auto">
                     </div>
                 </div>
                 <div class="row">

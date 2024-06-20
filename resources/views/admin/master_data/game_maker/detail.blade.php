@@ -53,7 +53,7 @@
                 <tr>
                     <th>関連メーカー(子)</th>
                     <td>
-                        @if ($model->related_children()->count() > 0)
+                        @if ($model->relatedChildren->count() > 0)
                             <ul>
                                 @foreach ($model->relatedChildren as $child)
                                     <li>{{ $child->name }}</li>

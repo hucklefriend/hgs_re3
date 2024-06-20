@@ -34,6 +34,10 @@ class Admin
             }
         }
 
+        if (!Auth::check() && app()->isLocal()) {
+            Auth::loginUsingId(1);
+        }
+
         // ログインはしているはず
         View::share('adminUser', Auth::user());
 

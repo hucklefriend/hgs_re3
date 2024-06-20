@@ -1,4 +1,4 @@
-@include ('admin.common.form.all_errors')
+@include ('admin.all_errors')
 
 <table class="table admin-form-table" id="franchise-table">
     @if ($model->exists)
@@ -10,31 +10,31 @@
     <tr>
         <th>名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'name', 'options' => ['required', 'maxlength' => 150]])
+            <x-admin.input name="name" :model="$model" required maxlength="150" />
         </td>
     </tr>
     <tr>
         <th>key</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'key', 'options' => ['required', 'maxlength' => 50]])
+            <x-admin.input name="key" :model="$model" required maxlength="50" />
         </td>
     </tr>
     <tr>
         <th>よみがな</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'phonetic', 'options' => ['required', 'maxlength' => 150]])
+            <x-admin.input name="phonetic" :model="$model" required maxlength="150" />
         </td>
     </tr>
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>H1ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'h1_node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
 </table>
