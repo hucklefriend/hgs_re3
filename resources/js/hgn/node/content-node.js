@@ -86,6 +86,10 @@ export class ContentNode extends OctaNode
     static STATE_OPENING = 10;
     static STATE_CLOSING = 20;
 
+    static MODE_NORMAL = 1;
+    static MODE_WARNING = 2;
+    static MODE_ERROR = 3;
+
     /**
      * コンストラクタ
      *
@@ -114,6 +118,8 @@ export class ContentNode extends OctaNode
 
         this.historyUrl = null;
         this.historyState = null;
+
+        this.mode = ContentNode.MODE_NORMAL;
     }
 
     /**
@@ -168,9 +174,12 @@ export class ContentNode extends OctaNode
      */
     open(data)
     {
-
         this.state = ContentNode.STATE_OPENED;
         this.openScrollY = window.scrollY;
+
+        if (data.hasOwnProperty('mode')) {
+            this.mode = data.mode;
+        }
 
         this.DOM.classList.add('content-node-opened');
         this.DOM.classList.remove('content-node-closed');
@@ -241,11 +250,20 @@ export class ContentNode extends OctaNode
         super.setShapePath(this.ctx, 0, 0);
 
         // Set line color
-        this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)"; // 線の色と透明度
+        if (this.mode === ContentNode.MODE_ERROR) {
+            this.ctx.strokeStyle = "rgba(180, 0, 0, 0.8)"; // 線の色と透明度
+            this.ctx.shadowColor = "red"; // 影の色
+        } else if (this.mode === ContentNode.MODE_WARNING) {
+            this.ctx.strokeStyle = "rgba(180, 180, 0, 0.8)";
+            this.ctx.shadowColor = "yellow"; // 影の色
+        } else {
+            this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)";
+            this.ctx.shadowColor = "lime"; // 影の色
+        }
+
         this.ctx.lineWidth = 3; // 線の太さ
         this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
         this.ctx.lineCap = "round"; // 線の末端のスタイル
-        this.ctx.shadowColor = "lime"; // 影の色
         this.ctx.shadowBlur = 5; // 影のぼかし効果
         this.ctx.stroke();
     }

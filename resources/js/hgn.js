@@ -550,8 +550,16 @@ export class HorrorGameNetwork
     {
         // pushStateにつっこむ
         window.history.pushState({type: 'contentNode'}, '', url);
-        this.fetch(url, (data) => {
-            this.showContentNode(data);
+        this.fetch(url, (data, hasError) => {
+            if (hasError) {
+                this.showContentNode({
+                    title: 'Error',
+                    body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
+                    mode: ContentNode.MODE_ERROR
+                });
+            } else {
+                this.showContentNode(data);
+            }
         });
     }
 
@@ -578,11 +586,19 @@ export class HorrorGameNetwork
             // pushStateにつっこむ
             window.history.pushState({type:'network'}, null, url);
         }
-        this.clearNodes();
-        this.mainDOM.innerHTML = '';
-        this.bg2.clear();
-        this.fetch(url, (data) => {
-            this.showNewNetwork(data);
+        this.fetch(url, (data, hasError) => {
+            if (hasError) {
+                this.showContentNode({
+                    title: 'Error',
+                    body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
+                    mode: ContentNode.MODE_ERROR
+                });
+            } else {
+                this.clearNodes();
+                this.mainDOM.innerHTML = '';
+                this.bg2.clear();
+                this.showNewNetwork(data);
+            }
         });
     }
 
@@ -618,12 +634,15 @@ export class HorrorGameNetwork
             },
         }).then((response) => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.json().then(error => {
+                    callback(error, true);
+                    throw new Error('Fetch error');
+                });
             }
             return response.json(); // JSON形式のレスポンスを取得
         }).then((data) => {
             // データの取得が成功した場合の処理
-            callback(data);
+            callback(data, false);
         }).catch((error) => {
             // エラーが発生した場合の処理
             console.error('There was a problem with the fetch operation:');
