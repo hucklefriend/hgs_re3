@@ -42,6 +42,8 @@ export class HorrorGameNetwork
         // スクロールの変更検知用
         this.prevScrollX = -99999;
         this.prevScrollY = -99999;
+        this.scrollModeScrollPosY = 0;
+        this.scrollModeStartPosY = 0;
 
         this.mainDOM = document.querySelector('main');
         this.popupDOM = document.querySelector('#popups');
@@ -113,9 +115,38 @@ export class HorrorGameNetwork
         return new HorrorGameNetwork();
     }
 
+    /**
+     * 高さの取得
+     *
+     * @returns {number}
+     */
     getHeight()
     {
         return this.mainDOM.offsetHeight;
+    }
+
+    /**
+     * スクロールXの取得
+     *
+     * @returns {number}
+     */
+    getScrollX()
+    {
+        return this.scrollX;
+    }
+
+    /**
+     * スクロールYの取得
+     *
+     * @returns {number}
+     */
+    getScrollY()
+    {
+        if (this.scrollMode === HorrorGameNetwork.SCROLL_MODE_SCROLLER) {
+            return this.scrollModeScrollPosY;
+        } else {
+            return this.scrollY;
+        }
     }
 
     /**
@@ -431,10 +462,6 @@ export class HorrorGameNetwork
         this.domNodes.forEach(domNode => {
             domNode.draw(this.mainCtx);
         });
-
-        if (this.contentNode.isOpened()) {
-            this.contentNode.draw();
-        }
     }
 
     /**
@@ -451,8 +478,10 @@ export class HorrorGameNetwork
     update()
     {
         this.changeSize();
-        this.contentNode.changeSize();
+
         this.scroll();
+
+        this.contentNode.update();
 
         if (this.redrawFlag) {
             this.draw();
@@ -497,12 +526,17 @@ export class HorrorGameNetwork
             return;
         }
 
-        if (this.scrollMode === HorrorGameNetwork.SCROLL_MODE_SCROLLER) {
+        this.scrollX = window.scrollX;
+        this.scrollY = window.scrollY;
 
+
+        if (this.scrollMode === HorrorGameNetwork.SCROLL_MODE_SCROLLER) {
+            this.scrollModeScrollPosY = this.scrollModeStartPosY + (this.scrollY / 3);
+
+            this.scroller.scrollTo(0, this.scrollModeScrollPosY);
         }
 
         this.bg3.scroll();
-
         this.bg2.scroll();
         this.bg2.draw();
         this.bg1.scroll();
@@ -545,11 +579,14 @@ export class HorrorGameNetwork
      * コンテンツノードの表示
      *
      * @param url
+     * @param linkNodeId
      */
-    openContentNode(url)
+    openContentNode(url, linkNodeId)
     {
+        this.contentNode.open(linkNodeId);
+
         // pushStateにつっこむ
-        window.history.pushState({type: 'contentNode'}, '', url);
+        window.history.pushState({type: 'contentNode', linkNodeId: linkNodeId}, '', url);
         this.fetch(url, (data, hasError) => {
             if (hasError) {
                 this.showContentNode({
@@ -570,7 +607,7 @@ export class HorrorGameNetwork
      */
     showContentNode(data)
     {
-        this.contentNode.open(data);
+        this.contentNode.setContent(data);
     }
 
     /**
@@ -592,7 +629,7 @@ export class HorrorGameNetwork
                     title: 'Error',
                     body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
                     mode: ContentNode.MODE_ERROR
-                });
+                }, null);
             } else {
                 this.clearNodes();
                 this.mainDOM.innerHTML = '';
@@ -602,6 +639,11 @@ export class HorrorGameNetwork
         });
     }
 
+    /**
+     * 新しいネットワークの表示
+     *
+     * @param data
+     */
     showNewNetwork(data)
     {
         // this.clearNodes();
@@ -624,9 +666,9 @@ export class HorrorGameNetwork
      */
     fetch(url, callback)
     {
-        let urlObj = new URL(url); // URLオブジェクトを作成
-        urlObj.searchParams.append('a', '1'); // クエリパラメータ'a'を追加
-        url = urlObj.toString(); // URLオブジェクトを文字列に戻す
+        let urlObj = new URL(url);
+        urlObj.searchParams.append('a', '1');
+        url = urlObj.toString();
 
         fetch(url, {
             headers: {
@@ -650,6 +692,11 @@ export class HorrorGameNetwork
         });
     }
 
+    /**
+     * ポップステート
+     *
+     * @param e
+     */
     popState(e)
     {
         if (this.contentNode.isOpened()) {
@@ -659,7 +706,7 @@ export class HorrorGameNetwork
                 if (e.state.type === 'network') {
                     this.changeNetwork(location.href, true);
                 } else if (e.state.type === 'contentNode') {
-                    this.openContentNode(location.href, true);
+                    this.openContentNode(location.href, e.state.linkNodeId);
                 }
             }
         }
@@ -678,6 +725,12 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * Bodyでスクロールさせるモード
+     *
+     * @param x
+     * @param y
+     */
     setBodyScrollMode(x, y)
     {
         this.scrollMode = HorrorGameNetwork.SCROLL_MODE_BODY;
@@ -685,14 +738,22 @@ export class HorrorGameNetwork
         window.scrollTo(x, y);
     }
 
+    /**
+     * 独自スクローラーでスクロールさせるモード
+     *
+     * @param x
+     * @param y
+     */
     setContainerScrollMode(x, y)
     {
         this.scrollMode = HorrorGameNetwork.SCROLL_MODE_SCROLLER;
         this.scroller.classList.add('self-scroll');
 
         // スクロール位置をリセット
-        window.scrollTo(x, y);
+        window.scrollTo(x, 0);
         this.scroller.scrollTo(x, y);
+        this.scrollModeStartPosY = y;
+        this.scrollModeScrollPosY = y;
     }
 }
 

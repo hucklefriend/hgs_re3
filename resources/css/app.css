@@ -23,16 +23,24 @@ table {
     justify-content: center;
 }
 
-#scroller.self-scroll {
-    height: 100vh;
-    overflow: hidden;
-    /*scrollbar-width: none;*/
-}
-
 .container {
     margin: 0;
     padding: 0 5px;
     width: calc(100% - 10px);
+}
+
+
+#scroller.self-scroll {
+    height: 100vh;
+    overflow-y: hidden;
+    position: fixed;
+    top: 0;
+
+    main {
+        padding-bottom: 100vh;
+    }
+
+    /*scrollbar-width: none;*/
 }
 
 #scroller.self-scroll::-webkit-scrollbar {

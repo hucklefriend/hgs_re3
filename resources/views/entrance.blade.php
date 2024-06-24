@@ -139,12 +139,12 @@
         <div style="margin-top:50px;margin-bottom:50px;">
             <div class="node-map">
                 <div>
-                    <div class="content-link-node">
+                    <div class="content-link-node" id="about-node">
                         <a href="{{ route('About') }}">About</a>
                     </div>
                 </div>
                 <div>
-                    <div class="content-link-node">
+                    <div class="content-link-node" id="privacy-policy-node">
                         <a href="{{ route('PrivacyPolicy') }}">PrivacyPolicy</a>
                     </div>
                 </div>

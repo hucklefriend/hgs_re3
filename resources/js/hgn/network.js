@@ -1,6 +1,7 @@
 import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
 import {PointNode, Bg2PointNode, Bg3PointNode} from "./node/point-node.js";
+import {HorrorGameNetwork} from "@/hgn.js";
 
 const NodeClasses = {
     'OctaNode': OctaNode,
@@ -182,7 +183,9 @@ export class Network
 
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
-        const maxY = window.scrollY + window.innerHeight;
+        const hgn = HorrorGameNetwork.getInstance();
+
+        const maxY = hgn.getScrollY() + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
                 let targetVertex = connect.getVertex();
@@ -202,7 +205,7 @@ export class Network
                 const drawY1 = y + offsetY1;
                 const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
 
-                if (drawY1 < window.scrollY && drawY2 < window.scrollY) {
+                if (drawY1 < hgn.getScrollY() && drawY2 < hgn.getScrollY()) {
                     return;
                 }
                 if (drawY1 > maxY && drawY2 > maxY) {

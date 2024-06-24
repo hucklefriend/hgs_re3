@@ -1,23 +1,20 @@
 @section('content-node-title', 'Privacy Policy')
 
+@section('link-node-name', 'privacy-policy-node')
+
 @section('content-node-body')
     <section>
         <h2><i class="bi bi-octagon"></i>Cookieの利用</h2>
         <p>
-            当サイトではログイン状態維持とXSRF対策のためCookieを利用しています。<br>
-            Cookieを第三者へ送信する形でのアクセス解析や広告配信は行ってないです。
+            当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
+            Cookieを第三者へ送信することはありません。
         </p>
         <p>
-            クッキーについて詳しくはこちら<br>
+            Cookieについて詳しくはこちら<br>
             <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
-            XSRF（クロスサイトリクエストフォージェリ）について詳しくはこちら<br>
-            <a href="https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AD%E3%82%B9%E3%82%B5%E3%82%A4%E3%83%88%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%83%95%E3%82%A9%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%AA" target="_blank">クロスサイトリクエストフォージェリ - Wikipedia <i class="fas fa-sign-out-alt"></i></a>
-        </p>
-        <p>
-            日本国内向けで第三者へのデータ送信は行ってないので、Cookie利用の同意を求める必要はないのですが、今後の法改正により必要になる可能性もありますのでユーザー登録/ログイン時に同意を取っています。<br>
-            面倒ですが、よろしくお願いします。
         </p>
     </section>
+    {{--
     <section>
     <h2><i class="bi bi-octagon"></i>メールアドレスの取得</h2>
         <p>
@@ -63,6 +60,7 @@
             当サイト内のデータが削除されるだけで、外部サービス側には設定が残っていますので、外部サービス側での連携解除処理も行ってください。
         </p>
     </section>
+    --}}
 
     <section>
         <h2><i class="bi bi-octagon"></i>アフィリエイト</h2>
@@ -78,6 +76,7 @@
         </ul>
     </section>
 
+    {{--
     <section>
         <h2><i class="bi bi-octagon"></i>年齢確認</h2>
         <p>
@@ -105,19 +104,12 @@
             </li>
         </ul>
     </section>
+    --}}
 
     <section>
         <h2><i class="bi bi-octagon"></i>AI</h2>
         <p>
-            当サイトではChatGPTを利用した機能を準備しています。<br>
-            AIにデータを渡すかどうかは各ユーザーが選択できます。<br>
-        </p>
-        <ul>
-            <li>レビューの総評</li>
-        </ul>
-        <p>
-            最初AIにデータを渡すように設定していて、途中でしないように変更された場合、
-            承諾していた期間のデータを取り除くことはできない場合がありますのでご了承ください。
+            当サイトではChatGPTを利用して生成したイラストを利用している場合があります。<br>
         </p>
     </section>
 

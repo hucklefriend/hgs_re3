@@ -2,6 +2,7 @@ import {Param} from '../param.js';
 import {Vertex} from '../vertex.js';
 import {OctaNode} from './octa-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
+import {HorrorGameNetwork} from "../../hgn.js";
 
 /**
  * 点ノード
@@ -103,11 +104,13 @@ export class PointNode extends Vertex
     draw(ctx, offsetX, offsetY)
     {
         if (!this.forceDraw) {
+            const hgn = HorrorGameNetwork.getInstance();
+
             const drawY = this.y + offsetY;
-            if (drawY < window.scrollY - 100) {
+            if (drawY < hgn.getScrollY() - 100) {
                 return;
             }
-            if (drawY > window.scrollY + window.innerHeight +100) {
+            if (drawY > hgn.getScrollY() + window.innerHeight + 100) {
                 return;
             }
         }

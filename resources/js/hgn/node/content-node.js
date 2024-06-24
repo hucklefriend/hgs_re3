@@ -23,7 +23,6 @@ export class ContentLinkNode extends LinkNode
         super(DOM);
 
         this.state = ContentLinkNode.STATE_CLOSED;
-        this.blurDOM = document.querySelector('#content-node-blur');
         this.openScrollY = 0;
 
         this.url = null;
@@ -33,6 +32,8 @@ export class ContentLinkNode extends LinkNode
             // aのクリックイベントを無効化
             a.addEventListener('click', (e) => e.preventDefault());
         }
+
+        this.id = DOM.getAttribute('id');
     }
 
     /**
@@ -42,7 +43,7 @@ export class ContentLinkNode extends LinkNode
     {
         if (this.url) {
             HorrorGameNetwork.getInstance()
-                .openContentNode(this.url);
+                .openContentNode(this.url, this.id);
         }
     }
 
@@ -120,6 +121,7 @@ export class ContentNode extends OctaNode
         this.historyState = null;
 
         this.mode = ContentNode.MODE_NORMAL;
+        this.linkNodeId = null;
     }
 
     /**
@@ -171,26 +173,31 @@ export class ContentNode extends OctaNode
      * 開く
      *
      * @param data
+     * @param linkNodeId
      */
-    open(data)
+    open(data, linkNodeId)
     {
+        this.linkNodeId = linkNodeId;
         this.state = ContentNode.STATE_OPENED;
         this.openScrollY = window.scrollY;
+        this.mode = ContentNode.MODE_NORMAL;
 
-        if (data.hasOwnProperty('mode')) {
-            this.mode = data.mode;
-        }
+        HorrorGameNetwork.getInstance().setContainerScrollMode(0, this.openScrollY);
 
         this.DOM.classList.add('content-node-opened');
         this.DOM.classList.remove('content-node-closed');
 
-        document.querySelector('#content-node-blur').style.display = 'block';
+        this.draw();
+    }
 
-        HorrorGameNetwork.getInstance().setContainerScrollMode(0, 0);
+    setContent(data)
+    {
+        if (data.hasOwnProperty('mode')) {
+            this.mode = data.mode;
+        }
 
         this.titleDOM.innerHTML = data.title;
         this.bodyDOM.innerHTML = data.body;
-        this.draw();
     }
 
     /**
@@ -223,22 +230,30 @@ export class ContentNode extends OctaNode
         }
     }
 
+    update()
+    {
+        if (this.changeSize()) {
+            this.draw();
+        }
+    }
+
     /**
      * ウィンドウサイズの変更
      */
     changeSize()
     {
         if (this.isClosed()) {
-            return;
+            return false;
         }
 
         if (this.canvas.width === this.containerDOM.offsetWidth &&
             this.canvas.height === this.containerDOM.offsetHeight) {
-            return;
+            return false;
         }
 
         this.reload();
-        this.draw();
+
+        return true;
     }
 
     /**
@@ -246,6 +261,10 @@ export class ContentNode extends OctaNode
      */
     draw()
     {
+        if (this.isClosed()) {
+            return false;
+        }
+
         this.reload();
         super.setShapePath(this.ctx, 0, 0);
 
@@ -266,6 +285,8 @@ export class ContentNode extends OctaNode
         this.ctx.lineCap = "round"; // 線の末端のスタイル
         this.ctx.shadowBlur = 5; // 影のぼかし効果
         this.ctx.stroke();
+
+        return true;
     }
 
     /**
