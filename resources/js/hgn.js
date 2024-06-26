@@ -51,7 +51,7 @@ export class HorrorGameNetwork
         // メインのcanvas
         this.mainCanvas = document.querySelector('#main-canvas');
         this.mainCanvas.width = document.documentElement.scrollWidth;
-        this.mainCanvas.height = this.mainDOM.offsetHeight;
+        this.mainCanvas.height = this.mainDOM.offsetHeight + 50;
         this.mainCtx = null;
         if (this.mainCanvas.getContext) {
             this.mainCtx = this.mainCanvas.getContext('2d');
@@ -71,7 +71,6 @@ export class HorrorGameNetwork
 
         // hr
         this.hrList = [];
-
 
         // 背景の生成
         this.bg1 = new Background1();
@@ -372,13 +371,20 @@ export class HorrorGameNetwork
      */
     start()
     {
-        window.history.pushState({type: 'network'}, '');
-
         this.draw();
 
         if (window.contentNode !== null) {
-            this.showContentNode(window.contentNode);
+            let linkNodeId = window.contentNode.linkNodeId;
+            let linkNode = null;
+            if (this.nodesIdHash.hasOwnProperty(linkNodeId)) {
+                linkNode = this.nodesIdHash[linkNodeId];
+            }
+            this.contentNode.open(linkNode);
+            this.contentNode.setContent(window.contentNode);
             window.contentNode = null;
+            window.history.pushState({type: 'contentNode', 'linkNodeId': linkNodeId}, '');
+        } else {
+            window.history.pushState({type: 'network'}, '');
         }
 
         if (Param.SHOW_DEBUG) {
@@ -500,12 +506,12 @@ export class HorrorGameNetwork
     changeSize()
     {
         if (this.mainCanvas.width === document.documentElement.scrollWidth &&
-            this.mainCanvas.height === this.mainDOM.offsetHeight) {
+            this.mainCanvas.height === (this.mainDOM.offsetHeight + 50)) {
             return;
         }
 
         this.mainCanvas.width = document.documentElement.scrollWidth;
-        this.mainCanvas.height = this.mainDOM.offsetHeight;
+        this.mainCanvas.height = this.mainDOM.offsetHeight + 50;
         this.reloadNodes();
 
         this.draw();
@@ -514,6 +520,10 @@ export class HorrorGameNetwork
         this.bg2.draw();
         this.bg1.resize();
         this.bg1.draw(this, this.bg2);
+
+        if (this.contentNode.changeSize()) {
+            this.contentNode.draw();
+        }
     }
 
     /**
@@ -528,7 +538,6 @@ export class HorrorGameNetwork
 
         this.scrollX = window.scrollX;
         this.scrollY = window.scrollY;
-
 
         if (this.scrollMode === HorrorGameNetwork.SCROLL_MODE_SCROLLER) {
             this.scrollModeScrollPosY = this.scrollModeStartPosY + (this.scrollY / 3);
@@ -583,7 +592,11 @@ export class HorrorGameNetwork
      */
     openContentNode(url, linkNodeId)
     {
-        this.contentNode.open(linkNodeId);
+        let linkNode = null;
+        if (this.nodesIdHash.hasOwnProperty(linkNodeId)) {
+            linkNode = this.nodesIdHash[linkNodeId];
+        }
+        this.contentNode.open(linkNode);
 
         // pushStateにつっこむ
         window.history.pushState({type: 'contentNode', linkNodeId: linkNodeId}, '', url);

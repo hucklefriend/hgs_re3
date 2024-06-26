@@ -88,6 +88,7 @@
 
 #content-node {
     padding: 0;
+    width: 100%;
     min-height: 100vh;
     position: absolute;
     left: 0;
@@ -96,7 +97,7 @@
 
     #content-node-container {
         position: relative;
-        width: calc(100% - 20px);
+        width: calc(100% - 10px);
     }
 
     .content-node-close {
@@ -191,16 +192,14 @@
     }
 }
 
-.popup-node-opened {
+.content-node-opened, .popup-node-opened {
     display: flex;
     justify-content: center;
     z-index: 100;
 }
 
-.content-node-opened {
-    display: flex;
-    justify-content: center;
-    z-index: 100;
+.content-node-hide {
+    visibility: hidden;
 }
 
 .content-node-closed, .popup-node-closed {
@@ -282,8 +281,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
 }
 
 #content-node-canvas {

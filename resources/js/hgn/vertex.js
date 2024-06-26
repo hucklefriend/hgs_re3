@@ -38,4 +38,14 @@ export class Vertex
         this.x += moveX;
         this.y += moveY;
     }
+
+    getPointAtFraction(v2, m, n) {
+        let xDiff = v2.x - this.x;
+        let yDiff = v2.y - this.y;
+
+        let x = this.x + (xDiff * m / n);
+        let y = this.y + (yDiff * m / n);
+
+        return new Vertex(x, y);
+    }
 }
