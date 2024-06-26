@@ -52,9 +52,10 @@ abstract class Controller
     {
         $rendered = $view->renderSections();
         $contentNodeData = [
-            'title'  => $rendered['content-node-title'],
-            'body'   => $rendered['content-node-body'],
-            'footer' => $rendered['content-node-footer'] ?? '',
+            'linkNodeId' => $rendered['link-node-id'] ?? '',
+            'title'      => $rendered['content-node-title'],
+            'body'       => $rendered['content-node-body'],
+            'footer'     => $rendered['content-node-footer'] ?? '',
         ];
         if (self::isAjax()) {
             return response()->json($contentNodeData);

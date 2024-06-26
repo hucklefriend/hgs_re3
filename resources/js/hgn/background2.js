@@ -1,5 +1,4 @@
-import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
-import {Bg2PointNode, PointNode} from './node/point-node.js';
+
 import {Bg2Network} from './network.js';
 import {Param} from './param.js';
 import {HorrorGameNetwork} from "../hgn.js";
@@ -171,7 +170,6 @@ export class Background2
             }
         }
 
-
         if (forceVertex === Param.RRT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRT, 301, 30, -30, 30);
             if (maxDepth >= 2) {
@@ -190,7 +188,6 @@ export class Background2
                 }
             }
         }
-
 
         if (forceVertex === Param.RBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRB, 401, 30, 0, 30);
@@ -246,7 +243,6 @@ export class Background2
             }
         }
 
-
         if (forceVertex === Param.LLB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LLB, 701, -40, 10, 35);
             if (maxDepth >= 2) {
@@ -265,7 +261,6 @@ export class Background2
                 }
             }
         }
-
 
         if (forceVertex === Param.LLT || this.judge(appearRate)) {
             network.addPointNode(node, Param.LLT, 801, -30, 0, 4);
@@ -307,8 +302,6 @@ export class Background2
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-
-
     /**
      * リロード
      */
@@ -336,8 +329,10 @@ export class Background2
      */
     draw()
     {
-        let offsetX = window.scrollX - (window.scrollX / Param.BG2_SCROLL_RATE);
-        let offsetY = window.scrollY - (window.scrollY / Param.BG2_SCROLL_RATE);
+        const hgn = HorrorGameNetwork.getInstance();
+
+        let offsetX = hgn.getScrollX() - (hgn.getScrollX() / Param.BG2_SCROLL_RATE);
+        let offsetY = hgn.getScrollY() - (hgn.getScrollY() / Param.BG2_SCROLL_RATE);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.networks.forEach(network => {
             network.draw(this.ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
@@ -349,9 +344,10 @@ export class Background2
      */
     resize()
     {
-        this.canvas.width = document.documentElement.scrollWidth;
-        this.canvas.height = window.hgn.getHeight();
+        const hgn = HorrorGameNetwork.getInstance();
 
+        this.canvas.width = document.documentElement.scrollWidth;
+        this.canvas.height = hgn.getHeight();
 
         this.ctx.strokeStyle = "rgba(0, 70, 0, 0.7)"; // 線の色と透明度
         this.ctx.lineWidth = 3; // 線の太さ

@@ -172,8 +172,9 @@ export class HgsTitleLinkNode extends LinkNode
      * 描画
      *
      * @param ctx
+     * @param fillStyle
      */
-    draw(ctx)
+    draw(ctx, fillStyle = 'black')
     {
         if (this.isHover) {
             ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
@@ -191,7 +192,7 @@ export class HgsTitleLinkNode extends LinkNode
         super.setShapePath(ctx);
         ctx.stroke();
 
-        ctx.fillStyle = "black";
+        ctx.fillStyle = fillStyle;
         ctx.fill();
     }
 }

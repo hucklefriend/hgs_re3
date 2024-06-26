@@ -71,7 +71,6 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        throw new \Exception('Not implemented yet');
         return $this->contentNode(view('about'));
     }
 

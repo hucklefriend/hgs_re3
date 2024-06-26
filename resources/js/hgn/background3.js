@@ -1,7 +1,5 @@
-import {OctaNode} from './node/octa-node.js';
-import {PointNode} from './node/point-node.js';
 import {Param} from './param.js';
-import {Bg3Network} from './network.js';
+import {HorrorGameNetwork} from "../hgn.js";
 
 export class Background3
 {
@@ -16,7 +14,9 @@ export class Background3
 
     scroll()
     {
-        this.dom.style.backgroundPositionY = (Param.BG3_OFFSET * -1) - (window.scrollY / Param.BG3_SCROLL_RATE) + 'px';
+        const hgn = HorrorGameNetwork.getInstance();
+
+        this.dom.style.backgroundPositionY = (Param.BG3_OFFSET * -1) - (hgn.getScrollY() / Param.BG3_SCROLL_RATE) + 'px';
     }
 }
 
