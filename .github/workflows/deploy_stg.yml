@@ -1,0 +1,29 @@
+name: Deploy to STG Server
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.HGN_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        env:
+          SSH_USER: ${{ vars.SSH_USER }}
+          SSH_HOST: ${{ vars.SSH_HOST }}
+          SSH_PORT: ${{ vars.SSH_PORT }}
+          REMOTE_PATH: ${{ vars.REMOTE_UPDATE_SCRIPT_PATH }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "cd $REMOTE_PATH && ./update_stg.sh"
+
