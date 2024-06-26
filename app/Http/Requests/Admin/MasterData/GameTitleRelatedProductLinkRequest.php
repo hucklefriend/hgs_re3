@@ -17,6 +17,16 @@ class GameTitleRelatedProductLinkRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->related_product_id === null) {
+            $this->merge(['related_product_id' => []]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -24,7 +34,7 @@ class GameTitleRelatedProductLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'related_product_id' => 'required|array|exists:game_related_product,id',
+            'related_product_id' => 'nullable|array|exists:game_related_product,id',
         ];
     }
 }

@@ -17,6 +17,16 @@ class GameTitlePackageLinkRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->package_id === null) {
+            $this->merge(['package_id' => []]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -24,7 +34,7 @@ class GameTitlePackageLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_id' => 'required|array|exists:game_packages,id',
+            'package_id' => 'nullable|array|exists:game_packages,id',
         ];
     }
 }

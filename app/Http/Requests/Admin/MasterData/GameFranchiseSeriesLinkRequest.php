@@ -18,6 +18,16 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->series_id === null) {
+            $this->merge(['series_id' => []]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -25,7 +35,7 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'series_id' => 'required|array|exists:game_series,id',
+            'series_id' => 'nullable|array|exists:game_series,id',
         ];
     }
 }

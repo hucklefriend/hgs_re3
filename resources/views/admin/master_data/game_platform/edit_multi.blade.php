@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前 or よみがな or 略称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        <input type="text" name="name" value="{{ $search['name'] ?? '' }}" class="form-control" placeholder="名前 or よみがな or 略称(半角スペースで単語区切り)" autocomplete="off">
                     </div>
                 </div>
                 <div class="row">
@@ -48,9 +48,9 @@
                         <tr>
                             <td>{{ $model->id }}</td>
                             <td>{{ $model->name }}</td>
-                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'key'])</td>
-                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'node_name'])</td>
-                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $model, 'name' => 'h1_node_name'])</td>
+                            <td><x-admin.multi-edit-textarea name="key" :model="$model" /></td>
+                            <td><x-admin.multi-edit-textarea name="node_name" :model="$model" /></td>
+                            <td><x-admin.multi-edit-textarea name="h1_node_name" :model="$model" /></td>
                         </tr>
                     @endforeach
                     </tbody>
