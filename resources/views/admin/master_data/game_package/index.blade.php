@@ -10,13 +10,13 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or よみがな or タイトルの俗称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->input('text', 'name', $search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">プラットフォーム</label>
                     <div class="col-md-9">
-                        @include ('admin.common.form.select_game_platform_multi', ['name' => 'platform_ids[]', 'value' => $search['platform_ids']])
+                        <x-admin.select-game-platform-multi name="platform_ids[]" />
                     </div>
                 </div>
                 <div class="row">
@@ -36,8 +36,12 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Package.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+            <div class="d-flex justify-content-between">
+                <div>{{ $packages->appends($search)->links() }}</div>
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Package.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Package.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                </div>
             </div>
 
             <table class="table table-hover">
@@ -68,13 +72,4 @@
             <div>{{ $packages->appends($search)->links() }}</div>
         </div>
     </div>
-@endsection
-
-
-@section('js')
-    <script>
-        $(()=> {
-            $(".multiple-select2").select2();
-        });
-    </script>
 @endsection

@@ -1,5 +1,7 @@
 @section('content-node-title', 'About')
 
+@section('link-node-id', 'about-node')
+
 @section('content-node-body')
     <section>
         <h2><i class="bi bi-octagon"></i>ホラーゲームネットワークとは？</h2>

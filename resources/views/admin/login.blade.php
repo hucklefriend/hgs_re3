@@ -44,7 +44,7 @@
             <div class="login-body">
                 <div class="login-content fs-13px">
                     <form action="{{ route('Admin.Auth') }}" method="POST">
-                        {{ csrf_field() }}
+                        @csrf
                         <div class="form-floating mb-20px">
                             <input type="text" name="email" class="form-control fs-13px h-45px" id="emailAddress" placeholder="Email">
                             <label for="emailAddress" class="d-flex align-items-center">Email Address</label>

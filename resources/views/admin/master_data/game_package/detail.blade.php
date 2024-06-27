@@ -68,12 +68,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>説明</th>
-                    <td>
-                        @include('common.explain', ['model' => $model])
-                    </td>
-                </tr>
-                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">
@@ -96,7 +90,7 @@
                                 </td>
                                 <td>
                                     <form method="post" action="{{ route('Admin.MasterData.Package.DeleteShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
-                                        {{ csrf_field() }}
+                                        @csrf
                                         {{ method_field('DELETE') }}
                                         <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Delete</button>
                                     </form>
@@ -112,7 +106,7 @@
         <div class="panel-footer">
             <div class="text-end">
                 <form method="POST" action="{{ route('Admin.MasterData.Package.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                    {{ csrf_field() }}
+                    @csrf
                     {{ method_field('DELETE') }}
                     <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>

@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前 or よみがな(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->input('text', 'name', $search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">
@@ -30,8 +30,13 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+
+            <div class="d-flex justify-content-between">
+                <div>{{ $series->appends($search)->links() }}</div>
+
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                </div>
             </div>
 
             <table class="table table-hover">

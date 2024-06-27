@@ -8,7 +8,10 @@
 .env
 .env.backup
 .env.production
+.phpactor.json
+.phpstorm.meta.php
 .phpunit.result.cache
+_ide_helper.php
 Homestead.json
 Homestead.yaml
 auth.json
@@ -17,3 +20,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+composer.lock

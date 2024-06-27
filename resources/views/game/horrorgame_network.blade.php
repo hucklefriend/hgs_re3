@@ -26,7 +26,7 @@
             @foreach ($games as $game)
                 <div>
                     <div class="link-node link-node-center" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">
-                        <a href="{{ route('Game.TitleNetwork',  $game->title) }}">{!! $game->title->node_name !!}</a>
+                        <a href="{{ route('Game.TitleDetailNetwork',  ['titleKey' => $game->title->key]) }}">{!! $game->title->node_name !!}</a>
                     </div>
                 </div>
             @endforeach
@@ -69,7 +69,7 @@
                 <div id="platform_check" style="padding-left:1rem;">
                     @foreach ($platforms as $platform)
                         <label>
-                            {{ Form::checkbox('platform', $platform->id, in_array($platform->id, $search['p']))}}
+                            {{ html()->checkbox('platform')->value($platform->id)->checked(in_array($platform->id, $search['p'])) }}
                             {{ $platform->acronym }}
                         </label>
                     @endforeach

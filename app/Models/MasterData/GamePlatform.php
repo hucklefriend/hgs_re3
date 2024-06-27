@@ -4,12 +4,15 @@ namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class GamePlatform extends Model
 {
+    use KeyFindTrait;
+
     protected $guarded = ['id', 'synonymsStr'];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -138,5 +141,15 @@ class GamePlatform extends Model
             // idが最小のデータを取得
             return self::orderBy('id', 'asc')->first();
         }
+    }
+
+    /**
+     * 関連商品
+     *
+     * @return BelongsToMany
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(GameRelatedProduct::class, GamePlatformRelatedProductLink::class);
     }
 }

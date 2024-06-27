@@ -3,79 +3,67 @@
         width: 150px;
     }
 </style>
+@include ('admin.all_errors')
 <table class="table" id="platform-table">
     <tr>
         <th>名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.input name="name" :model="$model" required maxlength="200" />
+        </td>
+    </tr>
+    <tr>
+        <th>key</th>
+        <td>
+            <x-admin.input name="key" :model="$model" required maxlength="50" />
         </td>
     </tr>
     <tr>
         <th>略称</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'acronym', 'options' => ['required', 'maxlength' => 30]])
+            <x-admin.input name="acronym" :model="$model" required maxlength="30" />
         </td>
     </tr>
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>H1ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'h1_node_name', 'options' => ['required', 'maxlength' => 200]])
-        </td>
-    </tr>
-    <tr>
-        <th>R指定</th>
-        <td>
-            @include ('admin.common.form.select', ['name' => 'rated_r', 'list' => \App\Enums\RatedR::selectList()])
+            <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>メーカー</th>
         <td>
-            @include ('admin.common.form.select_game_maker', ['name' => 'game_maker_id', 'value' => $model->game_maker_id, 'withBlank' => true])
+            <x-admin.select-game-maker name="game_maker_id" :model="$model" />
         </td>
     </tr>
     <tr>
         <th>表示順</th>
         <td>
-            @include ('admin.common.form.input', ['type' => 'number', 'name' => 'sort_order', 'options' => ['required', 'min' => 0]])
+            <x-admin.input name="sort_order" :model="$model" type="number" required min="0" />
         </td>
     </tr>
     <tr>
         <th>俗称</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'synonymsStr'])
+            <x-admin.textarea name="synonymsStr" :model="$model" />
         </td>
     </tr>
     <tr>
         <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
+            <x-admin.textarea name="description" :model="$model" />
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元名称</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元URL</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
+            <x-admin.textarea name="description_source" :model="$model" />
         </td>
     </tr>
 </table>
 
-@section('js')
-    <script>
-        $(()=>{
-            $(".default-select2").select2();
-        });
-    </script>
-@endsection

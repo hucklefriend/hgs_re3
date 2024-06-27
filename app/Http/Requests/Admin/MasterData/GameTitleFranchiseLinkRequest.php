@@ -24,7 +24,7 @@ class GameTitleFranchiseLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'franchise_id' => 'required|exists:game_franchises,id',
+            'franchise_id' => 'nullable|exists:game_franchises,id',
         ];
     }
 }

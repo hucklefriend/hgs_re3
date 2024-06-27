@@ -1,3 +1,4 @@
+@include ('admin.all_errors')
 <table class="table admin-form-table" id="series-table">
     @if ($model->exists)
         <tr>
@@ -8,67 +9,67 @@
     <tr>
         <th>種別</th>
         <td>
-            @include ('admin.common.form.select_enum', ['name' => 'type', 'list' => App\Enums\MediaMixType::selectList()])
+            <x-admin.select-enum name="type" :model="$model" :list="App\Enums\MediaMixType::selectList()" />
         </td>
     </tr>
     <tr>
         <th>名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.input name="name" :model="$model" required maxlength="200" />
+        </td>
+    </tr>
+    <tr>
+        <th>key</th>
+        <td>
+            <x-admin.input name="key" :model="$model" required maxlength="50" />
         </td>
     </tr>
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>H1ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'h1_node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>フランチャイズ</th>
         <td>
-            @include ('admin.common.form.select', ['name' => 'game_franchise_id', 'list' => $franchises, 'selected' => $model->franchise_id])
+            <x-admin.select name="game_franchise_id" :model="$model" :list="$franchises" />
         </td>
     </tr>
     <tr>
         <th>グループNo</th>
         <td>
-            @include ('admin.common.form.input', ['type' => 'number', 'name' => 'group_no', 'options' => ['required', 'min' => 1, 'max' => 65535]])
+            <x-admin.input name="group_no" :model="$model" type="number" required min="1" max="65535" />
         </td>
     </tr>
     <tr>
         <th>表示順</th>
         <td>
-            @include ('admin.common.form.input', ['type' => 'number', 'name' => 'sort_order', 'options' => ['required', 'min' => 1, 'max' => 65535]])
+            <x-admin.input name="sort_order" :model="$model" type="number" required min="1" max="65535" />
         </td>
     </tr>
     <tr>
         <th>レーティング</th>
         <td>
-            @include ('admin.common.form.select_enum', ['name' => 'rating', 'list' => App\Enums\Rating::selectList()])
+            <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
     <tr>
         <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
+            <x-admin.textarea name="description" :model="$model" />
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元名称</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元URL</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
+            <x-admin.textarea name="description_source" :model="$model" />
         </td>
     </tr>
 </table>

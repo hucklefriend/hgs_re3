@@ -19,16 +19,14 @@ class GameTitleRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return void
+     */
     protected function prepareForValidation(): void
     {
-        if ($this->introduction === null) {
+        if ($this->description === null) {
             $this->merge([
-                'introduction' => '',
-            ]);
-        }
-        if ($this->introduction_from === null) {
-            $this->merge([
-                'introduction_from' => '',
+                'description' => '',
             ]);
         }
     }
@@ -41,16 +39,16 @@ class GameTitleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                      => 'required|max:200',
-            'phonetic'                  => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
-            'node_name'                 => 'required|max:200',
-            'h1_node_name'              => 'required|max:200',
-            'genre'                     => 'nullable|max:150',
-            'original_package_id'       => 'nullable|exists:game_packages,id',
-            'introduction'              => 'nullable|max:1000',
-            'introduction_from'         => 'required_with:introduction|max:1000',
-            'introduction_from_rated_r' => [new Enum(RatedR::class)],
-            'first_release_int'         => 'required|numeric|max:99999999',
+            'name'                => 'required|max:200',
+            'key'                 => 'required|max:50',
+            'phonetic'            => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
+            'node_name'           => 'required|max:200',
+            'h1_node_name'        => 'required|max:200',
+            'genre'               => 'nullable|max:150',
+            'original_package_id' => 'nullable|exists:game_packages,id',
+            'description'         => '',
+            'description_source'  => 'nullable',
+            'first_release_int'   => 'required|numeric|max:99999999',
         ];
     }
 }

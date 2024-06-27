@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->input('name')->value($search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">
@@ -32,6 +32,7 @@
         <div class="panel-body">
             <div class="text-end">
                 <a href="{{ route('Admin.MasterData.MediaMix.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                <a href="{{ route('Admin.MasterData.MediaMix.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
             </div>
 
             <table class="table table-hover">
@@ -39,7 +40,7 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>よみがな</th>
+                    <th>ノード表示名称</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -48,7 +49,7 @@
                     <tr>
                         <td>{{ $mm->id }}</td>
                         <td>{{ $mm->name }}</td>
-                        <td>{{ $mm->phonetic }}</td>
+                        <td>{!! $mm->node_name !!}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
                         </td>

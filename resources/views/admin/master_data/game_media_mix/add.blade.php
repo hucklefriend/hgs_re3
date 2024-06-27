@@ -6,7 +6,7 @@
             <h4 class="panel-title">New Media Mix</h4>
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.MediaMix.Store') }}">
-            {{ csrf_field() }}
+            @csrf
             <div class="panel-body">
                 @include('admin.master_data.game_media_mix.form')
             </div>

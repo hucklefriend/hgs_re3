@@ -1,3 +1,4 @@
+@include ('admin.all_errors')
 <table class="table admin-form-table" id="series-table">
     @if ($model->exists)
         <tr>
@@ -8,49 +9,43 @@
     <tr>
         <th>名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.input name="name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>ノード表示用の名前</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'node_name', 'options' => ['required', 'maxlength' => 200]])
+            <x-admin.input name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
     <tr>
         <th>レーティング</th>
         <td>
-            @include ('admin.common.form.select_enum', ['name' => 'rating', 'list' => App\Enums\Rating::selectList()])
+            <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(小)URL</th>
+        <th>小画像URL</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'img_s_url', 'options' => ['maxlength' => 250]])
+            <x-admin.input name="img_s_url" :model="$model" maxlength="250" />
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(中)URL</th>
+        <th>中画像URL</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'img_m_url', 'options' => ['maxlength' => 250]])
+            <x-admin.input name="img_m_url" :model="$model" maxlength="250" />
         </td>
     </tr>
     <tr>
         <th>説明文</th>
         <td>
-            @include ('admin.common.form.textarea', ['name' => 'explain'])
+            <x-admin.textarea name="description" :model="$model" />
         </td>
     </tr>
     <tr>
-        <th>説明文の引用元名称</th>
+        <th>説明文の引用元</th>
         <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_name', 'options' => ['maxlength' => 100]])
-        </td>
-    </tr>
-    <tr>
-        <th>説明文の引用元URL</th>
-        <td>
-            @include ('admin.common.form.input', ['name' => 'explain_source_url', 'options' => ['maxlength' => 100]])
+            <x-admin.textarea name="description_source" :model="$model" />
         </td>
     </tr>
 </table>

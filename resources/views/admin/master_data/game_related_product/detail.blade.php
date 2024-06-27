@@ -37,7 +37,23 @@
                 <tr>
                     <th>説明</th>
                     <td>
-                        @include('common.explain', ['model' => $model])
+                        @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
+                    <th>小画像</th>
+                    <td>
+                        @if (!empty($model->img_s_url))
+                            <img src="{{ conv_asset_url($model->img_s_url) }}">
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>中画像</th>
+                    <td>
+                        @if (!empty($model->img_m_url))
+                            <img src="{{ conv_asset_url($model->img_m_url) }}">
+                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -72,7 +88,7 @@
                                     </td>
                                     <td>
                                         <form method="post" action="{{ route('Admin.MasterData.RelatedProduct.DeleteShop', ['relatedProduct' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
-                                            {{ csrf_field() }}
+                                            @csrf
                                             {{ method_field('DELETE') }}
                                             <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Delete</button>
                                         </form>
@@ -88,7 +104,7 @@
         <div class="panel-footer">
             <div class="text-end">
                 <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                    {{ csrf_field() }}
+                    @csrf
                     {{ method_field('DELETE') }}
                     <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                 </form>

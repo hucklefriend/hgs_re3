@@ -21,6 +21,16 @@ class GameMediaMixRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->description === null) {
+            $this->merge(['description' => '']);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -30,15 +40,15 @@ class GameMediaMixRequest extends FormRequest
         return [
             'type'                => ['required', new Enum(MediaMixType::class)],
             'name'                => 'required|max:200',
+            'key'                 => 'required|max:50',
             'node_name'           => 'required|max:200',
             'h1_node_name'        => 'required|max:200',
             'game_franchise_id'   => 'nullable|exists:game_franchises,id',
             'rating'              => ['required', new Enum(Rating::class)],
             'group_no'            => 'required|numeric',
             'sort_order'          => 'required|numeric',
-            'explain'             => 'nullable',
-            'explain_source_name' => 'nullable|max:100',
-            'explain_source_url'  => 'nullable|max:100',
+            'description'         => 'nullable',
+            'description_source'  => 'nullable',
         ];
     }
 }

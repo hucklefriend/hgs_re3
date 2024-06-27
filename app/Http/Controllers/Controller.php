@@ -5,14 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller as BaseController;
 
-class Controller extends BaseController
+abstract class Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
 
     /**
      * Ajaxリクエストかどうかを判定する
@@ -56,9 +52,10 @@ class Controller extends BaseController
     {
         $rendered = $view->renderSections();
         $contentNodeData = [
-            'title'  => $rendered['content-node-title'],
-            'body'   => $rendered['content-node-body'],
-            'footer' => $rendered['content-node-footer'] ?? '',
+            'linkNodeId' => $rendered['link-node-id'] ?? '',
+            'title'      => $rendered['content-node-title'],
+            'body'       => $rendered['content-node-body'],
+            'footer'     => $rendered['content-node-footer'] ?? '',
         ];
         if (self::isAjax()) {
             return response()->json($contentNodeData);

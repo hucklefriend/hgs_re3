@@ -356,12 +356,14 @@ export class OctaNode
     draw(ctx, offsetX = 0, offsetY = 0)
     {
         if (!this.forceDraw) {
+            const hgn = HorrorGameNetwork.getInstance();
+
             const drawTop = this.vertices[Param.LTT].y + offsetY;
             const drawBottom = this.vertices[Param.LBB].y + offsetY;
-            if (drawBottom < window.scrollY - 100) {
+            if (drawBottom < hgn.getScrollY() - 100) {
                 return;
             }
-            if (drawTop > window.scrollY + window.innerHeight +100) {
+            if (drawTop > hgn.getScrollY() + window.innerHeight +100) {
                 return;
             }
         }

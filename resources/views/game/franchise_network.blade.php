@@ -11,13 +11,15 @@
         <div class="node-map">
         @foreach ($franchises as $franchise)
             <div>
-                <div class="link-node link-node-center">
-                    <a href="{{ route('Game.FranchiseDetailNetwork', $franchise) }}">{!! $franchise->node_name !!}</a>
+                <div class="link-node link-node-center" data-sub="{{ $franchise->sub_net }}">
+                    <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $franchise->key]) }}">{!! $franchise->node_name !!}</a>
                 </div>
             </div>
         @endforeach
         </div>
     </div>
+
+    @include('common.paging', ['pager' => $franchises])
 
     @include('footer')
 @endsection

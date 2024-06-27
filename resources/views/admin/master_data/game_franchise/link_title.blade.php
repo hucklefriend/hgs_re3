@@ -11,13 +11,13 @@
         </div>
 
         <form method="POST" action="{{ route('Admin.MasterData.Franchise.SyncTitle', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
                     @foreach ($titles as $title)
                         <label class="list-group-item">
-                            {{ Form::checkbox('title_id[]', $title->id, in_array($title->id, $linkedTitleIds), ['class' => 'form-check-input me-1']) }}
+                            <input type="checkbox" name="title_id[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
                             {{ $title->name }}
                         </label>
                     @endforeach

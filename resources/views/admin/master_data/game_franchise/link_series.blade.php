@@ -9,15 +9,15 @@
         <div class="panel-body">
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
-
+        @include ('admin.all_errors')
         <form method="POST" action="{{ route('Admin.MasterData.Franchise.SyncSeries', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
                 @foreach ($series as $s)
                     <label class="list-group-item">
-                        {{ Form::checkbox('series_id[]', $s->id, in_array($s->id, $linkedSeriesIds), ['class' => 'form-check-input me-1']) }}
+                        <input type="checkbox" name="series_id[]" value="{{ $s->id }}" class="form-check-input me-1" @checked(in_array($s->id, $linkedSeriesIds))>
                         {{ $s->name }}
                     </label>
                 @endforeach

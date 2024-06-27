@@ -10,6 +10,15 @@
             </h1>
         </div>
 
+        @if (!empty($maker->description))
+            <section>
+                <div class="node node-center">
+                    <div class="text-node">
+                        @include('common.description', ['model' => $maker])
+                    </div>
+                </div>
+            </section>
+        @endif
 
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
@@ -18,7 +27,7 @@
                     @foreach ($titles as $title)
                         <div>
                             <div class="link-node link-node-center">
-                                <a href="{{ route('Game.TitleNetwork', $title) }}">{!! $title->node_name !!}</a>
+                                <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
                             </div>
                         </div>
                     @endforeach

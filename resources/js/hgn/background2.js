@@ -1,5 +1,4 @@
-import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
-import {Bg2PointNode, PointNode} from './node/point-node.js';
+
 import {Bg2Network} from './network.js';
 import {Param} from './param.js';
 import {HorrorGameNetwork} from "../hgn.js";
@@ -100,10 +99,6 @@ export class Background2
         network.addOctaNode(604, null, 607, -80, -80, 30);
         network.addOctaNode(604, null, 608, -120, 10, 25);
 
-
-
-
-
         this.networks.push(network);
     }
 
@@ -116,9 +111,9 @@ export class Background2
         let maxDepth = 1;
         let appearRate = 0;
         switch (node.subNetworkSize) {
-            case 's': maxDepth = 1; appearRate = 30; break;
+            case 's': maxDepth = 1; appearRate = 20; break;
             case 'm': maxDepth = 2; appearRate = 30; break;
-            case 'l': maxDepth = 3; appearRate = 40; break;
+            case 'l': maxDepth = 3; appearRate = 70; break;
         }
 
         let pattern = 1;//Math.floor((Math.random() * 2)) + 1;
@@ -133,7 +128,9 @@ export class Background2
 
     addRandomNodePatter1(network, node, maxDepth, appearRate)
     {
-        if (this.judge(appearRate)) {
+        let forceVertex = this.getRandomInt(Param.LTT, Param.LLT);
+
+        if (forceVertex === Param.LTT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LTT, 101, -50, -60, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -155,7 +152,7 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RTT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RTT, 201, 30, -60, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -173,8 +170,7 @@ export class Background2
             }
         }
 
-
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RRT || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRT, 301, 30, -30, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -193,8 +189,7 @@ export class Background2
             }
         }
 
-
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RRB, 401, 30, 0, 30);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -212,7 +207,7 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.RBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.RBB, 501, 10, 10, 30, null, null, Param.LTT);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -241,15 +236,14 @@ export class Background2
             }
         }
 
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LBB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LBB, 601, -30, 40, 30);
             if (maxDepth >= 2 && this.judge(appearRate)) {
                 network.addOctaNode(601, Param.LLB, 611, -45, 30, 35);
             }
         }
 
-
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LLB || this.judge(appearRate)) {
             network.addOctaNode(node, Param.LLB, 701, -40, 10, 35);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -268,8 +262,7 @@ export class Background2
             }
         }
 
-
-        if (this.judge(appearRate)) {
+        if (forceVertex === Param.LLT || this.judge(appearRate)) {
             network.addPointNode(node, Param.LLT, 801, -30, 0, 4);
             if (maxDepth >= 2) {
                 if (this.judge(appearRate)) {
@@ -290,6 +283,23 @@ export class Background2
     judge(rate)
     {
         return Math.random() * 100 <= rate;
+    }
+
+    /**
+     * ランダムな整数を生成
+     *
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    getRandomInt(min, max)
+    {
+        // minとmaxが整数であることを保証
+        min = Math.ceil(min);
+        max = Math.floor(max);
+
+        // minからmaxまでの範囲の整数をランダムに生成して返す
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     /**
@@ -319,8 +329,10 @@ export class Background2
      */
     draw()
     {
-        let offsetX = window.scrollX - (window.scrollX / Param.BG2_SCROLL_RATE);
-        let offsetY = window.scrollY - (window.scrollY / Param.BG2_SCROLL_RATE);
+        const hgn = HorrorGameNetwork.getInstance();
+
+        let offsetX = hgn.getScrollX() - (hgn.getScrollX() / Param.BG2_SCROLL_RATE);
+        let offsetY = hgn.getScrollY() - (hgn.getScrollY() / Param.BG2_SCROLL_RATE);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.networks.forEach(network => {
             network.draw(this.ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
@@ -332,14 +344,15 @@ export class Background2
      */
     resize()
     {
+        const hgn = HorrorGameNetwork.getInstance();
+
         this.canvas.width = document.documentElement.scrollWidth;
-        this.canvas.height = window.hgn.getHeight();
+        this.canvas.height = hgn.getHeight();
 
-
-        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-        this.ctx.lineWidth = 1; // 線の太さ
-        this.ctx.shadowColor = "lime"; // 影の色
-        this.ctx.shadowBlur = 5; // 影のぼかし効果
+        this.ctx.strokeStyle = "rgba(0, 70, 0, 0.7)"; // 線の色と透明度
+        this.ctx.lineWidth = 3; // 線の太さ
+        // this.ctx.shadowColor = "lime"; // 影の色
+        // this.ctx.shadowBlur = 5; // 影のぼかし効果
         this.ctx.fillStyle = "rgba(0, 150, 0, 0.8)";
         this.ctx.font = '20px Arial';
 

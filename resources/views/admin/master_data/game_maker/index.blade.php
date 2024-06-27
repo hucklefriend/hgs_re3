@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or よみがな or 略称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->text('name')->value($search['name'] ?? '')->class('form-control')->placeholder('名前 or よみがな or 略称(半角スペースで単語区切り)')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">
@@ -30,8 +30,12 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Maker.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+            <div class="d-flex justify-content-between">
+                <div>{{ $makers->appends($search)->links() }}</div>
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Maker.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Maker.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                </div>
             </div>
 
             <table class="table table-hover">
@@ -51,9 +55,7 @@
                         <td>{{ $maker->name }}</td>
                         <td>{{ $maker->acronym }}</td>
                         <td>{{ $maker->phonetic }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('Admin.MasterData.Maker.Edit', $maker) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit</a>
-                        </td>
+                        <td class="text-center"><a href="{{ route('Admin.MasterData.Maker.Detail', $maker) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
                     </tr>
                 @endforeach
                 </tbody>

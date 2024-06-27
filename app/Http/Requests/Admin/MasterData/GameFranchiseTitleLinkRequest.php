@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\MasterData;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class GameFranchiseTitleLinkRequest extends FormRequest
 {
@@ -13,7 +14,17 @@ class GameFranchiseTitleLinkRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
+    }
+
+    /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->title_id === null) {
+            $this->merge(['title_id' => []]);
+        }
     }
 
     /**
@@ -24,7 +35,7 @@ class GameFranchiseTitleLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title_id' => 'required|array|exists:game_titles,id',
+            'title_id' => 'nullable|array|exists:game_titles,id',
         ];
     }
 }

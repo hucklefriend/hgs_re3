@@ -9,13 +9,13 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.Title.SyncSeries', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
                 @foreach ($series as $seriesId => $seriesName)
                     <label class="list-group-item">
-                        {{ Form::radio('series_id', $seriesId, $seriesId == ($model->series()->id ?? null), ['class' => 'form-check-input me-1']) }}
+                        <input type="radio" name="series_id" value="{{ $seriesId }}" class="form-check-input me-1" @checked($seriesId == ($model->series()->id ?? null))>
                         {{ $seriesName }}
                     </label>
                 @endforeach

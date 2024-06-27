@@ -7,32 +7,38 @@
         </div>
         <div class="panel-body">
             <form action="{{ route('Admin.MasterData.Platform') }}" method="GET">
-                <table class="table table-borderless table-sm">
-                    <tr>
-                        <th class="align-middle">Name</th>
-                        <td>{{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or 略称 or 俗称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}</td>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <td><button type="submit" class="btn btn-sm btn-primary w-100px me-5px">Search</button></td>
-                    </tr>
-                </table>
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-3">Name</label>
+                    <div class="col-md-9">
+                        {{ html()->input('name')->value($search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7 offset-md-3">
+                        <button type="submit" class="btn btn-sm btn-primary w-100px me-5px">Search</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
 
     <div class="panel panel-inverse">
         <div class="panel-body">
-            <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Platform.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+            <div class="d-flex justify-content-between">
+                <div>{{ $platforms->appends($search)->links() }}</div>
+                <div class="text-end">
+                    <a href="{{ route('Admin.MasterData.Platform.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Platform.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                </div>
             </div>
 
             <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>タイトル</th>
-                    <th>表示期間</th>
+                    <th>名前</th>
+                    <th>key</th>
+                    <th>略称</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -41,6 +47,7 @@
                     <tr>
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
+                        <td>{{ $platform->key }}</td>
                         <td>{{ $platform->acronym }}</td>
                         <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
                     </tr>

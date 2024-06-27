@@ -25,7 +25,7 @@ class GameRelatedProductShopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shop_id'    => ['required', new Enum(\App\Enums\Game\Shop::class)],
+            'shop_id'    => ['required', new Enum(\App\Enums\Shop::class)],
             'url'        => 'required',
             'param1'     => 'nullable',
             'param2'     => 'nullable',

@@ -3,40 +3,57 @@
 @section('title', 'タイトルネットワーク.HGN')
 
 @section('content')
-    <div class="node-list">
-        <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">{{ $title->name }}</h1>
-        </div>
+    <div style="text-align:center; margin: 20px 0;">
+        <h1 class="head1">{{ $title->name }}</h1>
+    </div>
 
-        <div class="node node-center">
-            <div class="text-node">
-                <blockquote>
-                    {!! nl2br(e($title->introduction))  !!}
+    @if (!empty($title->description))
+        <section>
+            <div class="node node-center">
+                <div class="text-node">
+                    @include('common.description', ['model' => $title])
+                </div>
+            </div>
+        </section>
+    @endif
 
-                    <footer style="text-align: right;margin-top:1rem;">— <cite>{!! $title->introduction_from  !!}</cite></footer>
-                </blockquote>
+    <section>
+    <div class="node">
+        <h2 class="head2">レビュー総評</h2>
+    </div>
+    <div class="title-review">
+        <div class="text-node review-score">
+            <div class="review-score-fear">
+                <span>怖さ</span>
+                <span>★★★★☆</span>
+            </div>
+            <div class="review-score-other">
+                <div>
+                    <span>グラフィック</span>
+                    <span>★★★★☆</span>
+                </div>
+                <div>
+                    <span>サウンド</span>
+                    <span>★★★★☆</span>
+                </div>
+                <div>
+                    <span>ストーリー</span>
+                    <span>★★★★☆</span>
+                </div>
+                <div>
+                    <span>ゲーム性</span>
+                    <span>★★★★☆</span>
+                </div>
             </div>
         </div>
-
-        <div class="node">
-            <h2 class="head2">
-                レビュー総評
-            </h2>
+        <div class="text-node">
+            <h3>AIによる要約</h3>
+            このゲームはとても怖いです。グラフィックもサウンドも素晴らしいです。ストーリーも面白いです。ゲーム性も高いです。
         </div>
-        <div class="node-review-ge">
-            <div class="text-node" style="white-space: nowrap;">
-                怖さ：★★★★☆<br>
-                グラフィック：★★★★☆<br>
-                サウンド：★★★★☆<br>
-                ストーリー：★★★★☆<br>
-                ゲーム性：★★★★☆
-            </div>
-            <div class="text-node">
-                要約<br>
-                このゲームはとても怖いです。グラフィックもサウンドも素晴らしいです。ストーリーも面白いです。ゲーム性も高いです。
-            </div>
-        </div>
+    </div>
+    </section>
 
+    <section>
         <div class="node">
             <h2 class="head2">タグ</h2>
         </div>
@@ -53,11 +70,12 @@
                 </div>
             </div>
         </div>
+    </section>
 
-
-        <div class="node">
-            <h2 class="head2">ユーザーコンテンツ</h2>
-        </div>
+    <section>
+    <div class="node">
+        <h2 class="head2">ユーザーコンテンツ</h2>
+    </div>
         <div class="node-map">
             <div>
                 <div class="link-node">
@@ -85,37 +103,49 @@
                 </div>
             </div>
         </div>
+    </section>
 
+    <section>
         <div class="node">
             <h2 class="head2">パッケージ</h2>
         </div>
+        <div class="product-list">
             @foreach ($packages as $pkg)
-                <div style="display:flex;margin-bottom:1rem;">
-                    <div>
-                        <div class="text-node" style="white-space: nowrap;text-align: center;">
-                            @if ($pkg->img_s_url !== null)
-                                <div>
-                                    <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}" style="max-width:100px;max-height:100px;">
-                                </div>
-                            @endif
-                            【{{ $pkg->platform->acronym }}】{{ $pkg->acronym }}<br>
-                            {{ $pkg->release_at }}発売
-                        </div>
-                    </div>
-                    <div class="node-map" style="width:100%">
-                        @foreach($pkg->shops as $shop)
+                <div class="product-info">
+                    <div class="text-node">
+                        @if ($pkg->img_s_url !== null)
                             <div>
-                                <div class="link-node">
-                                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
+                                <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}">
+                            </div>
+                        @endif
+                        {!! $pkg->node_name !!}
+                        <div style="margin-top: 10px;">
+                            {{ $pkg->platform->name }}<br>
+                            {{ $pkg->release_at }}
+                        </div>
+
+                        @if ($pkg->shops->count() > 0)
+                            <div style="margin-top: 10px;" class="shop-link">
+                                @foreach($pkg->shops as $shop)
+                                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
                                         <i class="bi bi-shop"></i> {{ $shop->shop()->name }}
                                     </a>
-                                </div>
+                                @endforeach
+                                <a href="" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
+                                    <i class="bi bi-shop"></i> メルカリで探す
+                                </a>
+                                <a href="" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
+                                    <i class="bi bi-shop"></i> 楽天で探す
+                                </a>
                             </div>
-                        @endforeach
+                        @endif
                     </div>
                 </div>
             @endforeach
+        </div>
+    </section>
 
+    <section>
         <div class="node">
             <h2 class="head2">関連商品</h2>
         </div>
@@ -131,17 +161,19 @@
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="node">
-            <h2 class="head2">
-                関連ネットワーク
-            </h2>
-        </div>
+    <section>
+    <div class="node">
+        <h2 class="head2">
+            関連ネットワーク
+        </h2>
+    </div>
         <div class="node-map">
             @if ($title->franchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.FranchiseDetailNetwork', $title->franchise()) }}">
+                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->franchise()->key]) }}">
                             {{ $title->franchise()->node_name }}<br>
                             フランチャイズ
                         </a>
@@ -152,16 +184,14 @@
             @foreach ($makers as $maker)
                 <div>
                     <div class="link-node link-node-center">
-                        <a href="{{ route('Game.MakerDetailNetwork', $maker) }}">
+                        <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">
                             {!! $maker->node_name !!}
                         </a>
                     </div>
                 </div>
             @endforeach
         </div>
-    </div>
-
-
+    </section>
 
     @include('footer')
 @endsection

@@ -17,6 +17,16 @@ class GameRelatedProductMediaMixLinkRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->media_mix_id === null) {
+            $this->merge(['media_mix_id' => []]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -24,7 +34,7 @@ class GameRelatedProductMediaMixLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'media_mix_id' => 'required|array|exists:game_media_mixes,id',
+            'media_mix_id' => 'nullable|array|exists:game_media_mixes,id',
         ];
     }
 }

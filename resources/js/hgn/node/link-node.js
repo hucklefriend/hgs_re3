@@ -132,33 +132,67 @@ export class HgsTitleLinkNode extends LinkNode
      */
     constructor(DOM)
     {
-        super(DOM, 20);
+        super(DOM, 50);
+
+        this.lightCanvas = document.querySelector('#n-HGS-c');
+        this.lightCanvas.width = 300;
+        this.lightCanvas.height = 300;
+        this.lightCtx = this.lightCanvas.getContext('2d');
+
+
+        this.drawLight();
+    }
+
+    drawLight()
+    {
+        var radius = 70;
+        var startAngle = 0;
+        var endAngle = Math.PI * 2;
+
+// 新しいパスを開始
+        this.lightCtx.beginPath();
+
+// 円を描画
+        this.lightCtx.arc(150, 150, radius, startAngle, endAngle);
+
+// 光る効果を追加
+        this.lightCtx.shadowColor = 'rgb(0, 255, 0)';
+        this.lightCtx.shadowBlur = 70;
+
+// 円を塗りつぶす
+        const gradient = this.lightCtx.createRadialGradient(150, 150, 0, 150, 150, radius);
+        gradient.addColorStop(0, "rgba(0, 200, 0, 1)"); // 中心は白
+        gradient.addColorStop(0.5, "rgba(0, 100, 0, 0.8)"); // 外側は黒
+        gradient.addColorStop(1, "rgba(0, 70, 0, 0.7)"); // 外側は黒
+        this.lightCtx.fillStyle = gradient;
+        this.lightCtx.fill();
     }
 
     /**
      * 描画
      *
      * @param ctx
+     * @param fillStyle
      */
-    draw(ctx)
+    draw(ctx, fillStyle = 'black')
     {
         if (this.isHover) {
             ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
             ctx.shadowColor = "lime"; // 影の色
             ctx.shadowBlur = 15; // 影のぼかし効果
-            ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
         } else {
             ctx.strokeStyle = "rgba(0, 200, 0, 0.6)"; // 線の色と透明度
             ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
             ctx.shadowBlur = 8; // 影のぼかし効果
-            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
         }
-        ctx.lineWidth = 7; // 線の太さ
+        ctx.lineWidth = 5; // 線の太さ
         ctx.lineJoin = "round"; // 線の結合部分のスタイル
         ctx.lineCap = "round"; // 線の末端のスタイル
 
         super.setShapePath(ctx);
         ctx.stroke();
+
+        ctx.fillStyle = fillStyle;
         ctx.fill();
     }
 }

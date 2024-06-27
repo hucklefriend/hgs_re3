@@ -10,8 +10,6 @@ function menu_active(string $match, bool $isPerfectMatch = false): string
 }
 
 
-
-
 /**
  * checkboxとradioボタンのchecked判定
  *
@@ -104,4 +102,19 @@ function array_walk_synonym(array &$words): void
     array_walk($words, function (&$value, $key){
         $value = synonym($value);
     });
+}
+
+/**
+ * 内部URLをasset関数で変換する
+ *
+ * @param string $url
+ * @return string
+ */
+function conv_asset_url(string $url): string
+{
+    if (preg_match('/^%ASSET%\/(.*)/', $url, $matches)) {
+        return asset($matches[1]);
+    } else {
+        return $url;
+    }
 }

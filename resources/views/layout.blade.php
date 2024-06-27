@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'ホラーゲームネットワーク')</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon">
     <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,11 +30,8 @@
         </main>
     </div>
     <canvas id="main-canvas"></canvas>
-    <canvas id="bg1" style=""></canvas>
-    <canvas id="bg2" style="position: absolute;top:0;left:0; z-index: -1002;"></canvas>
-    <div id="bg3c">
-        <canvas id="bg3"></canvas>
-    </div>
+    <canvas id="bg1"></canvas>
+    <canvas id="bg2"></canvas>
 </div>
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
@@ -54,5 +51,6 @@
     @yield('popup')
 </div>
 <div id="debug" style="visibility: hidden;"></div>
+<div id="bg3"></div>
 </body>
 </html>

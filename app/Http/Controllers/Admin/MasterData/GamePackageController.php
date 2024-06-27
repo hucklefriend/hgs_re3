@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GamePackageMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GamePackageRequest;
 use App\Http\Requests\Admin\MasterData\GamePackageShopRequest;
 use App\Models\MasterData\GamePackage;
@@ -26,6 +27,17 @@ class GamePackageController extends AbstractAdminController
      * @return Application|Factory|View
      */
     public function index(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_package.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request)
     {
         $packages = GamePackage::orderBy('id');
 
@@ -59,12 +71,12 @@ class GamePackageController extends AbstractAdminController
             $packages->orWhereIn('game_platform_id', $searchPlatforms);
         }
 
-        $this->saveSearchSession('search_game_package', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_package.index', [
+        return [
             'packages' => $packages->paginate(AdminDefine::ITEMS_PER_PAGE),
-            'search' => $search
-        ]);
+            'search' => $search,
+        ];
     }
 
     /**
@@ -112,6 +124,38 @@ class GamePackageController extends AbstractAdminController
         }
 
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_package.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GamePackageMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GamePackageMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $package = GamePackage::find($id);
+            if ($package !== null) {
+                $package->node_name = $nodeName;
+                $package->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**

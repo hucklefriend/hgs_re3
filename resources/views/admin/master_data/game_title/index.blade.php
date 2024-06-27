@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'] ?? '', ['class' => 'form-control', 'placeholder' => '名前 or よみがな(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->input('text', 'name', $search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">
@@ -33,7 +33,8 @@
             <div class="d-flex justify-content-between">
                 <div>{{ $titles->appends($search)->links() }}</div>
                 <div class="text-end">
-                    <a href="{{ route('Admin.MasterData.Title.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i></a>
+                    <a href="{{ route('Admin.MasterData.Title.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Title.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
                 </div>
             </div>
 
@@ -68,13 +69,4 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('js')
-    <script>
-        $(()=>{
-            $("#franchise").select2();
-            $("#series").select2();
-        });
-    </script>
 @endsection

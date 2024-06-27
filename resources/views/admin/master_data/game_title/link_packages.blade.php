@@ -10,17 +10,17 @@
                 <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}" placeholder="名前" autocomplete="off">
             </div>
             <div>
-                @include ('admin.common.form.select_game_platform_multi', ['name' => 'platform_ids[]', 'options' => ['id' => 'admin-link-platform-filter']])
+                <x-admin.select-game-platform-multi name="'platform_ids[]'" id="admin-link-platform-filter" />
             </div>
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.Title.SyncPackage', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
                     @foreach ($packages as $package)
                         <label class="list-group-item" data-platform="{{ $package->game_platform_id }}">
-                            {{ Form::checkbox('package_id[]', $package->id, in_array($package->id, $linkedPackageIds), ['class' => 'form-check-input me-1']) }}
+                            <input type="checkbox" name="package_id" value="{{ $package->id }}" class="form-check-input me-1" @checked(in_array($package->id, $linkedPackageIds))>
                             {{ $package->name }} ({{ $platformHash[$package->game_platform_id] }})
                         </label>
                     @endforeach

@@ -31,9 +31,23 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('logout', [Admin\AdminController::class, 'logout'])->name('Admin.Logout');
 
     // ここからは認証が必要
-    Route::group(['middleware' => ['auth', 'can:admin', 'admin']], function () {
+    Route::middleware (['admin'])->group(function () {
         // 管理トップ
         Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
+
+        // 運営
+        Route::group(['prefix' => 'manage'], function () {
+            // お知らせ
+            Route::resource('information', Admin\Manage\InformationController::class)->names([
+                'index'   => 'Admin.Manage.Information',
+                'create'  => 'Admin.Manage.Information.Create',
+                'store'   => 'Admin.Manage.Information.Store',
+                'show'    => 'Admin.Manage.Information.Show',
+                'edit'    => 'Admin.Manage.Information.Edit',
+                'update'  => 'Admin.Manage.Information.Update',
+                'destroy' => 'Admin.Manage.Information.Destroy',
+            ]);
+        });
 
         // マスター
         Route::group(['prefix' => 'master'], function () {
@@ -45,6 +59,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
@@ -59,10 +75,15 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+                Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
+                Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
+
             });
 
             // フランチャイズ
@@ -73,6 +94,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_series', [$class, 'linkSeries'])->name("{$basename}.LinkSeries");
@@ -110,6 +133,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_franchise', [$class, 'linkFranchise'])->name("{$basename}.LinkFranchise");
@@ -130,6 +155,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
@@ -155,6 +182,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
@@ -178,6 +207,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
+                Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
@@ -194,6 +225,8 @@ $class = HgnController::class;
 Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
+Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
+Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 
 // マスター
 Route::group(['prefix' => 'game'], function () {
@@ -201,20 +234,18 @@ Route::group(['prefix' => 'game'], function () {
     // ホラーゲームネットワーク
     Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
     // フランチャイズ詳細ネットワーク
-    Route::get('/franchise/{franchise}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
+    Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク
     Route::get('/franchise', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
-    // タイトルネットワーク
-    Route::get('/title/{title}', [$class, 'titleNetwork'])->name('Game.TitleNetwork');
-    // パッケージネットワーク
-    Route::get('/package/{pkg}', [$class, 'packageNetwork'])->name('Game.PackageNetwork');
+    // タイトル詳細ネットワーク
+    Route::get('/title/{titleKey}', [$class, 'titleDetailNetwork'])->name('Game.TitleDetailNetwork');
 
     // メーカー詳細ネットワーク
-    Route::get('/maker/{maker}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
+    Route::get('/maker/{makerKey}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
     // メーカーネットワーク
     Route::get('/maker', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
     // プラットフォーム詳細ネットワーク
-    Route::get('/platform/{platform}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
+    Route::get('/platform/{platformKey}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
     // プラットフォームネットワーク
     Route::get('/platform', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
 });

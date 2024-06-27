@@ -9,13 +9,13 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.MediaMix.SyncRelatedProduct', $model) }}">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
                 @foreach ($relatedProducts as $rp)
                     <label class="list-group-item">
-                        {{ Form::checkbox('related_product_id[]', $rp->id, in_array($rp->id, $linkedrelatedProductIds), ['class' => 'form-check-input me-1']) }}
+                        <input type="checkbox" name="related_product_id[]" value="{{ $rp->id }}" class="form-check-input me-1" @checked(in_array($rp->id, $linkedRelatedProductIds))>
                         {{ $rp->name }}
                     </label>
                 @endforeach

@@ -51,12 +51,10 @@
                     <td>{{ $model->originalPackage->name ?? '-' }}</td>
                 </tr>
                 <tr>
-                    <th>あらすじ</th>
-                    <td>{!! nl2br(e($model->introduction)) !!}</td>
-                </tr>
-                <tr>
-                    <th>あらすじ引用元</th>
-                    <td>{!! $model->introduction_from !!}</td>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
+                    </td>
                 </tr>
                 <tr>
                     <th>シリーズ</th>
@@ -115,7 +113,7 @@
                 <div class="text-end">
                     @if ($model->packages()->count() === 0)
                         <form method="POST" action="{{ route('Admin.MasterData.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
-                            {{ csrf_field() }}
+                            @csrf
                             {{ method_field('DELETE') }}
                             <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
                         </form>

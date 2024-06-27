@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GameMediaMixMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameMediaMixRelatedProductLinkRequest;
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameMediaMix;
@@ -26,6 +27,17 @@ class GameMediaMixController extends AbstractAdminController
      */
     public function index(Request $request): Application|Factory|View
     {
+        return view('admin.master_data.game_media_mix.index', $this->search($request));
+    }
+
+    /**
+     * 検索処理
+     *
+     * @param Request $request
+     * @return array
+     */
+    private function search(Request $request): array
+    {
         $mediaMixes = GameMediaMix::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
@@ -43,12 +55,12 @@ class GameMediaMixController extends AbstractAdminController
             });
         }
 
-        $this->saveSearchSession('search_game_media_mix', $search);
+        $this->saveSearchSession($search);
 
-        return view('admin.master_data.game_media_mix.index', [
+        return [
             'mediaMixes' => $mediaMixes->paginate(AdminDefine::ITEMS_PER_PAGE),
             'search' => $search
-        ]);
+        ];
     }
 
     /**
@@ -93,6 +105,42 @@ class GameMediaMixController extends AbstractAdminController
         $mediaMix->save();
 
         return redirect()->route('Admin.MasterData.MediaMix.Detail', $mediaMix);
+    }
+
+    /**
+     * 一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editMulti(Request $request): Application|Factory|View
+    {
+        return view('admin.master_data.game_media_mix.edit_multi', $this->search($request));
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GameMediaMixMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateMulti(GameMediaMixMultiUpdateRequest $request): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $h1NodeNames = $request->validated(['h1_node_name']);
+        $keys = $request->validated(['key']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $model = GameMediaMix::find($id);
+            if ($model !== null) {
+                $model->node_name = $nodeName;
+                $model->h1_node_name = $h1NodeNames[$id];
+                $model->key = $keys[$id];
+                $model->save();
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**
@@ -164,7 +212,7 @@ class GameMediaMixController extends AbstractAdminController
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      */
-    public function syncTitle(GameMediaMixRelatedProductLinkRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function syncRelatedProduct(GameMediaMixRelatedProductLinkRequest $request, GameMediaMix $mediaMix): RedirectResponse
     {
         $mediaMix->relatedProducts()->sync($request->validated('related_product_id'));
         return redirect()->route('Admin.MasterData.MediaMix.Detail', $mediaMix);
