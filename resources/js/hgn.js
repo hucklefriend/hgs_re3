@@ -540,7 +540,6 @@ export class HorrorGameNetwork
         this.bg2.setStrokeStyle();
 
         this.domNodes.forEach(node => {
-            console.log(node);
             node.appear();
         });
     }
@@ -580,6 +579,12 @@ export class HorrorGameNetwork
             this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         }
 
+
+
+        this.domNodes.forEach(node => {
+            node.update();
+        });
+
         this.setRedraw();
     }
 
@@ -588,6 +593,10 @@ export class HorrorGameNetwork
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NETWORK_OUT;
         this.animationCnt = 0;
         this.mainDOM.classList.add('hide');
+
+        this.domNodes.forEach(node => {
+            node.disappear();
+        });
     }
 
     networkOut()
@@ -617,6 +626,13 @@ export class HorrorGameNetwork
         } else {
             this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         }
+
+
+
+        this.domNodes.forEach(node => {
+            node.update();
+        });
+
 
         this.setRedraw();
     }
