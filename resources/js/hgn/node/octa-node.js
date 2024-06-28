@@ -518,6 +518,9 @@ export class DOMNode extends OctaNode
         } else {
             this.subNetworkSize = 'n';
         }
+
+        this.animFunc = null;
+        this.animCnt = 0;
     }
 
     /**
@@ -526,6 +529,34 @@ export class DOMNode extends OctaNode
     reload()
     {
         super.reload(this.DOM.offsetLeft, this.DOM.offsetTop, this.DOM.offsetWidth, this.DOM.offsetHeight);
+    }
+
+    update()
+    {
+        if (this.animFunc !== null) {
+            this.animCnt++;
+            this.animFunc();
+        }
+    }
+
+    appear()
+    {
+        this.animCnt = 0;
+        this.animFunc = this.appearAnimation;
+    }
+
+    appearAnimation()
+    {
+    }
+
+    disappear()
+    {
+        this.animCnt = 0;
+        this.animFunc = this.disappearAnimation;
+    }
+
+    disappearAnimation()
+    {
     }
 }
 

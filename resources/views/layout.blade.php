@@ -19,13 +19,26 @@
             window.contentNode = null;
         @endif
 
+        showBg3 = () => {
+            // 10フレームくらいかけてopacityを1にする
+            let opacity = 0;
+            let interval = setInterval(() => {
+                opacity += 0.1;
+                document.getElementById('bg3').style.opacity = opacity;
+                if (opacity >= 1) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        };
     </script>
     @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/css/node.css', 'resources/js/app.js'])
 </head>
 <body>
+<div id="bg3" style="opacity: 0;"></div>
+<script>showBg3();</script>
 <div id="scroller">
     <div class="container">
-        <main>
+        <main class="hide">
             @yield('content')
         </main>
     </div>
@@ -51,6 +64,5 @@
     @yield('popup')
 </div>
 <div id="debug" style="visibility: hidden;"></div>
-<div id="bg3"></div>
 </body>
 </html>

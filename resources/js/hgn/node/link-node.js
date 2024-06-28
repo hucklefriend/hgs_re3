@@ -39,6 +39,8 @@ export class LinkNode extends DOMNode
             // aのクリックイベントを無効化
             a.addEventListener('click', (e) => e.preventDefault());
         }
+
+        this.scale = 1;
     }
 
     /**
@@ -99,24 +101,39 @@ export class LinkNode extends DOMNode
      */
     draw(ctx)
     {
-        if (this.isHover) {
-            ctx.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
-            ctx.shadowColor = "lime"; // 影の色
-            ctx.shadowBlur = 10; // 影のぼかし効果
-            ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-        } else {
-            ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            ctx.shadowBlur = 8; // 影のぼかし効果
-            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
-        }
-        ctx.lineWidth = 2; // 線の太さ
-        ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        ctx.lineCap = "round"; // 線の末端のスタイル
+        if (this.scale === 1) {
+            if (this.isHover) {
+                ctx.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
+                ctx.shadowColor = "lime"; // 影の色
+                ctx.shadowBlur = 10; // 影のぼかし効果
+                ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+            } else {
+                ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+                ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
+                ctx.shadowBlur = 8; // 影のぼかし効果
+                ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+            }
+            ctx.lineWidth = 2; // 線の太さ
+            ctx.lineJoin = "round"; // 線の結合部分のスタイル
+            ctx.lineCap = "round"; // 線の末端のスタイル
 
-        super.setShapePath(ctx);
-        ctx.stroke();
-        ctx.fill();
+            super.setShapePath(ctx);
+            ctx.stroke();
+            ctx.fill();
+        } else if (this.scale < 0.3) {
+            ctx.beginPath();
+            ctx.arc(this.center.x, this.center.y, 30 * this.scale, 0, Param.MATH_PI_2, false);
+            ctx.fill();
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(this.center.x + (this.center.x - this.vertices[0].x) * this.scale, this.center.y + (this.center.y - this.vertices[0].y) * this.scale);
+            for (let i = 1; i < this.vertices.length; i++) {
+                ctx.lineTo(this.center.x + (this.center.x - this.vertices[i].x) * this.scale, this.center.y + (this.center.y - this.vertices[i].y) * this.scale);
+            }
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+        }
     }
 }
 

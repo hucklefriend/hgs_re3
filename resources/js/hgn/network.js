@@ -181,6 +181,16 @@ export class Network
         });
     }
 
+    /**
+     * エッジの描画
+     *
+     * @param ctx
+     * @param node
+     * @param offsetX1
+     * @param offsetY1
+     * @param offsetX2
+     * @param offsetY2
+     */
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
         const hgn = HorrorGameNetwork.getInstance();

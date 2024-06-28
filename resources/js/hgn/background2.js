@@ -15,6 +15,8 @@ export class Background2
 
         this.networks = [];
 
+        this.fadeCnt = 7;
+
         this.resize();
 
         if (Param.BG3_MAKE_NETWORK_MODE) {
@@ -331,12 +333,32 @@ export class Background2
     {
         const hgn = HorrorGameNetwork.getInstance();
 
+
+
         let offsetX = hgn.getScrollX() - (hgn.getScrollX() / Param.BG2_SCROLL_RATE);
         let offsetY = hgn.getScrollY() - (hgn.getScrollY() / Param.BG2_SCROLL_RATE);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.networks.forEach(network => {
             network.draw(this.ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
         });
+    }
+
+    addFadeCnt(addCnt)
+    {
+        this.fadeCnt += addCnt;
+        if (this.fadeCnt > 7) {
+            this.fadeCnt = 7;
+        } else if (this.fadeCnt < 0) {
+            this.fadeCnt = 0;
+        }
+
+        this.setStrokeStyle();
+    }
+
+    setStrokeStyle()
+    {
+        let alpha = this.fadeCnt / 10;
+        this.ctx.strokeStyle = "rgba(0, 70, 0, " + alpha + ")"; // 線の色と透明度
     }
 
     /**
@@ -349,7 +371,8 @@ export class Background2
         this.canvas.width = document.documentElement.scrollWidth;
         this.canvas.height = hgn.getHeight();
 
-        this.ctx.strokeStyle = "rgba(0, 70, 0, 0.7)"; // 線の色と透明度
+        let alpha = this.fadeCnt / 10;
+        this.ctx.strokeStyle = "rgba(0, 70, 0, " + alpha + ")"; // 線の色と透明度
         this.ctx.lineWidth = 3; // 線の太さ
         // this.ctx.shadowColor = "lime"; // 影の色
         // this.ctx.shadowBlur = 5; // 影のぼかし効果

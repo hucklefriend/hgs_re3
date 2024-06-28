@@ -66,9 +66,6 @@ export class Head1Node extends DOMNode
         ctx.lineTo(this.vertices[Param.LLB].x - 5, this.vertices[Param.LLB].y + 5);
         ctx.lineTo(this.vertices[Param.LLB].x - 5, this.vertices[Param.LLB].y - this.notchSize);
         ctx.stroke();
-
-
-
     }
 }
 
@@ -132,5 +129,15 @@ export class Head2Node extends DOMNode
         ctx.lineTo(this.vertices[Param.RBB].x, this.vertices[Param.RBB].y);
         ctx.lineTo(this.vertices[Param.RBB].x - this.notchSize, this.vertices[Param.RBB].y);
         ctx.stroke();
+    }
+
+    appearAnimation()
+    {
+        this.animCnt++;
+    }
+
+    disappearAnimation()
+    {
+
     }
 }
