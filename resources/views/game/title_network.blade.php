@@ -17,6 +17,7 @@
         </section>
     @endif
 
+    {{--
     <section>
     <div class="node">
         <h2 class="head2">レビュー総評</h2>
@@ -104,7 +105,7 @@
             </div>
         </div>
     </section>
-
+--}}
     <section>
         <div class="node">
             <h2 class="head2">パッケージ</h2>
