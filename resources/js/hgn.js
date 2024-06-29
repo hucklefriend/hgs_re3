@@ -1,8 +1,6 @@
-import {Network} from "./hgn/network.js";
-
 import {DOMNode, TitleNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
 import {Bg2PointNode} from './hgn/node/point-node.js';
-import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
+import {LinkNode, HgsTitleLinkNode} from './hgn/node/link-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Head1Node, Head2Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
@@ -20,6 +18,10 @@ export class HorrorGameNetwork
 {
     static SCROLL_MODE_BODY = 1;
     static SCROLL_MODE_SCROLLER = 2;
+
+    static ANIMATION_MODE_NONE = 0;
+    static ANIMATION_MODE_NETWORK_IN = 1;
+    static ANIMATION_MODE_NETWORK_OUT = 2;
 
     /**
      * コンストラクタ
@@ -77,13 +79,6 @@ export class HorrorGameNetwork
         this.bg2 = new Background2();
         this.bg3 = new Background3();
 
-        // ノードの読み取り
-        this.loadNodes();
-
-        // 背景を描画
-        this.bg2.draw();
-        //this.bg1.draw(this.bg2);
-
         // 次の更新で再描画するフラグ
         this.redrawFlag = false;
 
@@ -99,6 +94,14 @@ export class HorrorGameNetwork
             this.frameCount = 0;
             this.fps = 0;
         }
+
+        this.isLoaded = false;
+
+        this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        this.animationCnt = 0;
+
+        this.waitNetworkOut = false;
+        this.dataCache = null;
     }
 
     /**
@@ -181,7 +184,7 @@ export class HorrorGameNetwork
 
         let linkNodeElems = document.querySelectorAll('.link-node');
         linkNodeElems.forEach(nodeElem => {
-            let newNode = null;
+            let newNode;
             if (nodeElem.id === 'n-HGS') {
                 newNode = new HgsTitleLinkNode(nodeElem);
                 this.bg2.createHGSNetwork(newNode);
@@ -263,6 +266,8 @@ export class HorrorGameNetwork
         hrElems.forEach(hrElem =>  {
             this.hrList.push(new HR(hrElem));
         });
+
+        this.isLoaded = true;
     }
 
     loadConnection(nodeElem, connections)
@@ -312,6 +317,8 @@ export class HorrorGameNetwork
         this.domNodes.forEach(node => {
             node.reload();
         });
+
+        this.isLoaded = true;
     }
 
     /**
@@ -371,7 +378,8 @@ export class HorrorGameNetwork
      */
     start()
     {
-        this.draw();
+        // ノードの読み取り
+        this.loadNodes();
 
         if (window.contentNode !== null) {
             let linkNodeId = window.contentNode.linkNodeId;
@@ -385,6 +393,8 @@ export class HorrorGameNetwork
             window.history.pushState({type: 'contentNode', 'linkNodeId': linkNodeId}, '');
         } else {
             window.history.pushState({type: 'network'}, '');
+
+            this.startNetworkIn();
         }
 
         if (Param.SHOW_DEBUG) {
@@ -398,6 +408,9 @@ export class HorrorGameNetwork
      */
     draw()
     {
+        this.bg2.draw();
+        this.bg1.draw(this, this.bg2);
+
         this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
         this.drawEdge();
         this.drawNodes();
@@ -489,6 +502,23 @@ export class HorrorGameNetwork
 
         this.contentNode.update();
 
+        switch (this.animationMode) {
+            case HorrorGameNetwork.ANIMATION_MODE_NETWORK_IN:
+                this.networkIn();
+                break;
+            case HorrorGameNetwork.ANIMATION_MODE_NETWORK_OUT:
+                this.networkOut();
+                break;
+            case HorrorGameNetwork.ANIMATION_MODE_NONE:
+                if (this.waitNetworkOut) {
+                    this.waitNetworkOut = false;
+                    this.showNewNetwork(this.dataCache);
+                }
+
+                break;
+        }
+
+
         if (this.redrawFlag) {
             this.draw();
             this.redrawFlag = false;
@@ -498,6 +528,113 @@ export class HorrorGameNetwork
             this.showDebug();
         }
         window.requestAnimationFrame(this.update);
+    }
+
+    startNetworkIn()
+    {
+        this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NETWORK_IN;
+        this.animationCnt = 0;
+        this.bg2.fadeCnt = 0;
+        this.bg2.setStrokeStyle();
+
+        this.domNodes.forEach(node => {
+            node.appear();
+        });
+    }
+
+    networkIn()
+    {
+        this.animationCnt++;
+        const OPEN_MAIN_CNT = 10;
+
+        // 最初の10フレームでタイトルとメインノードが出現
+        if (this.animationCnt < OPEN_MAIN_CNT) {
+            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
+            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
+            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
+            this.mainCtx.lineWidth = 2; // 線の太さ
+            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
+            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
+
+            this.linkNodes.forEach(linkNode => {
+                linkNode.scale = this.animationCnt / OPEN_MAIN_CNT;
+            });
+            this.contentLinkNodes.forEach(linkNode => {
+                linkNode.scale = this.animationCnt / OPEN_MAIN_CNT;
+            });
+        } else if (this.animationCnt === OPEN_MAIN_CNT) {
+            this.linkNodes.forEach(linkNode => {
+                linkNode.scale = 1;
+            });
+            this.contentLinkNodes.forEach(linkNode => {
+                linkNode.scale = 1;
+            });
+            this.mainDOM.classList.remove('hide');
+        } else if (this.animationCnt < 20) {
+            this.bg2.addFadeCnt(1);
+        }
+
+
+
+        this.domNodes.forEach(node => {
+            node.update();
+        });
+
+        this.setRedraw();
+
+        if (this.animationCnt === 30) {
+            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        }
+    }
+
+    startNetworkOut()
+    {
+        this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NETWORK_OUT;
+        this.animationCnt = 0;
+        this.mainDOM.classList.add('hide');
+
+        this.domNodes.forEach(node => {
+            node.disappear();
+        });
+    }
+
+    networkOut()
+    {
+        this.animationCnt++;
+        const SUB_NODE_REMOVE_CNT = 10;
+        const CLOSE_MAIN_CNT = 10;
+
+        // 最初の10フレームでタイトルとメインノードが出現
+        if (this.animationCnt <= SUB_NODE_REMOVE_CNT) {
+            this.bg2.addFadeCnt(-1);
+        } else if (this.animationCnt <= (SUB_NODE_REMOVE_CNT + CLOSE_MAIN_CNT)) {
+            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
+            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
+            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
+            this.mainCtx.lineWidth = 2; // 線の太さ
+            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
+            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
+
+            this.linkNodes.forEach(linkNode => {
+                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animationCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
+            });
+            this.contentLinkNodes.forEach(linkNode => {
+                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animationCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
+            });
+        } else {
+            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        }
+
+
+
+        this.domNodes.forEach(node => {
+            node.update();
+        });
+
+
+        this.setRedraw();
     }
 
     /**
@@ -514,16 +651,14 @@ export class HorrorGameNetwork
         this.mainCanvas.height = this.mainDOM.offsetHeight + 50;
         this.reloadNodes();
 
-        this.draw();
-
         this.bg2.resize();
-        this.bg2.draw();
         this.bg1.resize();
-        this.bg1.draw(this, this.bg2);
 
         if (this.contentNode.changeSize()) {
             this.contentNode.draw();
         }
+
+        this.setRedraw();
     }
 
     /**
@@ -547,15 +682,15 @@ export class HorrorGameNetwork
 
         this.bg3.scroll();
         this.bg2.scroll();
-        this.bg2.draw();
         this.bg1.scroll();
-        this.bg1.draw(this, this.bg2);
         if (this.contentNode.isOpened()) {
             this.contentNode.scroll();
         }
 
         this.prevScrollX = window.scrollX;
         this.prevScrollY = window.scrollY;
+
+        this.setRedraw();
     }
 
     /**
@@ -563,7 +698,7 @@ export class HorrorGameNetwork
      */
     showDebug()
     {
-        let text = '';
+        let text;
         const timestamp = Date.now();
         if (this.lastTime !== 0) {
             // 前回のフレームからの経過時間（ミリ秒）を計算
@@ -631,6 +766,7 @@ export class HorrorGameNetwork
     {
         this.contentNode.historyUrl = location.href;
         this.contentNode.historyState = window.history.state;
+        this.startNetworkOut();
 
         if (!isBack) {
             // pushStateにつっこむ
@@ -638,16 +774,22 @@ export class HorrorGameNetwork
         }
         this.fetch(url, (data, hasError) => {
             if (hasError) {
+                this.contentNode.open(null);
                 this.showContentNode({
                     title: 'Error',
                     body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
                     mode: ContentNode.MODE_ERROR
                 }, null);
+
+                // 同じネットワークの再表示
+                this.startNetworkIn();
             } else {
-                this.clearNodes();
-                this.mainDOM.innerHTML = '';
-                this.bg2.clear();
-                this.showNewNetwork(data);
+                if (this.animationMode === HorrorGameNetwork.ANIMATION_MODE_NETWORK_OUT) {
+                    this.dataCache = data;
+                    this.waitNetworkOut = true;
+                } else {
+                    this.showNewNetwork(data);
+                }
             }
         });
     }
@@ -659,16 +801,14 @@ export class HorrorGameNetwork
      */
     showNewNetwork(data)
     {
-        // this.clearNodes();
-        // this.bg2.clear();
-
         window.scrollTo(0, 0);
+        this.clearNodes();
+        this.mainDOM.innerHTML = '';
+        this.bg2.clear();
         this.mainDOM.innerHTML = data.network;
         this.popupDOM.innerHTML = data.popup;
         this.loadNodes();
-        this.draw();
-        this.bg2.draw();
-        //this.setRedraw();
+        this.startNetworkIn();
     }
 
     /**

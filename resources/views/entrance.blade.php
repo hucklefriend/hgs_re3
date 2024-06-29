@@ -93,17 +93,17 @@
 
         <div class="node-map">
             <div>
-                <div class="link-node" data-sub="m">
+                <div class="link-node" data-sub="m" id="franchise-node">
                     <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
                 </div>
             </div>
             <div>
-                <div class="link-node" data-sub="m">
+                <div class="link-node" data-sub="m" id="maker-node">
                     <a href="{{ route('Game.MakerNetwork') }}">Maker</a>
                 </div>
             </div>
             <div>
-                <div class="link-node" data-sub="m">
+                <div class="link-node" data-sub="m" id="platform-node">
                     <a href="{{ route('Game.PlatformNetwork') }}">Platform</a>
                 </div>
             </div>
