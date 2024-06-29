@@ -3,6 +3,7 @@ import {Param} from '../param.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 import {HorrorGameNetwork} from '../../hgn.js';
+import {Util} from "@/hgn/util.js";
 
 /**
  * 八角ノード
@@ -635,7 +636,6 @@ export class TextNode extends DOMNode
     {
         super.setShapePath(ctx);
 
-        ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
         ctx.lineWidth = 1; // 線の太さ
         ctx.lineJoin = "miter"; // 線の結合部分のスタイル
         ctx.lineCap = "butt"; // 線の末端のスタイル
@@ -643,5 +643,26 @@ export class TextNode extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
         ctx.fillStyle = "rgba(0,30,0,0.6)";
         ctx.fill();
+    }
+
+    appearAnimation()
+    {
+        if (this.animCnt < 10) {
+        } else if (this.animCnt < 25) {
+            this.DOM.style.opacity = (this.animCnt - 10) / 15
+        } else if (this.animCnt === 25) {
+            this.DOM.style.opacity = 1;
+            this.animFunc = null;
+        }
+    }
+
+    disappearAnimation()
+    {
+        if (this.animCnt < 15) {
+            this.DOM.style.opacity = 1 - (this.animCnt / 15);
+        } else if (this.animCnt === 15) {
+            this.DOM.style.opacity = 0;
+            this.animFunc = null;
+        }
     }
 }
