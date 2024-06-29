@@ -1,6 +1,5 @@
 import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
-import {Network} from '../network.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 import {HorrorGameNetwork} from '../../hgn.js';
@@ -150,6 +149,24 @@ export class OctaNode
         ctx.moveTo(this.vertices[0].x + offsetX, this.vertices[0].y + offsetY);
         for (let i = 1; i < this.vertices.length; i++) {
             ctx.lineTo(this.vertices[i].x + offsetX, this.vertices[i].y + offsetY);
+        }
+        ctx.closePath();
+    }
+
+    /**
+     * 図形のパスを設定
+     *
+     * @param ctx
+     * @param vertices
+     * @param offsetX
+     * @param offsetY
+     */
+    setShapePathByVertices(ctx, vertices, offsetX = 0, offsetY = 0)
+    {
+        ctx.beginPath();
+        ctx.moveTo(vertices[0].x + offsetX, vertices[0].y + offsetY);
+        for (let i = 1; i < vertices.length; i++) {
+            ctx.lineTo(vertices[i].x + offsetX, vertices[i].y + offsetY);
         }
         ctx.closePath();
     }

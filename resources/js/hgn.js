@@ -1,8 +1,6 @@
-import {Network} from "./hgn/network.js";
-
 import {DOMNode, TitleNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
 import {Bg2PointNode} from './hgn/node/point-node.js';
-import {LinkNode, HgsTitleLinkNode, BackNode} from './hgn/node/link-node.js';
+import {LinkNode, HgsTitleLinkNode} from './hgn/node/link-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Head1Node, Head2Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
@@ -186,7 +184,7 @@ export class HorrorGameNetwork
 
         let linkNodeElems = document.querySelectorAll('.link-node');
         linkNodeElems.forEach(nodeElem => {
-            let newNode = null;
+            let newNode;
             if (nodeElem.id === 'n-HGS') {
                 newNode = new HgsTitleLinkNode(nodeElem);
                 this.bg2.createHGSNetwork(newNode);
@@ -575,8 +573,6 @@ export class HorrorGameNetwork
             this.mainDOM.classList.remove('hide');
         } else if (this.animationCnt < 20) {
             this.bg2.addFadeCnt(1);
-        } else {
-            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         }
 
 
@@ -586,6 +582,10 @@ export class HorrorGameNetwork
         });
 
         this.setRedraw();
+
+        if (this.animationCnt === 30) {
+            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        }
     }
 
     startNetworkOut()
@@ -698,7 +698,7 @@ export class HorrorGameNetwork
      */
     showDebug()
     {
-        let text = '';
+        let text;
         const timestamp = Date.now();
         if (this.lastTime !== 0) {
             // 前回のフレームからの経過時間（ミリ秒）を計算
