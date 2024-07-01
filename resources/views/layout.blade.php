@@ -38,7 +38,7 @@
 <script>showBg3();</script>
 <div id="scroller">
     <div class="container">
-        <main class="hide">
+        <main>
             @yield('content')
         </main>
     </div>

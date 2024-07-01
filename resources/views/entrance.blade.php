@@ -11,8 +11,8 @@
     </div>
     --}}
     <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
-        <div class="link-node link-node-center" id="n-HGS">
-            <a href="{{ route('Game.HorrorGameNetwork') }}">
+        <div id="entrance-node">
+            <a href="{{ route('Game.HorrorGameNetwork') }}" class="fade">
                 <h1>HorrorGame Network</h1>
 
                 <p>
@@ -20,9 +20,18 @@
                 </p>
             </a>
 
-            <canvas id="n-HGS-c"></canvas>
+            <canvas id="entrance-node-canvas"></canvas>
         </div>
     </div>
+    <noscript>
+        <style>
+            #entrance-node {
+                > a {
+                    pointer-events: auto !important;
+                }
+            }
+        </style>
+    </noscript>
 
     {{--
     <section style="margin-bottom: 30px;">
@@ -63,18 +72,18 @@
     </section>
 --}}
     <section class="info">
-        <h2 class="head2">Information</h2>
+        <h2 class="head2 fade">Information</h2>
 
         @empty($infoList)
             <div class="node">
-                <div class="text-node">
+                <div class="text-node fade">
                     現在、お知らせはありません。
                 </div>
             </div>
         @else
             @foreach ($infoList as $info)
                 <div class="node">
-                    <div class="content-link-node">
+                    <div class="content-link-node fade">
                         <a href="{{ route('Info', $info) }}">{{ $info->head }}</a>
                     </div>
                 </div>
@@ -82,28 +91,28 @@
         @endempty
 
         <div class="node node-right">
-            <div class="link-node link-node-small">
+            <div class="link-node link-node-small fade">
                 <a href="{{ route('InfoNetwork') }}">More</a>
             </div>
         </div>
     </section>
 
     <section style="margin-top:100px;">
-        <h2 class="head2">Network Map</h2>
+        <h2 class="head2 fade">Network Map</h2>
 
         <div class="node-map">
             <div>
-                <div class="link-node" data-sub="m" id="franchise-node">
+                <div class="link-node fade" data-sub="m" id="franchise-node">
                     <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
                 </div>
             </div>
             <div>
-                <div class="link-node" data-sub="m" id="maker-node">
+                <div class="link-node fade" data-sub="m" id="maker-node">
                     <a href="{{ route('Game.MakerNetwork') }}">Maker</a>
                 </div>
             </div>
             <div>
-                <div class="link-node" data-sub="m" id="platform-node">
+                <div class="link-node fade" data-sub="m" id="platform-node">
                     <a href="{{ route('Game.PlatformNetwork') }}">Platform</a>
                 </div>
             </div>
@@ -139,12 +148,12 @@
         <div style="margin-top:50px;margin-bottom:50px;">
             <div class="node-map">
                 <div>
-                    <div class="content-link-node" id="about-node">
+                    <div class="content-link-node fade" id="about-node">
                         <a href="{{ route('About') }}">About</a>
                     </div>
                 </div>
                 <div>
-                    <div class="content-link-node" id="privacy-policy-node">
+                    <div class="content-link-node fade" id="privacy-policy-node">
                         <a href="{{ route('PrivacyPolicy') }}">PrivacyPolicy</a>
                     </div>
                 </div>
@@ -154,7 +163,7 @@
 
     <footer style="margin: 50px 0;">
         <div class="node node-center">
-            <div class="text-node">
+            <div class="text-node fade">
                 &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
             </div>
         </div>

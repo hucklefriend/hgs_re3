@@ -124,6 +124,7 @@ export class Head1Node extends DOMNode
         } else if (this.animCnt === 15) {
             this.isUseAnimVertices = false;
             this.setOctagon();
+            this.fadeInText();
         } else if (this.animCnt < 25) {
         } else if (this.animCnt < 30) {
             this.animOffset++;
@@ -140,6 +141,7 @@ export class Head1Node extends DOMNode
         super.disappear();
         this.initAnimation();
         this.setAnimOctagon(1);
+        this.fadeOutText();
     }
 
     disappearAnimation()
@@ -175,10 +177,11 @@ export class Head2Node extends DOMNode
     constructor(DOM, notchSize = 15)
     {
         super(DOM, notchSize);
-        this.animAlpha1 = 0;
-        this.animAlpha2 = 0;
-        this.animAlpha3 = 0;
+        this.animAlpha1 = 1;
+        this.animAlpha2 = 0.7;
+        this.animAlpha3 = 0.5;
         this.animWidth = 0;
+        this.setAnimOctagon(0);
     }
 
     /**
@@ -189,7 +192,6 @@ export class Head2Node extends DOMNode
     draw(ctx)
     {
         ctx.lineWidth = 0; // 線の太さ
-        //ctx.strokeStyle = "rgba(0, 180, 0, " + this.animAlpha1 + ")"; // 線の色と透明度
         ctx.shadowBlur = 0; // 影のぼかし効果
 
         // 中央から外に向かってグラデーション
@@ -235,19 +237,22 @@ export class Head2Node extends DOMNode
     appearAnimation()
     {
         // 最初の10Cntはフェードイン
-        if (this.animCnt < Head2Node.FADE_CNT) {
+        /*if (this.animCnt < Head2Node.FADE_CNT) {
             let ratio = this.animCnt / Head2Node.FADE_CNT;
             this.animAlpha1 = Util.getMidpoint(0, 1, ratio);
             this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
             this.animAlpha3 = Util.getMidpoint(0, 0.5, ratio);
-        } else if (this.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT - 1)) {
-            let ratio = (this.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
-            this.setAnimOctagon(ratio);
+            this.setAnimOctagon(0);
+        } else if (this.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT - 1)) {*/
+        if (this.animCnt < 15) {
+            //let ratio = (this.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
+            this.setAnimOctagon(this.animCnt / 15);
         } else {
             // アニメーション終了
             this.setOctagon();
             this.animWidth = this.w;
             this.animFunc = null;
+            this.fadeInText();
         }
     }
 
@@ -266,10 +271,14 @@ export class Head2Node extends DOMNode
         this.vertices[Param.LLT].x = this.x + offsetX - moveX;
     }
 
+    disappear()
+    {
+        super.disappear();
+        this.fadeOutText();
+    }
+
     disappearAnimation()
     {
-        this.animCnt++;
-
         // 最初は縮小
         if (this.animCnt < Head2Node.SCALE_CNT) {
             let ratio = 1 - this.animCnt / Head2Node.SCALE_CNT;

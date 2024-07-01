@@ -5,7 +5,7 @@
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">
+            <h1 class="head1 fade">
                 {!! $platform->h1_node_name !!}
             </h1>
         </div>
@@ -13,7 +13,7 @@
         @if (!empty($platform->description))
             <section>
                 <div class="node node-center">
-                    <div class="text-node">
+                    <div class="text-node fade">
                         @include('common.description', ['model' => $platform])
                     </div>
                 </div>
@@ -22,11 +22,11 @@
 
         @if ($platform->relatedProducts->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
-                <h2 class="head2">ハードウェア</h2>
+                <h2 class="head2 fade">ハードウェア</h2>
                 <div class="product-list">
                     @foreach ($platform->relatedProducts as $rp)
                         <div class="product-info">
-                            <div class="text-node">
+                            <div class="text-node fade">
                                 @if ($rp->img_s_url !== null)
                                     <div>
                                         <img src="{{ conv_asset_url($rp->img_s_url) }}" alt="{{ $rp->name }}">
@@ -58,11 +58,11 @@
 
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
-                <h2 class="head2">タイトル</h2>
+                <h2 class="head2 fade">タイトル</h2>
                 <div class="node-map">
                     @foreach ($titles as $title)
                         <div>
-                            <div class="link-node link-node-center">
+                            <div class="link-node link-node-center fade">
                                 <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
                             </div>
                         </div>

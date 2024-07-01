@@ -5,12 +5,12 @@
 @section('content')
     <div class="node-list" style="margin-bottom: 50px;">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">{!! $pkg->name !!}</h1>
+            <h1 class="head1 fade">{!! $pkg->name !!}</h1>
         </div>
     </div>
 
     <div class="node">
-        <div class="text-node" style="white-space: nowrap;">
+        <div class="text-node fade" style="white-space: nowrap;">
             <table>
                 <tr>
                     <th>プラットフォーム</th>
@@ -26,7 +26,7 @@
 
 
     <div class="node" style="align-items: end">
-        <h2 class="head2">購入</h2>
+        <h2 class="head2 fade">購入</h2>
     </div>
 
 

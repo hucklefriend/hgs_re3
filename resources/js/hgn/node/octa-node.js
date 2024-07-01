@@ -29,6 +29,7 @@ export class OctaNode
         this.vertices = [];
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
+        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -91,16 +92,6 @@ export class OctaNode
     }
 
     /**
-     * 中心
-     *
-     * @returns {Vertex}
-     */
-    get center()
-    {
-        return new Vertex(this.x + this.w / 2, this.y + this.h / 2);
-    }
-
-    /**
      * 再ロード（再配置）
      *
      * @param x
@@ -114,6 +105,8 @@ export class OctaNode
         this.y = y;
         this.w = w;
         this.h = h;
+        this.center.x = this.x + this.w / 2;
+        this.center.y = this.y + this.h / 2;
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -478,6 +471,8 @@ export class Bg2OctaNode extends OctaNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+
+        this.depth = 0;
     }
 
     /**
@@ -538,7 +533,11 @@ export class DOMNode extends OctaNode
         }
 
         this.animFunc = null;
-        this.animCnt = 0;
+    }
+
+    get animCnt()
+    {
+        return window.hgn.animCnt;
     }
 
     /**
@@ -549,17 +548,37 @@ export class DOMNode extends OctaNode
         super.reload(this.DOM.offsetLeft, this.DOM.offsetTop, this.DOM.offsetWidth, this.DOM.offsetHeight);
     }
 
+    fadeInText()
+    {
+        if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.add('fade-in-text');
+        }
+
+        this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.add('fade-in-text');
+        });
+
+    }
+    fadeOutText()
+    {
+        if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.add('fade-out-text');
+        }
+
+        this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.add('fade-out-text');
+        });
+    }
+
     update()
     {
         if (this.animFunc !== null) {
-            this.animCnt++;
             this.animFunc();
         }
     }
 
     appear()
     {
-        this.animCnt = 0;
         this.animFunc = this.appearAnimation;
     }
 
@@ -569,7 +588,6 @@ export class DOMNode extends OctaNode
 
     disappear()
     {
-        this.animCnt = 0;
         this.animFunc = this.disappearAnimation;
     }
 

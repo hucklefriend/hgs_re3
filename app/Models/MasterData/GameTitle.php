@@ -119,6 +119,16 @@ class GameTitle extends \Eloquent
     }
 
     /**
+     * 関連商品を取得
+     *
+     * @return BelongsToMany
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(GameRelatedProduct::class, GameTitleRelatedProductLink::class);
+    }
+
+    /**
      * 保存
      *
      * @throws \Throwable

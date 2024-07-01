@@ -243,6 +243,10 @@ export class Bg2Network extends Network
     constructor(parentNode)
     {
         super(parentNode);
+
+        this.drawDepth = 1;
+        this.drawRateInDepth = 0;
+        this.maxDepth = 0;
     }
 
     /**
@@ -272,9 +276,10 @@ export class Bg2Network extends Network
             n = OctaNode.standardNotchSize(w);
         }
 
+        let depth = this.getDepth(baseNode);
         let newNode = new Bg2OctaNode(baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
+        newNode.depth = depth;
         this.nodes[myNo] = newNode;
-        //this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
 
         return newNode;
@@ -298,54 +303,104 @@ export class Bg2Network extends Network
             baseNode = this.nodes[baseNode];
         }
 
+        let depth = this.getDepth(baseNode);
         let newNode = new Bg2PointNode(baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
+        newNode.depth = depth;
         this.nodes[myNo] = newNode;
-        //this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo);
 
         return newNode;
     }
-}
 
-
-/**
- * 背景3用ネットワーク
- */
-export class Bg3Network extends Network
-{
-    /**
-     * コンストラクタ
-     */
-    constructor(parentNode)
+    getDepth(baseNode)
     {
-        super(parentNode, true);
+        let depth;
+        if (this.parentNode === baseNode) {
+            depth = 1;
+        } else {
+            depth = baseNode.depth + 1;
+        }
+        if (this.maxDepth < depth) {
+            this.maxDepth = depth;
+        }
+
+        return depth;
     }
 
     /**
-     * 八角ノードの追加
+     * 描画
      *
-     * @param baseNode
+     * @param ctx
      * @param offsetX
      * @param offsetY
-     * @returns number
+     * @param drawIdxText
      */
-    addOctaNode(baseNode, offsetX, offsetY)
+    draw(ctx, offsetX, offsetY, drawIdxText = false)
     {
-        super.addOctaNode(baseNode, null, offsetX, offsetY, 5, 5, 2);
-        return this.nodes.length - 1;
+        this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
+
+        this.nodes.forEach((node, i) => {
+            if (node.depth <= this.drawDepth) {
+                let offsetY1 = offsetY;
+                if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
+                    offsetY1 -= node.drawOffsetY;
+                }
+
+                this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
+
+                node.draw(ctx, offsetX, offsetY1);
+
+                if (drawIdxText) {
+                    ctx.fillText(i.toString(), node.x, node.y);
+                }
+            }
+        });
     }
 
     /**
-     * 点ノードの追加
+     * エッジの描画
      *
-     * @param baseNode
-     * @param offsetX
-     * @param offsetY
-     * @returns number
+     * @param ctx
+     * @param node
+     * @param offsetX1
+     * @param offsetY1
+     * @param offsetX2
+     * @param offsetY2
      */
-    addPointNode(baseNode, offsetX, offsetY)
+    drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
-        super.addPointNode(baseNode, null, offsetX, offsetY, 1, 'Bg3PointNode');
-        return this.nodes.length - 1;
+        const hgn = HorrorGameNetwork.getInstance();
+
+        const maxY = hgn.getScrollY() + window.innerHeight;
+        node.connects.forEach((connect, vertexNo) => {
+            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
+                if (connect.node.depth <= this.drawDepth) {
+                    let targetVertex = connect.getVertex();
+
+                    let x = node.x;
+                    let y = node.y;
+                    if (node instanceof OctaNode) {
+                        x = node.vertices[vertexNo].x;
+                        y = node.vertices[vertexNo].y;
+                    }
+
+                    let drawOffsetY2 = connect.node.drawOffsetY;
+                    const drawY1 = y + offsetY1;
+                    const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
+
+                    if (drawY1 < hgn.getScrollY() && drawY2 < hgn.getScrollY()) {
+                        return;
+                    }
+                    if (drawY1 > maxY && drawY2 > maxY) {
+                        return;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(x + offsetX1, drawY1);
+                    ctx.lineTo(targetVertex.x + offsetX2, drawY2);
+                    ctx.stroke();
+                }
+            }
+        });
     }
 }

@@ -9,7 +9,7 @@
         <div class="node-map">
             @foreach ($makers as $maker)
                 <div>
-                    <div class="link-node link-node-center" data-sub="{{ $maker->sub_net }}" id="{{ $maker->key }}">
+                    <div class="link-node link-node-center fade" data-sub="{{ $maker->sub_net }}" id="{{ $maker->key }}">
                         <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">
                             {!! $maker->node_name !!}
                         </a>
@@ -18,7 +18,7 @@
 
                 @foreach ($maker->relatedChildren as $childMaker)
                     <div>
-                        <div class="link-node link-node-center" data-sub="s" id="{{ $childMaker->key }}" data-connect="{{ json_encode([$childMaker->relatedMaker->key]) }}">
+                        <div class="link-node link-node-center fade" data-sub="s" id="{{ $childMaker->key }}" data-connect="{{ json_encode([$childMaker->relatedMaker->key]) }}">
                             <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $childMaker->key]) }}">
                                 {!! $childMaker->node_name !!}
                             </a>

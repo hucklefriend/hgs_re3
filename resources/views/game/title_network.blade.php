@@ -4,13 +4,13 @@
 
 @section('content')
     <div style="text-align:center; margin: 20px 0;">
-        <h1 class="head1">{{ $title->name }}</h1>
+        <h1 class="head1 fade">{{ $title->name }}</h1>
     </div>
 
     @if (!empty($title->description))
         <section>
             <div class="node node-center">
-                <div class="text-node">
+                <div class="text-node fade">
                     @include('common.description', ['model' => $title])
                 </div>
             </div>
@@ -108,12 +108,12 @@
 --}}
     <section>
         <div class="node">
-            <h2 class="head2">パッケージ</h2>
+            <h2 class="head2 fade">パッケージ</h2>
         </div>
         <div class="product-list">
             @foreach ($packages as $pkg)
                 <div class="product-info">
-                    <div class="text-node">
+                    <div class="text-node fade">
                         @if ($pkg->img_s_url !== null)
                             <div>
                                 <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}">
@@ -146,34 +146,35 @@
         </div>
     </section>
 
+    @if ($title->relatedProducts->count() > 0)
     <section>
         <div class="node">
-            <h2 class="head2">関連商品</h2>
+            <h2 class="head2 fade">関連商品</h2>
         </div>
         <div class="node-map">
-            <div>
-                <div class="link-node">
-                    <a href="#test">アドベンチャー</a>
+            @foreach ($title->relatedProducts as $related)
+                <div>
+                    <div class="link-node link-node-center fade">
+                        <a href="{{ route('Game.TitleNetwork', ['titleKey' => $related->key]) }}">
+                            {!! $related->node_name !!}
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">アドベンチャー</a>
-                </div>
-            </div>
+            @endforeach
         </div>
     </section>
+    @endif
 
     <section>
     <div class="node">
-        <h2 class="head2">
+        <h2 class="head2 fade">
             関連ネットワーク
         </h2>
     </div>
         <div class="node-map">
             @if ($title->franchise()->getTitleNum() > 1)
                 <div>
-                    <div class="link-node link-node-center">
+                    <div class="link-node link-node-center fade">
                         <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->franchise()->key]) }}">
                             {{ $title->franchise()->node_name }}<br>
                             フランチャイズ
@@ -184,7 +185,7 @@
 
             @foreach ($makers as $maker)
                 <div>
-                    <div class="link-node link-node-center">
+                    <div class="link-node link-node-center fade">
                         <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">
                             {!! $maker->node_name !!}
                         </a>

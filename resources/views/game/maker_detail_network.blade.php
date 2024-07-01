@@ -13,7 +13,7 @@
         @if (!empty($maker->description))
             <section>
                 <div class="node node-center">
-                    <div class="text-node">
+                    <div class="text-node fade">
                         @include('common.description', ['model' => $maker])
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                 <div class="node-map">
                     @foreach ($titles as $title)
                         <div>
-                            <div class="link-node link-node-center">
+                            <div class="link-node link-node-center fade">
                                 <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
                             </div>
                         </div>
