@@ -51,35 +51,19 @@
     }
 }
 
-.link-node, .back-node, .content-link-node, .popup-link-node {
+.link-node, .content-link-node, .popup-link-node {
     padding: 13px 20px;
     display: inline-block;
     cursor: pointer;
 
-    a:link, a:visited, a:hover {
+    a:link, a:visited, a:hover, a:active {
         color: white;
         text-decoration: none;
-    }
-
-    a:active {
-        color: green;
     }
 }
 
 .link-node-center {
     text-align: center;
-}
-
-
-.link-node.active, .back-node.active,.content-link-node.active, .popup-node.active {
-    a:link, a:visited, a:hover {
-        color: white;
-        text-decoration: none;
-    }
-
-    a:active {
-        color: green;
-    }
 }
 
 .node {
@@ -237,11 +221,13 @@
     }
 }
 
-#n-HGS {
+#entrance-node {
     width: 300px;
     height: 200px;
     padding: 50px 0;
     position: relative;
+    text-align: center;
+    cursor: hand;
 
     > canvas {
         position: absolute;
@@ -256,6 +242,8 @@
         display: block;
         height: 200px;
         position: relative;
+        color: white;
+        pointer-events: none;
 
         > p {
             width: 100%;

@@ -22,6 +22,8 @@ export class PointNode extends Vertex
         this.r = r;
         this.connects = [];
         this.forceDraw = false;
+
+        this.depth = 0;
     }
 
     /**

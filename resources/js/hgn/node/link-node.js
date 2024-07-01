@@ -1,8 +1,4 @@
-import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
-import {Network} from '../network.js';
-import {PointNode} from './point-node.js';
-import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 import {HorrorGameNetwork} from '../../hgn.js';
 import {DOMNode} from './octa-node.js';
 
@@ -20,6 +16,7 @@ export class LinkNode extends DOMNode
         super(DOM, notchSize);
 
         this.isHover = false;
+        this.isEnableMouse = true;
 
         DOM.addEventListener('mouseenter', () => this.mouseEnter());
         DOM.addEventListener('mouseleave', () => this.mouseLeave());
@@ -30,7 +27,7 @@ export class LinkNode extends DOMNode
             DOM.addEventListener('touchend', () => this.mouseLeave());
         }
 
-        this.subNodes = [];
+        this.subNetwork = null;
 
         this.url = null;
         const a = this.DOM.querySelector('a');
@@ -43,16 +40,28 @@ export class LinkNode extends DOMNode
         this.scale = 1;
     }
 
+    delete()
+    {
+        super.delete();
+        if (this.subNetwork !== null) {
+            this.subNetwork.delete();
+            this.subNetwork = null;
+        }
+    }
+
     /**
      * マウスが乗った時の処理
      */
     mouseEnter()
     {
+        if (!this.isEnableMouse) {
+            return;
+        }
+
         this.isHover = true;
         this.DOM.classList.add('active');
 
-        const hgn = HorrorGameNetwork.getInstance();
-        hgn.setRedraw();
+        HorrorGameNetwork.getInstance().setRedraw();
     }
 
     /**
@@ -60,11 +69,14 @@ export class LinkNode extends DOMNode
      */
     mouseLeave()
     {
+        if (!this.isEnableMouse) {
+            return;
+        }
+
         this.isHover = false;
         this.DOM.classList.remove('active');
 
-        const hgn = HorrorGameNetwork.getInstance();
-        hgn.setRedraw();
+        HorrorGameNetwork.getInstance().setRedraw();
     }
 
     /**
@@ -72,6 +84,10 @@ export class LinkNode extends DOMNode
      */
     mouseClick()
     {
+        if (!this.isEnableMouse) {
+            return;
+        }
+
         if (this.url) {
             HorrorGameNetwork.getInstance()
                 .changeNetwork(this.url);
@@ -135,97 +151,51 @@ export class LinkNode extends DOMNode
             ctx.fill();
         }
     }
-}
 
-/**
- * トップページの特別なリンクノード
- */
-export class HgsTitleLinkNode extends LinkNode
-{
-    /**
-     * コンストラクタ
-     *
-     * @param DOM
-     */
-    constructor(DOM)
+    reload()
     {
-        super(DOM, 50);
-
-        this.lightCanvas = document.querySelector('#n-HGS-c');
-        this.lightCanvas.width = 300;
-        this.lightCanvas.height = 300;
-        this.lightCtx = this.lightCanvas.getContext('2d');
-
-
-        this.drawLight();
-    }
-
-    drawLight()
-    {
-        var radius = 70;
-        var startAngle = 0;
-        var endAngle = Math.PI * 2;
-
-// 新しいパスを開始
-        this.lightCtx.beginPath();
-
-// 円を描画
-        this.lightCtx.arc(150, 150, radius, startAngle, endAngle);
-
-// 光る効果を追加
-        this.lightCtx.shadowColor = 'rgb(0, 255, 0)';
-        this.lightCtx.shadowBlur = 70;
-
-// 円を塗りつぶす
-        const gradient = this.lightCtx.createRadialGradient(150, 150, 0, 150, 150, radius);
-        gradient.addColorStop(0, "rgba(0, 200, 0, 1)"); // 中心は白
-        gradient.addColorStop(0.5, "rgba(0, 100, 0, 0.8)"); // 外側は黒
-        gradient.addColorStop(1, "rgba(0, 70, 0, 0.7)"); // 外側は黒
-        this.lightCtx.fillStyle = gradient;
-        this.lightCtx.fill();
+        super.reload();
+        if (this.subNetwork !== null) {
+            this.subNetwork.reload();
+        }
     }
 
     /**
-     * 描画
+     * サブネットワークの描画
      *
      * @param ctx
-     * @param fillStyle
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx, fillStyle = 'black')
+    drawSubNetwork(ctx, offsetX = 0, offsetY = 0)
     {
-        if (this.isHover) {
-            ctx.strokeStyle = "rgba(0, 255, 0, 0.8)"; // 線の色と透明度
-            ctx.shadowColor = "lime"; // 影の色
-            ctx.shadowBlur = 15; // 影のぼかし効果
-        } else {
-            ctx.strokeStyle = "rgba(0, 200, 0, 0.6)"; // 線の色と透明度
-            ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            ctx.shadowBlur = 8; // 影のぼかし効果
-        }
-        ctx.lineWidth = 5; // 線の太さ
-        ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        ctx.lineCap = "round"; // 線の末端のスタイル
-
-        super.setShapePath(ctx);
-        ctx.stroke();
-
-        ctx.fillStyle = fillStyle;
-        ctx.fill();
+        this.subNetwork.draw(ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
     }
-}
 
-/**
- * 戻るノード
- */
-export class BackNode extends LinkNode
-{
-    /**
-     * コンストラクタ
-     *
-     * @param DOM
-     */
-    constructor(DOM)
+    appear()
     {
-        super(DOM, 13);
+        super.appear();
+        this.isEnableMouse = false;
+    }
+
+    appearAnimation()
+    {
+        if (window.hgn.animCnt === 18) {
+            this.isEnableMouse = true;
+            this.fadeInText();
+        }
+    }
+
+    disappear()
+    {
+        this.fadeOutText();
+        super.disappear();
+    }
+
+    disappearAnimation()
+    {
+        if (window.hgn.animCnt === 18) {
+            this.isEnableMouse = true;
+        }
     }
 }

@@ -12,7 +12,7 @@
 
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">HorrorGame Network</h1>
+            <h1 class="head1 fade">HorrorGame Network</h1>
         </div>
 
         <div class="node node-right">
@@ -25,7 +25,7 @@
         <div class="node-map">
             @foreach ($games as $game)
                 <div>
-                    <div class="link-node link-node-center" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">
+                    <div class="link-node link-node-center fade" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">
                         <a href="{{ route('Game.TitleDetailNetwork',  ['titleKey' => $game->title->key]) }}">{!! $game->title->node_name !!}</a>
                     </div>
                 </div>
@@ -37,14 +37,14 @@
         <div class="node-list node-around" style="margin-top:100px;margin-bottom: 50px;">
             <div>
                 @isset($prev['page'])
-                <div class="link-node link-node-center">
+                <div class="link-node link-node-center fade">
                     <a href="{{ route('Game.HorrorGameNetwork', $prev) }}">&lt;&lt; Prev</a>
                 </div>
                 @endif
             </div>
             <div>
                 @isset($next['page'])
-                <div class="link-node link-node-center">
+                <div class="link-node link-node-center fade">
                     <a href="{{ route('Game.HorrorGameNetwork', $next) }}">Next &gt;&gt;</a>
                 </div>
                 @endif
