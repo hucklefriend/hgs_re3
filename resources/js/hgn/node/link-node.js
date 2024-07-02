@@ -28,7 +28,10 @@ export class LinkNode extends DOMNode
             DOM.addEventListener('touchend', () => this.mouseLeave());
         }
 
-        this.subNetwork = null;
+        this.createRandomSubNetwork();
+        if (this.subNetwork !== null) {
+            window.hgn.bg2.addParentNode(this);
+        }
 
         this.url = null;
         const a = this.DOM.querySelector('a');
@@ -43,6 +46,9 @@ export class LinkNode extends DOMNode
         this.animMaxCnt = Util.getRandomInt(10, 15);
     }
 
+    /**
+     * 削除
+     */
     delete()
     {
         super.delete();
@@ -166,6 +172,9 @@ export class LinkNode extends DOMNode
         }
     }
 
+    /**
+     * 再読み込み
+     */
     reload()
     {
         super.reload();
@@ -186,6 +195,9 @@ export class LinkNode extends DOMNode
         this.subNetwork.draw(ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
     }
 
+    /**
+     * 出現
+     */
     appear()
     {
         super.appear();
@@ -193,27 +205,48 @@ export class LinkNode extends DOMNode
         this.scale = 0;
     }
 
+    /**
+     * 出現アニメーション
+     */
     appearAnimation()
     {
         if (window.hgn.animCnt >= this.appearAnimCnt) {
-            if (window.hgn.animCnt === this.appearAnimCnt + this.animMaxCnt) {
+            let maxAnimCnt = this.appearAnimCnt + this.animMaxCnt;
+            if (window.hgn.animCnt < maxAnimCnt) {
+                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
+                this.scale = animCnt / this.animMaxCnt;
+            } else if (window.hgn.animCnt === maxAnimCnt) {
                 this.isEnableMouse = true;
                 this.scale = 1;
                 this.fadeInText();
-                this.animFunc = null;
-            } else {
-                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
-                this.scale = animCnt / this.animMaxCnt;
+                if (this.subNetwork === null) {
+                    this.animFunc = null;
+                }
+            } else if (this.subNetwork !== null) {
+                let animCnt = window.hgn.animCnt - maxAnimCnt;
+                let depth = Math.ceil(animCnt / 5);
+                this.subNetwork.maxDrawDepth = depth;
+                if (this.subNetwork.maxDepth === depth) {
+                    this.animFunc = null;
+                }
+
+                window.hgn.setRedrawBg2();
             }
         }
     }
 
+    /**
+     * 消える
+     */
     disappear()
     {
         this.fadeOutText();
         super.disappear();
     }
 
+    /**
+     * 消えるアニメーション
+     */
     disappearAnimation()
     {
         if (window.hgn.animCnt >= this.appearAnimCnt) {
@@ -221,10 +254,26 @@ export class LinkNode extends DOMNode
                 this.isEnableMouse = true;
                 this.scale = 0;
                 this.fadeOutText();
-                this.animFunc = null;
-            } else {
+                if (this.subNetwork === null || this.subNetwork.isNotDraw()) {
+                    this.animFunc = null;
+                }
+            } else if (this.scale > 0) {
                 let animCnt = window.hgn.animCnt - this.appearAnimCnt;
                 this.scale = 1 - animCnt / this.animMaxCnt;
+            }
+
+            if (this.subNetwork !== null) {
+                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
+                let depth = Math.ceil(animCnt / 5);
+                if (depth > this.subNetwork.maxDepth) {
+                    this.subNetwork.setDrawDepth(0, 0);
+                    if (this.scale === 0) {
+                        this.animFunc = null;
+                    }
+                } else {
+                    this.subNetwork.minDrawDepth = depth;
+                }
+                window.hgn.setRedrawBg2();
             }
         }
     }

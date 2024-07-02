@@ -1,15 +1,7 @@
-import {Bg2OctaNode, OctaNode} from './node/octa-node.js';
+import {OctaNode, Bg2OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
-import {PointNode, Bg2PointNode, Bg3PointNode} from "./node/point-node.js";
+import {PointNode, Bg2PointNode} from "./node/point-node.js";
 import {HorrorGameNetwork} from "@/hgn.js";
-
-const NodeClasses = {
-    'OctaNode': OctaNode,
-    'Bg2OctaNode': Bg2OctaNode,
-    'PointNode': PointNode,
-    'Bg2PointNode': Bg2PointNode,
-    'Bg3PointNode': Bg3PointNode,
-};
 
 /**
  * ネットワーク
@@ -50,17 +42,12 @@ export class Network
      * @param h
      * @param n
      * @param newNodeVertexNo
-     * @param newNodeClass
      * @returns {*}
      */
-    addOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null, newNodeClass = null)
+    addOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
     {
         if (Number.isInteger(baseNode)) {
             baseNode = this.nodes[baseNode];
-        }
-
-        if (newNodeClass === null) {
-            newNodeClass = 'OctaNode';
         }
 
         if (h === null) {
@@ -70,7 +57,7 @@ export class Network
             n = OctaNode.standardNotchSize(w);
         }
 
-        let newNode = new NodeClasses[newNodeClass](baseNode.x + offsetX, baseNode.y + offsetY, w, h, n);
+        let newNode = new OctaNode(baseNode.x + offsetX, baseNode.y + offsetY, w, h, n);
         this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
 
@@ -85,20 +72,15 @@ export class Network
      * @param offsetX
      * @param offsetY
      * @param r
-     * @param newNodeClass
      * @returns {*}
      */
-    addPointNode(baseNode, vertexNo, offsetX, offsetY, r = 5, newNodeClass = null)
+    addPointNode(baseNode, vertexNo, offsetX, offsetY, r = 5)
     {
         if (Number.isInteger(baseNode)) {
             baseNode = this.nodes[baseNode];
         }
 
-        if (newNodeClass === null) {
-            newNodeClass = 'PointNode';
-        }
-
-        let newNode = new NodeClasses[newNodeClass](baseNode.x + offsetX, baseNode.y + offsetY, r);
+        let newNode = new PointNode(baseNode.x + offsetX, baseNode.y + offsetY, r);
         this.nodes.push(newNode);
         this.addNodeConnection(baseNode, newNode, vertexNo);
 
@@ -244,7 +226,8 @@ export class Bg2Network extends Network
     {
         super(parentNode);
 
-        this.drawDepth = 0;
+        this.minDrawDepth = 0;
+        this.maxDrawDepth = 0;
         this.drawRateInDepth = 0;
         this.maxDepth = 0;
     }
@@ -312,6 +295,12 @@ export class Bg2Network extends Network
         return newNode;
     }
 
+    /**
+     * 親ノードから指定ノードの深さを取得
+     *
+     * @param baseNode
+     * @returns {number}
+     */
     getDepth(baseNode)
     {
         let depth;
@@ -328,6 +317,29 @@ export class Bg2Network extends Network
     }
 
     /**
+     * 描画する深さを設定
+     *
+     * @param min
+     * @param max
+     */
+    setDrawDepth(min, max)
+    {
+        // 上限や下限を超えたかのチェックはしない
+        this.minDrawDepth = min;
+        this.maxDrawDepth = max;
+    }
+
+    /**
+     * 秒化するかどうかを深さから判定
+     *
+     * @returns {boolean}
+     */
+    isNotDraw()
+    {
+        return this.minDrawDepth === 0 && this.maxDrawDepth === 0;
+    }
+
+    /**
      * 描画
      *
      * @param ctx
@@ -337,15 +349,15 @@ export class Bg2Network extends Network
      */
     draw(ctx, offsetX, offsetY, drawIdxText = false)
     {
+        if (this.isNotDraw()) {
+            return;
+        }
+
         this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
 
         this.nodes.forEach((node, i) => {
-            if (node.depth <= this.drawDepth) {
-                let offsetY1 = offsetY;
-                if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
-                    offsetY1 -= node.drawOffsetY;
-                }
-
+            if (this.minDrawDepth <= node.depth && node.depth <= this.maxDrawDepth) {
+                let offsetY1 = offsetY - node.drawOffsetY;
                 this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
 
                 node.draw(ctx, offsetX, offsetY1);
@@ -374,7 +386,7 @@ export class Bg2Network extends Network
         const maxY = hgn.getScrollY() + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                if (connect.node.depth <= this.drawDepth) {
+                if (this.minDrawDepth <= connect.node.depth && connect.node.depth <= this.maxDrawDepth) {
                     let targetVertex = connect.getVertex();
 
                     let x = node.x;

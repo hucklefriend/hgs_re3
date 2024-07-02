@@ -1,4 +1,4 @@
-import {DOMNode, TitleNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
+import {DOMNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
 import {Bg2PointNode} from './hgn/node/point-node.js';
 import {LinkNode} from './hgn/node/link-node.js';
 import {EntranceNode} from './hgn/node/entrance-node.js';
@@ -62,7 +62,6 @@ export class HorrorGameNetwork
         this.mainDOM = document.querySelector('main');
 
         // ノード
-        this.titleNode = null;
         this.contentNode = null;
         this.entranceNode = null;
         this.linkNodes = [];
@@ -161,14 +160,6 @@ export class HorrorGameNetwork
     {
         let connections = [];
 
-        // タイトルノード
-        let elem = document.querySelector('#title-node');
-        if (elem) {
-            this.titleNode = new TitleNode(elem);
-            this.nodesIdHash['#title-node'] = this.titleNode;
-            this.loadConnection(elem, connections);
-        }
-
         // コンテンツノード
         this.contentNodeDOM = document.querySelector('#content-node');
         if (this.contentNodeDOM) {
@@ -176,7 +167,7 @@ export class HorrorGameNetwork
         }
 
         // エントランスノード
-        elem = document.querySelector('#entrance-node');
+        let elem = document.querySelector('#entrance-node');
         if (elem) {
             this.entranceNode = new EntranceNode(elem);
             this.nodesIdHash['#entrance-node'] = this.entranceNode;
@@ -196,7 +187,6 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.link-node');
         elems.forEach(elem => {
             let newNode = new LinkNode(elem);
-            this.bg2.createRandomNetwork(newNode);
 
             this.linkNodes.push(newNode);
             if (elem.id.length > 0) {
@@ -210,7 +200,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new ContentLinkNode(elem);
             this.contentLinkNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode)
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.contentLinkNodes[this.contentLinkNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -222,7 +211,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new PopupLinkNode(elem);
             this.popupLinkNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.popupLinkNodes[this.popupLinkNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -243,7 +231,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new DOMNode(elem, 15);
             this.domNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -304,10 +291,6 @@ export class HorrorGameNetwork
      */
     reloadNodes()
     {
-        if (this.titleNode) {
-            this.titleNode.reload();
-        }
-
         if (this.contentNode) {
             this.contentNode.reload();
         }
@@ -345,11 +328,6 @@ export class HorrorGameNetwork
     clearNodes()
     {
         this.nodesIdHash = {};
-
-        if (this.titleNode) {
-            this.titleNode.delete();
-            this.titleNode = null;
-        }
 
         if (this.contentNode) {
             // コンテンツノードは消さない
@@ -472,9 +450,6 @@ export class HorrorGameNetwork
      */
     drawNodes()
     {
-        if (this.titleNode) {
-            this.titleNode.draw(this.mainCtx);
-        }
         if (this.entranceNode) {
             this.entranceNode.draw(this.mainCtx);
         }

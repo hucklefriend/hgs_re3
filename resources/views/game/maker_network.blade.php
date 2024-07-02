@@ -3,7 +3,7 @@
 @section('content')
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">Maker Network</h1>
+            <h1 class="head1 fade">Maker Network</h1>
         </div>
 
         <div class="node-map">

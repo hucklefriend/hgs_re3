@@ -180,22 +180,3 @@ export class Bg2PointNode extends PointNode
         this.y = v.y + this.offsetY;
     }
 }
-
-
-/**
- * 背景3用の点ノード
- */
-export class Bg3PointNode extends PointNode
-{
-    /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     */
-    draw(ctx, offsetX, offsetY)
-    {
-        // 見えないので背景3は点ノードを描画しない
-    }
-}
