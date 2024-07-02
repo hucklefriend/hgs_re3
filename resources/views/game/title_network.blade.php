@@ -154,10 +154,8 @@
         <div class="node-map">
             @foreach ($title->relatedProducts as $related)
                 <div>
-                    <div class="link-node link-node-center fade">
-                        <a href="{{ route('Game.TitleNetwork', ['titleKey' => $related->key]) }}">
-                            {!! $related->node_name !!}
-                        </a>
+                    <div class="text-node fade">
+                        {!! $related->node_name !!}
                     </div>
                 </div>
             @endforeach

@@ -566,7 +566,7 @@ export class HorrorGameNetwork
     {
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_APPEAR;
         this.animCnt = 0;
-        this.bg2.fadeCnt = 0;
+        //this.bg2.fadeCnt = 0;
         this.bg2.setStrokeStyle();
 
 
@@ -591,36 +591,6 @@ export class HorrorGameNetwork
     appearAnimation()
     {
         this.animCnt++;
-        const OPEN_MAIN_CNT = 10;
-
-        // 最初の10フレームでタイトルとメインノードが出現
-        if (this.animCnt < OPEN_MAIN_CNT) {
-            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
-            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
-            this.mainCtx.lineWidth = 2; // 線の太さ
-            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
-            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
-
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = this.animCnt / OPEN_MAIN_CNT;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = this.animCnt / OPEN_MAIN_CNT;
-            });
-        } else if (this.animCnt === OPEN_MAIN_CNT) {
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = 1;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = 1;
-            });
-            //this.mainDOM.classList.remove('hide');
-        } else if (this.animCnt < 20) {
-            this.bg2.addFadeCnt(1);
-        }
-
 
         this.linkNodes.forEach(node => {
             node.update();
@@ -660,7 +630,6 @@ export class HorrorGameNetwork
             node.disappear();
         });
 
-
         if (this.entranceNode) {
             this.entranceNode.disappear();
         }
@@ -669,30 +638,6 @@ export class HorrorGameNetwork
     disappearAnimation()
     {
         this.animCnt++;
-        const SUB_NODE_REMOVE_CNT = 10;
-        const CLOSE_MAIN_CNT = 10;
-
-        // 最初の10フレームでタイトルとメインノードが出現
-        if (this.animCnt <= SUB_NODE_REMOVE_CNT) {
-            this.bg2.addFadeCnt(-1);
-        } else if (this.animCnt <= (SUB_NODE_REMOVE_CNT + CLOSE_MAIN_CNT)) {
-            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
-            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
-            this.mainCtx.lineWidth = 2; // 線の太さ
-            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
-            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
-
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
-            });
-        } else {
-            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
-        }
 
         this.linkNodes.forEach(node => {
             node.update();
@@ -708,6 +653,10 @@ export class HorrorGameNetwork
         });
 
         this.setRedraw();
+
+        if (this.animCnt === 30) {
+            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        }
     }
 
     /**

@@ -244,7 +244,7 @@ export class Bg2Network extends Network
     {
         super(parentNode);
 
-        this.drawDepth = 1;
+        this.drawDepth = 0;
         this.drawRateInDepth = 0;
         this.maxDepth = 0;
     }

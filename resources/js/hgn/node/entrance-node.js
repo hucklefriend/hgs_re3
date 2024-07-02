@@ -218,6 +218,7 @@ export class EntranceNode extends LinkNode
         super.appear();
         this.animCnt2 = 0;
         this.isUseAnimVertices = true;
+        this.subNetwork.drawDepth = 0;
 
         this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
         this.ctxParams.shadowColor = "rgb(0,150, 0)"; // 影の色
@@ -245,7 +246,7 @@ export class EntranceNode extends LinkNode
             this.fadeInText();
         } else {
             let animCnt = this.animCnt2 - 15;
-            let depth = Math.ceil(animCnt / 10);
+            let depth = Math.ceil(animCnt / 5);
             this.subNetwork.drawDepth = depth;
 
             if (this.subNetwork.maxDepth === depth) {
