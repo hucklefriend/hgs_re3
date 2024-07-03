@@ -3,8 +3,8 @@ import {Param} from '../param.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
 import {HorrorGameNetwork} from '../../hgn.js';
-import {Util} from "@/hgn/util.js";
-import {Bg2Network} from "@/hgn/network.js";
+import {Util} from "../util.js";
+import {Bg2Network} from "../network.js";
 
 /**
  * 八角ノード
@@ -832,6 +832,7 @@ export class TextNode extends DOMNode
     constructor(DOM)
     {
         super(DOM, 16);
+        this.alpha = 0.6;
     }
 
     /**
@@ -848,8 +849,17 @@ export class TextNode extends DOMNode
         ctx.lineCap = "butt"; // 線の末端のスタイル
         ctx.shadowColor = "black"; // 影の色
         ctx.shadowBlur = 0; // 影のぼかし効果
-        ctx.fillStyle = "rgba(0,30,0,0.6)";
+        ctx.fillStyle = "rgba(0,30,0," + this.alpha + ")";
         ctx.fill();
+    }
+
+    /**
+     * 出現
+     */
+    appear()
+    {
+        super.appear();
+        this.alpha = 0;
     }
 
     /**
@@ -858,12 +868,23 @@ export class TextNode extends DOMNode
     appearAnimation()
     {
         if (this.animCnt < 10) {
+        } else if (this.animCnt === 10) {
+            this.fadeInText();
         } else if (this.animCnt < 25) {
-            this.DOM.style.opacity = (this.animCnt - 10) / 15
+            this.alpha = Util.getMidpoint(0, 0.6, (this.animCnt - 10) / 15);
         } else if (this.animCnt === 25) {
-            this.DOM.style.opacity = 1;
+            this.alpha = 0.6;
             this.animFunc = null;
         }
+    }
+
+    /**
+     * 消える
+     */
+    disappear()
+    {
+        super.disappear();
+        this.fadeOutText();
     }
 
     /**
@@ -872,9 +893,9 @@ export class TextNode extends DOMNode
     disappearAnimation()
     {
         if (this.animCnt < 15) {
-            this.DOM.style.opacity = 1 - (this.animCnt / 15);
+            this.alpha = Util.getMidpoint(0, 0.6, 1 - (this.animCnt - 10) / 15);
         } else if (this.animCnt === 15) {
-            this.DOM.style.opacity = 0;
+            this.alpha = 0.0;
             this.animFunc = null;
         }
     }

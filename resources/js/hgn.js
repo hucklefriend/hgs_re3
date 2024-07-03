@@ -6,6 +6,7 @@ import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Head1Node, Head2Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
 import {Param} from './hgn/param.js';
+import {Util} from './hgn/util.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
 import {Background3} from './hgn/background3.js';
@@ -104,6 +105,7 @@ export class HorrorGameNetwork
 
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         this.animCnt = 0;
+        this.edgeScale = 0;
 
         this.isWaitDisappear = false;
         this.dataCache = null;
@@ -319,6 +321,10 @@ export class HorrorGameNetwork
             node.reload();
         });
 
+        this.hrList.forEach(hr => {
+            hr.reload();
+        });
+
         this.isLoaded = true;
     }
 
@@ -421,6 +427,10 @@ export class HorrorGameNetwork
      */
     drawEdge()
     {
+        if (this.edgeScale === 0) {
+            return;
+        }
+
         let keys = Object.keys(this.nodesIdHash);
         if (keys.length > 0) {
             this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
@@ -436,8 +446,28 @@ export class HorrorGameNetwork
                         let targetVertex = connect.getVertex();
 
                         this.mainCtx.beginPath();
-                        this.mainCtx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                        this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
+
+                        let x1 = node.vertices[vertexNo].x;
+                        let y1 = node.vertices[vertexNo].y;
+                        let x2 = targetVertex.x;
+                        let y2 = targetVertex.y;
+
+                        let centerX = (x1 + x2) / 2;
+                        let centerY = (y1 + y2) / 2;
+
+                        // centerXとx1のthis.scaleに合わせた中間点
+                        let midX1 = Util.getMidpoint(centerX, x1, this.edgeScale);
+                        let midY1 = Util.getMidpoint(centerY, y1, this.edgeScale);
+                        this.mainCtx.moveTo(midX1, midY1);
+
+                        // centerXとx2のthis.scaleに合わせた中間点
+                        let midX2 = Util.getMidpoint(centerX, x2, this.edgeScale);
+                        let midY2 = Util.getMidpoint(centerY, y2, this.edgeScale);
+                        this.mainCtx.lineTo(midX2, midY2);
+
+
+                        // this.mainCtx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                        // this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
                         this.mainCtx.stroke();
                     }
                 });
@@ -537,13 +567,15 @@ export class HorrorGameNetwork
         window.requestAnimationFrame(this.update);
     }
 
+    /**
+     * 出現
+     */
     appear()
     {
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_APPEAR;
         this.animCnt = 0;
-        //this.bg2.fadeCnt = 0;
+        this.edgeScale = 0;
         this.bg2.setStrokeStyle();
-
 
         this.linkNodes.forEach(node => {
             node.appear();
@@ -556,6 +588,9 @@ export class HorrorGameNetwork
         });
         this.domNodes.forEach(node => {
             node.appear();
+        });
+        this.hrList.forEach(hr => {
+            hr.appear();
         });
 
         if (this.entranceNode) {
@@ -563,9 +598,18 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * 出現アニメーション
+     */
     appearAnimation()
     {
         this.animCnt++;
+
+        if (this.animCnt > 10 && this.animCnt < 25) {
+            this.edgeScale = Util.getMidpoint(0, 1, (this.animCnt - 10) / 15);
+        } else if (this.animCnt === 25) {
+            this.edgeScale = 1;
+        }
 
         this.linkNodes.forEach(node => {
             node.update();
@@ -578,6 +622,9 @@ export class HorrorGameNetwork
         });
         this.domNodes.forEach(node => {
             node.update();
+        });
+        this.hrList.forEach(hr => {
+            hr.update();
         });
 
         this.setRedraw();
@@ -587,6 +634,9 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * 消える
+     */
     disappear()
     {
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_DISAPPEAR;
@@ -604,15 +654,27 @@ export class HorrorGameNetwork
         this.domNodes.forEach(node => {
             node.disappear();
         });
+        this.hrList.forEach(hr => {
+            hr.disappear();
+        });
 
         if (this.entranceNode) {
             this.entranceNode.disappear();
         }
     }
 
+    /**
+     * 消えるアニメーション
+     */
     disappearAnimation()
     {
         this.animCnt++;
+
+        if (this.animCnt > 10 && this.animCnt < 25) {
+            this.edgeScale = Util.getMidpoint(0, 1, 1 - (this.animCnt - 10) / 15);
+        } else if (this.animCnt === 25) {
+            this.edgeScale = 0;
+        }
 
         this.linkNodes.forEach(node => {
             node.update();
@@ -625,6 +687,9 @@ export class HorrorGameNetwork
         });
         this.domNodes.forEach(node => {
             node.update();
+        });
+        this.hrList.forEach(hr => {
+            hr.update();
         });
 
         this.setRedraw();

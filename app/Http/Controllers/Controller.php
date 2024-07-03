@@ -31,7 +31,6 @@ abstract class Controller
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
-            sleep(2);
             $rendered = $view->renderSections();
             return response()->json([
                 'network' => $rendered['content'],
