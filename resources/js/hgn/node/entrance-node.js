@@ -1,8 +1,7 @@
 import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
-import {Bg2Network, Network} from '../network.js';
+import {Bg2Network} from '../network.js';
 import {LinkNode} from './link-node.js';
-import {HorrorGameNetwork} from '../../hgn.js';
 import {Util} from '../util.js';
 
 /**
@@ -33,7 +32,7 @@ export class EntranceNode extends LinkNode
             this.animVertices.push(new Vertex(0, 0));
         }
 
-        this.lightRadius = 70;
+        this.lightRadius = 0;
 
         this.ctxParams = {
             strokeStyle: "rgba(0, 200, 0, 0.8)",
@@ -124,21 +123,26 @@ export class EntranceNode extends LinkNode
         this.subNetwork = network;
     }
 
+    /**
+     * 光の描画
+     */
     drawLight()
     {
         this.lightCtx.clearRect(0, 0, this.lightCanvas.width, this.lightCanvas.height);
 
-        this.lightCtx.beginPath();
-        this.lightCtx.arc(150, 150, this.lightRadius, 0, Param.MATH_PI_2);
-        this.lightCtx.shadowColor = 'rgb(0, 255, 0)';
-        this.lightCtx.shadowBlur = 70;
+        if (this.lightRadius > 0) {
+            this.lightCtx.beginPath();
+            this.lightCtx.arc(150, 150, this.lightRadius, 0, Param.MATH_PI_2);
+            this.lightCtx.shadowColor = 'rgb(0, 255, 0)';
+            this.lightCtx.shadowBlur = 70;
 
-        const gradient = this.lightCtx.createRadialGradient(150, 150, 0, 150, 150, this.lightRadius);
-        gradient.addColorStop(0, "rgba(0, 200, 0, 1)"); // 中心は白
-        gradient.addColorStop(0.5, "rgba(0, 100, 0, 0.8)"); // 外側は黒
-        gradient.addColorStop(1, "rgba(0, 70, 0, 0.7)"); // 外側は黒
-        this.lightCtx.fillStyle = gradient;
-        this.lightCtx.fill();
+            const gradient = this.lightCtx.createRadialGradient(150, 150, 0, 150, 150, this.lightRadius);
+            gradient.addColorStop(0, "rgba(0, 200, 0, 1)"); // 中心は白
+            gradient.addColorStop(0.5, "rgba(0, 100, 0, 0.8)"); // 外側は黒
+            gradient.addColorStop(1, "rgba(0, 70, 0, 0.7)"); // 外側は黒
+            this.lightCtx.fillStyle = gradient;
+            this.lightCtx.fill();
+        }
     }
 
     /**
@@ -181,6 +185,11 @@ export class EntranceNode extends LinkNode
      */
     draw(ctx, fillStyle = 'black')
     {
+        if (this.isDrawLight) {
+            this.drawLight();
+            this.isDrawLight = false;
+        }
+
         ctx.strokeStyle = this.ctxParams.strokeStyle;
         ctx.shadowColor = this.ctxParams.shadowColor;
         ctx.shadowBlur = this.ctxParams.shadowBlur;
@@ -189,6 +198,9 @@ export class EntranceNode extends LinkNode
         ctx.lineCap = "round";
 
         if (this.isUseAnimVertices) {
+            if (this.animVertices === null) {
+                return;
+            }
             super.setShapePathByVertices(ctx, this.animVertices);
         } else {
             super.setShapePath(ctx);
@@ -198,13 +210,11 @@ export class EntranceNode extends LinkNode
 
         ctx.fillStyle = fillStyle;
         ctx.fill();
-
-        if (this.isDrawLight) {
-            this.drawLight();
-            this.isDrawLight = false;
-        }
     }
 
+    /**
+     * 更新
+     */
     update()
     {
         if (this.animFunc !== null) {
@@ -213,18 +223,32 @@ export class EntranceNode extends LinkNode
         }
     }
 
+    /**
+     * 出現
+     */
     appear()
     {
         super.appear();
         this.animCnt2 = 0;
         this.isUseAnimVertices = true;
+        this.subNetwork.setDrawDepth(0, 0);
 
         this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
         this.ctxParams.shadowColor = "rgb(0,150, 0)"; // 影の色
         this.ctxParams.shadowBlur = 0; // 影のぼかし効果
         this.ctxParams.lineWidth = 1; // 線の太さ
+
+        if (this.animVertices === null) {
+            this.animVertices = [];
+            for (let i = 0; i < 8; i++) {
+                this.animVertices.push(new Vertex(0, 0));
+            }
+        }
     }
 
+    /**
+     * 出現アニメーション
+     */
     appearAnimation()
     {
         if (this.animCnt2 < 15) {
@@ -232,22 +256,19 @@ export class EntranceNode extends LinkNode
                 this.ctxParams.lineWidth++;
             }
 
-            let ratio = this.animCnt2 / 15;
-            this.lightRadius = Util.getMidpoint(1, 70, ratio);
-            for (let i = 0; i < this.animVertices.length; i++) {
-                this.animVertices[i].x = Util.getMidpoint(this.center.x, this.vertices[i].x, ratio);
-                this.animVertices[i].y = Util.getMidpoint(this.center.y, this.vertices[i].y, ratio);
-            }
+            this.setAnimSize(this.animCnt2 / 15);
             this.isDrawLight = true;
         } else if (this.animCnt2 === 15) {
             this.isUseAnimVertices = false;
             this.isEnableMouse = true;
             this.fadeInText();
+
+            this.lightRadius = 70;
+            this.isDrawLight = true;
         } else {
             let animCnt = this.animCnt2 - 15;
-            let depth = Math.ceil(animCnt / 10);
-            this.subNetwork.drawDepth = depth;
-
+            let depth = Math.ceil(animCnt / 5);
+            this.subNetwork.maxDrawDepth = depth;
             if (this.subNetwork.maxDepth === depth) {
                 this.animFunc = null;
             }
@@ -256,6 +277,9 @@ export class EntranceNode extends LinkNode
         }
     }
 
+    /**
+     * 消える
+     */
     disappear()
     {
         super.disappear();
@@ -264,6 +288,9 @@ export class EntranceNode extends LinkNode
         this.fadeOutText();
     }
 
+    /**
+     * 消えるアニメーション
+     */
     disappearAnimation()
     {
         if (this.animCnt2 < 15) {
@@ -271,15 +298,35 @@ export class EntranceNode extends LinkNode
                 this.ctxParams.lineWidth--;
             }
 
-            let ratio = 1 - (this.animCnt2 / 15);
-            this.lightRadius = Util.getMidpoint(1, 70, ratio);
-            for (let i = 0; i < this.animVertices.length; i++) {
-                this.animVertices[i].x = Util.getMidpoint(this.center.x, this.vertices[i].x, ratio);
-                this.animVertices[i].y = Util.getMidpoint(this.center.y, this.vertices[i].y, ratio);
-            }
+            this.setAnimSize(1 - (this.animCnt2 / 15));
             this.isDrawLight = true;
         } else if (this.animCnt2 === 15) {
-            this.isEnableMouse = true;
+            this.lightRadius = 0;
+            this.animVertices = null;
+            this.isDrawLight = true;
+        }
+
+        let depth = Math.ceil(this.animCnt2 / 5);
+        if (depth > this.subNetwork.maxDepth) {
+            this.subNetwork.setDrawDepth(0, 0);
+            this.animFunc = null;
+        } else {
+            this.subNetwork.minDrawDepth = depth;
+        }
+        window.hgn.setRedrawBg2();
+    }
+
+    /**
+     * アニメーションのサイズを設定
+     *
+     * @param ratio
+     */
+    setAnimSize(ratio)
+    {
+        this.lightRadius = Util.getMidpoint(1, 70, ratio);
+        for (let i = 0; i < this.animVertices.length; i++) {
+            this.animVertices[i].x = Util.getMidpoint(this.center.x, this.vertices[i].x, ratio);
+            this.animVertices[i].y = Util.getMidpoint(this.center.y, this.vertices[i].y, ratio);
         }
     }
 }

@@ -20,6 +20,9 @@ export class Head1Node extends DOMNode
         this.animVertices = null;
         this.minVertices = null;
         this.isUseAnimVertices = false;
+        this.alpha1 = 0.4;
+        this.alpha2 = 0.7;
+        this.alpha3 = 0.8;
     }
 
     /**
@@ -30,10 +33,10 @@ export class Head1Node extends DOMNode
     draw(ctx)
     {
         ctx.lineWidth = 0; // 線の太さ
-        ctx.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
+        ctx.strokeStyle = "rgba(0, 180, 0, " + this.alpha1 + ")"; // 線の色と透明度
         ctx.shadowBlur = 0; // 影のぼかし効果
 
-        ctx.fillStyle = "rgba(0, 70, 0, 0.7)";
+        ctx.fillStyle = "rgba(0, 70, 0, " + this.alpha2 + ")";
 
         let vertices = this.isUseAnimVertices ? this.animVertices : this.vertices;
 
@@ -41,7 +44,7 @@ export class Head1Node extends DOMNode
         ctx.fill();
 
 
-        ctx.strokeStyle = "rgba(0, 140, 0, 0.8)"; // 線の色と透明度
+        ctx.strokeStyle = "rgba(0, 140, 0, " + this.alpha3 + ")"; // 線の色と透明度
         ctx.lineWidth = 2; // 線の太さ
         ctx.lineJoin = "round"; // 線の結合部分のスタイル
         ctx.lineCap = "round"; // 線の末端のスタイル
@@ -77,6 +80,9 @@ export class Head1Node extends DOMNode
         ctx.stroke();
     }
 
+    /**
+     * アニメーション用の八角形の座標を初期化
+     */
     initAnimation()
     {
         this.animVertices = [
@@ -102,13 +108,11 @@ export class Head1Node extends DOMNode
         this.isUseAnimVertices = true;
     }
 
-    appear()
-    {
-        super.appear();
-        this.initAnimation();
-        this.setAnimOctagon(0.0);
-    }
-
+    /**
+     * アニメーション用の八角形の座標を設定
+     *
+     * @param ratio
+     */
     setAnimOctagon(ratio)
     {
         for (let vertexNo = 0; vertexNo < this.vertices.length; vertexNo++) {
@@ -117,8 +121,35 @@ export class Head1Node extends DOMNode
         }
     }
 
+    /**
+     * 出現
+     */
+    appear()
+    {
+        super.appear();
+        this.initAnimation();
+        this.setAnimOctagon(0.0);
+        this.alpha1 = 0.0;
+        this.alpha2 = 0.0;
+        this.alpha3 = 0.0;
+    }
+
+    /**
+     * 出現アニメーション
+     */
     appearAnimation()
     {
+        if (this.animCnt < 5) {
+            let ratio = this.animCnt / 5;
+            this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
+            this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
+            this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+        } else if (this.animCnt === 5) {
+            this.alpha1 = 0.4;
+            this.alpha2 = 0.7;
+            this.alpha3 = 0.8;
+        }
+
         if (this.animCnt < 15) {
             this.setAnimOctagon(this.animCnt / 15);
         } else if (this.animCnt === 15) {
@@ -136,6 +167,9 @@ export class Head1Node extends DOMNode
         }
     }
 
+    /**
+     * 消える
+     */
     disappear()
     {
         super.disappear();
@@ -144,6 +178,9 @@ export class Head1Node extends DOMNode
         this.fadeOutText();
     }
 
+    /**
+     * 消えるアニメーション
+     */
     disappearAnimation()
     {
         if (this.animCnt < 5) {
@@ -151,12 +188,21 @@ export class Head1Node extends DOMNode
         } else if (this.animCnt === 5) {
             this.animOffset = 0;
         } else if (this.animCnt < 15) {
-
         } else if (this.animCnt < 30) {
-            this.setAnimOctagon(1 - ((this.animCnt-15) / 15));
+            this.setAnimOctagon(1 - ((this.animCnt - 15) / 15));
+
+            if (this.animCnt >= 25) {
+                let ratio = 1 - (this.animCnt - 25) / 5;
+                this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
+                this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
+                this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+            }
         } else {
             this.animFunc = null;
             this.animVertices = this.minVertices;
+            this.alpha1 = 0.0;
+            this.alpha2 = 0.0;
+            this.alpha3 = 0.0;
         }
     }
 }

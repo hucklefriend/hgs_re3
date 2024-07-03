@@ -5,7 +5,7 @@
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">
         <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">
+            <h1 class="head1 fade">
                 {!! $maker->h1_node_name !!}
             </h1>
         </div>
@@ -22,7 +22,7 @@
 
         @if ($titles->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
-                <h2 class="head2">関連タイトル</h2>
+                <h2 class="head2 fade">関連タイトル</h2>
                 <div class="node-map">
                     @foreach ($titles as $title)
                         <div>

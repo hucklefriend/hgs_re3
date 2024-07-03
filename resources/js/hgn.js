@@ -1,4 +1,4 @@
-import {DOMNode, TitleNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
+import {DOMNode, TextNode, Bg2OctaNode} from './hgn/node/octa-node.js';
 import {Bg2PointNode} from './hgn/node/point-node.js';
 import {LinkNode} from './hgn/node/link-node.js';
 import {EntranceNode} from './hgn/node/entrance-node.js';
@@ -6,6 +6,7 @@ import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
 import {Head1Node, Head2Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
 import {Param} from './hgn/param.js';
+import {Util} from './hgn/util.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
 import {Background3} from './hgn/background3.js';
@@ -62,7 +63,6 @@ export class HorrorGameNetwork
         this.mainDOM = document.querySelector('main');
 
         // ノード
-        this.titleNode = null;
         this.contentNode = null;
         this.entranceNode = null;
         this.linkNodes = [];
@@ -105,6 +105,7 @@ export class HorrorGameNetwork
 
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         this.animCnt = 0;
+        this.edgeScale = 0;
 
         this.isWaitDisappear = false;
         this.dataCache = null;
@@ -161,14 +162,6 @@ export class HorrorGameNetwork
     {
         let connections = [];
 
-        // タイトルノード
-        let elem = document.querySelector('#title-node');
-        if (elem) {
-            this.titleNode = new TitleNode(elem);
-            this.nodesIdHash['#title-node'] = this.titleNode;
-            this.loadConnection(elem, connections);
-        }
-
         // コンテンツノード
         this.contentNodeDOM = document.querySelector('#content-node');
         if (this.contentNodeDOM) {
@@ -176,7 +169,7 @@ export class HorrorGameNetwork
         }
 
         // エントランスノード
-        elem = document.querySelector('#entrance-node');
+        let elem = document.querySelector('#entrance-node');
         if (elem) {
             this.entranceNode = new EntranceNode(elem);
             this.nodesIdHash['#entrance-node'] = this.entranceNode;
@@ -196,7 +189,6 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.link-node');
         elems.forEach(elem => {
             let newNode = new LinkNode(elem);
-            this.bg2.createRandomNetwork(newNode);
 
             this.linkNodes.push(newNode);
             if (elem.id.length > 0) {
@@ -210,7 +202,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new ContentLinkNode(elem);
             this.contentLinkNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode)
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.contentLinkNodes[this.contentLinkNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -222,7 +213,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new PopupLinkNode(elem);
             this.popupLinkNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.popupLinkNodes[this.popupLinkNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -243,7 +233,6 @@ export class HorrorGameNetwork
         elems.forEach(elem =>  {
             let newNode = new DOMNode(elem, 15);
             this.domNodes.push(newNode);
-            this.bg2.createRandomNetwork(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -304,10 +293,6 @@ export class HorrorGameNetwork
      */
     reloadNodes()
     {
-        if (this.titleNode) {
-            this.titleNode.reload();
-        }
-
         if (this.contentNode) {
             this.contentNode.reload();
         }
@@ -336,6 +321,10 @@ export class HorrorGameNetwork
             node.reload();
         });
 
+        this.hrList.forEach(hr => {
+            hr.reload();
+        });
+
         this.isLoaded = true;
     }
 
@@ -345,11 +334,6 @@ export class HorrorGameNetwork
     clearNodes()
     {
         this.nodesIdHash = {};
-
-        if (this.titleNode) {
-            this.titleNode.delete();
-            this.titleNode = null;
-        }
 
         if (this.contentNode) {
             // コンテンツノードは消さない
@@ -443,6 +427,10 @@ export class HorrorGameNetwork
      */
     drawEdge()
     {
+        if (this.edgeScale === 0) {
+            return;
+        }
+
         let keys = Object.keys(this.nodesIdHash);
         if (keys.length > 0) {
             this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
@@ -458,8 +446,28 @@ export class HorrorGameNetwork
                         let targetVertex = connect.getVertex();
 
                         this.mainCtx.beginPath();
-                        this.mainCtx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                        this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
+
+                        let x1 = node.vertices[vertexNo].x;
+                        let y1 = node.vertices[vertexNo].y;
+                        let x2 = targetVertex.x;
+                        let y2 = targetVertex.y;
+
+                        let centerX = (x1 + x2) / 2;
+                        let centerY = (y1 + y2) / 2;
+
+                        // centerXとx1のthis.scaleに合わせた中間点
+                        let midX1 = Util.getMidpoint(centerX, x1, this.edgeScale);
+                        let midY1 = Util.getMidpoint(centerY, y1, this.edgeScale);
+                        this.mainCtx.moveTo(midX1, midY1);
+
+                        // centerXとx2のthis.scaleに合わせた中間点
+                        let midX2 = Util.getMidpoint(centerX, x2, this.edgeScale);
+                        let midY2 = Util.getMidpoint(centerY, y2, this.edgeScale);
+                        this.mainCtx.lineTo(midX2, midY2);
+
+
+                        // this.mainCtx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                        // this.mainCtx.lineTo(targetVertex.x, targetVertex.y);
                         this.mainCtx.stroke();
                     }
                 });
@@ -472,9 +480,6 @@ export class HorrorGameNetwork
      */
     drawNodes()
     {
-        if (this.titleNode) {
-            this.titleNode.draw(this.mainCtx);
-        }
         if (this.entranceNode) {
             this.entranceNode.draw(this.mainCtx);
         }
@@ -562,13 +567,15 @@ export class HorrorGameNetwork
         window.requestAnimationFrame(this.update);
     }
 
+    /**
+     * 出現
+     */
     appear()
     {
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_APPEAR;
         this.animCnt = 0;
-        this.bg2.fadeCnt = 0;
+        this.edgeScale = 0;
         this.bg2.setStrokeStyle();
-
 
         this.linkNodes.forEach(node => {
             node.appear();
@@ -581,6 +588,9 @@ export class HorrorGameNetwork
         });
         this.domNodes.forEach(node => {
             node.appear();
+        });
+        this.hrList.forEach(hr => {
+            hr.appear();
         });
 
         if (this.entranceNode) {
@@ -588,39 +598,18 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * 出現アニメーション
+     */
     appearAnimation()
     {
         this.animCnt++;
-        const OPEN_MAIN_CNT = 10;
 
-        // 最初の10フレームでタイトルとメインノードが出現
-        if (this.animCnt < OPEN_MAIN_CNT) {
-            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
-            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
-            this.mainCtx.lineWidth = 2; // 線の太さ
-            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
-            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
-
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = this.animCnt / OPEN_MAIN_CNT;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = this.animCnt / OPEN_MAIN_CNT;
-            });
-        } else if (this.animCnt === OPEN_MAIN_CNT) {
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = 1;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = 1;
-            });
-            //this.mainDOM.classList.remove('hide');
-        } else if (this.animCnt < 20) {
-            this.bg2.addFadeCnt(1);
+        if (this.animCnt > 10 && this.animCnt < 25) {
+            this.edgeScale = Util.getMidpoint(0, 1, (this.animCnt - 10) / 15);
+        } else if (this.animCnt === 25) {
+            this.edgeScale = 1;
         }
-
 
         this.linkNodes.forEach(node => {
             node.update();
@@ -633,6 +622,9 @@ export class HorrorGameNetwork
         });
         this.domNodes.forEach(node => {
             node.update();
+        });
+        this.hrList.forEach(hr => {
+            hr.update();
         });
 
         this.setRedraw();
@@ -642,6 +634,9 @@ export class HorrorGameNetwork
         }
     }
 
+    /**
+     * 消える
+     */
     disappear()
     {
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_DISAPPEAR;
@@ -659,39 +654,26 @@ export class HorrorGameNetwork
         this.domNodes.forEach(node => {
             node.disappear();
         });
-
+        this.hrList.forEach(hr => {
+            hr.disappear();
+        });
 
         if (this.entranceNode) {
             this.entranceNode.disappear();
         }
     }
 
+    /**
+     * 消えるアニメーション
+     */
     disappearAnimation()
     {
         this.animCnt++;
-        const SUB_NODE_REMOVE_CNT = 10;
-        const CLOSE_MAIN_CNT = 10;
 
-        // 最初の10フレームでタイトルとメインノードが出現
-        if (this.animCnt <= SUB_NODE_REMOVE_CNT) {
-            this.bg2.addFadeCnt(-1);
-        } else if (this.animCnt <= (SUB_NODE_REMOVE_CNT + CLOSE_MAIN_CNT)) {
-            this.mainCtx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.mainCtx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            this.mainCtx.shadowBlur = 8; // 影のぼかし効果
-            this.mainCtx.fillStyle = "rgba(0, 0, 0, 0.95)";
-            this.mainCtx.lineWidth = 2; // 線の太さ
-            this.mainCtx.lineJoin = "round"; // 線の結合部分のスタイル
-            this.mainCtx.lineCap = "round"; // 線の末端のスタイル
-
-            this.linkNodes.forEach(linkNode => {
-                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
-            });
-            this.contentLinkNodes.forEach(linkNode => {
-                linkNode.scale = (SUB_NODE_REMOVE_CNT - (this.animCnt - SUB_NODE_REMOVE_CNT)) / CLOSE_MAIN_CNT;
-            });
-        } else {
-            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        if (this.animCnt > 10 && this.animCnt < 25) {
+            this.edgeScale = Util.getMidpoint(0, 1, 1 - (this.animCnt - 10) / 15);
+        } else if (this.animCnt === 25) {
+            this.edgeScale = 0;
         }
 
         this.linkNodes.forEach(node => {
@@ -706,8 +688,15 @@ export class HorrorGameNetwork
         this.domNodes.forEach(node => {
             node.update();
         });
+        this.hrList.forEach(hr => {
+            hr.update();
+        });
 
         this.setRedraw();
+
+        if (this.animCnt === 30) {
+            this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
+        }
     }
 
     /**
