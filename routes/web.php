@@ -33,7 +33,7 @@ Route::group(['prefix' => 'admin'], function () {
     // ここからは認証が必要
     Route::middleware (['admin', 'auth:admin'])->group(function () {
         // 管理トップ
-        Route::get('', [Admin\AdminController::class, 'top'])->name('Admin');
+        Route::get('', [Admin\AdminController::class, 'top'])->name('Admin.Dashboard');
 
         // 運営
         Route::group(['prefix' => 'manage'], function () {

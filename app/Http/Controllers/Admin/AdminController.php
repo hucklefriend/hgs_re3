@@ -45,7 +45,7 @@ class AdminController extends AbstractAdminController
 
         if (Auth::guard('admin')->attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
-            return redirect()->route('Admin');
+            return redirect()->route('Admin.Dashboard');
         } else {
             // 認証に失敗したときの処理
             return back()->withInput()->withErrors(['login' => '認証に失敗しました。再度やり直してください。']);
@@ -55,11 +55,14 @@ class AdminController extends AbstractAdminController
     /**
      * ログアウト
      *
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('Admin.Login');
     }
 }

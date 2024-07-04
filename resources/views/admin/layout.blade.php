@@ -45,7 +45,7 @@
     <div id="header" class="app-header">
         <!-- BEGIN navbar-header -->
         <div class="navbar-header">
-            <a href="{{ route('Admin') }}" class="navbar-brand"><img src="{{ asset('admin_assets/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
+            <a href="{{ route('Admin.Dashboard') }}" class="navbar-brand"><img src="{{ asset('admin_assets/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
             <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -93,18 +93,18 @@
             <!-- BEGIN menu -->
             <div class="menu">
                 <div class="menu-header">Navigation</div>
-                <div class="menu-item {{ menu_active("Admin", true) }}">
-                    <a href="{{ route("Admin") }}" class="menu-link">
+                <div class="menu-item {{ menu_active("Admin.Dashboard") }}">
+                    <a href="{{ route("Admin.Dashboard") }}" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-sitemap"></i>
                         </div>
-                        <div class="menu-text">Top</div>
+                        <div class="menu-text">Dashboard</div>
                     </a>
                 </div>
                 <div class="menu-item has-sub {{ menu_active("Admin.Manage") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-sitemap"></i>
+                            <i class="far fa-calendar"></i>
                         </div>
                         <div class="menu-text">Manage</div>
                         <div class="menu-caret"></div>
@@ -118,7 +118,7 @@
                 <div class="menu-item has-sub {{ menu_active("Admin.MasterData") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-sitemap"></i>
+                            <i class="fas fa-gamepad"></i>
                         </div>
                         <div class="menu-text">MasterData</div>
                         <div class="menu-caret"></div>
