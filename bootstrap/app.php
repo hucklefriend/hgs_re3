@@ -11,7 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->redirectGuestsTo('/');
+        $middleware->redirectGuestsTo(function (Request $request) {
+
+            if ($request->routeIs('Admin.*')) {
+                return route('Admin.Login');
+            }
+
+            return route('Entrance');
+        });
 
         $middleware->appendToGroup('admin', [
             \App\Http\Middleware\Admin::class,
