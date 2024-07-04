@@ -132,12 +132,6 @@
                                         <i class="bi bi-shop"></i> {{ $shop->shop()->name }}
                                     </a>
                                 @endforeach
-                                <a href="" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
-                                    <i class="bi bi-shop"></i> メルカリで探す
-                                </a>
-                                <a href="" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
-                                    <i class="bi bi-shop"></i> 楽天で探す
-                                </a>
                             </div>
                         @endif
                     </div>

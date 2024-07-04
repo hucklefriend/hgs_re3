@@ -16,7 +16,7 @@
         </div>
 
         <div class="node node-right">
-            <div class="popup-link-node" id="search" data-target="search-popup">
+            <div class="popup-link-node fade" id="search" data-target="search-popup">
                 <i class="bi bi-search"></i>
             </div>
         </div>
