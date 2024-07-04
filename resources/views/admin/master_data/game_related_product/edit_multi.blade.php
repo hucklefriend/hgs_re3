@@ -44,11 +44,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($relatedProducts as $pkg)
+                    @foreach ($relatedProducts as $model)
                         <tr>
-                            <td>{{ $pkg->id }}</td>
-                            <td>{{ $pkg->name }}</td>
-                            <td>{{ Form::textarea("node_name[{$pkg->id}]", old("node_name[{$pkg->id}]", $pkg->node_name), ['class' => 'form-control edit-multi-textarea']) }}</td>
+                            <td>{{ $model->id }}</td>
+                            <td>{{ $model->name }}</td>
+                            <td><x-admin.multi-edit-input name="key" :model="$model" /></td>
                         </tr>
                     @endforeach
                     </tbody>

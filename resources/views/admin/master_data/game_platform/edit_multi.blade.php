@@ -48,7 +48,7 @@
                         <tr>
                             <td>{{ $model->id }}</td>
                             <td>{{ $model->name }}</td>
-                            <td><x-admin.multi-edit-textarea name="key" :model="$model" /></td>
+                            <td><x-admin.multi-edit-input name="key" :model="$model" /></td>
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$model" /></td>
                             <td><x-admin.multi-edit-textarea name="h1_node_name" :model="$model" /></td>
                         </tr>

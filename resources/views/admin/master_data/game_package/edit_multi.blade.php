@@ -16,7 +16,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">プラットフォーム</label>
                     <div class="col-md-9">
-                        @include ('admin.common.form.select_game_platform_multi', ['name' => 'platform_ids[]', 'value' => $search['platform_ids']])
+                        <x-admin.select-game-platform-multi name="platform_ids[]" />
                     </div>
                 </div>
                 <div class="row">
@@ -53,7 +53,7 @@
                         <tr>
                             <td>{{ $pkg->id }}</td>
                             <td>{{ $pkg->name }}</td>
-                            <td>@include('admin.common.form.multi_edit_textarea', ['model' => $pkg, 'name' => 'node_name'])</td>
+                            <td><x-admin.multi-edit-textarea name="node_name" :model="$model" /></td>
                         </tr>
                     @endforeach
                     </tbody>
