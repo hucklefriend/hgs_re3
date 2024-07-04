@@ -46,135 +46,115 @@ export class HR
      */
     draw(ctx)
     {
-        let width = this.dom.offsetWidth / 5;
-        let lx = 0;
-        let rx = 0;
-        let ratio = 0;
-
         if (this.leftX === this.rightX) {
             return;
         }
 
-        let startPos = null;
-        let lineVertices = [];
-
-        lx = this.dom.offsetLeft;
-        rx = lx + width;
-        if (rx > this.rightX) {
-            rx = this.rightX;
+        let lineVertices = this.getLineVertices();
+        if (lineVertices.length > 0) {
+            ctx.beginPath();
+            lineVertices.forEach((v, i) => {
+                if (i === 0) {
+                    ctx.moveTo(v.x, v.y);
+                } else {
+                    ctx.lineTo(v.x, v.y);
+                }
+            });
+            ctx.stroke();
         }
-        if (this.leftX <= rx) {
-            startPos = {x: this.leftX, y: this.dom.offsetTop};
-            lineVertices.push({x: rx, y: this.dom.offsetTop});
-        }
-        lx += width;
-        rx += 5;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                ratio = (this.leftX - lx) / 5;
-                startPos = {x: this.leftX, y: this.dom.offsetTop - Util.getMidpoint(0, 5, ratio)};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop - 5});
-        }
-        lx += 5;
-        rx += width;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                startPos = {x: this.leftX, y: this.dom.offsetTop - 5};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop - 5});
-        }
-        lx += width;
-        rx += 10;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                ratio = (this.leftX - lx) / 10;
-                startPos = {x: this.leftX, y: this.dom.offsetTop + Util.getMidpoint(0, 10, ratio)};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop + 5});
-        }
-        lx += 10;
-        rx += width;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                startPos = {x: this.leftX, y: this.dom.offsetTop + 5};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop + 5});
-        }
-        lx += width;
-        rx += 15;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                ratio = (this.leftX - lx) / 15;
-                startPos = {x: this.leftX, y: this.dom.offsetTop - Util.getMidpoint(0, 15, ratio)};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop - 10});
-        }
-        lx += 15;
-        rx += width;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                startPos = {x: this.leftX, y: this.dom.offsetTop - 10};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop - 10});
-        }
-        lx += width;
-        rx += 10;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                ratio = (this.leftX - lx) / 10;
-                startPos = {x: this.leftX, y: this.dom.offsetTop - Util.getMidpoint(0, 10, ratio)};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop});
-        }
-        lx += 10;
-        rx += width;
-        if (rx > this.rightX) {
-            rx = this.rightX;
-        }
-        if (this.leftX <= rx) {
-            if (startPos === null) {
-                startPos = {x: this.leftX, y: this.dom.offsetTop};
-            }
-            lineVertices.push({x: rx, y: this.dom.offsetTop});
-        }
-
-        ctx.beginPath();
-
-        ctx.moveTo(startPos.x, startPos.y);
-        lineVertices.forEach((v) => {
-            ctx.lineTo(v.x, v.y);
-        });
-        //ctx.lineTo(this.dom.offsetLeft + this.dom.offsetWidth, this.dom.offsetTop);
-
-
-        ctx.stroke();
     }
 
-    calcRetio(x1, x2)
+    /**
+     * 線の座標を取得
+     *
+     * @returns {*[]}
+     */
+    getLineVertices()
     {
+        let width = this.dom.offsetWidth / 5;
+        let lineVertices = [];
 
+        let lx = this.dom.offsetLeft;
+        let ly = this.dom.offsetTop;
+        this.addStraightLine(lx, ly, width, lineVertices);
+        lx += width;
+        this.addDiagonalLine(lx, ly, -5, lineVertices);
+        lx += 5;
+        ly -= 5;
+        this.addStraightLine(lx, ly, width, lineVertices);
+        lx += width;
+        this.addDiagonalLine(lx, ly, 15, lineVertices);
+        lx += 15;
+        ly += 15;
+        this.addStraightLine(lx, ly, width, lineVertices);
+        lx += width;
+        this.addDiagonalLine(lx, ly, -13, lineVertices);
+        lx += 13;
+        ly -= 13;
+        this.addStraightLine(lx, ly, width, lineVertices);
+        lx += width;
+        this.addDiagonalLine(lx, ly, 3, lineVertices);
+        lx += 3;
+        ly += 3;
+        this.addStraightLine(lx, ly, width, lineVertices);
+
+        return lineVertices;
+    }
+
+    /**
+     * 直線を追加
+     *
+     * @param lx
+     * @param ly
+     * @param width
+     * @param lineVertices
+     */
+    addStraightLine(lx, ly, width, lineVertices)
+    {
+        let rx = lx + width;
+        if (this.leftX < rx && lx < this.rightX) {
+            if (lx < this.leftX) {
+                lx = this.leftX;
+            }
+            if (rx > this.rightX) {
+                rx = this.rightX;
+            }
+
+            if (lineVertices.length === 0) {
+                lineVertices.push({x: lx, y: ly});
+            }
+            lineVertices.push({x: rx, y: ly});
+        }
+    }
+
+    /**
+     * 斜線を追加
+     *
+     * @param lx
+     * @param ly
+     * @param height
+     * @param lineVertices
+     */
+    addDiagonalLine(lx, ly, height, lineVertices)
+    {
+        let absHeight = Math.abs(height);
+        let rx = lx + absHeight;
+        let ry = ly + height;
+        if (this.leftX < rx && lx < this.rightX) {
+            if (lx < this.leftX) {
+                lx = this.leftX;
+                ly = ly + Util.getMidpoint(0, height, (this.leftX - lx) / absHeight);
+            }
+            if (rx > this.rightX) {
+                rx = this.rightX;
+                ry = ly + Util.getMidpoint(0, height, 1 - (rx - this.rightX) / absHeight);
+            }
+
+            if (lineVertices.length === 0) {
+                lineVertices.push({x: lx, y: ly});
+            }
+            lineVertices.push({x: rx, y: ry});
+        }
     }
 
     /**
