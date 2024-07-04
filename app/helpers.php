@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * メニューのアクティブ状態を設定
+ *
+ * @param string $match
+ * @param bool $isPerfectMatch
+ * @return string
+ */
 function menu_active(string $match, bool $isPerfectMatch = false): string
 {
     if ($isPerfectMatch) {

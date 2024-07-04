@@ -29,12 +29,6 @@ class AdminController extends AbstractAdminController
      */
     public function login(): Application|Factory|View|RedirectResponse
     {
-        // ローカル環境でのみ、id:1で自動ログインする
-        if (App::environment('local')) {
-            Auth::loginUsingId(1, true);
-            return redirect()->route('Admin');
-        }
-
         return view('admin.login');
     }
 
@@ -49,7 +43,7 @@ class AdminController extends AbstractAdminController
         $credentials = $request->only('email', 'password');
         $rememberMe = $request->input('remember_me', 0);
 
-        if (Auth::attempt($credentials, $rememberMe == 1)) {
+        if (Auth::guard('admin')->attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
             return redirect()->route('Admin');
         } else {
