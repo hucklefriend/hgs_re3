@@ -113,6 +113,7 @@ hr {
     left:0;
     z-index:-1000;
     backdrop-filter: blur(1px);
+    pointer-events: none;
 }
 
 #bg1, #bg2 {
@@ -120,6 +121,7 @@ hr {
     top:0;
     left:0;
     z-index:-1001;
+    pointer-events: none;
 }
 
 #bg2 {
@@ -141,6 +143,7 @@ hr {
     background-position-y: 0;
     background-repeat: no-repeat;
     background-size: 1000px 1200px;
+    pointer-events: none;
 }
 
 #debug {

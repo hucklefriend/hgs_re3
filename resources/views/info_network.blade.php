@@ -4,7 +4,7 @@
 
 @section('content')
     <div style="text-align:center; margin: 20px 0;">
-        <h1 class="head1">Information</h1>
+        <h1 class="head1 fade">Information</h1>
     </div>
 
 

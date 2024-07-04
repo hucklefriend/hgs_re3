@@ -57,7 +57,11 @@
 
 @section('popup')
 
-
+    <style>
+        #platform_check > label {
+            width: 200px;
+        }
+    </style>
     <div class="popup-node horrorgame_search" id="search-popup">
         <div class="popup-container">
             <form method="get" action="{{ route('Game.HorrorGameNetwork') }}" onsubmit="return search();">
@@ -83,7 +87,6 @@
                         </label>
                     @endforeach
                 </div>
-                <h5>レビュー</h5>
                 <div style="text-align: right;">
                     <button type="button" class="popup-node-close">Cancel</button>
                     <button type="submit" style="margin-left:10px;">Search</button>
@@ -94,9 +97,9 @@
         <script>
             function search()
             {
-                var name = document.querySelector('.horrorgame_search input[name="name"]').value;
-                var platform = [];
-                var rating = [];
+                let name = document.querySelector('.horrorgame_search input[name="name"]').value;
+                let platform = [];
+                let rating = [];
                 // name=platformでチェックが入っている値を取得
                 document.querySelectorAll('.horrorgame_search input[name="platform"]:checked').forEach(function(e){
                     platform.push(e.value);
