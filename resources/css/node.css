@@ -158,14 +158,19 @@
     display: none;
     position: absolute;
     width: 100%;
+    min-height: 100%;
     left: 0;
     top: 0;
-    background-color: rgba(0,0,0,0.5);
-    padding: 30px 0;
+    opacity: 0;
+    backdrop-filter: blur(3px);
+    background-color: rgba(0, 0, 0, 0.6);
 
     .popup-container {
-        width: calc(100% - 20px);
-        min-height: 100vh;
+        width: calc(100% - 10px);
+        padding: 20px;
+        margin: 30px 0;
+        border: solid 1px lime;
+        border-radius: 10px;
     }
 
     .popup-node-canvas {
@@ -173,8 +178,6 @@
         top:0;
         left:0;
         z-index:-1000;
-        backdrop-filter: blur(2px);
-        background-color: rgba(0, 0, 0, 0.5);
         pointer-events: none;
     }
 }

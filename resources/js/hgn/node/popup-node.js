@@ -129,8 +129,8 @@ export class PopupNode extends DOMNode
         this.state = PopupNode.STATE_OPENED;
         this.openScrollY = window.scrollY;
 
-        this.DOM.classList.add('popup-node-opened');
-        this.DOM.classList.remove('popup-node-closed');
+        this.DOM.classList.remove('popup-node-closed', 'fade-out-text');
+        this.DOM.classList.add('popup-node-opened', 'fade-in-text');
 
         window.hgn.setContainerScrollMode(0, this.openScrollY);
         this.draw();
@@ -142,8 +142,11 @@ export class PopupNode extends DOMNode
     close()
     {
         this.state = PopupNode.STATE_CLOSED;
-        this.DOM.classList.add('popup-node-closed');
-        this.DOM.classList.remove('popup-node-opened');
+        this.DOM.classList.remove('fade-in-text');
+        this.DOM.classList.add('fade-out-text');
+        setTimeout(() => {
+            this.DOM.classList.add('popup-node-closed');
+        }, 200);
 
         window.hgn.setBodyScrollMode(0, this.openScrollY);
     }

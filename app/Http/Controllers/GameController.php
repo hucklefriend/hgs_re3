@@ -172,7 +172,7 @@ class GameController extends Controller
 
 
         return $this->network(view('game.horrorgame_network', [
-            'platforms' => GamePlatform::select(['id', 'acronym'])->orderBy('sort_order')->get(),
+            'platforms' => GamePlatform::select(['id', 'name'])->orderBy('sort_order')->get(),
             'groups'    => $groups,
             'page'      => $page,
             'prev'      => array_merge($queries, ['page' => $prevPage]),
