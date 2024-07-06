@@ -10,8 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet">
     <script>
-        window.Laravel = {!! json_encode(['csrfToken' => csrf_token()]) !!};
+        window.Laravel = @json(['csrfToken' => csrf_token()]);
         window.baseUrl = '{{ url('/') }}';
+        window.lazyCss = @json([]);
 
         @isset($contentNode)
             window.contentNode = @json($contentNode);

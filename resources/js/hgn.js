@@ -975,4 +975,11 @@ export class HorrorGameNetwork
 window.onload = function() {
     const hgn = new HorrorGameNetwork();
     hgn.start();
+
+    window.lazyCss.forEach((url) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.head.appendChild(link);
+    });
 }
