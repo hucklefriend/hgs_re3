@@ -21,6 +21,13 @@
             </div>
         </div>
 
+        @empty($groups)
+            <div class="node">
+                <div class="text-node fade">
+                    検索条件に一致するゲームが見つかりませんでした。
+                </div>
+            </div>
+        @endempty
         @foreach ($groups as $games)
         <div class="node-map">
             @foreach ($games as $game)
@@ -65,31 +72,31 @@
     <div class="popup-node horrorgame_search" id="search-popup">
         <div class="popup-container">
             <form method="get" action="{{ route('Game.HorrorGameNetwork') }}" onsubmit="return search();">
-                <h5>ゲームタイトル</h5>
+                <label for="search-name">ゲームタイトル</label>
                 <div style="padding-left:1rem;">
-                    <input type="text" name="name" value="{{ $search['n'] }}" style="width: 100%;">
+                    <input type="text" name="name" value="{{ $search['n'] }}" id="search-name" style="width: 100%;" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" autocomplete="off">
                 </div>
-                <h5>プラットフォーム</h5>
+                <label>プラットフォーム</label>
                 <div id="platform_check" style="padding-left:1rem;">
                     @foreach ($platforms as $platform)
                         <label>
-                            {{ html()->checkbox('platform')->value($platform->id)->checked(in_array($platform->id, $search['p'])) }}
+                            <input type="checkbox" name="platform" value="{{ $platform->id }}" @checked(in_array($platform->id, $search['p']))>
                             {{ $platform->acronym }}
                         </label>
                     @endforeach
                 </div>
-                <h5>レーティング</h5>
+                <label>レーティング</label>
                 <div id="rating_check" style="padding-left:1rem;">
                     @foreach (\App\Enums\Rating::selectList() as $id => $name)
                         <label>
-                            <input type="checkbox" name="rating" value="{{ $id }}" id="rating_{{ $id }}">
+                            <input type="checkbox" name="rating" value="{{ $id }}" id="rating_{{ $id }}" @checked(in_array($id, $search['r']))>
                             {{ $name }}
                         </label>
                     @endforeach
                 </div>
                 <div style="text-align: right;">
-                    <button type="button" class="popup-node-close">Cancel</button>
-                    <button type="submit" style="margin-left:10px;">Search</button>
+                    <button type="button" class="popup-node-close bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">Cancel</button>
+                    <button type="submit" style="margin-left:10px;" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Search</button>
                 </div>
             </form>
         </div>

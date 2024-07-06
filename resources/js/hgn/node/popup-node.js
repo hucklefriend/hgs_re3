@@ -70,6 +70,10 @@ export class PopupNode extends DOMNode
                 this.close();
             });
         });
+
+        this.DOM.addEventListener('click', () => {
+            //this.close();
+        });
     }
 
     /**

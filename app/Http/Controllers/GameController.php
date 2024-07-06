@@ -17,6 +17,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Mockery\Exception;
 
@@ -38,6 +39,7 @@ class GameController extends Controller
         $search = ['n' => '', 'p' => [], 'r' => []];
 
         $franchisesQuery = GameFranchise::orderBy('phonetic');
+        $groups = [];
 
         $name = $request->get('n', '');
         if (strlen($name) > 0) {
@@ -46,7 +48,7 @@ class GameController extends Controller
         }
 
         $platforms = $request->get('p', '');
-        $titleIds = [];
+        $titleIds = new \Illuminate\Support\Collection();
         if (!empty($platforms)) {
             $queries['p'] = $platforms;
             $platforms = explode(',', $platforms);
@@ -55,15 +57,27 @@ class GameController extends Controller
             $titles = GameTitlePackageLink::whereIn('game_package_id', $packages)->distinct()->get()->pluck('game_title_id');
             $series = GameSeriesTitleLink::whereIn('game_title_id', $titles)->distinct()->pluck('game_series_id');
             $franchisesBySeries = GameFranchiseSeriesLink::whereIn('game_series_id', $series)->distinct()->pluck('game_franchise_id');
-            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $series)->distinct()->pluck('game_franchise_id');
+            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $titles)->distinct()->pluck('game_franchise_id');
             $linkedFranchiseIds = $franchisesBySeries->merge($franchisesByTitle)->unique();
             $franchisesQuery->whereIn('id', $linkedFranchiseIds);
 
             $titleIds = $titles;
             if (!empty($series)) {
-                $titleIds->merge(GameSeriesTitleLink::whereIn('game_series_id', $series)
+                $titleIds = $titleIds->concat(GameSeriesTitleLink::whereIn('game_series_id', $series)
                     ->distinct()->pluck('game_title_id')->toArray());
             }
+        }
+
+        $ratings = $request->get('r', '');
+        if (!empty($ratings)) {
+            $queries['r'] = $ratings;
+            $ratings = explode(',', $ratings);
+            $search['r'] = $ratings;
+            $packages = GamePackage::select(['id'])->whereIn('rating', $ratings)->get()->pluck('id');
+            $titles = GameTitlePackageLink::whereIn('game_package_id', $packages->toArray())->distinct()->get()->pluck('game_title_id');
+            $titleIds = $titleIds->concat($titles->toArray());
+            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $titleIds)->distinct()->pluck('game_franchise_id');
+            $franchisesQuery->whereIn('id', $franchisesByTitle->unique());
         }
 
         $franchiseNum = $franchisesQuery->count();
@@ -102,7 +116,7 @@ class GameController extends Controller
                     $titleNum += $series->titles->whereIn('id', $titleIds)->count();
                 }
             }
-            if (empty($titleIds)) {
+            if ($titleIds->isEmpty()) {
                 $titleNum += $franchise->titles->count();
             } else {
                 $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
@@ -115,7 +129,7 @@ class GameController extends Controller
 
             foreach ($franchise->series as $series) {
                 $prevId = null;
-                if (empty($titleIds)) {
+                if ($titleIds->isEmpty()) {
                     $titles = $series->titles;
                 } else {
                     $titles = $series->titles->whereIn('id', $titleIds);
@@ -133,7 +147,7 @@ class GameController extends Controller
                 }
             }
 
-            if (empty($titleIds)) {
+            if ($titleIds->isEmpty()) {
                 $titles = $franchise->titles;
             } else {
                 $titles = $franchise->titles->whereIn('id', $titleIds);
@@ -163,7 +177,7 @@ class GameController extends Controller
             'page'      => $page,
             'prev'      => array_merge($queries, ['page' => $prevPage]),
             'next'      => array_merge($queries, ['page' => $nextPage]),
-            'search'    => $search,
+            'search'    => $search
         ]));
     }
 

@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
     background-color: black;
@@ -91,7 +94,12 @@ hr {
 
 .horrorgame_search {
 
-    > form {
+    form {
+        > label {
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
         > div {
             margin: 1rem 0;
         }
@@ -101,8 +109,10 @@ hr {
         line-height: 2rem;
 
         label {
+            display: inline-block;
             white-space: nowrap;
             margin-right: 20px;
+            width: 90px;
         }
     }
 }
