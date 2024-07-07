@@ -44,7 +44,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>ノード表示名称</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -53,7 +52,6 @@
                     <tr>
                         <td>{{ $mm->id }}</td>
                         <td>{{ $mm->name }}</td>
-                        <td>{!! $mm->node_name !!}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>

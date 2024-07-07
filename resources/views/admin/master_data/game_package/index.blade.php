@@ -53,7 +53,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>略称</th>
                     <th>プラットフォーム</th>
                     <th>発売日</th>
                     <td></td>
@@ -64,7 +63,6 @@
                     <tr>
                         <td>{{ $package->id }}</td>
                         <td>{{ $package->name }}</td>
-                        <td>{{ $package->acronym }}</td>
                         <td>{{ $package->platform->acronym ?? '' }}</td>
                         <td>{{ $package->release_at }}</td>
                         <td class="text-center">

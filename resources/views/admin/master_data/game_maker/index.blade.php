@@ -44,7 +44,6 @@
                     <th>ID</th>
                     <th>名前</th>
                     <th>略称</th>
-                    <th>ふりがな</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -54,7 +53,6 @@
                         <td>{{ $maker->id }}</td>
                         <td>{{ $maker->name }}</td>
                         <td>{{ $maker->acronym }}</td>
-                        <td>{{ $maker->phonetic }}</td>
                         <td class="text-center"><a href="{{ route('Admin.MasterData.Maker.Detail', $maker) }}" class="btn btn-default"><i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span></a></td>
                     </tr>
                 @endforeach

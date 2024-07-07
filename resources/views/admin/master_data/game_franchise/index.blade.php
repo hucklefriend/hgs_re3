@@ -47,7 +47,6 @@
                 <tr>
                     <th>ID</th>
                     <th>名前</th>
-                    <th>ふりがな</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -56,8 +55,7 @@
                     <tr>
                         <td>{{ $franchise->id }}</td>
                         <td>{{ $franchise->name }}</td>
-                        <td>{{ $franchise->phonetic }}</td>
-                        <td class="text-center">
+                        <td class="text-center nowrap">
                             <a href="{{ route('Admin.MasterData.Franchise.Detail', $franchise) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
                             </a>

@@ -46,7 +46,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>よみがな</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -55,7 +54,6 @@
                     <tr>
                         <td>{{ $s->id }}</td>
                         <td>{{ $s->name }}</td>
-                        <td>{{ $s->phonetic }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.Series.Detail', $s) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>

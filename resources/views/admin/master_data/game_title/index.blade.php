@@ -47,7 +47,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>シリーズ</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -56,7 +55,6 @@
                     <tr>
                         <td>{{ $title->id }}</td>
                         <td>{{ $title->name }}</td>
-                        <td>{{ $title->series()->name ?? '' }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.Title.Detail', $title) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
