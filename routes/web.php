@@ -63,6 +63,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+                Route::get('{' . $prefix . '}/link_package', [$class, 'linkPackage'])->name("{$basename}.LinkPackage");
+                Route::post('{' . $prefix . '}/link_package', [$class, 'syncPackage'])->name("{$basename}.SyncPackage");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -161,6 +163,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
                 Route::post('{' . $prefix . '}/copy', [$class, 'makeCopy'])->name("{$basename}.MakeCopy");
+                Route::get('{' . $prefix . '}/link_maker', [$class, 'linkMaker'])->name("{$basename}.LinkMaker");
+                Route::post('{' . $prefix . '}/link_maker', [$class, 'syncMaker'])->name("{$basename}.SyncMaker");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
 

@@ -6,29 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-class GameFranchiseTitleLink extends Model
+class GameMakerPackageLink extends Model
 {
-    protected $primaryKey = ['game_franchise_id', 'game_title_id'];
+    protected $primaryKey = ['game_maker_id', 'game_package_id'];
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
     /**
-     * フランチャイズ
+     * メーカー
      *
      * @return BelongsTo
      */
-    public function franchise(): BelongsTo
+    public function maker(): BelongsTo
     {
-        return $this->belongsTo(GameFranchise::class);
+        return $this->belongsTo(GameMaker::class);
     }
 
     /**
-     * タイトル
+     * パッケージ
      *
      * @return BelongsTo
      */
-    public function title(): BelongsTo
+    public function package(): BelongsTo
     {
-        return $this->belongsTo(GameTitle::class);
+        return $this->belongsTo(GamePackage::class);
     }
 }

@@ -227,7 +227,7 @@ class GameController extends Controller
     {
         $maker = GameMaker::findByKey($makerKey);
 
-        $packages = GamePackage::select(['id'])->where('game_maker_id', $maker->id)->get();
+        $packages = $maker->packages();
         $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
@@ -380,8 +380,8 @@ class GameController extends Controller
         $packages = $title->packages;
         $makers = [];
         foreach ($packages as $package) {
-            if ($package->maker) {
-                $makers[$package->maker->id] = $package->maker;
+            foreach ($package->makers as $maker) {
+                $makers[$maker->id] = $maker;
             }
         }
 
