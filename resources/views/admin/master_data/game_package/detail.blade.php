@@ -37,8 +37,18 @@
                 </tr>
                 <tr>
                     <th>メーカー</th>
-                    <td>{{ $model->maker->name ?? '' }}</td>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->makers as $maker)
+                                <li class="list-group-item"><a href="{{ route('Admin.MasterData.Maker.Detail', $maker) }}">{{ $maker->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.MasterData.Package.LinkMaker', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
                 </tr>
+                <tr>
                 <tr>
                     <th>プラットフォーム</th>
                     <td>{{ $model->platform->name ?? '' }}</td>

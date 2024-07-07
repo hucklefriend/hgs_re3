@@ -15,14 +15,15 @@ class GamePackage extends \Eloquent
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
+
     /**
-     * メーカーを取得
+     * メーカー
      *
-     * @return BelongsTo
+     * @return BelongsToMany
      */
-    public function maker(): BelongsTo
+    public function makers(): BelongsToMany
     {
-        return $this->belongsTo(GameMaker::class, 'game_maker_id');
+        return $this->belongsToMany(GameMaker::class, GameMakerPackageLink::class);
     }
 
     /**

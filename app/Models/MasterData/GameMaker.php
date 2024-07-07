@@ -4,6 +4,7 @@ namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +67,16 @@ class GameMaker extends \Eloquent
     public function relatedChildren(): HasMany
     {
         return $this->hasMany(GameMaker::class, 'related_game_maker_id');
+    }
+
+    /**
+     * パッケージ
+     *
+     * @return BelongsToMany
+     */
+    public function packages(): BelongsToMany
+    {
+        return $this->belongsToMany(GamePackage::class, GameMakerPackageLink::class);
     }
 
     /**

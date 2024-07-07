@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameMakerMultiUpdateRequest;
+use App\Http\Requests\Admin\MasterData\GameMakerPackageLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameMakerRequest;
 use App\Models\MasterData\GameMaker;
+use App\Models\MasterData\GamePackage;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -198,5 +200,40 @@ class GameMakerController extends AbstractAdminController
         $maker->delete();
 
         return redirect()->route('Admin.MasterData.Maker');
+    }
+
+    /**
+     * パッケージとリンク
+     *
+     * @param GameMaker $maker
+     * @return Application|Factory|View
+     */
+    public function linkTitle(GameMaker $maker): Application|Factory|View
+    {
+        $packages = GamePackage::orderBy('id')
+            ->whereNotIn('id', function ($query){
+                $query->select('game_title_id')
+                    ->from('game_series_title_links');
+            })
+            ->get(['id', 'name']);
+
+        return view('admin.master_data.game_maker.link_package', [
+            'model'            => $maker,
+            'linkedPackageIds' => $maker->packages()->pluck('id')->toArray(),
+            'packages'         => $packages,
+        ]);
+    }
+
+    /**
+     * タイトルと同期処理
+     *
+     * @param GameMakerPackageLinkRequest $request
+     * @param GameMaker $maker
+     * @return RedirectResponse
+     */
+    public function syncTitle(GameMakerPackageLinkRequest $request, GameMaker $maker): RedirectResponse
+    {
+        $maker->packages()->sync($request->validated('package_id'));
+        return redirect()->route('Admin.MasterData.Maker.Detail', $maker);
     }
 }
