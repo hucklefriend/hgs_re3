@@ -59,6 +59,7 @@
                     </tbody>
                 </table>
                 <div class="my-4 d-flex justify-content-end">
+                    <a href="{{ route('Admin.MasterData.Maker', $search) }}" class="btn btn-default">Cancel</a>&nbsp;
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

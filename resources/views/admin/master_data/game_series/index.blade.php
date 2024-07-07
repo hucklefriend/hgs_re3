@@ -35,7 +35,9 @@
                 <div>{{ $series->appends($search)->links() }}</div>
 
                 <div class="text-end">
-                    <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{{ route('Admin.MasterData.Series.Add') }}" class="btn btn-default">
+                        <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                    </a>
                 </div>
             </div>
 
@@ -44,7 +46,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>よみがな</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -53,9 +54,10 @@
                     <tr>
                         <td>{{ $s->id }}</td>
                         <td>{{ $s->name }}</td>
-                        <td>{{ $s->phonetic }}</td>
                         <td class="text-center">
-                            <a href="{{ route('Admin.MasterData.Series.Detail', $s) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
+                            <a href="{{ route('Admin.MasterData.Series.Detail', $s) }}" class="btn btn-default">
+                                <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
+                            </a>
                         </td>
                     </tr>
                 @endforeach

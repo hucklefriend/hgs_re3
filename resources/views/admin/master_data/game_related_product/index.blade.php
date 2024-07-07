@@ -34,8 +34,12 @@
                 <div>{{ $relatedProducts->appends($search)->links() }}</div>
 
                 <div class="text-end">
-                    <a href="{{ route('Admin.MasterData.RelatedProduct.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
-                    <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                    <a href="{{ route('Admin.MasterData.RelatedProduct.Add') }}" class="btn btn-default">
+                        <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                    </a>
+                    <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default">
+                        <i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
+                    </a>
                 </div>
             </div>
 
@@ -59,7 +63,9 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
+                            <a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}" class="btn btn-default">
+                                <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
+                            </a>
                         </td>
                     </tr>
                 @endforeach

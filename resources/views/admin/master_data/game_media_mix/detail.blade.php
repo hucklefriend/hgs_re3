@@ -7,12 +7,18 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.MediaMix.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('Admin.MasterData.MediaMix.Edit', $model) }}" class="btn btn-default">
+                    <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                </a>
             </div>
             <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
+                </tr>
+                <tr>
+                    <th>key</th>
+                    <td>{{ $model->key }}</td>
                 </tr>
                 <tr>
                     <th>名称</th>
@@ -56,7 +62,9 @@
                             <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
                         @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.MediaMix.LinkRelatedProduct', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.MediaMix.LinkRelatedProduct', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -66,7 +74,9 @@
                 <form method="POST" action="{{ route('Admin.MasterData.MediaMix.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                    </button>
                 </form>
             </div>
         </div>

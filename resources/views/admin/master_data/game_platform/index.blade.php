@@ -27,8 +27,12 @@
             <div class="d-flex justify-content-between">
                 <div>{{ $platforms->appends($search)->links() }}</div>
                 <div class="text-end">
-                    <a href="{{ route('Admin.MasterData.Platform.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i> Add</a>
-                    <a href="{{ route('Admin.MasterData.Platform.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i> Edit Multi</a>
+                    <a href="{{ route('Admin.MasterData.Platform.Add') }}" class="btn btn-default">
+                        <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                    </a>
+                    <a href="{{ route('Admin.MasterData.Platform.EditMulti', $search) }}" class="btn btn-default">
+                        <i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
+                    </a>
                 </div>
             </div>
 
@@ -37,7 +41,6 @@
                 <tr>
                     <th>ID</th>
                     <th>名前</th>
-                    <th>key</th>
                     <th>略称</th>
                     <td></td>
                 </tr>
@@ -47,9 +50,12 @@
                     <tr>
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
-                        <td>{{ $platform->key }}</td>
                         <td>{{ $platform->acronym }}</td>
-                        <td class="text-center"><a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a></td>
+                        <td class="text-center">
+                            <a href="{{ route('Admin.MasterData.Platform.Detail', $platform) }}" class="btn btn-default">
+                                <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -57,6 +63,5 @@
             <div>{{ $platforms->appends($search)->links() }}</div>
         </div>
     </div>
-    <!-- END panel -->
 
 @endsection

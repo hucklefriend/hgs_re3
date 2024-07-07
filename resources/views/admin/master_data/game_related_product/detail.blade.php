@@ -7,12 +7,18 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.RelatedProduct.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('Admin.MasterData.RelatedProduct.Edit', $model) }}" class="btn btn-default">
+                    <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                </a>
             </div>
             <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
+                </tr>
+                <tr>
+                    <th>key</th>
+                    <td>{{ $model->key }}</td>
                 </tr>
                 <tr>
                     <th>名称</th>
@@ -64,7 +70,9 @@
                             <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.Title.Detail', $title) }}">{{ $title->name }}</a></li>
                         @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.RelatedProduct.LinkTitle', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.RelatedProduct.LinkTitle', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -73,7 +81,9 @@
                         @foreach ($model->mediaMixes as $mm)
                             <span class="mr-2"><a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></span>
                         @endforeach
-                        <a href="{{ route('Admin.MasterData.RelatedProduct.LinkMediaMix', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.RelatedProduct.LinkMediaMix', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -90,13 +100,17 @@
                                         <form method="post" action="{{ route('Admin.MasterData.RelatedProduct.DeleteShop', ['relatedProduct' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
                                             @csrf
                                             {{ method_field('DELETE') }}
-                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
                             @endforeach
                         </table>
-                        <a href="{{ route('Admin.MasterData.RelatedProduct.AddShop', $model) }}" class="btn btn-sm btn-default"><i class="fas fa-plus"></i> Add</a>
+                        <a href="{{ route('Admin.MasterData.RelatedProduct.AddShop', $model) }}" class="btn btn-sm btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -106,7 +120,9 @@
                 <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                    </button>
                 </form>
             </div>
         </div>
