@@ -7,8 +7,12 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Package.Copy', $model) }}" class="btn btn-default"><i class="far fa-copy"></i> Copy</a>&nbsp;
-                <a href="{{ route('Admin.MasterData.Package.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('Admin.MasterData.Package.Copy', $model) }}" class="btn btn-default">
+                    <i class="far fa-copy"></i><span class="d-none d-md-inline"> Copy</span>
+                </a>&nbsp;
+                <a href="{{ route('Admin.MasterData.Package.Edit', $model) }}" class="btn btn-default">
+                    <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                </a>
             </div>
             <table class="table admin-form-table">
                 <tr>
@@ -75,7 +79,9 @@
                                 <li class="list-group-item"><a href="{{ route('Admin.MasterData.Title.Detail', $title) }}">{{ $title->name ?? '' }}</a></li>
                             @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.Package.LinkTitle', $model) }}" class="btn btn-sm btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.Package.LinkTitle', $model) }}" class="btn btn-sm btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -86,19 +92,25 @@
                             <tr>
                                 <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name }}</a></td>
                                 <td>
-                                    <a href="{{ route('Admin.MasterData.Package.EditShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
+                                    <a href="{{ route('Admin.MasterData.Package.EditShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;">
+                                        <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                                    </a>
                                 </td>
                                 <td>
                                     <form method="post" action="{{ route('Admin.MasterData.Package.DeleteShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
                                         @csrf
                                         {{ method_field('DELETE') }}
-                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-eraser"></i> Delete</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
                             @endforeach
                         </table>
-                        <a href="{{ route('Admin.MasterData.Package.AddShop', $model) }}" class="btn btn-sm btn-default"><i class="fas fa-plus"></i> Add</a>
+                        <a href="{{ route('Admin.MasterData.Package.AddShop', $model) }}" class="btn btn-sm btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -108,7 +120,9 @@
                 <form method="POST" action="{{ route('Admin.MasterData.Package.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                    </button>
                 </form>
             </div>
         </div>

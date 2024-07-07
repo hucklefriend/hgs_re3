@@ -7,7 +7,9 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Maker.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('Admin.MasterData.Maker.Edit', $model) }}" class="btn btn-default">
+                    <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                </a>
             </div>
             <table class="table admin-detail-table" id="maker-table">
                 <tr>
@@ -74,13 +76,20 @@
                 </tr>
             </table>
         </div>
-        <div class="panel-footer">
-            <div class="text-end">
+        <div class="panel-footer d-flex justify-content-between">
+            <div>
                 <form method="POST" action="{{ route('Admin.MasterData.Maker.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
-                    <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                    <button class="btn btn-danger" type="submit">
+                        <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                    </button>
                 </form>
+            </div>
+            <div>
+                <a href="{{ route('Admin.MasterData.Maker', $search) }}" class="btn btn-default">
+                    <i class="fas fa-table"></i><span class="d-none d-md-inline"> List</span>
+                </a>
             </div>
         </div>
     </div>

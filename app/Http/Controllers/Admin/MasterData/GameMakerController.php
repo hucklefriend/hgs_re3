@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
+use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameMakerMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameMakerRequest;
 use App\Models\MasterData\GameMaker;
@@ -11,8 +12,10 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-class GameMakerController extends AbstractMasterDataController
+class GameMakerController extends AbstractAdminController
 {
     /**
      * インデックス
@@ -79,7 +82,8 @@ class GameMakerController extends AbstractMasterDataController
     public function add(): Application|Factory|View
     {
         return view('admin.master_data.game_maker.add', [
-            'model' => new GameMaker(),
+            'model'  => new GameMaker(),
+            'search' => $this->getSearchSession()
         ]);
     }
 
@@ -110,7 +114,8 @@ class GameMakerController extends AbstractMasterDataController
     {
         $maker->loadSynonyms();
         return view('admin.master_data.game_maker.detail', [
-            'model' => $maker
+            'model'  => $maker,
+            'search' => $this->getSearchSession()
         ]);
     }
 

@@ -7,12 +7,18 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default"><i class="fas fa-edit"></i> Edit</a>
+                <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default">
+                    <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
+                </a>
             </div>
             <table class="table admin-form-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
+                </tr>
+                <tr>
+                    <th>key</th>
+                    <td>{{ $model->key }}</td>
                 </tr>
                 <tr>
                     <th>名称</th>
@@ -67,7 +73,7 @@
                             </span>
                         @endif
                         <a href="{{ route('Admin.MasterData.Title.LinkSeries', $model) }}" class="btn btn-default">
-                            <i class="fas fa-link"></i> Link
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
                 </tr>
@@ -82,7 +88,9 @@
                             </span>
                         @endif
                         @if (!$model->series())
-                        <a href="{{ route('Admin.MasterData.Title.LinkFranchise', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.Title.LinkFranchise', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                         @endif
                     </td>
                 </tr>
@@ -94,7 +102,9 @@
                                 <li class="list-group-item"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
                             @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.Title.LinkPackage', $model) }}" class="btn btn-default"><i class="fas fa-link"></i> Link</a>
+                        <a href="{{ route('Admin.MasterData.Title.LinkPackage', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -115,7 +125,9 @@
                         <form method="POST" action="{{ route('Admin.MasterData.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
                             @csrf
                             {{ method_field('DELETE') }}
-                            <button class="btn btn-danger" type="submit"><i class="fas fa-eraser"></i> Delete</button>
+                            <button class="btn btn-danger" type="submit">
+                                <i class="fas fa-eraser"></i><span class="d-none d-md-inline"> Delete</span>
+                            </button>
                         </form>
                     @endif
                 </div>
