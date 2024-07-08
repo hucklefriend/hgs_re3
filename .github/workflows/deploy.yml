@@ -1,4 +1,4 @@
-name: Deploy to STG Server
+name: Deploy to Production Server
 
 on:
   push:

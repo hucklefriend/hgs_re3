@@ -75,9 +75,9 @@
                         <span class="badge bg-danger rounded-pill ms-auto pb-4px">2</span>
                     </a>
                     <a href="calendar.html" class="dropdown-item">Calendar</a>
-                    <a href="extra_settings_page.html" class="dropdown-item">Settings</a>
-                    <div class="dropdown-divider"></div>
                     --}}
+                    <a href="{{ route('Entrance') }}" class="dropdown-item">Entrance</a>
+                    <div class="dropdown-divider"></div>
                     <a href="{{ route('Admin.Logout') }}" class="dropdown-item">Log Out</a>
                 </div>
             </div>
