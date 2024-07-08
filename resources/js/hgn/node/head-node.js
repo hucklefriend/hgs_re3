@@ -139,25 +139,25 @@ export class Head1Node extends DOMNode
      */
     appearAnimation()
     {
-        if (this.animCnt < 5) {
-            let ratio = this.animCnt / 5;
+        if (window.hgn.animCnt < 5) {
+            let ratio = window.hgn.animCnt / 5;
             this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
             this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
             this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
-        } else if (this.animCnt === 5) {
+        } else if (window.hgn.animCnt === 5) {
             this.alpha1 = 0.4;
             this.alpha2 = 0.7;
             this.alpha3 = 0.8;
         }
 
-        if (this.animCnt < 15) {
-            this.setAnimOctagon(this.animCnt / 15);
-        } else if (this.animCnt === 15) {
+        if (window.hgn.animCnt < 15) {
+            this.setAnimOctagon(window.hgn.animCnt / 15);
+        } else if (window.hgn.animCnt === 15) {
             this.isUseAnimVertices = false;
             this.setOctagon();
             this.fadeInText();
-        } else if (this.animCnt < 25) {
-        } else if (this.animCnt < 30) {
+        } else if (window.hgn.animCnt < 25) {
+        } else if (window.hgn.animCnt < 30) {
             this.animOffset++;
         } else {
             this.animOffset = 5
@@ -183,16 +183,16 @@ export class Head1Node extends DOMNode
      */
     disappearAnimation()
     {
-        if (this.animCnt < 5) {
+        if (window.hgn.animCnt < 5) {
             this.animOffset--;
-        } else if (this.animCnt === 5) {
+        } else if (window.hgn.animCnt === 5) {
             this.animOffset = 0;
-        } else if (this.animCnt < 15) {
-        } else if (this.animCnt < 30) {
-            this.setAnimOctagon(1 - ((this.animCnt - 15) / 15));
+        } else if (window.hgn.animCnt < 15) {
+        } else if (window.hgn.animCnt < 30) {
+            this.setAnimOctagon(1 - ((window.hgn.animCnt - 15) / 15));
 
-            if (this.animCnt >= 25) {
-                let ratio = 1 - (this.animCnt - 25) / 5;
+            if (window.hgn.animCnt >= 25) {
+                let ratio = 1 - (window.hgn.animCnt - 25) / 5;
                 this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
                 this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
                 this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
@@ -283,16 +283,16 @@ export class Head2Node extends DOMNode
     appearAnimation()
     {
         // 最初の10Cntはフェードイン
-        /*if (this.animCnt < Head2Node.FADE_CNT) {
-            let ratio = this.animCnt / Head2Node.FADE_CNT;
+        /*if (window.hgn.animCnt < Head2Node.FADE_CNT) {
+            let ratio = window.hgn.animCnt / Head2Node.FADE_CNT;
             this.animAlpha1 = Util.getMidpoint(0, 1, ratio);
             this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
             this.animAlpha3 = Util.getMidpoint(0, 0.5, ratio);
             this.setAnimOctagon(0);
-        } else if (this.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT - 1)) {*/
-        if (this.animCnt < 15) {
-            //let ratio = (this.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
-            this.setAnimOctagon(this.animCnt / 15);
+        } else if (window.hgn.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT - 1)) {*/
+        if (window.hgn.animCnt < 15) {
+            //let ratio = (window.hgn.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
+            this.setAnimOctagon(window.hgn.animCnt / 15);
         } else {
             // アニメーション終了
             this.setOctagon();
@@ -326,13 +326,13 @@ export class Head2Node extends DOMNode
     disappearAnimation()
     {
         // 最初は縮小
-        if (this.animCnt < Head2Node.SCALE_CNT) {
-            let ratio = 1 - this.animCnt / Head2Node.SCALE_CNT;
+        if (window.hgn.animCnt < Head2Node.SCALE_CNT) {
+            let ratio = 1 - window.hgn.animCnt / Head2Node.SCALE_CNT;
             this.setAnimOctagon(ratio);
-        } else if (this.animCnt === Head2Node.SCALE_CNT) {
+        } else if (window.hgn.animCnt === Head2Node.SCALE_CNT) {
             this.setAnimOctagon(0);
-        } else if (this.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT)) {
-            let ratio = 1 - (this.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
+        } else if (window.hgn.animCnt < (Head2Node.FADE_CNT + Head2Node.SCALE_CNT)) {
+            let ratio = 1 - (window.hgn.animCnt - Head2Node.FADE_CNT) / Head2Node.SCALE_CNT;
             this.animAlpha1 = Util.getMidpoint(0, 1, ratio);
             this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
             this.animAlpha3 = Util.getMidpoint(0, 0.5, ratio);

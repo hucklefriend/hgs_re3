@@ -65,12 +65,8 @@ export class HorrorGameNetwork
         // ノード
         this.contentNode = null;
         this.entranceNode = null;
-        this.linkNodes = [];
-        this.contentLinkNodes = [];
-        this.popupLinkNodes = [];
         this.popupNodes = [];
         this.domNodes = [];
-
         this.nodesIdHash = {};
 
         // hr
@@ -84,8 +80,12 @@ export class HorrorGameNetwork
         // 次の更新で再描画するフラグ
         this.redrawFlag = false;
 
+        // 次の更新でメイン再描画するフラグ
+        // redrawFlagでも描画される
+        this.redrawMainFlag = false;
+
         // 次の更新でBG2再描画するフラグ
-        // redrawFlagでも描画される、redrawFlagがfalseの時だけこちらが有効
+        // redrawFlagでも描画される
         this.redrawBg2Flag = false;
 
         this.update = this.update.bind(this);
@@ -156,6 +156,17 @@ export class HorrorGameNetwork
     }
 
     /**
+     * 特定のカウントから数えなおしたカウントを取得
+     *
+     * @param offset
+     * @returns {number}
+     */
+    getOffsetAnimCnt(offset)
+    {
+        return this.animCnt - offset;
+    }
+
+    /**
      * DOMからノードの読み取り
      */
     loadNodes()
@@ -189,8 +200,7 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.link-node');
         elems.forEach(elem => {
             let newNode = new LinkNode(elem);
-
-            this.linkNodes.push(newNode);
+            this.domNodes.push(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = newNode;
                 this.loadConnection(elem, connections);
@@ -201,9 +211,9 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.content-link-node');
         elems.forEach(elem =>  {
             let newNode = new ContentLinkNode(elem);
-            this.contentLinkNodes.push(newNode);
+            this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = this.contentLinkNodes[this.contentLinkNodes.length - 1];
+                this.nodesIdHash[elem.id] = newNode;
                 this.loadConnection(elem, connections);
             }
         });
@@ -212,9 +222,9 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.popup-link-node');
         elems.forEach(elem =>  {
             let newNode = new PopupLinkNode(elem);
-            this.popupLinkNodes.push(newNode);
+            this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = this.popupLinkNodes[this.popupLinkNodes.length - 1];
+                this.nodesIdHash[elem.id] = newNode;
                 this.loadConnection(elem, connections);
             }
         });
@@ -301,18 +311,6 @@ export class HorrorGameNetwork
             this.entranceNode.reload();
         }
 
-        this.linkNodes.forEach(node => {
-            node.reload();
-        });
-
-        this.contentLinkNodes.forEach(node => {
-            node.reload();
-        });
-
-        this.popupLinkNodes.forEach(node => {
-            node.reload();
-        });
-
         this.popupNodes.forEach(node => {
             node.reload();
         });
@@ -343,21 +341,6 @@ export class HorrorGameNetwork
             this.entranceNode.delete();
             this.entranceNode = null;
         }
-
-        this.linkNodes.forEach(linkNode => {
-            linkNode.delete();
-        });
-        this.linkNodes = [];
-
-        this.contentLinkNodes.forEach(contentNode =>  {
-            contentNode.delete();
-        });
-        this.contentLinkNodes = [];
-
-        this.popupLinkNodes.forEach(node =>  {
-            node.delete();
-        });
-        this.popupLinkNodes = [];
 
         this.popupNodes.forEach(node =>  {
             node.delete();
@@ -410,9 +393,6 @@ export class HorrorGameNetwork
      */
     draw()
     {
-        this.bg2.draw();
-        this.bg1.draw(this, this.bg2);
-
         this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
         this.drawEdge();
         this.drawNodes();
@@ -484,18 +464,6 @@ export class HorrorGameNetwork
             this.entranceNode.draw(this.mainCtx);
         }
 
-        this.linkNodes.forEach(linkNode => {
-            linkNode.draw(this.mainCtx);
-        });
-
-        this.contentLinkNodes.forEach(contentLinkNode => {
-            contentLinkNode.draw(this.mainCtx);
-        });
-
-        this.popupLinkNodes.forEach(node => {
-            node.draw(this.mainCtx);
-        });
-
         this.popupNodes.forEach(node => {
             node.draw(this.mainCtx);
         });
@@ -514,6 +482,14 @@ export class HorrorGameNetwork
     }
 
     /**
+     * メインキャンバス描画フラグの設定
+     */
+    setRedrawMain()
+    {
+        this.redrawMainFlag = true;
+    }
+
+    /**
      * BG2再描画フラグの設定
      */
     setRedrawBg2()
@@ -526,6 +502,8 @@ export class HorrorGameNetwork
      */
     update()
     {
+        this.animCnt++;
+
         if (this.entranceNode) {
             this.entranceNode.update();
         }
@@ -547,6 +525,10 @@ export class HorrorGameNetwork
                 if (this.isWaitDisappear) {
                     this.isWaitDisappear = false;
                     this.showNewNetwork(this.dataCache);
+                } else {
+                    this.domNodes.forEach(node => {
+                        node.update();
+                    });
                 }
 
                 break;
@@ -555,12 +537,17 @@ export class HorrorGameNetwork
 
         if (this.redrawFlag) {
             this.draw();
-            this.redrawFlag = false;
-            this.redrawBg2Flag = false;
+            this.bg2.draw();
+            this.bg1.draw(this, this.bg2);
+        } else if (this.redrawMainFlag) {
+            this.draw();
         } else if (this.redrawBg2Flag) {
             this.bg2.draw();
         }
 
+        this.redrawFlag = false;
+        this.redrawMainFlag = false;
+        this.redrawBg2Flag = false;
         if (Param.SHOW_DEBUG) {
             this.showDebug();
         }
@@ -577,15 +564,6 @@ export class HorrorGameNetwork
         this.edgeScale = 0;
         this.bg2.setStrokeStyle();
 
-        this.linkNodes.forEach(node => {
-            node.appear();
-        });
-        this.contentLinkNodes.forEach(node =>  {
-            node.appear();
-        });
-        this.popupLinkNodes.forEach(node =>  {
-            node.appear();
-        });
         this.domNodes.forEach(node => {
             node.appear();
         });
@@ -603,23 +581,12 @@ export class HorrorGameNetwork
      */
     appearAnimation()
     {
-        this.animCnt++;
-
         if (this.animCnt > 10 && this.animCnt < 25) {
             this.edgeScale = Util.getMidpoint(0, 1, (this.animCnt - 10) / 15);
         } else if (this.animCnt === 25) {
             this.edgeScale = 1;
         }
 
-        this.linkNodes.forEach(node => {
-            node.update();
-        });
-        this.contentLinkNodes.forEach(node =>  {
-            node.update();
-        });
-        this.popupLinkNodes.forEach(node =>  {
-            node.update();
-        });
         this.domNodes.forEach(node => {
             node.update();
         });
@@ -642,15 +609,6 @@ export class HorrorGameNetwork
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_DISAPPEAR;
         this.animCnt = 0;
 
-        this.linkNodes.forEach(node => {
-            node.disappear();
-        });
-        this.contentLinkNodes.forEach(node =>  {
-            node.disappear();
-        });
-        this.popupLinkNodes.forEach(node =>  {
-            node.disappear();
-        });
         this.domNodes.forEach(node => {
             node.disappear();
         });
@@ -668,23 +626,12 @@ export class HorrorGameNetwork
      */
     disappearAnimation()
     {
-        this.animCnt++;
-
         if (this.animCnt > 10 && this.animCnt < 25) {
             this.edgeScale = Util.getMidpoint(0, 1, 1 - (this.animCnt - 10) / 15);
         } else if (this.animCnt === 25) {
             this.edgeScale = 0;
         }
 
-        this.linkNodes.forEach(node => {
-            node.update();
-        });
-        this.contentLinkNodes.forEach(node =>  {
-            node.update();
-        });
-        this.popupLinkNodes.forEach(node =>  {
-            node.update();
-        });
         this.domNodes.forEach(node => {
             node.update();
         });

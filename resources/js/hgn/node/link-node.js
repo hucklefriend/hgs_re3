@@ -1,6 +1,5 @@
 import {Param} from '../param.js';
 import {Util} from '../util.js';
-import {HorrorGameNetwork} from '../../hgn.js';
 import {DOMNode} from './octa-node.js';
 
 
@@ -16,7 +15,6 @@ export class LinkNode extends DOMNode
     {
         super(DOM, notchSize);
 
-        this.isHover = false;
         this.isEnableMouse = true;
 
         DOM.addEventListener('mouseenter', () => this.mouseEnter());
@@ -44,6 +42,12 @@ export class LinkNode extends DOMNode
         this.scale = 0;
         this.appearAnimCnt = Util.getRandomInt(1, 10);
         this.animMaxCnt = Util.getRandomInt(10, 15);
+        this.hoverOffsetAnimCnt = 0;
+        this.ctxParams = {
+            strokeStyle: "rgba(0, 100, 0, 0.8)",
+            shadowColor: "rgb(0, 150, 0)",
+            shadowBlur: 4
+        };
     }
 
     /**
@@ -67,10 +71,9 @@ export class LinkNode extends DOMNode
             return;
         }
 
-        this.isHover = true;
+        this.hoverOffsetAnimCnt = window.hgn.animCnt;
+        this.animFunc = this.hoverAnimation;
         this.DOM.classList.add('active');
-
-        HorrorGameNetwork.getInstance().setRedraw();
     }
 
     /**
@@ -82,10 +85,9 @@ export class LinkNode extends DOMNode
             return;
         }
 
-        this.isHover = false;
+        this.hoverOffsetAnimCnt = window.hgn.animCnt;
+        this.animFunc = this.leaveAnimation;
         this.DOM.classList.remove('active');
-
-        HorrorGameNetwork.getInstance().setRedraw();
     }
 
     /**
@@ -98,8 +100,7 @@ export class LinkNode extends DOMNode
         }
 
         if (this.url) {
-            HorrorGameNetwork.getInstance()
-                .changeNetwork(this.url);
+            window.hgn.changeNetwork(this.url);
         }
     }
 
@@ -120,6 +121,48 @@ export class LinkNode extends DOMNode
     }
 
     /**
+     * ホバーアニメーション
+     */
+    hoverAnimation()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+        } else {
+            this.animFunc = null;
+            this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)";
+            this.ctxParams.shadowColor = "rgb(90, 255, 25)";
+            this.ctxParams.shadowBlur = 8;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
+    /**
+     * リーブアニメーション
+     */
+    leaveAnimation()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = 1 - animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+        } else {
+            this.animFunc = null;
+            this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)";
+            this.ctxParams.shadowColor = "rgb(0, 150, 0)";
+            this.ctxParams.shadowBlur = 4;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
+    /**
      * 描画
      *
      * @param ctx
@@ -129,20 +172,13 @@ export class LinkNode extends DOMNode
         if (this.scale === 0) {
             // 何もしない
         } else if (this.scale === 1) {
-            if (this.isHover) {
-                ctx.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
-                ctx.shadowColor = "lime"; // 影の色
-                ctx.shadowBlur = 10; // 影のぼかし効果
-                ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-            } else {
-                ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-                ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
-                ctx.shadowBlur = 8; // 影のぼかし効果
-                ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
-            }
-            ctx.lineWidth = 2; // 線の太さ
-            ctx.lineJoin = "round"; // 線の結合部分のスタイル
-            ctx.lineCap = "round"; // 線の末端のスタイル
+            ctx.strokeStyle = this.ctxParams.strokeStyle;
+            ctx.shadowColor = this.ctxParams.shadowColor;
+            ctx.shadowBlur = this.ctxParams.shadowBlur;
+            ctx.fillStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
 
             super.setShapePath(ctx);
             ctx.stroke();
