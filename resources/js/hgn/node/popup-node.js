@@ -1,7 +1,4 @@
-import {Vertex} from '../vertex.js';
-import {Param} from '../param.js';
-import {Network} from '../network.js';
-import {DOMNode, OctaNode} from './octa-node.js';
+import {DOMNode} from './octa-node.js';
 import {LinkNode} from './link-node.js';
 import {HorrorGameNetwork} from '../../hgn.js';
 
@@ -74,6 +71,8 @@ export class PopupNode extends DOMNode
         this.DOM.addEventListener('click', () => {
             //this.close();
         });
+
+        this.timer = null;
     }
 
     /**
@@ -87,6 +86,10 @@ export class PopupNode extends DOMNode
         this.canvas = null;
         this.ctx = null;
         this.DOM = null;
+        if (this.timer !== null) {
+            clearTimeout(this.timer);
+            this.timer = null;
+        }
     }
 
     /**
@@ -144,7 +147,7 @@ export class PopupNode extends DOMNode
         this.state = PopupNode.STATE_CLOSED;
         this.DOM.classList.remove('fade-in-text');
         this.DOM.classList.add('fade-out-text');
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
             this.DOM.classList.add('popup-node-closed');
         }, 200);
 

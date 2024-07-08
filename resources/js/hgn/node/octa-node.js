@@ -732,16 +732,6 @@ export class DOMNode extends OctaNode
     }
 
     /**
-     * アニメーションカウントを取得
-     *
-     * @returns {number}
-     */
-    get animCnt()
-    {
-        return window.hgn.animCnt;
-    }
-
-    /**
      * 再配置
      */
     reload()
@@ -867,12 +857,12 @@ export class TextNode extends DOMNode
      */
     appearAnimation()
     {
-        if (this.animCnt < 10) {
-        } else if (this.animCnt === 10) {
+        if (window.hgn.animCnt < 10) {
+        } else if (window.hgn.animCnt === 10) {
             this.fadeInText();
-        } else if (this.animCnt < 25) {
-            this.alpha = Util.getMidpoint(0, 0.6, (this.animCnt - 10) / 15);
-        } else if (this.animCnt === 25) {
+        } else if (window.hgn.animCnt < 25) {
+            this.alpha = Util.getMidpoint(0, 0.6, (window.hgn.animCnt - 10) / 15);
+        } else if (window.hgn.animCnt === 25) {
             this.alpha = 0.6;
             this.animFunc = null;
         }
@@ -892,9 +882,9 @@ export class TextNode extends DOMNode
      */
     disappearAnimation()
     {
-        if (this.animCnt < 15) {
-            this.alpha = Util.getMidpoint(0, 0.6, 1 - (this.animCnt - 10) / 15);
-        } else if (this.animCnt === 15) {
+        if (window.hgn.animCnt < 15) {
+            this.alpha = Util.getMidpoint(0, 0.6, 1 - (window.hgn.animCnt - 10) / 15);
+        } else if (window.hgn.animCnt === 15) {
             this.alpha = 0.0;
             this.animFunc = null;
         }

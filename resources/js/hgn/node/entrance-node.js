@@ -41,6 +41,7 @@ export class EntranceNode extends LinkNode
             lineWidth: 8
         };
 
+        this.isHover = false;
         this.isUseAnimVertices = false;
         this.isDrawLight = true;
     }
@@ -154,11 +155,13 @@ export class EntranceNode extends LinkNode
             return;
         }
 
+        this.isHover = true;
         this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
         this.ctxParams.shadowColor = "lime"; // 影の色
         this.ctxParams.shadowBlur = 10; // 影のぼかし効果
-
-        super.mouseEnter();
+        this.hoverOffsetAnimCnt = window.hgn.animCnt;
+        this.animFunc = this.hoverAnimation;
+        this.DOM.classList.add('active');
     }
 
     /**
@@ -170,12 +173,57 @@ export class EntranceNode extends LinkNode
             return;
         }
 
+        this.isHover = false;
         this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-        this.ctxParams.shadowColor = "rgb(0,150, 0)"; // 影の色
+        this.ctxParams.shadowColor = "rgb(0, 150, 0)"; // 影の色
         this.ctxParams.shadowBlur = 0; // 影のぼかし効果
-
-        super.mouseLeave();
+        this.hoverOffsetAnimCnt = window.hgn.animCnt;
+        this.animFunc = this.leaveAnimation;
+        this.DOM.classList.remove('active');
     }
+
+    /**
+     * ホバーアニメーション
+     */
+    hoverAnimation()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+        } else {
+            this.animFunc = null;
+            this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)";
+            this.ctxParams.shadowColor = "rgb(90, 255, 25)";
+            this.ctxParams.shadowBlur = 10;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
+    /**
+     * りーブアニメーション
+     */
+    leaveAnimation()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = 1 - animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+        } else {
+            this.animFunc = null;
+            this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)";
+            this.ctxParams.shadowColor = "rgb(0, 150, 0)";
+            this.ctxParams.shadowBlur = 0;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
 
     /**
      * 描画
