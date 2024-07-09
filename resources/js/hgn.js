@@ -109,6 +109,8 @@ export class HorrorGameNetwork
 
         this.isWaitDisappear = false;
         this.dataCache = null;
+
+        this.loadingShowTimer = null;
     }
 
     /**
@@ -832,11 +834,21 @@ export class HorrorGameNetwork
         urlObj.searchParams.append('a', '1');
         url = urlObj.toString();
 
+        this.loadingShowTimer = setTimeout(()=>{
+            document.querySelector('#loading').style.display = 'block';
+        }, 1000);
+
         fetch(url, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
             },
         }).then((response) => {
+            if (this.loadingShowTimer !== null) {
+                clearTimeout(this.loadingShowTimer);
+            }
+            this.loadingShowTimer = null;
+            document.querySelector('#loading').style.display = 'none';
+
             if (!response.ok) {
                 return response.json().then(error => {
                     callback(error, true);

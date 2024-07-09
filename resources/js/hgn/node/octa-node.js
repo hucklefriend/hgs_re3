@@ -745,10 +745,12 @@ export class DOMNode extends OctaNode
     fadeInText()
     {
         if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.remove('fade-in-text', 'fade-out-text');
             this.DOM.classList.add('fade-in-text');
         }
 
         this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.remove('fade-in-text', 'fade-out-text');
             e.classList.add('fade-in-text');
         });
 

@@ -80,4 +80,11 @@
             ご了承ください。
         </p>
     </section>
+
+    <section>
+        <h2><i class="bi bi-octagon"></i>利用画像</h2>
+        <p>
+            ・ローディング画像 <a href="https://pixabay.com/gifs/three-dots-loading-movement-11928/" target="_blank">Pixabay</a>
+        </p>
+    </section>
 @endsection
