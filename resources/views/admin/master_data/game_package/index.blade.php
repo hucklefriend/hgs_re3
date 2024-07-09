@@ -1,6 +1,14 @@
 @extends('admin.layout')
 
 @section('content')
+
+    <div class="text-end mb-2">
+        <a href="{{ route('Admin.MasterData.Package.EditShopMulti', $search) }}" class="btn btn-default">
+            <i class="fas fa-table"></i><i class="fas fa-shop"></i>Edit Shop Multi
+        </a>
+    </div>
+
+
     <div class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">Search</h4>
@@ -43,7 +51,7 @@
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>
                     <a href="{{ route('Admin.MasterData.Package.EditMulti', $search) }}" class="btn btn-default">
-                        <i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
+                        <i class="fas fa-table"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
                     </a>
                 </div>
             </div>
@@ -53,7 +61,7 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>プラットフォーム</th>
+                    <th>PLT</th>
                     <th>発売日</th>
                     <td></td>
                 </tr>

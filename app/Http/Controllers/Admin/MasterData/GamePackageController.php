@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
+use App\Enums\Shop;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GamePackageMakerLinkRequest;
 use App\Http\Requests\Admin\MasterData\GamePackageMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GamePackageRequest;
+use App\Http\Requests\Admin\MasterData\GamePackageShopMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GamePackageShopRequest;
 use App\Models\MasterData\GameMaker;
 use App\Models\MasterData\GamePackage;
@@ -338,5 +340,74 @@ class GamePackageController extends AbstractAdminController
     {
         $package->makers()->sync($request->validated('maker_id'));
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
+    }
+
+    /**
+     * ショップ一括更新
+     *
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function editShopMulti(Request $request): Application|Factory|View
+    {
+        $searchShop = $request->query('shop', Shop::Amazon->value);
+        $shop = Shop::tryFrom($searchShop);
+        $searchName = trim($request->query('name', ''));
+        $searchPlatforms = $request->query('platform_ids', []);
+        $search = ['shop' => $searchShop, 'name' => '', 'platform_ids' => []];
+
+        $packageShops = GamePackageShop::where('shop_id', $searchShop);
+
+        if (!empty($searchName) || !empty($searchPlatforms)) {
+            $packages = GamePackage::orderBy('id');
+
+            if (!empty($searchName)) {
+                $search['name'] = $searchName;
+                $words = explode(' ', $searchName);
+
+                $packages->where(function ($query) use ($words) {
+                    foreach ($words as $word) {
+                        $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
+                    }
+                });
+            }
+
+            if (!empty($searchPlatforms)) {
+                $search['platform_ids'] = $searchPlatforms;
+                $packages->orWhereIn('game_platform_id', $searchPlatforms);
+            }
+
+            $packageShops->whereIn('game_package_id', $packages->get(['id'])->pluck('id')->toArray());
+        }
+
+        return view('admin.master_data.game_package.edit_shop_multi', [
+            'packageShops' => $packageShops->paginate(AdminDefine::ITEMS_PER_PAGE),
+            'search' => $search,
+            'shop' => $shop,
+            'listSearch' => $this->getSearchSession(),
+        ]);
+    }
+
+    /**
+     * 更新処理
+     *
+     * @param GamePackageShopMultiUpdateRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updateShopMulti(GamePackageShopMultiUpdateRequest $request): RedirectResponse
+    {
+        $urls = $request->validated(['url']);
+        $param1s = $request->validated(['param1']);
+        foreach ($urls as $id => $url) {
+            $pkgShop = GamePackageShop::find($id);
+            if ($pkgShop !== null) {
+                $pkgShop->url = $url;
+                $pkgShop->param1 = $param1s[$id];
+                $pkgShop->save();
+            }
+        }
+
+        return redirect()->back();
     }
 }

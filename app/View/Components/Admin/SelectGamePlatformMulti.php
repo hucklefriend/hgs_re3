@@ -9,14 +9,16 @@ use Illuminate\View\Component;
 class SelectGamePlatformMulti extends Component
 {
     public string $name;
+    public mixed $selected;
     public bool $hasError;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($name)
+    public function __construct($name, $selected = [])
     {
         $this->name = $name;
+        $this->selected = $selected;
         $this->hasError = session('errors') && session('errors')->has($name);
     }
 
@@ -27,7 +29,7 @@ class SelectGamePlatformMulti extends Component
     {
         $list = \App\Models\MasterData\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray();
         return view('components.admin.select-game-platform-multi', [
-            'list' => $list,
+            'list' => $list
         ]);
     }
 }

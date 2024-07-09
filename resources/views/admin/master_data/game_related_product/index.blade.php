@@ -38,7 +38,7 @@
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>
                     <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default">
-                        <i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
+                        <i class="fas fa-table"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
                     </a>
                 </div>
             </div>
@@ -48,7 +48,6 @@
                 <tr>
                     <th>ID</th>
                     <th>タイトル</th>
-                    <th>画像</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -57,11 +56,6 @@
                     <tr>
                         <td>{{ $rp->id }}</td>
                         <td>{{ $rp->name }}</td>
-                        <td>
-                            @if ($rp->img_s_url)
-                                <img src="{{ $rp->img_s_url }}" class="thumbnail">
-                            @endif
-                        </td>
                         <td class="text-center">
                             <a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>

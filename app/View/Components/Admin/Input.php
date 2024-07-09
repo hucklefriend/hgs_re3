@@ -10,7 +10,7 @@ class Input extends Component
 {
     public string $name;
     public bool $hasError;
-    public $model;
+    public mixed $model;
 
     /**
      * Create a new component instance.
