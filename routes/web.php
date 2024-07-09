@@ -159,6 +159,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
                 Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
+                Route::get('edit_shop_multi', [$class, 'editShopMulti'])->name("{$basename}.EditShopMulti");
+                Route::put('edit_shop_multi', [$class, 'updateShopMulti'])->name("{$basename}.UpdateShopMulti");
+
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");

@@ -24,7 +24,6 @@ enum Shop: int
     case DMM = 43;
     case FANZA = 44;
     case FANZA_GAMES = 45;
-    case RAKUTEN_LINK_SHARE = 46;
     case Amazon_SEARCH = 101;
     case MERCARI_SEARCH = 102;
     case RAKUTEN_SEARCH = 103;
@@ -54,10 +53,9 @@ enum Shop: int
             self::DMM              => 'DMM.com',
             self::FANZA            => 'FANZA',
             self::FANZA_GAMES      => 'FANZA Games',
-            self::RAKUTEN_LINK_SHARE => 'リンクシェア',
-            self::Amazon_SEARCH => 'Amazonで探す',
-            self::MERCARI_SEARCH => 'メルカリで探す',
-            self::RAKUTEN_SEARCH => '楽天で探す',
+            self::Amazon_SEARCH    => 'Amazonで探す',
+            self::MERCARI_SEARCH   => 'メルカリで探す',
+            self::RAKUTEN_SEARCH   => '楽天で探す',
         };
     }
 

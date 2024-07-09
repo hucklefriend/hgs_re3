@@ -38,7 +38,7 @@
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>
                     <a href="{{ route('Admin.MasterData.RelatedProduct.EditMulti', $search) }}" class="btn btn-default">
-                        <i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
+                        <i class="fas fa-table"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
                     </a>
                 </div>
             </div>

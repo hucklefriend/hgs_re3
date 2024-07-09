@@ -34,7 +34,7 @@
                 <div>{{ $makers->appends($search)->links() }}</div>
                 <div class="text-end">
                     <a href="{{ route('Admin.MasterData.Maker.Add') }}" class="btn btn-default"><i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span></a>
-                    <a href="{{ route('Admin.MasterData.Maker.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-pen"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span></a>
+                    <a href="{{ route('Admin.MasterData.Maker.EditMulti', $search) }}" class="btn btn-default"><i class="fas fa-table"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span></a>
                 </div>
             </div>
 
