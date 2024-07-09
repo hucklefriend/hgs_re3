@@ -64,6 +64,7 @@
 <div id="popups">
     @yield('popup')
 </div>
+<div id="loading"><img src="{{ asset('img/loading.gif') }}" alt="now loading..."></div>
 <div id="debug" style="visibility: hidden;"></div>
 </body>
 </html>

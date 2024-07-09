@@ -33,7 +33,7 @@ export class LinkNode extends DOMNode
 
         this.url = null;
         const a = this.DOM.querySelector('a');
-        if (a) {
+        if (a && !a.classList.contains('outside-link')) {
             this.url = a.getAttribute('href');
             // aのクリックイベントを無効化
             a.addEventListener('click', (e) => e.preventDefault());

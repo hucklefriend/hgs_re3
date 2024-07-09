@@ -7,6 +7,7 @@ use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameFranchiseSeriesLink;
 use App\Models\MasterData\GameFranchiseTitleLink;
 use App\Models\MasterData\GameMaker;
+use App\Models\MasterData\GameMakerPackageLink;
 use App\Models\MasterData\GamePackage;
 use App\Models\MasterData\GamePlatform;
 use App\Models\MasterData\GameSeriesTitleLink;
@@ -196,8 +197,8 @@ class GameController extends Controller
             ->paginate(self::ITEM_PER_PAGE);
 
         // game_maker_idと紐づくパッケージの数を検索
-        GamePackage::whereIn('game_maker_id', $makers->getCollection()->pluck('id'))
-            ->select(['game_maker_id', \DB::raw('count(id) as count')])
+        GameMakerPackageLink::whereIn('game_maker_id', $makers->getCollection()->pluck('id'))
+            ->select(['game_maker_id', \DB::raw('count(game_maker_id) as count')])
             ->groupBy('game_maker_id')
             ->get()
             ->each(function ($item) use ($makers) {
