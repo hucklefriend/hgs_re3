@@ -2,10 +2,7 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-
-use App\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
 class GameTitleRequest extends FormRequest
 {
@@ -48,7 +45,7 @@ class GameTitleRequest extends FormRequest
             'original_package_id' => 'nullable|exists:game_packages,id',
             'description'         => '',
             'description_source'  => 'nullable',
-            'first_release_int'   => 'required|numeric|max:99999999',
+            'first_release'       => 'required|numeric|max:99999999',
         ];
     }
 }

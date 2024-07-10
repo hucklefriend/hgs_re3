@@ -3,7 +3,7 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">New Related Product Shop</h4>
+            <h4 class="panel-title">{{ $relatedProduct->name }} New Shop</h4>
         </div>
         <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.StoreShop', $relatedProduct) }}">
             @csrf

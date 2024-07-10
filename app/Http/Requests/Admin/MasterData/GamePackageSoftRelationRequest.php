@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-
-use Hgs3\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GamePackageSoftRelationRequest extends FormRequest

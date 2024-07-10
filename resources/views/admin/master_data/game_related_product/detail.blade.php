@@ -94,10 +94,10 @@
                                 <tr>
                                     <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name }}</a></td>
                                     <td>
-                                        <a href="{{ route('Admin.MasterData.RelatedProduct.EditShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
+                                        <a href="{{ route('Admin.MasterData.RelatedProduct.EditShop', ['related_product' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
                                     </td>
                                     <td>
-                                        <form method="post" action="{{ route('Admin.MasterData.RelatedProduct.DeleteShop', ['relatedProduct' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
+                                        <form method="post" action="{{ route('Admin.MasterData.RelatedProduct.DeleteShop', ['related_product' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
                                             @csrf
                                             {{ method_field('DELETE') }}
                                             <button type="submit" class="btn btn-danger btn-sm">

@@ -2,10 +2,7 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-
-use App\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
 class GamePackageShopMultiUpdateRequest extends FormRequest
 {

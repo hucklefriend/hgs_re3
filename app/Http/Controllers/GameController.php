@@ -378,7 +378,7 @@ class GameController extends Controller
     {
         $title = GameTitle::findByKey($titleKey);
 
-        $packages = $title->packages;
+        $packages = $title->packages->sortBy('release_at');
         $makers = [];
         foreach ($packages as $package) {
             foreach ($package->makers as $maker) {

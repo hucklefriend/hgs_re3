@@ -278,6 +278,7 @@ export class LinkNode extends DOMNode
     {
         this.fadeOutText();
         super.disappear();
+        this.isEnableMouse = false;
     }
 
     /**

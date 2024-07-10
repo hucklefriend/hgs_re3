@@ -39,6 +39,7 @@ class GameMakerRequest extends FormRequest
     {
         return [
             'name'                  => 'required|max:100',
+            'key'                   => 'required|max:50',
             'acronym'               => 'required|max:100',
             'phonetic'              => 'required|max:100|regex:/^[あ-ん][ぁ-んー0-9]*/u',
             'node_name'             => 'required|max:200',

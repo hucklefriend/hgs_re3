@@ -2,11 +2,8 @@
 
 namespace App\Http\Requests\Admin\MasterData;
 
-
-use App\Enums\RatedR;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Enum;
 
 class GameFranchiseMultiUpdateRequest extends FormRequest
 {
