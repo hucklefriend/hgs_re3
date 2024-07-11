@@ -93,7 +93,7 @@
                         <button type="button" style="margin:auto;" class="popup-node-close bg-transparent hover:bg-gray-500 text-gray-700 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">Cancel</button>
                     </div>
                     <div>
-                        <button type="submit" style="margin:auto;" class="popup-node-close bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Search</button>
+                        <button type="submit" style="margin:auto;" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Search</button>
                     </div>
                 </div>
             </form>
@@ -102,6 +102,8 @@
         <script>
             function search()
             {
+                window.hgn.closePopupNode('search-popup');
+
                 let name = document.querySelector('.horrorgame_search input[name="name"]').value;
                 let platform = [];
                 let rating = [];
@@ -131,7 +133,6 @@
                 }
 
                 window.hgn.changeNetwork(url);
-                window.hgn.closePopup();
 
                 return false;
             }
