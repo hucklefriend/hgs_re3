@@ -900,6 +900,19 @@ export class HorrorGameNetwork
     }
 
     /**
+     * ポップアップノードの非表示
+     *
+     * @param id
+     */
+    closePopupNode(id)
+    {
+        let node = this.nodesIdHash[id];
+        if (node) {
+            node.close();
+        }
+    }
+
+    /**
      * Bodyでスクロールさせるモード
      *
      * @param x

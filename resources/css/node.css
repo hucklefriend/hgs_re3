@@ -2,20 +2,6 @@
     --content-node-notch: 70px;
 }
 
-#title-node {
-    padding: 15px 25px;
-    display: inline-block;
-
-    h1 {
-        font-size: 20px;
-    }
-
-    .title-node-text {
-        margin-top: 15px;
-        font-size: 0.9rem;
-    }
-}
-
 .node {
     display: flex;
 }
@@ -38,7 +24,7 @@
 }
 
 .dom-node {
-    padding: 15px 25px;
+    padding: 10px 20px;
     display: inline-block;
 
     a:link, a:visited {
@@ -52,7 +38,7 @@
 }
 
 .link-node, .content-link-node, .popup-link-node {
-    padding: 13px 20px;
+    padding: 13px 18px;
     display: inline-block;
     cursor: pointer;
 
@@ -203,27 +189,25 @@
 .node-map {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-around;
 
     > div {
         display: inline-block;
+        white-space: nowrap;
 
         .link-node, .content-link-node, .dom-node, .popup-link-node {
-            margin: 25px;
+            margin: 20px;
         }
     }
 
     > div:nth-child(2n) {
-        padding-top: 40px;
-        padding-left: 25px;
+        padding-top: 20px;
     }
     > div:nth-child(3n) {
-        padding-top: 25px;
-        padding-left: 10px;
+        padding-top: 13px;
     }
     > div:nth-child(5n) {
-        padding-top: 55px;
-        padding-left: 20px;
+        padding-top: 30px;
     }
 }
 
@@ -294,7 +278,35 @@
 
 /* ファブレット～ */
 @media (min-width: 550px) {
+    .dom-node {
+        padding: 15px 25px;
+    }
 
+    .link-node, .content-link-node, .popup-link-node {
+        padding: 13px 20px;
+    }
+
+    .node-map {
+        > div {
+            flex-basis: auto;
+            .link-node, .content-link-node, .dom-node, .popup-link-node {
+                margin: 25px;
+            }
+        }
+
+        > div:nth-child(2n) {
+            padding-top: 40px;
+            padding-left: 25px;
+        }
+        > div:nth-child(3n) {
+            padding-top: 25px;
+            padding-left: 10px;
+        }
+        > div:nth-child(5n) {
+            padding-top: 55px;
+            padding-left: 20px;
+        }
+    }
 }
 
 /* タブレット～ */

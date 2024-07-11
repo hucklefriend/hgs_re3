@@ -63,11 +63,9 @@ class GameController extends Controller
             $franchisesQuery->whereIn('id', $linkedFranchiseIds);
 
             $titleIds = $titles;
-            if (!empty($series)) {
-                $titleIds = $titleIds->concat(GameSeriesTitleLink::whereIn('game_series_id', $series)
-                    ->distinct()->pluck('game_title_id')->toArray());
-            }
         }
+
+        Log::debug('plt: ' . print_r($titleIds->toArray(), true));
 
         $ratings = $request->get('r', '');
         if (!empty($ratings)) {
@@ -106,35 +104,30 @@ class GameController extends Controller
 
         $groups = [];
         $games = [];
+        $prevTitleNum = 0;
         foreach ($franchises as $franchise) {
             $id = sprintf("g_%d_", $franchise->id);
 
             $titleNum = 0;
+            $prevTitleNumInSeries = 0;
             foreach ($franchise->series as $series) {
-                if (empty($titleIds)) {
-                    $titleNum += $series->titles->count();
-                } else {
-                    $titleNum += $series->titles->whereIn('id', $titleIds)->count();
-                }
-            }
-            if ($titleIds->isEmpty()) {
-                $titleNum += $franchise->titles->count();
-            } else {
-                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
-            }
-
-            if ($titleNum > 2) {
-                $groups[] = $games;
-                $games = [];
-            }
-
-            foreach ($franchise->series as $series) {
-                $prevId = null;
                 if ($titleIds->isEmpty()) {
                     $titles = $series->titles;
                 } else {
                     $titles = $series->titles->whereIn('id', $titleIds);
                 }
+                Log::debug('series: ' . print_r($titles->pluck('id')->toArray(), true));
+
+                $titleNumInSeries = $titles->count();
+                $titleNum += $titleNumInSeries;
+
+                if ($titleNumInSeries >= 2 && !empty($games)) {
+                    $groups[] = $games;
+                    $games = [];
+                }
+
+
+                $prevId = null;
 
                 foreach ($titles as $title) {
                     $games[] = (object)[
@@ -146,7 +139,48 @@ class GameController extends Controller
 
                     $prevId = $id . $title->id;
                 }
+
+                if ($titleNumInSeries >= 2 || $prevTitleNumInSeries >= 2) {
+                    $groups[] = $games;
+                    $games = [];
+                }
+
+                $prevTitleNumInSeries = $titleNumInSeries;
             }
+
+//            foreach ($franchise->series as $series) {
+//                $prevId = null;
+//                if ($titleIds->isEmpty()) {
+//                    $titles = $series->titles;
+//                } else {
+//                    $titles = $series->titles->whereIn('id', $titleIds);
+//                }
+//
+//                foreach ($titles as $title) {
+//                    $games[] = (object)[
+//                        'title'       => $title,
+//                        'dom_id'      => $id . $title->id,
+//                        'node_name'   => $title->node_name,
+//                        'connections' => is_null($prevId) ? [] : [$prevId],
+//                    ];
+//
+//                    $prevId = $id . $title->id;
+//                }
+//            }
+
+
+            if ($titleIds->isEmpty()) {
+                $titleNum += $franchise->titles->count();
+            } else {
+                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
+            }
+
+//            if ($titleNum >= 2 || $prevTitleNum >= 2) {
+//                $groups[] = $games;
+//                $games = [];
+//            }
+
+            $prevTitleNum = $titleNum;
 
             if ($titleIds->isEmpty()) {
                 $titles = $franchise->titles;
@@ -162,10 +196,11 @@ class GameController extends Controller
                 ];
             }
 
-            if ($titleNum > 2) {
-                $groups[] = $games;
-                $games = [];
-            }
+//            if (count($games) >= 2) {
+//                $groups[] = $games;
+//                $games = [];
+//                $titleNum = 0;
+//            }
         }
         if (count($games) > 0) {
             $groups[] = $games;
