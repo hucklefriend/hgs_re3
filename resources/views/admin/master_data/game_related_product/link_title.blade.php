@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Series.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
