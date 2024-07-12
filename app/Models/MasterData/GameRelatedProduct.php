@@ -23,6 +23,16 @@ class GameRelatedProduct extends \Eloquent
     ];
 
     /**
+     * プラットフォームを取得
+     *
+     * @return BelongsToMany
+     */
+    public function platforms(): BelongsToMany
+    {
+        return $this->belongsToMany(GamePlatform::class, GamePlatformRelatedProductLink::class);
+    }
+
+    /**
      * タイトルを取得
      *
      * @return BelongsToMany

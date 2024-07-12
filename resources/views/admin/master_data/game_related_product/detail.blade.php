@@ -63,6 +63,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>プラットフォーム</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->platforms as $plt)
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.Platform.Detail', $plt) }}">{{ $plt->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.MasterData.RelatedProduct.LinkPlatform', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">

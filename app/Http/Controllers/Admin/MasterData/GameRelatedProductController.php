@@ -6,10 +6,12 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductMediaMixLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductMultiUpdateRequest;
+use App\Http\Requests\Admin\MasterData\GameRelatedProductPlatformLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductShopRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductTitleLinkRequest;
 use App\Models\MasterData\GameMediaMix;
+use App\Models\MasterData\GamePlatform;
 use App\Models\MasterData\GameRelatedProduct;
 use App\Models\MasterData\GameRelatedProductShop;
 use App\Models\MasterData\GameTitle;
@@ -178,9 +180,40 @@ class GameRelatedProductController extends AbstractAdminController
     public function delete(GameRelatedProduct $relatedProduct): RedirectResponse
     {
         $relatedProduct->titles()->detach();
+        $relatedProduct->mediaMixes()->detach();
+        $relatedProduct->platforms()->detach();
         $relatedProduct->delete();
 
         return redirect()->route('Admin.MasterData.RelatedProduct');
+    }
+
+    /**
+     * プラットフォームとリンク
+     *
+     * @param GameRelatedProduct $relatedProduct
+     * @return Application|Factory|View
+     */
+    public function linkPlatform(GameRelatedProduct $relatedProduct): Application|Factory|View
+    {
+        $platforms = GamePlatform::orderBy('id')->get(['id', 'name']);
+        return view('admin.master_data.game_related_product.link_platform', [
+            'model' => $relatedProduct,
+            'linkedPlatformIds' => $relatedProduct->platforms()->pluck('id')->toArray(),
+            'platforms' => $platforms,
+        ]);
+    }
+
+    /**
+     * プラットフォームと同期処理
+     *
+     * @param GameRelatedProductPlatformLinkRequest $request
+     * @param GameRelatedProduct $relatedProduct
+     * @return RedirectResponse
+     */
+    public function syncPlatform(GameRelatedProductPlatformLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    {
+        $relatedProduct->platforms()->sync($request->validated('platform_id'));
+        return redirect()->route('Admin.MasterData.RelatedProduct.Detail', $relatedProduct);
     }
 
     /**
