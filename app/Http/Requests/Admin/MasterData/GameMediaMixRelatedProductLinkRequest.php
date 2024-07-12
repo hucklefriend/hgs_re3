@@ -34,7 +34,7 @@ class GameMediaMixRelatedProductLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'related_product_id' => 'nullable|array|exists:game_related_product,id',
+            'related_product_id' => 'nullable|array|exists:game_related_products,id',
         ];
     }
 }

@@ -63,7 +63,7 @@
     <tr>
         <th>最初のパッケージ発売日</th>
         <td>
-            <x-admin.input name="first_release" :model="$model" type="number" min="0" max="99999999" />
+            <x-admin.input name="first_release_int" :model="$model" type="number" min="0" max="99999999" />
         </td>
     </tr>
 </table>

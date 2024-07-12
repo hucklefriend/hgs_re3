@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Information;
 use App\Models\MasterData\GameFranchise;
 use App\Models\MasterData\GameFranchiseSeriesLink;
 use App\Models\MasterData\GameFranchiseTitleLink;
 use App\Models\MasterData\GameMaker;
 use App\Models\MasterData\GameMakerPackageLink;
+use App\Models\MasterData\GameMediaMix;
 use App\Models\MasterData\GamePackage;
 use App\Models\MasterData\GamePlatform;
 use App\Models\MasterData\GameSeriesTitleLink;
@@ -18,9 +18,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Mockery\Exception;
 
 class GameController extends Controller
 {
@@ -40,7 +38,6 @@ class GameController extends Controller
         $search = ['n' => '', 'p' => [], 'r' => []];
 
         $franchisesQuery = GameFranchise::orderBy('phonetic');
-        $groups = [];
 
         $name = $request->get('n', '');
         if (strlen($name) > 0) {
@@ -64,8 +61,6 @@ class GameController extends Controller
 
             $titleIds = $titles;
         }
-
-        Log::debug('plt: ' . print_r($titleIds->toArray(), true));
 
         $ratings = $request->get('r', '');
         if (!empty($ratings)) {
@@ -104,11 +99,9 @@ class GameController extends Controller
 
         $groups = [];
         $games = [];
-        $prevTitleNum = 0;
         foreach ($franchises as $franchise) {
             $id = sprintf("g_%d_", $franchise->id);
 
-            $titleNum = 0;
             $prevTitleNumInSeries = 0;
             foreach ($franchise->series as $series) {
                 if ($titleIds->isEmpty()) {
@@ -116,16 +109,12 @@ class GameController extends Controller
                 } else {
                     $titles = $series->titles->whereIn('id', $titleIds);
                 }
-                Log::debug('series: ' . print_r($titles->pluck('id')->toArray(), true));
 
                 $titleNumInSeries = $titles->count();
-                $titleNum += $titleNumInSeries;
-
                 if ($titleNumInSeries >= 2 && !empty($games)) {
                     $groups[] = $games;
                     $games = [];
                 }
-
 
                 $prevId = null;
 
@@ -148,40 +137,6 @@ class GameController extends Controller
                 $prevTitleNumInSeries = $titleNumInSeries;
             }
 
-//            foreach ($franchise->series as $series) {
-//                $prevId = null;
-//                if ($titleIds->isEmpty()) {
-//                    $titles = $series->titles;
-//                } else {
-//                    $titles = $series->titles->whereIn('id', $titleIds);
-//                }
-//
-//                foreach ($titles as $title) {
-//                    $games[] = (object)[
-//                        'title'       => $title,
-//                        'dom_id'      => $id . $title->id,
-//                        'node_name'   => $title->node_name,
-//                        'connections' => is_null($prevId) ? [] : [$prevId],
-//                    ];
-//
-//                    $prevId = $id . $title->id;
-//                }
-//            }
-
-
-            if ($titleIds->isEmpty()) {
-                $titleNum += $franchise->titles->count();
-            } else {
-                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
-            }
-
-//            if ($titleNum >= 2 || $prevTitleNum >= 2) {
-//                $groups[] = $games;
-//                $games = [];
-//            }
-
-            $prevTitleNum = $titleNum;
-
             if ($titleIds->isEmpty()) {
                 $titles = $franchise->titles;
             } else {
@@ -195,17 +150,10 @@ class GameController extends Controller
                     'connections' => [],
                 ];
             }
-
-//            if (count($games) >= 2) {
-//                $groups[] = $games;
-//                $games = [];
-//                $titleNum = 0;
-//            }
         }
         if (count($games) > 0) {
             $groups[] = $games;
         }
-
 
         return $this->network(view('game.horrorgame_network', [
             'platforms' => GamePlatform::select(['id', 'name'])->orderBy('sort_order')->get(),
@@ -425,6 +373,23 @@ class GameController extends Controller
             'title'    => $title,
             'packages' => $packages,
             'makers'   => $makers,
+        ]));
+    }
+
+    /**
+     * メディアミックスの詳細ネットワーク
+     *
+     * @param Request $request
+     * @param string $mediaMixKey
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function mediaMixDetailNetwork(Request $request, string $mediaMixKey): JsonResponse|Application|Factory|View
+    {
+        $mediaMix = GameMediaMix::findByKey($mediaMixKey);
+
+        return $this->network(view('game.media_mix_detail_network', [
+            'mediaMix' => $mediaMix,
         ]));
     }
 }

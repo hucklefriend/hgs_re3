@@ -140,22 +140,7 @@
         </div>
     </section>
 
-    @if ($title->relatedProducts->count() > 0)
-    <section>
-        <div class="node">
-            <h2 class="head2 fade">関連商品</h2>
-        </div>
-        <div class="node-map">
-            @foreach ($title->relatedProducts as $related)
-                <div>
-                    <div class="text-node fade">
-                        {!! $related->node_name !!}
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
+    @include('common.related_products', ['model' => $title])
 
     <section>
     <div class="node">

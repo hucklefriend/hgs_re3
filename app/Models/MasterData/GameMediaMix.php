@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class GameMediaMix extends \Eloquent
 {
+    use KeyFindTrait;
+
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [

@@ -15,7 +15,7 @@
                 <div class="list-group" id="admin-link-list">
                 @foreach ($mediaMixes as $mm)
                     <label class="list-group-item">
-                        <input type="radio" name="media_mix_id" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
+                        <input type="checkbox" name="media_mix_id[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
                         {{ $mm->name }}
                     </label>
                 @endforeach

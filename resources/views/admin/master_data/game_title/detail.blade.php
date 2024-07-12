@@ -11,7 +11,7 @@
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
-            <table class="table admin-form-table">
+            <table class="table admin-detail-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
@@ -60,6 +60,12 @@
                     <th>説明</th>
                     <td>
                         @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
+                    <th>初リリース日</th>
+                    <td>
+                        {{ $model->first_release_int }}
                     </td>
                 </tr>
                 <tr>
