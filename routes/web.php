@@ -235,7 +235,7 @@ Route::get('about', [$class, 'about'])->name('About');
 Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
 Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 
-// マスター
+// ゲームネットワーク
 Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // ホラーゲームネットワーク
@@ -255,4 +255,6 @@ Route::group(['prefix' => 'game'], function () {
     Route::get('/platform/{platformKey}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
     // プラットフォームネットワーク
     Route::get('/platform', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
+    // メディアミックス詳細ネットワーク
+    Route::get('/media-mix/{mediaMixKey}', [$class, 'mediaMixDetailNetwork'])->name('Game.MediaMixDetailNetwork');
 });

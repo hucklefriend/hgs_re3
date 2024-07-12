@@ -11,7 +11,7 @@
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
-            <table class="table admin-form-table">
+            <table class="table admin-detail-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>

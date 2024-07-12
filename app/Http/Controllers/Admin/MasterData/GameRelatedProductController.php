@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\MasterData\GameRelatedProductMediaMixLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductRequest;
 use App\Http\Requests\Admin\MasterData\GameRelatedProductShopRequest;
@@ -230,11 +231,11 @@ class GameRelatedProductController extends AbstractAdminController
     /**
      * メディアミックスと同期処理
      *
-     * @param GameRelatedProductTitleLinkRequest $request
+     * @param GameRelatedProductMediaMixLinkRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function syncMediaMix(GameRelatedProductTitleLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function syncMediaMix(GameRelatedProductMediaMixLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
     {
         $relatedProduct->mediaMixes()->sync($request->validated('media_mix_id'));
         return redirect()->route('Admin.MasterData.RelatedProduct.Detail', $relatedProduct);

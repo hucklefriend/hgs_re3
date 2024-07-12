@@ -11,7 +11,7 @@
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
-            <table class="table admin-form-table">
+            <table class="table admin-detail-table">
                 <tr>
                     <th>ID</th>
                     <td>{{ $model->id }}</td>
@@ -78,9 +78,11 @@
                 <tr>
                     <th>メディアミックス</th>
                     <td>
+                        <ul class="list-group">
                         @foreach ($model->mediaMixes as $mm)
-                            <span class="mr-2"><a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></span>
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></li>
                         @endforeach
+                        </ul>
                         <a href="{{ route('Admin.MasterData.RelatedProduct.LinkMediaMix', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>

@@ -40,6 +40,21 @@
                 </div>
             </section>
         @endif
+
+        @if ($franchise->mediaMixes->count() > 0)
+            <section style="margin-top: 50px;margin-bottom: 30px;">
+                <h2 class="head2 fade">メディアミックス</h2>
+                <div class="node-map">
+                    @foreach ($franchise->mediaMixes as $mediaMix)
+                        <div>
+                            <div class="link-node link-node-center fade">
+                                <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">[{{ $mediaMix->type->text() }}]{!! $mediaMix->node_name !!}</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 
     @include('footer')

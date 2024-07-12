@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\MasterData;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\MasterData\GameSeriesFranchiseLinkRequest;
+use App\Http\Requests\Admin\MasterData\GameTitleFranchiseLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameTitleMultiUpdateRequest;
 use App\Http\Requests\Admin\MasterData\GameTitlePackageLinkRequest;
 use App\Http\Requests\Admin\MasterData\GameTitleRequest;
@@ -221,18 +222,18 @@ class GameTitleController extends AbstractAdminController
     /**
      * フランチャイズと同期処理
      *
-     * @param GameSeriesFranchiseLinkRequest $request
+     * @param GameTitleFranchiseLinkRequest $request
      * @param GameTitle $title
      * @return RedirectResponse
      */
-    public function syncFranchise(GameSeriesFranchiseLinkRequest $request, GameTitle $title): RedirectResponse
+    public function syncFranchise(GameTitleFranchiseLinkRequest $request, GameTitle $title): RedirectResponse
     {
         if ($title->franchise()) {
             $title->franchise()->titles()->detach($title->id);
         }
 
         $franchise = GameFranchise::find($request->validated('franchise_id'));
-        $franchise->series()->attach($title->id);
+        $franchise->titles()->attach($title->id);
 
         return redirect()->route('Admin.MasterData.Title.Detail', $title);
     }

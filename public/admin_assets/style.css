@@ -1,8 +1,9 @@
-table.admin-detail-table {
+table.admin-detail-table, table.admin-form-table {
     width: 100%;
 
     th {
         width: auto;
+        padding-right: 10px;
         white-space: nowrap;
     }
 
@@ -11,12 +12,12 @@ table.admin-detail-table {
     }
 }
 
-.admin-form-table th {
+table.admin-form-table th {
     white-space: nowrap;
 }
 
-.admin-form-table tr:last-child > td,
-.admin-form-table tr:last-child > th {
+table.admin-form-table tr:last-child > td,
+table.admin-form-table tr:last-child > th {
     border-bottom: none;
 }
 
