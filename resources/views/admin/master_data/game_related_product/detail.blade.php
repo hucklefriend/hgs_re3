@@ -80,7 +80,7 @@
                     <td>
                         <ul class="list-group">
                         @foreach ($model->mediaMixes as $mm)
-                                <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></li>
+                            <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.MediaMix.Detail', $mm) }}">[{{ $mm->type->text() }}] {{ $mm->name }}</a></li>
                         @endforeach
                         </ul>
                         <a href="{{ route('Admin.MasterData.RelatedProduct.LinkMediaMix', $model) }}" class="btn btn-default">

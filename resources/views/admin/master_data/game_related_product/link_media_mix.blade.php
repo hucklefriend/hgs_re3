@@ -16,7 +16,7 @@
                 @foreach ($mediaMixes as $mm)
                     <label class="list-group-item">
                         <input type="checkbox" name="media_mix_id[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
-                        {{ $mm->name }}
+                        [{{ $mm->type->text() }}] {{ $mm->name }}
                     </label>
                 @endforeach
                 </div>
