@@ -27,7 +27,10 @@ class SelectGamePlatformMulti extends Component
      */
     public function render(): View|Closure|string
     {
-        $list = \App\Models\MasterData\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray();
+        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name', 'sort_order'])
+            ->sortBy('sort_order')
+            ->pluck('name', 'id')
+            ->toArray();
         return view('components.admin.select-game-platform-multi', [
             'list' => $list
         ]);

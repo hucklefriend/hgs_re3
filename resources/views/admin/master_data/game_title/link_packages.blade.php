@@ -20,7 +20,7 @@
                 <div class="list-group" id="admin-link-list">
                     @foreach ($packages as $package)
                         <label class="list-group-item" data-platform="{{ $package->game_platform_id }}">
-                            <input type="checkbox" name="package_id" value="{{ $package->id }}" class="form-check-input me-1" @checked(in_array($package->id, $linkedPackageIds))>
+                            <input type="checkbox" name="package_id[]" value="{{ $package->id }}" class="form-check-input me-1" @checked(in_array($package->id, $linkedPackageIds))>
                             {{ $package->name }} ({{ $platformHash[$package->game_platform_id] }})
                         </label>
                     @endforeach

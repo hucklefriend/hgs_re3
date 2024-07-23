@@ -14,7 +14,10 @@ class SelectGamePlatform extends Input
     public function render(): View|Closure|string
     {
         $name = $this->name;
-        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name'])->pluck('name', 'id')->toArray();
+        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name', 'sort_order'])
+            ->sortBy('sort_order')
+            ->pluck('name', 'id')
+            ->toArray();
         return view('components.admin.select', [
             'list' => ['' => '-'] + $list,
             'selected' => $this->model->$name,

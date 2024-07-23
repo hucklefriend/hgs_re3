@@ -303,7 +303,6 @@ class GameTitleController extends AbstractAdminController
     public function syncPackage(GameTitlePackageLinkRequest $request, GameTitle $title): RedirectResponse
     {
         $title->packages()->sync($request->validated('package_id'));
-
         return redirect()->route('Admin.MasterData.Title.Detail', $title);
     }
 }
