@@ -18,7 +18,6 @@ class GameTitle extends \Eloquent
      * @var array デフォルト値
      */
     protected $attributes = [
-        'genre' => '',
     ];
 
     /**

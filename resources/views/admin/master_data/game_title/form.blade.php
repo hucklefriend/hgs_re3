@@ -43,12 +43,6 @@
         </td>
     </tr>
     <tr>
-        <th>ジャンル</th>
-        <td>
-            <x-admin.input name="genre" :model="$model" maxlength="150" />
-        </td>
-    </tr>
-    <tr>
         <th>説明文</th>
         <td>
             <x-admin.textarea name="description" :model="$model" />

@@ -49,10 +49,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>ジャンル</th>
-                    <td>{{ $model->genre }}</td>
-                </tr>
-                <tr>
                     <th>原点パッケージ</th>
                     <td>{{ $model->originalPackage->name ?? '-' }}</td>
                 </tr>
