@@ -49,8 +49,6 @@ class GameMakerController extends AbstractAdminController
             $makers->where(function ($query) use ($words) {
                 foreach ($words as $word) {
                     $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
-                    $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
-                    $query->orWhere('acronym', operator: 'LIKE', value: '%' . $word . '%');
                 }
             });
 

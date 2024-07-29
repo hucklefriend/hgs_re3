@@ -20,8 +20,6 @@ class GameMaker extends \Eloquent
      */
     protected $attributes = [
         'name'     => '',
-        'acronym'  => '',
-        'phonetic' => '',
     ];
 
     /**

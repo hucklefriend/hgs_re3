@@ -25,14 +25,6 @@
                     <td>{{ $model->name }}</td>
                 </tr>
                 <tr>
-                    <th>略称</th>
-                    <td>{{ $model->acronym }}</td>
-                </tr>
-                <tr>
-                    <th>よみがな</th>
-                    <td>{{ $model->phonetic }}</td>
-                </tr>
-                <tr>
                     <th>ノード表示用名称</th>
                     <td>
                         <div class="d-inline-block text-center">

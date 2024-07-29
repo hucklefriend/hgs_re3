@@ -43,7 +43,6 @@
                 <tr>
                     <th>ID</th>
                     <th>名前</th>
-                    <th>略称</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -52,7 +51,6 @@
                     <tr>
                         <td>{{ $maker->id }}</td>
                         <td>{{ $maker->name }}</td>
-                        <td>{{ $maker->acronym }}</td>
                         <td class="text-center"><a href="{{ route('Admin.MasterData.Maker.Detail', $maker) }}" class="btn btn-default"><i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span></a></td>
                     </tr>
                 @endforeach

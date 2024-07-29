@@ -24,18 +24,6 @@
         </td>
     </tr>
     <tr>
-        <th>略称</th>
-        <td>
-            <x-admin.input name="acronym" :model="$model" required maxlength="100" />
-        </td>
-    </tr>
-    <tr>
-        <th>よみがな</th>
-        <td>
-            <x-admin.input name="phonetic" :model="$model" required maxlength="100" />
-        </td>
-    </tr>
-    <tr>
         <th>ノード表示用の名前</th>
         <td>
             <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
