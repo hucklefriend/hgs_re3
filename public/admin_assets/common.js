@@ -49,6 +49,17 @@ $(()=>{
             }
         });
     }
+
+    $('textarea').each(function (){
+        $(this).on('input', function(e) {
+            let elem = $(this);
+            const height = this.scrollHeight;
+            const clientHeight = elem.get(0).clientHeight;
+            if (clientHeight < height && height < 400) {
+                elem.css('height', height + 'px');
+            }
+        });
+    });
 });
 
 

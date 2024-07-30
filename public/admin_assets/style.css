@@ -30,3 +30,7 @@ table.admin-form-table tr:last-child > th {
 .edit-multi-textarea {
     height: 4rem;
 }
+
+textarea {
+    height: 60px;
+}
