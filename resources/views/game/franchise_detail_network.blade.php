@@ -9,7 +9,17 @@
                 {!! $franchise->h1_node_name !!}<br>
                 フランチャイズ
             </h1>
-        </div>
+        </div
+
+        @if (!empty($franchise->description))
+            <section>
+                <div class="node node-center">
+                    <div class="text-node fade">
+                        @include('common.description', ['model' => $franchise])
+                    </div>
+                </div>
+            </section>
+        @endif
 
         @foreach($franchise->series as $series)
             <section style="margin-top: 50px;margin-bottom: 30px;">

@@ -45,6 +45,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
                     <th>シリーズ</th>
                     <td>
                         <ul class="list-group">

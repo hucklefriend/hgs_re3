@@ -37,4 +37,16 @@
             <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
+    <tr>
+        <th>説明文</th>
+        <td>
+            <x-admin.textarea name="description" :model="$model" />
+        </td>
+    </tr>
+    <tr>
+        <th>説明文の引用元</th>
+        <td>
+            <x-admin.input name="description_source" :model="$model" maxlength="200" />
+        </td>
+    </tr>
 </table>
