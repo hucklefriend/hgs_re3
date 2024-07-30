@@ -32,7 +32,7 @@ class GamePackageRequest extends FormRequest
             'node_name'         => 'required|max:200',
             'game_platform_id'  => 'required_without:game_platform_ids|exists:game_platforms,id',
             'game_platform_ids' => 'required_without:game_platform_id|array|exists:game_platforms,id',
-            'game_maker_id'     => 'nullable|exists:game_makers,id',
+            'game_maker_ids'    => 'nullable|array|exists:game_makers,id',
             'release_at'        => 'required|max:100',
             'img_s_url'         => 'nullable|max:250',
             'img_m_url'         => 'nullable|max:250',

@@ -118,13 +118,20 @@ class GamePackageController extends AbstractAdminController
     public function store(GamePackageRequest $request): RedirectResponse
     {
         $platformIds = $request->validated('game_platform_ids');
+        $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
         unset($validated['game_platform_ids']);
+        unset($validated['game_maker_ids']);
+
         foreach ($platformIds as $platformId) {
             $validated['game_platform_id'] = $platformId;
             $package = new GamePackage();
             $package->fill($validated);
             $package->save();
+
+            if (!empty($makerIds)) {
+                $package->makers()->sync($makerIds);
+            }
         }
 
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
@@ -185,8 +192,16 @@ class GamePackageController extends AbstractAdminController
      */
     public function update(GamePackageRequest $request, GamePackage $package): RedirectResponse
     {
+        $makerIds = $request->validated('game_maker_ids', []);
+        $validated = $request->validated();
+        unset($validated['game_maker_ids']);
+
         $package->fill($request->validated());
         $package->save();
+
+        if (!empty($makerIds)) {
+            $package->makers()->sync($makerIds);
+        }
 
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
     }
@@ -213,9 +228,17 @@ class GamePackageController extends AbstractAdminController
      */
     public function makeCopy(GamePackageRequest $request): RedirectResponse
     {
+        $makerIds = $request->validated('game_maker_ids', []);
+        $validated = $request->validated();
+        unset($validated['game_maker_ids']);
+
         $package = new GamePackage();
         $package->fill($request->validated());
         $package->save();
+
+        if (!empty($makerIds)) {
+            $package->makers()->sync($makerIds);
+        }
 
         return redirect()->route('Admin.MasterData.Package.Detail', $package);
     }

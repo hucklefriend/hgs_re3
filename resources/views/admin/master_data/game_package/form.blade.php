@@ -18,6 +18,12 @@
             <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
         </td>
     </tr>
+    <tr>
+        <th>メーカー</th>
+        <td>
+            <x-admin.select-game-maker-multi name="game_maker_ids[]" :selected="$model->makerIds()" :model="$model"  />
+        </td>
+    </tr>
     @if ($isAdd)
         <tr>
             <th>プラットフォーム</th>

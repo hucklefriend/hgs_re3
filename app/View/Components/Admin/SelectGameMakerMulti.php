@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class SelectGamePlatformMulti extends Component
+class SelectGameMakerMulti extends Component
 {
     public string $name;
     public mixed $selected;
@@ -27,8 +27,7 @@ class SelectGamePlatformMulti extends Component
      */
     public function render(): View|Closure|string
     {
-        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name', 'sort_order'])
-            ->sortBy('sort_order')
+        $list = \App\Models\MasterData\GameMaker::all(['id', 'name'])
             ->pluck('name', 'id')
             ->toArray();
         return view('components.admin.select-multi', [
