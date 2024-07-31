@@ -22,3 +22,14 @@ h2.head2 {
     white-space: nowrap;
 }
 
+h3.head3 {
+    width: calc(100% - 80px);
+    margin: 0 0 1.5rem 0;
+    font-size: 15px;
+    padding: 5px 15px;
+    background: linear-gradient(to right, rgba(0, 100, 0, 0.7), rgba(0, 0, 0, 0.2));
+
+    .bi-octagon {
+        color: #AAFFAA;
+    }
+}

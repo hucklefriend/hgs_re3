@@ -3,7 +3,7 @@ import {Bg2PointNode} from './hgn/node/point-node.js';
 import {LinkNode} from './hgn/node/link-node.js';
 import {EntranceNode} from './hgn/node/entrance-node.js';
 import {ContentNode, ContentLinkNode} from './hgn/node/content-node.js';
-import {Head1Node, Head2Node} from './hgn/node/head-node.js';
+import {Head1Node, Head2Node, Head3Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
 import {Param} from './hgn/param.js';
 import {Util} from './hgn/util.js';
@@ -261,6 +261,12 @@ export class HorrorGameNetwork
         elems = document.querySelectorAll('.head2');
         elems.forEach(elem =>  {
             this.domNodes.push(new Head2Node(elem, 10));
+        });
+
+        // H3ノード
+        elems = document.querySelectorAll('.head3');
+        elems.forEach(elem =>  {
+            this.domNodes.push(new Head3Node(elem));
         });
 
         this.bg2.reload();

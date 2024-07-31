@@ -342,3 +342,52 @@ export class Head2Node extends DOMNode
         }
     }
 }
+
+
+export class Head3Node extends DOMNode
+{
+    /**
+     * コンストラクタ
+     *
+     * @param DOM
+     * @param notchSize
+     */
+    constructor(DOM, notchSize = 5)
+    {
+        super(DOM, notchSize);
+    }
+
+    /**
+     * 描画
+     *
+     * @param ctx
+     */
+    draw(ctx)
+    {
+    }
+
+    appear()
+    {
+        super.appear();
+        this.fadeInText();
+    }
+
+    appearAnimation()
+    {
+        // アニメーション終了
+        this.animFunc = null;
+    }
+
+    disappear()
+    {
+        super.disappear();
+        this.fadeOutText();
+    }
+
+    disappearAnimation()
+    {
+        // アニメーション終了
+        this.animFunc = null;
+    }
+}
+
