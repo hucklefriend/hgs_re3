@@ -9,16 +9,16 @@
 
 
     <section class="info">
-        @empty($infoList)
+        @if ($infoList->isEmpty())
             <div class="node">
-                <div class="text-node">
+                <div class="text-node fade">
                     現在、お知らせはありません。
                 </div>
             </div>
         @else
             @foreach ($infoList as $info)
                 <div class="node">
-                    <div class="content-link-node">
+                    <div class="content-link-node fade">
                         <a href="{{ route('Info', $info) }}">{{ $info->head }}</a>
                     </div>
                 </div>

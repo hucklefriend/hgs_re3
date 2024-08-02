@@ -74,7 +74,7 @@
     <section class="info">
         <h2 class="head2 fade">Information</h2>
 
-        @empty($infoList)
+        @if ($infoList->isEmpty())
             <div class="node">
                 <div class="text-node fade">
                     現在、お知らせはありません。
@@ -90,9 +90,9 @@
             @endforeach
         @endempty
 
-        <div class="node node-right">
+        <div class="node node-center">
             <div class="link-node link-node-small fade">
-                <a href="{{ route('InfoNetwork') }}">More</a>
+                <a href="{{ route('InfoNetwork') }}">過去のお知らせ</a>
             </div>
         </div>
     </section>
