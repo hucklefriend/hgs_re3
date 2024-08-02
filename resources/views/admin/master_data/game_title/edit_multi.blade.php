@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Title.EditMulti') }}" method="GET">
+            <form action="{{ route('Admin.Game.Title.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
@@ -33,7 +33,7 @@
         <div class="panel-body">
             <div>{{ $titles->appends($search)->links() }}</div>
             @include ('admin.all_errors')
-            <form method="POST" action="{{ route('Admin.MasterData.Title.UpdateMulti', $search) }}">
+            <form method="POST" action="{{ route('Admin.Game.Title.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">

@@ -8,7 +8,7 @@
         @foreach ($errors->all() as $error)
             <li>{{$error}}</li>
         @endforeach
-        <form method="POST" action="{{ route('Admin.MasterData.Package.MakeCopy', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Package.MakeCopy', $model) }}">
             @csrf
 
             <div class="panel-body">

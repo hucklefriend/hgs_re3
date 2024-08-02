@@ -5,7 +5,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">更新</h4>
         </div>
-        <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.UpdateShop', ['relatedProduct' => $relatedProduct, 'shop_id' => $model->shop_id]) }}">
+        <form method="POST" action="{{ route('Admin.Game.RelatedProduct.UpdateShop', ['relatedProduct' => $relatedProduct, 'shop_id' => $model->shop_id]) }}">
             {{ method_field('PUT') }}
             @csrf
 
@@ -14,7 +14,7 @@
             </div>
             <div class="panel-footer text-end">
                 <div class="panel-footer text-end">
-                    <a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $relatedProduct) }}" class="btn btn-default">Cancel</a>&nbsp;
+                    <a href="{{ route('Admin.Game.RelatedProduct.Detail', $relatedProduct) }}" class="btn btn-default">Cancel</a>&nbsp;
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </div>

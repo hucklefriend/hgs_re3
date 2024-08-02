@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Information;
-use App\Models\MasterData\GameFranchise;
+use App\Models\Game\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

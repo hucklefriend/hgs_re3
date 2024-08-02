@@ -10,7 +10,7 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
 
-        <form method="POST" action="{{ route('Admin.MasterData.Franchise.SyncTitle', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Franchise.SyncTitle', $model) }}">
             @csrf
 
             <div class="panel-body panel-inverse">
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Franchise.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.Franchise.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Package.EditMulti') }}" method="GET">
+            <form action="{{ route('Admin.Game.Package.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
@@ -37,7 +37,7 @@
         </div>
         <div class="panel-body">
             <div>{{ $packages->appends($search)->links() }}</div>
-            <form method="POST" action="{{ route('Admin.MasterData.Package.UpdateMulti', $search) }}">
+            <form method="POST" action="{{ route('Admin.Game.Package.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">

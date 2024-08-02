@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Package.EditShopMulti') }}" method="GET">
+            <form action="{{ route('Admin.Game.Package.EditShopMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">ショップ</label>
                     <div class="col-md-9">
@@ -43,7 +43,7 @@
         </div>
         <div class="panel-body">
             <div>{{ $packageShops->appends($search)->links() }}</div>
-            <form method="POST" action="{{ route('Admin.MasterData.Package.UpdateShopMulti', $search) }}">
+            <form method="POST" action="{{ route('Admin.Game.Package.UpdateShopMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">
@@ -62,7 +62,7 @@
                             <td>{{ $pkgShop->id }}</td>
                             <td>
                                 @if ($pkgShop->package)
-                                    <a href="{{ route('Admin.MasterData.Package.Detail', $pkgShop->package) }}">{{ $pkgShop->package->name }}</a>
+                                    <a href="{{ route('Admin.Game.Package.Detail', $pkgShop->package) }}">{{ $pkgShop->package->name }}</a>
                                 @endif
                             </td>
                             <td>{{ $pkgShop->package?->platform->acronym ?? '' }}</td>
@@ -82,7 +82,7 @@
                     </tbody>
                 </table>
                 <div class="my-4 d-flex justify-content-end">
-                    <a href="{{ route('Admin.MasterData.Package', $listSearch) }}" class="btn btn-default">Cancel</a>
+                    <a href="{{ route('Admin.Game.Package', $listSearch) }}" class="btn btn-default">Cancel</a>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

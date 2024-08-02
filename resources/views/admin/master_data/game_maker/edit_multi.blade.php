@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Maker.EditMulti') }}" method="GET">
+            <form action="{{ route('Admin.Game.Maker.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
@@ -33,7 +33,7 @@
         <div class="panel-body">
             <div>{{ $makers->appends($search)->links() }}</div>
             @include ('admin.all_errors')
-            <form method="POST" action="{{ route('Admin.MasterData.Maker.UpdateMulti', $search) }}">
+            <form method="POST" action="{{ route('Admin.Game.Maker.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">
@@ -59,7 +59,7 @@
                     </tbody>
                 </table>
                 <div class="my-4 d-flex justify-content-end">
-                    <a href="{{ route('Admin.MasterData.Maker', $search) }}" class="btn btn-default">Cancel</a>&nbsp;
+                    <a href="{{ route('Admin.Game.Maker', $search) }}" class="btn btn-default">Cancel</a>&nbsp;
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

@@ -12,7 +12,6 @@
     <meta content="" name="author" />
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
-
     <!-- ================== BEGIN core-css ================== -->
     <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet" />
@@ -115,38 +114,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="menu-item has-sub {{ menu_active("Admin.MasterData") }}">
+                <div class="menu-item has-sub {{ menu_active("Admin.Game") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
                             <i class="fas fa-gamepad"></i>
                         </div>
-                        <div class="menu-text">MasterData</div>
+                        <div class="menu-text">Game</div>
                         <div class="menu-caret"></div>
                     </a>
                     <div class="menu-submenu">
-                        <div class="menu-item  {{ menu_active("Admin.MasterData.Maker") }}">
-                            <a href="{{ route("Admin.MasterData.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
+                        <div class="menu-item  {{ menu_active("Admin.Game.Maker") }}">
+                            <a href="{{ route("Admin.Game.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Platform") }}">
-                            <a href="{{ route("Admin.MasterData.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Platform") }}">
+                            <a href="{{ route("Admin.Game.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Franchise") }}">
-                            <a href="{{ route("Admin.MasterData.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Franchise") }}">
+                            <a href="{{ route("Admin.Game.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Series") }}">
-                            <a href="{{ route("Admin.MasterData.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Series") }}">
+                            <a href="{{ route("Admin.Game.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Title") }}">
-                            <a href="{{ route("Admin.MasterData.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Title") }}">
+                            <a href="{{ route("Admin.Game.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Package") }}">
-                            <a href="{{ route("Admin.MasterData.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.PackageGroup") }}">
+                            <a href="{{ route("Admin.Game.PackageGroup") }}" class="menu-link"><div class="menu-text">Package Group</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.RelatedProduct") }}">
-                            <a href="{{ route("Admin.MasterData.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Package") }}">
+                            <a href="{{ route("Admin.Game.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.MediaMix") }}">
-                            <a href="{{ route("Admin.MasterData.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.RelatedProduct") }}">
+                            <a href="{{ route("Admin.Game.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.Game.MediaMix") }}">
+                            <a href="{{ route("Admin.Game.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
                         </div>
                     </div>
                 </div>

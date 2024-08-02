@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Series.Edit', $model) }}" class="btn btn-default">
+                <a href="{{ route('Admin.Game.Series.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
@@ -36,9 +36,9 @@
                     <th>フランチャイズ</th>
                     <td>
                         @if ($model->franchise())
-                            <span class="mr-2"><a href="{{ route('Admin.MasterData.Franchise.Detail', $model->franchise()) }}">{{ $model->franchise()->name }}</a></span>
+                            <span class="mr-2"><a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise()) }}">{{ $model->franchise()->name }}</a></span>
                         @endif
-                        <a href="{{ route('Admin.MasterData.Series.LinkFranchise', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Series.LinkFranchise', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
@@ -48,10 +48,10 @@
                     <td>
                         <ul class="list-group">
                         @foreach ($model->titles as $title)
-                            <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.Title.Detail', $title) }}">{{ $title->name }}</a></li>
+                            <li class="list-group-item p-2"><a href="{{ route('Admin.Game.Title.Detail', $title) }}">{{ $title->name }}</a></li>
                         @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.Series.LinkTitle', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Series.LinkTitle', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
@@ -60,7 +60,7 @@
         </div>
         <div class="panel-footer">
             <div class="text-end">
-                <form method="POST" action="{{ route('Admin.MasterData.Series.Delete', $model) }}" onsubmit="return confirm('削除します');">
+                <form method="POST" action="{{ route('Admin.Game.Series.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
                     <button class="btn btn-danger" type="submit">

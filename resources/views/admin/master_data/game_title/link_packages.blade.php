@@ -13,7 +13,7 @@
                 <x-admin.select-game-platform-multi name="'platform_ids[]'" id="admin-link-platform-filter" />
             </div>
         </div>
-        <form method="POST" action="{{ route('Admin.MasterData.Title.SyncPackage', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Title.SyncPackage', $model) }}">
             @csrf
 
             <div class="panel-body panel-inverse">
@@ -30,7 +30,7 @@
                 @endif
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Title.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.Title.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

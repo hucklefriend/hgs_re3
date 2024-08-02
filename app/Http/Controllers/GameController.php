@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MasterData\GameFranchise;
-use App\Models\MasterData\GameFranchiseSeriesLink;
-use App\Models\MasterData\GameFranchiseTitleLink;
-use App\Models\MasterData\GameMaker;
-use App\Models\MasterData\GameMakerPackageLink;
-use App\Models\MasterData\GameMediaMix;
-use App\Models\MasterData\GamePackage;
-use App\Models\MasterData\GamePlatform;
-use App\Models\MasterData\GameSeriesTitleLink;
-use App\Models\MasterData\GameTitle;
-use App\Models\MasterData\GameTitlePackageLink;
+use App\Models\Game\GameFranchise;
+use App\Models\Game\GameFranchiseSeriesLink;
+use App\Models\Game\GameFranchiseTitleLink;
+use App\Models\Game\GameMaker;
+use App\Models\Game\GameMakerPackageLink;
+use App\Models\Game\GameMediaMix;
+use App\Models\Game\GamePackage;
+use App\Models\Game\GamePlatform;
+use App\Models\Game\GameSeriesTitleLink;
+use App\Models\Game\GameTitle;
+use App\Models\Game\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -176,7 +176,7 @@ class GameController extends Controller
     {
         $makers = GameMaker::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
             ->whereNull('related_game_maker_id')
-            ->orderBy('phonetic')
+            ->orderBy('name')
             ->paginate(self::ITEM_PER_PAGE);
 
         // game_maker_idと紐づくパッケージの数を検索
