@@ -8,7 +8,7 @@
         @foreach ($errors->all() as $error)
             <li>{{$error}}</li>
         @endforeach
-        <form method="POST" action="{{ route('Admin.MasterData.Package.Update', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Package.Update', $model) }}">
             @csrf
             {{ method_field('PUT') }}
 
@@ -16,7 +16,7 @@
                 @include('admin.master_data.game_package.form', ['isAdd' => false])
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Package.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.Package.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

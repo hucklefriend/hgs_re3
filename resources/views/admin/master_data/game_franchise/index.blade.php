@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.Franchise') }}" method="GET">
+            <form action="{{ route('Admin.Game.Franchise') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
@@ -34,10 +34,10 @@
             <div class="d-flex  justify-content-between">
                 <div>{{ $franchises->appends($search)->links() }}</div>
                 <div class="text-end">
-                    <a href="{{ route('Admin.MasterData.Franchise.Add') }}" class="btn btn-default">
+                    <a href="{{ route('Admin.Game.Franchise.Add') }}" class="btn btn-default">
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>
-                    <a href="{{ route('Admin.MasterData.Franchise.EditMulti', $search) }}" class="btn btn-default">
+                    <a href="{{ route('Admin.Game.Franchise.EditMulti', $search) }}" class="btn btn-default">
                         <i class="fas fa-table"></i><i class="fas fa-pen"></i><span class="d-none d-md-inline"> Edit Multi</span>
                     </a>
                 </div>
@@ -56,10 +56,10 @@
                         <td>{{ $franchise->id }}</td>
                         <td>{{ $franchise->name }}</td>
                         <td class="text-center nowrap">
-                            <a href="{{ route('Admin.MasterData.Franchise.Detail', $franchise) }}" class="btn btn-default">
+                            <a href="{{ route('Admin.Game.Franchise.Detail', $franchise) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
                             </a>
-                            <a href="{{ route('Admin.MasterData.Franchise.LinkTree', $franchise) }}" class="btn btn-default">
+                            <a href="{{ route('Admin.Game.Franchise.LinkTree', $franchise) }}" class="btn btn-default">
                                 <i class="fas fa-tree"></i><span class="d-none d-md-inline"> Tree</span>
                             </a>
                         </td>

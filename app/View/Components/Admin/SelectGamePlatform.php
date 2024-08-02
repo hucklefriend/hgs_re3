@@ -2,6 +2,7 @@
 
 namespace App\View\Components\Admin;
 
+use App\Models\Game\GamePlatform;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -14,7 +15,7 @@ class SelectGamePlatform extends Input
     public function render(): View|Closure|string
     {
         $name = $this->name;
-        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name', 'sort_order'])
+        $list = GamePlatform::all(['id', 'name', 'sort_order'])
             ->sortBy('sort_order')
             ->pluck('name', 'id')
             ->toArray();

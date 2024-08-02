@@ -2,6 +2,7 @@
 
 namespace App\View\Components\Admin;
 
+use App\Models\Game\GameMaker;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -14,7 +15,7 @@ class SelectGameMaker extends Input
     public function render(): View|Closure|string
     {
         $name = $this->name;
-        $list = \App\Models\MasterData\GameMaker::all(['id', 'name'])->pluck('name', 'id')->toArray();
+        $list = GameMaker::all(['id', 'name'])->pluck('name', 'id')->toArray();
         return view('components.admin.select', [
             'list' => ['' => '-'] + $list,
             'selected' => $this->model->$name,

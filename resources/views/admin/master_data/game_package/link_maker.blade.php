@@ -11,7 +11,7 @@
         </div>
 
         @include ('admin.all_errors')
-        <form method="POST" action="{{ route('Admin.MasterData.Package.SyncMaker', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Package.SyncMaker', $model) }}">
             @csrf
 
             <div class="panel-body panel-inverse">
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Package.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.Package.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

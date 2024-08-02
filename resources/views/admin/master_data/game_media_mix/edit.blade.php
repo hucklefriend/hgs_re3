@@ -5,7 +5,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
-        <form method="POST" action="{{ route('Admin.MasterData.MediaMix.Update', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.MediaMix.Update', $model) }}">
             @csrf
             {{ method_field('PUT') }}
 
@@ -13,7 +13,7 @@
                 @include('admin.master_data.game_media_mix.form')
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.MediaMix.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.MediaMix.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Platform.Edit', $model) }}" class="btn btn-default">
+                <a href="{{ route('Admin.Game.Platform.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
@@ -67,10 +67,10 @@
                     <td>
                         <ul class="list-group">
                             @foreach ($model->relatedProducts as $rp)
-                                <li class="list-group-item p-2"><a href="{{ route('Admin.MasterData.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.Game.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
                             @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.Platform.LinkRelatedProduct', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Platform.LinkRelatedProduct', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
@@ -79,7 +79,7 @@
         </div>
         <div class="panel-footer">
             <div class="text-end">
-                <form method="POST" action="{{ route('Admin.MasterData.Platform.Delete', $model) }}" onsubmit="return confirm('削除します');">
+                <form method="POST" action="{{ route('Admin.Game.Platform.Delete', $model) }}" onsubmit="return confirm('削除します');">
                     @csrf
                     {{ method_field('DELETE') }}
                     <button class="btn btn-danger" type="submit">

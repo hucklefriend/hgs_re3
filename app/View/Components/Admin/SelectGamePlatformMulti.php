@@ -27,7 +27,7 @@ class SelectGamePlatformMulti extends Component
      */
     public function render(): View|Closure|string
     {
-        $list = \App\Models\MasterData\GamePlatform::all(['id', 'name', 'sort_order'])
+        $list = \App\Models\Game\GamePlatform::all(['id', 'name', 'sort_order'])
             ->sortBy('sort_order')
             ->pluck('name', 'id')
             ->toArray();

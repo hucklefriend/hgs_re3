@@ -6,7 +6,7 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.MasterData.RelatedProduct.EditMulti') }}" method="GET">
+            <form action="{{ route('Admin.Game.RelatedProduct.EditMulti') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
@@ -32,7 +32,7 @@
         </div>
         <div class="panel-body">
             @include ('admin.all_errors')
-            <form method="POST" action="{{ route('Admin.MasterData.RelatedProduct.UpdateMulti', $search) }}">
+            <form method="POST" action="{{ route('Admin.Game.RelatedProduct.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
                 <table class="table table-hover">

@@ -5,7 +5,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
-        <form method="POST" action="{{ route('Admin.MasterData.Maker.Update', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Maker.Update', $model) }}">
             @csrf
             {{ method_field('PUT') }}
 
@@ -13,7 +13,7 @@
                 @include('admin.master_data.game_maker.form')
             </div>
             <div class="panel-footer text-end">
-                <a href="{{ route('Admin.MasterData.Maker.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
+                <a href="{{ route('Admin.Game.Maker.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

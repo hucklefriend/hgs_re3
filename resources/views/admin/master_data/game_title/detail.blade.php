@@ -7,7 +7,7 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
-                <a href="{{ route('Admin.MasterData.Title.Edit', $model) }}" class="btn btn-default">
+                <a href="{{ route('Admin.Game.Title.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>
             </div>
@@ -69,12 +69,12 @@
                     <td>
                         @if ($model->series())
                             <span class="mr-2">
-                                <a href="{{ route('Admin.MasterData.Series.Detail', $model->series()) }}">
+                                <a href="{{ route('Admin.Game.Series.Detail', $model->series()) }}">
                                     {{ $model->series()->name }}
                                 </a>
                             </span>
                         @endif
-                        <a href="{{ route('Admin.MasterData.Title.LinkSeries', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Title.LinkSeries', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
@@ -84,16 +84,29 @@
                     <td>
                         @if ($model->franchise())
                             <span class="mr-2">
-                                <a href="{{ route('Admin.MasterData.Franchise.Detail', $model->franchise()) }}">
+                                <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise()) }}">
                                     {{ $model->franchise()->name }}
                                 </a>
                             </span>
                         @endif
                         @if (!$model->series())
-                        <a href="{{ route('Admin.MasterData.Title.LinkFranchise', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Title.LinkFranchise', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                         @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>パッケージグループ</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->packageGroups as $pkgGroup)
+                                <li class="list-group-item"><a href="{{ route('Admin.Game.PackageGroup.Detail', $pkgGroup) }}">{{ $pkgGroup->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.Game.Title.LinkPackageGroup', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -101,10 +114,10 @@
                     <td>
                         <ul class="list-group">
                             @foreach ($model->packages as $package)
-                                <li class="list-group-item"><a href="{{ route('Admin.MasterData.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
+                                <li class="list-group-item"><a href="{{ route('Admin.Game.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
                             @endforeach
                         </ul>
-                        <a href="{{ route('Admin.MasterData.Title.LinkPackage', $model) }}" class="btn btn-default">
+                        <a href="{{ route('Admin.Game.Title.LinkPackage', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                     </td>
@@ -116,15 +129,15 @@
             <div class="d-flex justify-content-between">
                 <div>
                     @if ($model->prev())
-                        <a href="{{ route('Admin.MasterData.Title.Detail', $model->prev()) }}" class="btn btn-default"><i class="fas fa-caret-left"></i></a>
+                        <a href="{{ route('Admin.Game.Title.Detail', $model->prev()) }}" class="btn btn-default"><i class="fas fa-caret-left"></i></a>
                     @endif
                     @if ($model->next())
-                        <a href="{{ route('Admin.MasterData.Title.Detail', $model->next()) }}" class="btn btn-default"><i class="fas fa-caret-right"></i></a>
+                        <a href="{{ route('Admin.Game.Title.Detail', $model->next()) }}" class="btn btn-default"><i class="fas fa-caret-right"></i></a>
                     @endif
                 </div>
                 <div class="text-end">
                     @if ($model->packages()->count() === 0)
-                        <form method="POST" action="{{ route('Admin.MasterData.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
+                        <form method="POST" action="{{ route('Admin.Game.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
                             @csrf
                             {{ method_field('DELETE') }}
                             <button class="btn btn-danger" type="submit">

@@ -110,34 +110,25 @@
         <div class="node">
             <h2 class="head2 fade">パッケージ</h2>
         </div>
-        <div class="product-list">
-            @foreach ($packages as $pkg)
-                <div class="product-info">
-                    <div class="text-node fade">
-                        @if ($pkg->img_s_url !== null)
-                            <div>
-                                <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}">
-                            </div>
-                        @endif
-                        {!! $pkg->node_name !!}
-                        <div style="margin-top: 10px;">
-                            {{ $pkg->platform->name }}<br>
-                            {{ $pkg->release_at }}
-                        </div>
-
-                        @if ($pkg->shops->count() > 0)
-                            <div style="margin-top: 10px;" class="shop-link">
-                                @foreach($pkg->shops as $shop)
-                                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
-                                        <i class="bi bi-shop"></i> {{ $shop->shop()->name }}
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
+            @if ($title->packageGroups()->exists())
+                @foreach ($title->packageGroups as $pkgGroup)
+                    <div class="node">
+                        <h3 class="head3 fade">{{ $pkgGroup->name }}</h3>
                     </div>
+
+                    <div class="product-list">
+                        @foreach ($pkgGroup->packages as $pkg)
+                            @include('common.package', ['pkg' => $pkg])
+                        @endforeach
+                    </div>
+                @endforeach
+            @else
+                <div class="product-list">
+                    @foreach ($title->packages as $pkg)
+                        @include('common.package', ['pkg' => $pkg])
+                    @endforeach
                 </div>
-            @endforeach
-        </div>
+            @endif
     </section>
 
     @include('common.related_products', ['model' => $title])
