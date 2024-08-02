@@ -5,7 +5,11 @@
                 <img src="{{ $pkg->img_s_url }}" alt="{{ $pkg->name }}">
             </div>
         @endif
-        {!! $pkg->node_name !!}
+        @if (!($isGroup ?? false))
+            {!! $pkg->node_name !!}
+        @elseif (!empty($pkg->acronym))
+            {!! $pkg->acronym !!}
+        @endif
         <div style="margin-top: 10px;">
             {{ $pkg->platform->name }}<br>
             {{ $pkg->release_at }}

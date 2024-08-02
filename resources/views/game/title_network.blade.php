@@ -118,7 +118,7 @@
 
                     <div class="product-list">
                         @foreach ($pkgGroup->packages as $pkg)
-                            @include('common.package', ['pkg' => $pkg])
+                            @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                         @endforeach
                     </div>
                 @endforeach
