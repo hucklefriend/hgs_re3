@@ -24,4 +24,14 @@
         </div>
     </div>
     --}}
+
+    @isset($footerLinks)
+        @foreach($footerLinks as $name => $url)
+            <div>
+                <div class="link-node fade">
+                    <a href="{{ $url }}">{{ $name }}</a>
+                </div>
+            </div>
+        @endforeach
+    @endisset
 </div>

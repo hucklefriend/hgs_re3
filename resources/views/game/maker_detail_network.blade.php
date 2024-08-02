@@ -36,5 +36,5 @@
         @endif
     </div>
 
-    @include('footer')
+    @include('footer', ['footerLinks' => $footerLinks])
 @endsection

@@ -218,6 +218,9 @@ class GameController extends Controller
         return $this->network(view('game.maker_detail_network', [
             'maker'  => $maker,
             'titles' => $titles,
+            'footerLinks' => [
+                'Maker' => route('Game.MakerNetwork'),
+            ]
         ]));
     }
 
@@ -271,8 +274,11 @@ class GameController extends Controller
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
         return $this->network(view('game.platform_detail_network', [
-            'platform'  => $platform,
-            'titles' => $titles,
+            'platform'    => $platform,
+            'titles'      => $titles,
+            'footerLinks' => [
+                'Platform' => route('Game.PlatformNetwork'),
+            ],
         ]));
     }
 
@@ -344,8 +350,11 @@ class GameController extends Controller
         }
 
         return $this->network(view('game.franchise_detail_network', [
-            'franchise' => $franchise,
-            'titles' => $titles
+            'franchise'   => $franchise,
+            'titles'      => $titles,
+            'footerLinks' => [
+                'Franchise' => route('Game.FranchiseNetwork'),
+            ],
         ]));
     }
 
