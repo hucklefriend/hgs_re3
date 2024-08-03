@@ -359,7 +359,9 @@ class GameTitleController extends AbstractAdminController
         $packages = [];
         if ($title->packages->isEmpty()) {
             foreach ($title->packageGroups as $pg) {
-                $packages += $pg->packages->toArray();
+                foreach ($pg->packages as $package) {
+                    $packages[] = $package;
+                }
             }
         } else {
             $packages = $title->packages;
