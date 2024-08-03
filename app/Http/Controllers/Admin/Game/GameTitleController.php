@@ -356,8 +356,11 @@ class GameTitleController extends AbstractAdminController
      */
     public function editPackageMulti(Request $request, GameTitle $title): Application|Factory|View
     {
+        $packages = [];
         if ($title->packages->isEmpty()) {
-            $packages = $title->packageGroups;
+            foreach ($title->packageGroups as $pg) {
+                $packages += $pg->packages->toArray();
+            }
         } else {
             $packages = $title->packages;
         }
