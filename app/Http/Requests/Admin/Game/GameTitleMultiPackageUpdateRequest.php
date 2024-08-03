@@ -28,7 +28,7 @@ class GameTitleMultiPackageUpdateRequest extends FormRequest
             'node_name'   => 'array',
             'node_name.*' => 'string|max:200',
             'acronym'     => 'array',
-            'acronym.*'   => 'string|max:200',
+            'acronym.*'   => 'nullable|string|max:200',
         ];
     }
 }
