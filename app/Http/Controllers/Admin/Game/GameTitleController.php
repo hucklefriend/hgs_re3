@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameSeriesFranchiseLinkRequest;
 use App\Http\Requests\Admin\Game\GameTitleFranchiseLinkRequest;
+use App\Http\Requests\Admin\Game\GameTitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\GameTitleMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GameTitlePackageLinkRequest;
 use App\Http\Requests\Admin\Game\GameTitleRequest;
 use App\Http\Requests\Admin\Game\GameTitleSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiGamePackageGroupRequest;
@@ -25,7 +24,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GameTitleController extends AbstractAdminController
 {
@@ -313,6 +311,7 @@ class GameTitleController extends AbstractAdminController
     public function syncPackageGroup(LinkMultiGamePackageGroupRequest $request, GameTitle $title): RedirectResponse
     {
         $title->packageGroups()->sync($request->validated('package_group_id'));
+        $title->packages()->detach();
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 
@@ -344,6 +343,48 @@ class GameTitleController extends AbstractAdminController
     public function syncPackage(LinkMultiGamePackageRequest $request, GameTitle $title): RedirectResponse
     {
         $title->packages()->sync($request->validated('package_id'));
+        $title->packageGroups()->detach();
         return redirect()->route('Admin.Game.Title.Detail', $title);
+    }
+
+    /**
+     * 関連パッケージの一括更新
+     *
+     * @param Request $request
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function editPackageMulti(Request $request, GameTitle $title): Application|Factory|View
+    {
+        if ($title->packages->isEmpty()) {
+            $packages = $title->packageGroups;
+        } else {
+            $packages = $title->packages;
+        }
+        return view('admin.master_data.game_title.edit_package_multi', compact('packages', 'title'));
+    }
+
+    /**
+     * 関連パッケージの更新処理
+     *
+     * @param GameTitleMultiPackageUpdateRequest $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updatePackageMulti(GameTitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
+    {
+        $nodeNames = $request->validated(['node_name']);
+        $acronyms = $request->validated(['acronym']);
+        foreach ($nodeNames as $id => $nodeName) {
+            $model = GamePackage::find($id);
+            if ($model !== null) {
+                $model->node_name = $nodeName;
+                $model->acronym = $acronyms[$id];
+                $model->save();
+            }
+        }
+
+        return redirect()->back();
     }
 }

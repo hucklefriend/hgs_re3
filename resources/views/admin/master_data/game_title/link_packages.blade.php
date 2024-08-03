@@ -1,6 +1,11 @@
 @extends('admin.layout')
 
 @section('content')
+
+    <div class="alert alert-warning my-3">
+        パッケージ単体と紐づけると、パッケージグループとの紐づけが解除されます。
+    </div>
+
     <div class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>

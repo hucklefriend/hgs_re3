@@ -107,6 +107,11 @@
                         <a href="{{ route('Admin.Game.Title.LinkPackageGroup', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
+                        @if (!$model->packageGroups->isEmpty())
+                            <a href="{{ route('Admin.Game.Title.UpdatePackageMulti', $model) }}" class="btn btn-default">
+                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Package</span>
+                            </a>
+                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -120,6 +125,11 @@
                         <a href="{{ route('Admin.Game.Title.LinkPackage', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
+                        @if (!$model->packages->isEmpty())
+                            <a href="{{ route('Admin.Game.Title.UpdatePackageMulti', $model) }}" class="btn btn-default">
+                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Package</span>
+                            </a>
+                        @endif
                     </td>
                 </tr>
             </table>

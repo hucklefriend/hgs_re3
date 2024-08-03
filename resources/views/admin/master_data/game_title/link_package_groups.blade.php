@@ -1,10 +1,16 @@
 @extends('admin.layout')
 
 @section('content')
+
+    <div class="alert alert-warning my-3">
+        パッケージグループと紐づけると、パッケージ単体との紐づけが解除されます。
+    </div>
+
     <div class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
+
         <div class="panel-body">
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
