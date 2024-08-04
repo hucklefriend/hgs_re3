@@ -266,18 +266,18 @@ Route::group(['prefix' => 'game'], function () {
     // フランチャイズ詳細ネットワーク
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク
-    Route::get('/franchise', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
+    Route::get('/franchise-network/{prefix?}', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
     // タイトル詳細ネットワーク
     Route::get('/title/{titleKey}', [$class, 'titleDetailNetwork'])->name('Game.TitleDetailNetwork');
 
     // メーカー詳細ネットワーク
     Route::get('/maker/{makerKey}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
     // メーカーネットワーク
-    Route::get('/maker', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
+    Route::get('/maker-network', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
     // プラットフォーム詳細ネットワーク
     Route::get('/platform/{platformKey}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
     // プラットフォームネットワーク
-    Route::get('/platform', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
+    Route::get('/platform-network', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
     // メディアミックス詳細ネットワーク
     Route::get('/media-mix/{mediaMixKey}', [$class, 'mediaMixDetailNetwork'])->name('Game.MediaMixDetailNetwork');
 });

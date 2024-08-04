@@ -52,6 +52,23 @@
     text-align: center;
 }
 
+.link-node.small, .content-link-node.small, .popup-link-node.small {
+    padding: 8px 12px;
+    display: inline-block;
+}
+
+.paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .link-node {
+        margin-right: 15px;
+        margin-bottom: 10px;
+    }
+}
+
 .node {
 
 }

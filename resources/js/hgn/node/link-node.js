@@ -13,6 +13,12 @@ export class LinkNode extends DOMNode
      */
     constructor(DOM, notchSize = 13)
     {
+        // smallクラスがDOMのクラスリストに含まれている場合はnotchSizeを小さくする
+        if (DOM.classList.contains('small')) {
+            notchSize = 8;
+        }
+
+
         super(DOM, notchSize);
 
         this.isEnableMouse = true;

@@ -289,40 +289,59 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function franchiseNetwork(Request $request): JsonResponse|Application|Factory|View
+    public function franchiseNetwork(Request $request, string $prefix = 'a'): JsonResponse|Application|Factory|View
     {
-        $franchises = GameFranchise::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
-            ->orderBy('phonetic')
-            ->paginate(self::ITEM_PER_PAGE);
+        if (preg_match('/^[akstnhmr]$/', $prefix) !== 1) {
+            $prefix = 'a';
+        }
+
+        $like = match($prefix) {
+            'k' => ['か', 'き', 'く', 'け', 'こ', 'が', 'ぎ', 'ぐ', 'げ', 'ご'],
+            's' => ['さ', 'し', 'す', 'せ', 'そ', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ'],
+            't' => ['た', 'ち', 'つ', 'て', 'と', 'だ', 'ぢ', 'づ', 'で', 'ど'],
+            'n' => ['な', 'に', 'ぬ', 'ね', 'の'],
+            'h' => ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ'],
+            'm' => ['ま', 'み', 'む', 'め', 'も'],
+            'y' => ['や', 'よ', 'ゆ'],
+            'r' => ['ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん'],
+            default => ['あ', 'い', 'う', 'え', 'お'],
+        };
+
+        $franchises = GameFranchise::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')]);
+        foreach ($like as $word) {
+            $franchises->orWhere('phonetic', 'like', $word . '%');
+        }
+
+        $franchises = $franchises->orderBy('phonetic');
 
         // フランチャイズに紐づくタイトル数を取得
-        $franchises
-            ->getCollection()
-            ->each(function ($franchise) {
-                $titleNum = 0;
-                foreach ($franchise->series as $series) {
-                    if (empty($titleIds)) {
-                        $titleNum += $series->titles->count();
-                    } else {
-                        $titleNum += $series->titles->whereIn('id', $titleIds)->count();
-                    }
-                }
+        $franchises = $franchises->get();
+
+        $franchises->each(function ($franchise) {
+            $titleNum = 0;
+            foreach ($franchise->series as $series) {
                 if (empty($titleIds)) {
-                    $titleNum += $franchise->titles->count();
+                    $titleNum += $series->titles->count();
                 } else {
-                    $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
+                    $titleNum += $series->titles->whereIn('id', $titleIds)->count();
                 }
+            }
+            if (empty($titleIds)) {
+                $titleNum += $franchise->titles->count();
+            } else {
+                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
+            }
 
-                if ($titleNum >= 10) {
-                    $franchise->sub_net = 'l';
-                } else if ($titleNum >= 5) {
-                    $franchise->sub_net = 'm';
-                } else if ($titleNum >= 1) {
-                    $franchise->sub_net = 's';
-                }
+            if ($titleNum >= 10) {
+                $franchise->sub_net = 'l';
+            } else if ($titleNum >= 5) {
+                $franchise->sub_net = 'm';
+            } else if ($titleNum >= 1) {
+                $franchise->sub_net = 's';
+            }
 
-                // レビュー、お気に入りユーザー数なども加味してゆく
-            });
+            // レビュー、お気に入りユーザー数なども加味してゆく
+        });
 
 
         return $this->network(view('game.franchise_network', compact('franchises')));
