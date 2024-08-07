@@ -40,6 +40,16 @@ class GameMediaMix extends \Eloquent
     }
 
     /**
+     * メディアミックスグループを取得
+     *
+     * @return BelongsTo
+     */
+    public function mediaMixGroup(): BelongsTo
+    {
+        return $this->belongsTo(GameMediaMixGroup::class, 'game_media_mix_group_id');
+    }
+
+    /**
      * 関連商品
      *
      * @return BelongsToMany
@@ -47,5 +57,20 @@ class GameMediaMix extends \Eloquent
     public function relatedProducts(): BelongsToMany
     {
         return $this->belongsToMany(GameRelatedProduct::class, GameMediaMixRelatedProductLink::class);
+    }
+
+    /**
+     * 保存処理
+     *
+     * @param array $options
+     * @return bool
+     */
+    public function save(array $options = []): bool
+    {
+        if ($this->game_franchise_id !== null && $this->game_media_mix_group_id != null) {
+            $this->game_media_mix_group_id = null;
+        }
+
+        return parent::save($options);
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameFranchiseSeriesLinkRequest extends FormRequest
+class LinkMultiRelatedProductsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->series_id === null) {
-            $this->merge(['series_id' => []]);
+        if ($this->related_product_ids === null) {
+            $this->merge(['related_product_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'series_id' => 'nullable|array|exists:series,id',
+            'related_product_ids' => 'nullable|array|exists:game_related_products,id',
         ];
     }
 }

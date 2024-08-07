@@ -4,8 +4,9 @@ namespace App\Http\Requests\Admin\Game;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
-class GameFranchiseSeriesLinkRequest extends FormRequest
+class PackageShopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,16 +19,6 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
     }
 
     /**
-     * @return void
-     */
-    protected function prepareForValidation(): void
-    {
-        if ($this->series_id === null) {
-            $this->merge(['series_id' => []]);
-        }
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -35,7 +26,11 @@ class GameFranchiseSeriesLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'series_id' => 'nullable|array|exists:series,id',
+            'shop_id'    => ['required', new Enum(\App\Enums\Shop::class)],
+            'url'        => 'required',
+            'param1'     => 'nullable',
+            'param2'     => 'nullable',
+            'param3'     => 'nullable',
         ];
     }
 }

@@ -45,13 +45,23 @@ class GameFranchise extends \Eloquent
     }
 
     /**
+     * メディアミックスグループ
+     *
+     * @return BelongsToMany
+     */
+    public function mediaMixGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(GameMediaMixGroup::class, GameFranchiseMediaMixGroupLink::class);
+    }
+
+    /**
      * メディアミックス
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function mediaMixes(): HasMany
+    public function mediaMixes(): BelongsToMany
     {
-        return $this->hasMany(GameMediaMix::class, 'game_franchise_id');
+        return $this->belongsToMany(GameMediaMix::class, GameFranchiseMediaMixLink::class);
     }
 
     /**

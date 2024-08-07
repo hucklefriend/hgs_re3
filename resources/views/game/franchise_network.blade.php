@@ -38,8 +38,6 @@
             </div>
         </div>
 
-
-
         <div class="node-map">
         @foreach ($franchises as $franchise)
             <div>
@@ -49,8 +47,6 @@
             </div>
         @endforeach
         </div>
-
-
 
         <div class="paginator" style="margin-top: 40px;">
             <div class="link-node link-node-center small fade">

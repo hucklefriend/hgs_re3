@@ -7,24 +7,24 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $controllerName }}.Admin.HGN</title>
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <meta content="" name="description" />
-    <meta content="" name="author" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="author">
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
     <!-- ================== BEGIN core-css ================== -->
-    <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet">
     <!-- ================== END core-css ================== -->
 
     <!-- オリジナルCSS -->
-    <link href="{{ asset('admin_assets/style.css') }}?{{ time() }}" rel="stylesheet" />
+    <link href="{{ asset('admin_assets/style.css') }}?{{ time() }}" rel="stylesheet">
 
     <!-- ================== BEGIN page-css ================== -->
-    <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet">
     <!-- ================== END page-css ================== -->
 </head>
 <body>
@@ -146,6 +146,9 @@
                         </div>
                         <div class="menu-item {{ menu_active("Admin.Game.RelatedProduct") }}">
                             <a href="{{ route("Admin.Game.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.Game.MediaMixGroup") }}">
+                            <a href="{{ route("Admin.Game.MediaMixGroup") }}" class="menu-link"><div class="menu-text">Media Mix Group</div></a>
                         </div>
                         <div class="menu-item {{ menu_active("Admin.Game.MediaMix") }}">
                             <a href="{{ route("Admin.Game.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
