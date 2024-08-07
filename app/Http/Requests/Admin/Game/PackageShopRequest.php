@@ -4,8 +4,9 @@ namespace App\Http\Requests\Admin\Game;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
-class GameFranchiseMultiUpdateRequest extends FormRequest
+class PackageShopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +26,11 @@ class GameFranchiseMultiUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'node_name'      => 'array',
-            'node_name.*'    => 'string|max:200',
-            'h1_node_name'   => 'array',
-            'h1_node_name.*' => 'string|max:200',
-            'key'            => 'array',
-            'key.*'          => 'string|max:50',
+            'shop_id'    => ['required', new Enum(\App\Enums\Shop::class)],
+            'url'        => 'required',
+            'param1'     => 'nullable',
+            'param2'     => 'nullable',
+            'param3'     => 'nullable',
         ];
     }
 }

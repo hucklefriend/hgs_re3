@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GamePlatformMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\PlatformMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\RelatedProductLinkRequest;
 use App\Models\Game\GamePlatform;
-use App\Http\Requests\Admin\Game\GamePlatformRequest;
+use App\Http\Requests\Admin\Game\PlatformRequest;
 use App\Models\Game\GameRelatedProduct;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -103,11 +103,11 @@ class PlatformController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GamePlatformRequest $request
+     * @param PlatformRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GamePlatformRequest $request): RedirectResponse
+    public function store(PlatformRequest $request): RedirectResponse
     {
         $platform = new GamePlatform();
         $platform->fill($request->validated());
@@ -131,11 +131,11 @@ class PlatformController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GamePlatformMultiUpdateRequest $request
+     * @param PlatformMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GamePlatformMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(PlatformMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
@@ -170,12 +170,12 @@ class PlatformController extends AbstractAdminController
     /**
      * データ更新
      *
-     * @param GamePlatformRequest $request
+     * @param PlatformRequest $request
      * @param GamePlatform $platform
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GamePlatformRequest $request, GamePlatform $platform): RedirectResponse
+    public function update(PlatformRequest $request, GamePlatform $platform): RedirectResponse
     {
         $platform->fill($request->validated());
         $platform->synonymsStr = $request->post('synonymsStr', '');

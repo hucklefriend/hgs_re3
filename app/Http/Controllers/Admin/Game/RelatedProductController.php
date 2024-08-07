@@ -7,8 +7,8 @@ use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\GameRelatedProductMediaMixLinkRequest;
 use App\Http\Requests\Admin\Game\GameRelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\GameRelatedProductPlatformLinkRequest;
-use App\Http\Requests\Admin\Game\GameRelatedProductRequest;
-use App\Http\Requests\Admin\Game\GameRelatedProductShopRequest;
+use App\Http\Requests\Admin\Game\RelatedProductRequest;
+use App\Http\Requests\Admin\Game\RelatedProductShopRequest;
 use App\Http\Requests\Admin\Game\GameRelatedProductTitleLinkRequest;
 use App\Models\Game\GameMediaMix;
 use App\Models\Game\GamePlatform;
@@ -94,11 +94,11 @@ class RelatedProductController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameRelatedProductRequest $request
+     * @param RelatedProductRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameRelatedProductRequest $request): RedirectResponse
+    public function store(RelatedProductRequest $request): RedirectResponse
     {
         $relatedProduct = new GameRelatedProduct();
         $relatedProduct->fill($request->validated());
@@ -157,12 +157,12 @@ class RelatedProductController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameRelatedProductRequest $request
+     * @param RelatedProductRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameRelatedProductRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function update(RelatedProductRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
     {
         $relatedProduct->fill($request->validated());
         $relatedProduct->save();
@@ -291,11 +291,11 @@ class RelatedProductController extends AbstractAdminController
     /**
      * ショップの登録処理
      *
-     * @param GameRelatedProductShopRequest $request
+     * @param RelatedProductShopRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function storeShop(GameRelatedProductShopRequest $request, GameRelatedProduct $relatedProduct)
+    public function storeShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct)
     {
         $shop = new GameRelatedProductShop();
         $shop->game_related_product_id = $relatedProduct->id;
@@ -323,12 +323,12 @@ class RelatedProductController extends AbstractAdminController
     /**
      * ショップの編集処理
      *
-     * @param GameRelatedProductShopRequest $request
+     * @param RelatedProductShopRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @param $shop_id
      * @return RedirectResponse
      */
-    public function updateShop(GameRelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, $shop_id)
+    public function updateShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, $shop_id)
     {
         $shop = $relatedProduct->shops()->firstWhere('shop_id', $shop_id);
         $shop->fill($request->validated());

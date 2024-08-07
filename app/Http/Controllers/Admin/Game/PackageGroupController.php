@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GamePackageGroupRequest;
+use App\Http\Requests\Admin\Game\PackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Game\GamePackage;
@@ -90,11 +90,11 @@ class PackageGroupController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GamePackageGroupRequest $request
+     * @param PackageGroupRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GamePackageGroupRequest $request): RedirectResponse
+    public function store(PackageGroupRequest $request): RedirectResponse
     {
         $packageGroup = new GamePackageGroup();
         $packageGroup->fill($request->validated());
@@ -119,12 +119,12 @@ class PackageGroupController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GamePackageGroupRequest $request
+     * @param PackageGroupRequest $request
      * @param GamePackageGroup $packageGroup
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GamePackageGroupRequest $request, GamePackageGroup $packageGroup): RedirectResponse
+    public function update(PackageGroupRequest $request, GamePackageGroup $packageGroup): RedirectResponse
     {
         $packageGroup->fill($request->validated());
         $packageGroup->save();

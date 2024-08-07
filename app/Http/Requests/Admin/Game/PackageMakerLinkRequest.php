@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GamePackageShopMultiUpdateRequest extends FormRequest
+class PackageMakerLinkRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,9 @@ class GamePackageShopMultiUpdateRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $texts = $this->input('url', []);
-        $preparedTexts = array_map(function ($text) {
-            return $text === null ? '' : $text;
-        }, $texts);
-
-        $this->merge([
-            'url' => $preparedTexts
-        ]);
+        if ($this->maker_id === null) {
+            $this->merge(['maker_id' => []]);
+        }
     }
 
     /**
@@ -40,10 +35,7 @@ class GamePackageShopMultiUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'url'      => 'array',
-            'url.*'    => 'string',
-            'param1'   => 'array',
-            'param1.*' => 'nullable|string|max:200',
+            'maker_id' => 'nullable|array|exists:game_makers,id',
         ];
     }
 }

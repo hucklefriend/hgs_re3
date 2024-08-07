@@ -9,7 +9,7 @@ use App\Http\Requests\Admin\Game\GameSeriesFranchiseLinkRequest;
 use App\Http\Requests\Admin\Game\GameSeriesTitleLinkRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameSeries;
-use App\Http\Requests\Admin\Game\GameSeriesRequest;
+use App\Http\Requests\Admin\Game\SeriesRequest;
 use App\Models\Game\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -91,11 +91,11 @@ class SeriesController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameSeriesRequest $request
+     * @param SeriesRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameSeriesRequest $request): RedirectResponse
+    public function store(SeriesRequest $request): RedirectResponse
     {
         $series = new GameSeries();
         $series->fill($request->validated());
@@ -120,12 +120,12 @@ class SeriesController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameSeriesRequest $request
+     * @param SeriesRequest $request
      * @param GameSeries $series
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameSeriesRequest $request, GameSeries $series): RedirectResponse
+    public function update(SeriesRequest $request, GameSeries $series): RedirectResponse
     {
         $series->fill($request->validated());
         $series->save();

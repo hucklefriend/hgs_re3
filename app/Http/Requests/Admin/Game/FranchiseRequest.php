@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameMakerMultiUpdateRequest extends FormRequest
+class FranchiseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +25,13 @@ class GameMakerMultiUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'node_name'      => 'array',
-            'node_name.*'    => 'string|max:200',
-            'h1_node_name'   => 'array',
-            'h1_node_name.*' => 'string|max:200',
-            'key'            => 'array',
-            'key.*'          => 'string|max:50',
+            'name'               => 'required|max:200',
+            'key'                => 'required|max:50',
+            'phonetic'           => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/u',
+            'node_name'          => 'required|max:200',
+            'h1_node_name'       => 'required|max:200',
+            'description'        => 'nullable',
+            'description_source' => 'nullable',
         ];
     }
 }

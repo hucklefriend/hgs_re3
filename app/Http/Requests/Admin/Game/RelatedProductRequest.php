@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\Admin\Game;
 
+
+use App\Enums\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
-class GameMakerRequest extends FormRequest
+class RelatedProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +26,9 @@ class GameMakerRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if ($this->description === null) {
-            $this->merge(['description' => '']);
-        }
-        if ($this->synonymsStr === null) {
-            $this->merge(['synonymsStr' => '']);
+            $this->merge([
+                'description' => '',
+            ]);
         }
     }
 
@@ -38,14 +40,13 @@ class GameMakerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => 'required|max:100',
-            'key'                   => 'required|max:50',
-            'node_name'             => 'required|max:200',
-            'h1_node_name'          => 'required|max:200',
-            'related_game_maker_id' => 'nullable|exists:game_makers,id',
-            'synonymsStr'           => '',
-            'description'           => 'nullable',
-            'description_source'    => 'nullable',
+            'name'               => 'required|max:200',
+            'node_name'          => 'required|max:200',
+            'img_s_url'          => 'nullable|max:250',
+            'img_m_url'          => 'nullable|max:250',
+            'rating'             => ['required', new Enum(Rating::class)],
+            'description'        => '',
+            'description_source' => 'nullable',
         ];
     }
 }

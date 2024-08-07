@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameFranchiseRequest extends FormRequest
+class PlatformRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,6 +18,16 @@ class GameFranchiseRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->description === null) {
+            $this->merge(['description' => '']);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -27,10 +37,12 @@ class GameFranchiseRequest extends FormRequest
         return [
             'name'               => 'required|max:200',
             'key'                => 'required|max:50',
-            'phonetic'           => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/u',
+            'acronym'            => 'required|max:30',
             'node_name'          => 'required|max:200',
             'h1_node_name'       => 'required|max:200',
-            'description'        => 'nullable',
+            'sort_order'         => 'required|integer|min:0|max:99999999',
+            'game_maker_id'      => 'nullable|exists:game_makers,id',
+            'description'        => '',
             'description_source' => 'nullable',
         ];
     }

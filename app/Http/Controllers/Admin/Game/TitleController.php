@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\GameTitleFranchiseLinkRequest;
-use App\Http\Requests\Admin\Game\GameTitleMultiPackageUpdateRequest;
-use App\Http\Requests\Admin\Game\GameTitleMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GameTitleRequest;
+use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
+use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\TitleRequest;
 use App\Http\Requests\Admin\Game\GameTitleSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
@@ -113,11 +113,11 @@ class TitleController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameTitleRequest $request
+     * @param TitleRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameTitleRequest $request): RedirectResponse
+    public function store(TitleRequest $request): RedirectResponse
     {
         $title = new GameTitle();
         $title->fill($request->validated());
@@ -141,11 +141,11 @@ class TitleController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameTitleMultiUpdateRequest $request
+     * @param TitleMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GameTitleMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(TitleMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
@@ -180,12 +180,12 @@ class TitleController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameTitleRequest $request
+     * @param TitleRequest $request
      * @param GameTitle $title
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameTitleRequest $request, GameTitle $title): RedirectResponse
+    public function update(TitleRequest $request, GameTitle $title): RedirectResponse
     {
         $title->fill($request->validated());
         $title->synonymsStr = $request->post('synonymsStr', '');
@@ -372,12 +372,12 @@ class TitleController extends AbstractAdminController
     /**
      * 関連パッケージの更新処理
      *
-     * @param GameTitleMultiPackageUpdateRequest $request
+     * @param TitleMultiPackageUpdateRequest $request
      * @param GameTitle $title
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updatePackageMulti(GameTitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
+    public function updatePackageMulti(TitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $acronyms = $request->validated(['acronym']);

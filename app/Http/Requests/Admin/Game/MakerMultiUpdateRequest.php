@@ -2,13 +2,10 @@
 
 namespace App\Http\Requests\Admin\Game;
 
-
-use App\Enums\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Enum;
 
-class GamePackageGroupRequest extends FormRequest
+class MakerMultiUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +25,12 @@ class GamePackageGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|max:200',
-            'node_name' => 'required|max:200',
+            'node_name'      => 'array',
+            'node_name.*'    => 'string|max:200',
+            'h1_node_name'   => 'array',
+            'h1_node_name.*' => 'string|max:200',
+            'key'            => 'array',
+            'key.*'          => 'string|max:50',
         ];
     }
 }

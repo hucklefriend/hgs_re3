@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameMakerMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\MakerMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\GameMakerPackageLinkRequest;
-use App\Http\Requests\Admin\Game\GameMakerRequest;
+use App\Http\Requests\Admin\Game\MakerRequest;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GamePackage;
 use Illuminate\Contracts\Foundation\Application;
@@ -88,11 +88,11 @@ class MakerController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameMakerRequest $request
+     * @param MakerRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameMakerRequest $request): RedirectResponse
+    public function store(MakerRequest $request): RedirectResponse
     {
         $maker = new GameMaker();
         $maker->fill($request->validated());
@@ -134,12 +134,12 @@ class MakerController extends AbstractAdminController
     /**
      * データ更新
      *
-     * @param GameMakerRequest $request
+     * @param MakerRequest $request
      * @param GameMaker $maker
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameMakerRequest $request, GameMaker $maker): RedirectResponse
+    public function update(MakerRequest $request, GameMaker $maker): RedirectResponse
     {
         $maker->fill($request->validated());
         $maker->synonymsStr = $request->validated('synonymsStr', '');
@@ -162,11 +162,11 @@ class MakerController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameMakerMultiUpdateRequest $request
+     * @param MakerMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GameMakerMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(MakerMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);

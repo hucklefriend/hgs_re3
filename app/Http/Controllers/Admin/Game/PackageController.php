@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Enums\Shop;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GamePackageMakerLinkRequest;
-use App\Http\Requests\Admin\Game\GamePackageMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GamePackageRequest;
-use App\Http\Requests\Admin\Game\GamePackageShopMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GamePackageShopRequest;
+use App\Http\Requests\Admin\Game\PackageMakerLinkRequest;
+use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\PackageRequest;
+use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\PackageShopRequest;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GamePackage;
 use App\Models\Game\GamePackageShop;
@@ -111,11 +111,11 @@ class PackageController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GamePackageRequest $request
+     * @param PackageRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GamePackageRequest $request): RedirectResponse
+    public function store(PackageRequest $request): RedirectResponse
     {
         $platformIds = $request->validated('game_platform_ids');
         $makerIds = $request->validated('game_maker_ids', []);
@@ -151,11 +151,11 @@ class PackageController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GamePackageMultiUpdateRequest $request
+     * @param PackageMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GamePackageMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(PackageMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         foreach ($nodeNames as $id => $nodeName) {
@@ -185,12 +185,12 @@ class PackageController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GamePackageRequest $request
+     * @param PackageRequest $request
      * @param GamePackage $package
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GamePackageRequest $request, GamePackage $package): RedirectResponse
+    public function update(PackageRequest $request, GamePackage $package): RedirectResponse
     {
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
@@ -222,11 +222,11 @@ class PackageController extends AbstractAdminController
     /**
      * 複製処理
      *
-     * @param GamePackageRequest $request
+     * @param PackageRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function makeCopy(GamePackageRequest $request): RedirectResponse
+    public function makeCopy(PackageRequest $request): RedirectResponse
     {
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
@@ -274,11 +274,11 @@ class PackageController extends AbstractAdminController
     /**
      * ショップの登録処理
      *
-     * @param GamePackageShopRequest $request
+     * @param PackageShopRequest $request
      * @param GamePackage $package
      * @return RedirectResponse
      */
-    public function storeShop(GamePackageShopRequest $request, GamePackage $package)
+    public function storeShop(PackageShopRequest $request, GamePackage $package)
     {
         $shop = new GamePackageShop();
         $shop->game_package_id = $package->id;
@@ -306,12 +306,12 @@ class PackageController extends AbstractAdminController
     /**
      * ショップの編集処理
      *
-     * @param GamePackageShopRequest $request
+     * @param PackageShopRequest $request
      * @param GamePackage $package
      * @param $shop_id
      * @return RedirectResponse
      */
-    public function updateShop(GamePackageShopRequest $request, GamePackage $package, $shop_id)
+    public function updateShop(PackageShopRequest $request, GamePackage $package, $shop_id)
     {
         $shop = $package->shops()->firstWhere('shop_id', $shop_id);
         $shop->fill($request->validated());
@@ -355,11 +355,11 @@ class PackageController extends AbstractAdminController
     /**
      * メーカーと同期処理
      *
-     * @param GamePackageMakerLinkRequest $request
+     * @param PackageMakerLinkRequest $request
      * @param GamePackage $package
      * @return RedirectResponse
      */
-    public function syncMaker(GamePackageMakerLinkRequest $request, GamePackage $package): RedirectResponse
+    public function syncMaker(PackageMakerLinkRequest $request, GamePackage $package): RedirectResponse
     {
         $package->makers()->sync($request->validated('maker_id'));
         return redirect()->route('Admin.Game.Package.Detail', $package);
@@ -414,11 +414,11 @@ class PackageController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GamePackageShopMultiUpdateRequest $request
+     * @param PackageShopMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateShopMulti(GamePackageShopMultiUpdateRequest $request): RedirectResponse
+    public function updateShopMulti(PackageShopMultiUpdateRequest $request): RedirectResponse
     {
         $urls = $request->validated(['url']);
         $param1s = $request->validated(['param1']);

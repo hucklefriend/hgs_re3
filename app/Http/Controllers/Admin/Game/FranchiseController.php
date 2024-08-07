@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameFranchiseMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\FranchiseMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameSeries;
-use App\Http\Requests\Admin\Game\GameFranchiseRequest;
+use App\Http\Requests\Admin\Game\FranchiseRequest;
 use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
 use App\Models\Game\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
@@ -104,11 +104,11 @@ class FranchiseController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameFranchiseRequest $request
+     * @param FranchiseRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameFranchiseRequest $request): RedirectResponse
+    public function store(FranchiseRequest $request): RedirectResponse
     {
         $franchise = new GameFranchise();
         $franchise->fill($request->validated());
@@ -131,11 +131,11 @@ class FranchiseController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameFranchiseMultiUpdateRequest $request
+     * @param FranchiseMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GameFranchiseMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(FranchiseMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
@@ -169,12 +169,12 @@ class FranchiseController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameFranchiseRequest $request
+     * @param FranchiseRequest $request
      * @param GameFranchise $franchise
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameFranchiseRequest $request, GameFranchise $franchise): RedirectResponse
+    public function update(FranchiseRequest $request, GameFranchise $franchise): RedirectResponse
     {
         $franchise->fill($request->validated());
         $franchise->save();

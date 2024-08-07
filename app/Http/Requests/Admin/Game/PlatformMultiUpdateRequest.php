@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameTitleMultiUpdateRequest extends FormRequest
+class PlatformMultiUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

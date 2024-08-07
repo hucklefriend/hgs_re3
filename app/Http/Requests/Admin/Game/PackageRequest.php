@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
 
-class GamePackageRequest extends FormRequest
+class PackageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

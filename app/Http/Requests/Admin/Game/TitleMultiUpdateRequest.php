@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameTitleMultiPackageUpdateRequest extends FormRequest
+class TitleMultiUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +25,12 @@ class GameTitleMultiPackageUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'node_name'   => 'array',
-            'node_name.*' => 'string|max:200',
-            'acronym'     => 'array',
-            'acronym.*'   => 'nullable|string|max:200',
+            'node_name'      => 'array',
+            'node_name.*'    => 'string|max:200',
+            'h1_node_name'   => 'array',
+            'h1_node_name.*' => 'string|max:200',
+            'key'            => 'array',
+            'key.*'          => 'string|max:50',
         ];
     }
 }
