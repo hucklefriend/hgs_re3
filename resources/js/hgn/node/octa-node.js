@@ -823,7 +823,13 @@ export class TextNode extends DOMNode
      */
     constructor(DOM)
     {
-        super(DOM, 16);
+        let notchSize = 16;
+        // smallクラスがDOMのクラスリストに含まれている場合はnotchSizeを小さくする
+        if (DOM.classList.contains('small')) {
+            notchSize = 8;
+        }
+
+        super(DOM, notchSize);
         this.alpha = 0.6;
     }
 

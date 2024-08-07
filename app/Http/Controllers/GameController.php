@@ -286,6 +286,7 @@ class GameController extends Controller
      * フランチャイズのネットワーク
      *
      * @param Request $request
+     * @param string $prefix
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */

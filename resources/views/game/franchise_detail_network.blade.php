@@ -51,7 +51,37 @@
             </section>
         @endif
 
-        @if ($franchise->mediaMixes->count() > 0)
+
+        @if ($franchise->mediaMixGroups->isNotEmpty())
+            <section style="margin-top: 50px;margin-bottom: 30px;">
+                <h2 class="head2 fade">メディアミックス</h2>
+
+                @foreach ($franchise->mediaMixGroups as $mediaMixGroup)
+                    @empty($mediaMixGroup->description)
+                        <h3 class="head3 fade">{{ $mediaMixGroup->name }}</h3>
+                    @else
+                    <h3 class="head3 fade" style="margin-bottom: 5px;">
+                        {{ $mediaMixGroup->name }}
+                    </h3>
+                    <div class="node">
+                        <div class="text-node small fade">
+                            {!! nl2br($mediaMixGroup->description) !!}
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="node-map">
+                        @foreach ($mediaMixGroup->mediaMixes as $mediaMix)
+                            <div>
+                                <div class="link-node link-node-center fade">
+                                    <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">[{{ $mediaMix->type->text() }}]{!! $mediaMix->node_name !!}</a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
+            </section>
+        @elseif ($franchise->mediaMixes->isNotEmpty())
             <section style="margin-top: 50px;margin-bottom: 30px;">
                 <h2 class="head2 fade">メディアミックス</h2>
                 <div class="node-map">

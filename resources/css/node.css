@@ -288,6 +288,11 @@
     }
 }
 
+.text-node.small {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
 /* スマホ～ */
 @media (min-width: 400px) {
 
