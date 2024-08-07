@@ -42,7 +42,11 @@
                 </tr>
                 <tr>
                     <th>フランチャイズ</th>
-                    <td>{{ $model->franchise->name }}</td>
+                    <td>{{ $model->franchise->name ?? '--' }}</td>
+                </tr>
+                <tr>
+                    <th>メディアミックスグループ</th>
+                    <td>{{ $model->mediaMixGroup->name ?? '--' }}</td>
                 </tr>
                 <tr>
                     <th>レーティング</th>

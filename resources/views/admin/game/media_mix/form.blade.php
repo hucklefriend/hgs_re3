@@ -39,13 +39,15 @@
     <tr>
         <th>フランチャイズ</th>
         <td>
-            <x-admin.select name="game_franchise_id" :model="$model" :list="$franchises" />
+            <x-admin.select-game-franchise name="game_franchise_id" :model="$model" />
+            <p>メディアミックスグループとどちらか一方のみ設定可</p>
         </td>
     </tr>
     <tr>
-        <th>グループNo</th>
+        <th>メディアミックスグループ</th>
         <td>
-            <x-admin.input name="group_no" :model="$model" type="number" required min="1" max="65535" />
+            <x-admin.select-game-media-mix-group name="game_media_mix_group_id" :model="$model" />
+            <p>フランチャイズとどちらか一方のみ設定可</p>
         </td>
     </tr>
     <tr>

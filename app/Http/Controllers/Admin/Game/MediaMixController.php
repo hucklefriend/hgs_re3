@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameMediaMixMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GameMediaMixRelatedProductLinkRequest;
+use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\LinkMultiRelatedProductsRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameMediaMix;
-use App\Http\Requests\Admin\Game\GameMediaMixRequest;
+use App\Http\Requests\Admin\Game\MediaMixRequest;
 use App\Models\Game\GameMediaMixRelatedProductLink;
 use App\Models\Game\GameRelatedProduct;
 use Illuminate\Contracts\Foundation\Application;
@@ -94,11 +94,11 @@ class MediaMixController extends AbstractAdminController
     /**
      * 追加処理
      *
-     * @param GameMediaMixRequest $request
+     * @param MediaMixRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(GameMediaMixRequest $request): RedirectResponse
+    public function store(MediaMixRequest $request): RedirectResponse
     {
         $mediaMix = new GameMediaMix();
         $mediaMix->fill($request->validated());
@@ -121,11 +121,11 @@ class MediaMixController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameMediaMixMultiUpdateRequest $request
+     * @param MediaMixMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GameMediaMixMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(MediaMixMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
@@ -161,12 +161,12 @@ class MediaMixController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameMediaMixRequest $request
+     * @param MediaMixRequest $request
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(GameMediaMixRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function update(MediaMixRequest $request, GameMediaMix $mediaMix): RedirectResponse
     {
         $mediaMix->fill($request->validated());
         $mediaMix->save();
@@ -208,13 +208,13 @@ class MediaMixController extends AbstractAdminController
     /**
      * 関連商品と同期処理
      *
-     * @param GameMediaMixRelatedProductLinkRequest $request
+     * @param LinkMultiRelatedProductsRequest $request
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(GameMediaMixRelatedProductLinkRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductsRequest $request, GameMediaMix $mediaMix): RedirectResponse
     {
-        $mediaMix->relatedProducts()->sync($request->validated('related_product_id'));
+        $mediaMix->relatedProducts()->sync($request->validated('related_product_ids'));
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
     }
 }

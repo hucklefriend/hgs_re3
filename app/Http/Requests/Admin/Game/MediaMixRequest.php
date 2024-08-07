@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
 
-class GameMediaMixRequest extends FormRequest
+class MediaMixRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -39,17 +39,17 @@ class GameMediaMixRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'                => ['required', new Enum(MediaMixType::class)],
-            'name'                => 'required|max:200',
-            'key'                 => 'required|max:50',
-            'node_name'           => 'required|max:200',
-            'h1_node_name'        => 'required|max:200',
-            'game_franchise_id'   => 'nullable|exists:game_franchises,id',
-            'rating'              => ['required', new Enum(Rating::class)],
-            'group_no'            => 'required|numeric',
-            'sort_order'          => 'required|numeric',
-            'description'         => 'nullable',
-            'description_source'  => 'nullable',
+            'type'                    => ['required', new Enum(MediaMixType::class)],
+            'name'                    => 'required|max:200',
+            'key'                     => 'required|max:50',
+            'node_name'               => 'required|max:200',
+            'h1_node_name'            => 'required|max:200',
+            'game_franchise_id'       => 'nullable|exists:game_franchises,id',
+            'game_media_mix_group_id' => 'nullable|exists:game_media_mix_groups,id',
+            'rating'                  => ['required', new Enum(Rating::class)],
+            'sort_order'              => 'required|numeric',
+            'description'             => 'nullable',
+            'description_source'      => 'nullable',
         ];
     }
 }
