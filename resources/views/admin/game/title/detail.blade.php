@@ -17,6 +17,24 @@
                     <td>{{ $model->id }}</td>
                 </tr>
                 <tr>
+                    <th>フランチャイズ</th>
+                    <td>
+                        {{ $model->franchise->name ?? '--' }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>シリーズ</th>
+                    <td>
+                        @if ($model->series)
+                            {{ $model->series->name }}
+                             ({{ $model->series->franchise->name ?? '--' }}フランチャイズ)
+                        @else
+                            --
+                        @endif
+
+                    </td>
+                </tr>
+                <tr>
                     <th>key</th>
                     <td>{{ $model->key }}</td>
                 </tr>
@@ -62,38 +80,6 @@
                     <th>初リリース日</th>
                     <td>
                         {{ $model->first_release_int }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>シリーズ</th>
-                    <td>
-                        @if ($model->series())
-                            <span class="mr-2">
-                                <a href="{{ route('Admin.Game.Series.Detail', $model->series()) }}">
-                                    {{ $model->series()->name }}
-                                </a>
-                            </span>
-                        @endif
-                        <a href="{{ route('Admin.Game.Title.LinkSeries', $model) }}" class="btn btn-default">
-                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th>フランチャイズ</th>
-                    <td>
-                        @if ($model->franchise())
-                            <span class="mr-2">
-                                <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise()) }}">
-                                    {{ $model->franchise()->name }}
-                                </a>
-                            </span>
-                        @endif
-                        @if (!$model->series())
-                        <a href="{{ route('Admin.Game.Title.LinkFranchise', $model) }}" class="btn btn-default">
-                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
-                        </a>
-                        @endif
                     </td>
                 </tr>
                 <tr>

@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class LinkMultiTitleRequest extends FormRequest
+class LinkMultiSeriesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class LinkMultiTitleRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->game_title_ids === null) {
-            $this->merge(['game_title_ids' => []]);
+        if ($this->game_series_ids === null) {
+            $this->merge(['game_series_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class LinkMultiTitleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'game_title_ids' => 'nullable|array|exists:game_titles,id',
+            'game_series_ids' => 'nullable|array|exists:game_series,id',
         ];
     }
 }

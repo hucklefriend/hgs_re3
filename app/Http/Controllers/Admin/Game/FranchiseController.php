@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\FranchiseMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameSeries;
@@ -16,6 +17,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FranchiseController extends AbstractAdminController
 {
@@ -191,7 +193,36 @@ class FranchiseController extends AbstractAdminController
      */
     public function delete(GameFranchise $franchise): RedirectResponse
     {
-        $franchise->delete();
+        try {
+            DB::beginTransaction();
+
+            foreach ($franchise->series as $s) {
+                $s->game_franchise_id = null;
+                $s->save();
+            }
+
+            foreach ($franchise->titles as $t) {
+                $t->game_franchise_id = null;
+                $t->save();
+            }
+
+            foreach ($franchise->mediaMixGroups as $mmg) {
+                $mmg->game_franchise_id = null;
+                $mmg->save();
+            }
+
+            foreach ($franchise->mediaMixes as $mm) {
+                $mm->game_franchise_id = null;
+                $mm->save();
+            }
+
+            $franchise->delete();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
         return redirect()->route('Admin.Game.Franchise');
     }
@@ -206,22 +237,41 @@ class FranchiseController extends AbstractAdminController
     {
         $series = GameSeries::orderBy('id')->get(['id', 'name']);
         return view('admin.game.franchise.link_series', [
-            'model' => $franchise,
+            'model'           => $franchise,
             'linkedSeriesIds' => $franchise->series()->pluck('id')->toArray(),
-            'series' => $series,
+            'series'          => $series,
         ]);
     }
 
     /**
      * シリーズと同期処理
      *
-     * @param GameFranchiseSeriesLinkRequest $request
+     * @param LinkMultiSeriesRequest $request
      * @param GameFranchise $franchise
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function syncSeries(GameFranchiseSeriesLinkRequest $request, GameFranchise $franchise): RedirectResponse
+    public function syncSeries(LinkMultiSeriesRequest $request, GameFranchise $franchise): RedirectResponse
     {
-        $franchise->series()->sync($request->validated('series_id'));
+        try {
+            DB::beginTransaction();
+
+            foreach ($franchise->series as $series) {
+                $series->game_franchise_id = null;
+                $series->save();
+            }
+            foreach ($request->validated('game_series_ids') as $seriesId) {
+                $series = GameSeries::find($seriesId);
+                $series->game_franchise_id = $franchise->id;
+                $series->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
     }
 
@@ -252,10 +302,28 @@ class FranchiseController extends AbstractAdminController
      * @param LinkMultiTitleRequest $request
      * @param GameFranchise $franchise
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function syncTitle(LinkMultiTitleRequest $request, GameFranchise $franchise): RedirectResponse
     {
-        $franchise->titles()->sync($request->validated('title_id'));
+        try {
+            DB::beginTransaction();
+
+            foreach ($franchise->titles as $title) {
+                $title->game_franchise_id = null;
+                $title->save();
+            }
+            foreach ($request->validated('game_title_ids') as $titleId) {
+                $title = GameTitle::find($titleId);
+                $title->game_franchise_id = $franchise->id;
+                $title->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
     }
 }

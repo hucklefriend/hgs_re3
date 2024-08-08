@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -23,37 +24,21 @@ class GameTitle extends \Eloquent
     /**
      * フランチャイズを取得
      *
-     * @return ?GameFranchise
+     * @return BelongsTo
      */
-    public function franchise(): ?GameFranchise
+    public function franchise(): BelongsTo
     {
-        if ($this->series()) {
-            return $this->series()->franchise();
-        } else {
-            $hasOneThrough = $this->hasOneThrough(GameFranchise::class, GameFranchiseTitleLink::class,
-                'game_title_id', 'id', 'id', 'game_franchise_id');
-            if ($hasOneThrough) {
-                return $hasOneThrough->first();
-            }
-        }
-
-        return null;
+        return $this->belongsTo(GameFranchise::class, 'game_franchise_id');
     }
 
     /**
      * シリーズを取得
      *
-     * @return ?GameSeries
+     * @return BelongsTo
      */
-    public function series(): ?GameSeries
+    public function series(): BelongsTo
     {
-        $hasOneThrough = $this->hasOneThrough(GameSeries::class, GameSeriesTitleLink::class,
-            'game_title_id', 'id', 'id', 'game_series_id');
-        if ($hasOneThrough) {
-            return $hasOneThrough->first();
-        }
-
-        return null;
+        return $this->belongsTo(GameSeries::class, 'game_series_id');
     }
 
     /**
@@ -128,6 +113,10 @@ class GameTitle extends \Eloquent
      */
     public function save(array $options = []): void
     {
+        if ($this->game_franchise_id !== null && $this->game_series_id !== null) {
+            $this->game_series_id = null;
+        }
+
         try {
             DB::beginTransaction();
 

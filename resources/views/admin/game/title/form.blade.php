@@ -7,6 +7,18 @@
         </tr>
     @endif
     <tr>
+        <th>フランチャイズ</th>
+        <td>
+            <x-admin.select-game-franchise name="game_franchise_id" :model="$model" />
+        </td>
+    </tr>
+        <tr>
+            <th>シリーズ</th>
+            <td>
+                <x-admin.select-game-series name="game_series_id" :model="$model" />
+            </td>
+        </tr>
+    <tr>
         <th>名前</th>
         <td>
             <x-admin.input name="name" :model="$model" required maxlength="200" />

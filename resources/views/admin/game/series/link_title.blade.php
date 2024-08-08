@@ -15,7 +15,7 @@
                 <div class="list-group" id="admin-link-list">
                 @foreach ($titles as $title)
                     <label class="list-group-item">
-                        <input type="checkbox" name="title_id[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
+                        <input type="checkbox" name="game_title_ids[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
                         {{ $title->name }}
                     </label>
                 @endforeach

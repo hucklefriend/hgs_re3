@@ -27,21 +27,21 @@ class GameFranchise extends \Eloquent
     /**
      * シリーズ
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function series(): BelongsToMany
+    public function series(): HasMany
     {
-        return $this->belongsToMany(GameSeries::class, GameFranchiseSeriesLink::class);
+        return $this->hasMany(GameSeries::class, 'game_franchise_id');
     }
 
     /**
      * タイトル
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function titles(): BelongsToMany
+    public function titles(): HasMany
     {
-        return $this->belongsToMany(GameTitle::class, GameFranchiseTitleLink::class);
+        return $this->hasMany(GameTitle::class, 'game_franchise_id');
     }
 
     /**

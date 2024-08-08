@@ -37,6 +37,8 @@ class TitleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'game_franchise_id'   => 'required_without:game_series_id|nullable|exists:game_franchises,id',
+            'game_series_id'      => 'required_without:game_franchise_id|nullable|exists:game_series,id',
             'name'                => 'required|max:200',
             'key'                 => 'required|max:50',
             'phonetic'            => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
