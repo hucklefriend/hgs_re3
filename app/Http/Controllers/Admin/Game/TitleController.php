@@ -4,20 +4,14 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameTitleFranchiseLinkRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
-use App\Http\Requests\Admin\Game\GameTitleSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
-use App\Models\Game\GameFranchise;
-use App\Models\Game\GameFranchiseTitleLink;
 use App\Models\Game\GamePackage;
 use App\Models\Game\GamePackageGroup;
 use App\Models\Game\GamePlatform;
-use App\Models\Game\GameSeries;
-use App\Models\Game\GameSeriesTitleLink;
 use App\Models\Game\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -206,82 +200,9 @@ class TitleController extends AbstractAdminController
         $title->packageGroups()->detach();
         $title->synonyms()->delete();
         $title->relatedProducts()->detach();
-        GameSeriesTitleLink::where('game_title_id', $title->id)->delete();
-        GameFranchiseTitleLink::where('game_title_id', $title->id)->delete();
         $title->delete();
 
         return redirect()->route('Admin.Game.Title');
-    }
-
-    /**
-     * フランチャイズとリンク
-     *
-     * @param GameTitle $title
-     * @return Application|Factory|View
-     */
-    public function linkFranchise(GameTitle $title): Application|Factory|View
-    {
-        $franchises = GameFranchise::orderBy('id')->get(['id', 'name']);
-        return view('admin.game.title.link_franchise', [
-            'model' => $title,
-            'franchises' => $franchises,
-        ]);
-    }
-
-    /**
-     * フランチャイズと同期処理
-     *
-     * @param GameTitleFranchiseLinkRequest $request
-     * @param GameTitle $title
-     * @return RedirectResponse
-     */
-    public function syncFranchise(GameTitleFranchiseLinkRequest $request, GameTitle $title): RedirectResponse
-    {
-        if ($title->franchise()) {
-            $title->franchise()->titles()->detach($title->id);
-        }
-
-        $franchise = GameFranchise::find($request->validated('franchise_id'));
-        $franchise->titles()->attach($title->id);
-
-        return redirect()->route('Admin.Game.Title.Detail', $title);
-    }
-
-    /**
-     * シリーズとリンク
-     *
-     * @param GameTitle $title
-     * @return Application|Factory|View
-     */
-    public function linkSeries(GameTitle $title): Application|Factory|View
-    {
-        $series = ['' => 'シリーズに属さない'] + GameSeries::orderBy('id')
-                ->get(['id', 'name'])->pluck('name', 'id')->toArray();
-        return view('admin.game.title.link_series', [
-            'model'  => $title,
-            'series' => $series,
-        ]);
-    }
-
-    /**
-     * シリーズと同期処理
-     *
-     * @param GameTitleSeriesLinkRequest $request
-     * @param GameTitle $title
-     * @return RedirectResponse
-     */
-    public function syncSeries(GameTitleSeriesLinkRequest $request, GameTitle $title): RedirectResponse
-    {
-        if ($title->series()) {
-            $title->series()->titles()->detach($title->id);
-        }
-
-        if (!empty($request->validated('series_id'))) {
-            $series = GameSeries::find($request->validated('series_id'));
-            $series->titles()->attach($title->id);
-        }
-
-        return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 
     /**

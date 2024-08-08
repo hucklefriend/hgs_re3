@@ -140,11 +140,11 @@
         </h2>
     </div>
         <div class="node-map">
-            @if ($title->franchise()->getTitleNum() > 1)
+            @if ($title->getFranchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center fade">
-                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->franchise()->key]) }}">
-                            {{ $title->franchise()->node_name }}<br>
+                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->getFranchise()->key]) }}">
+                            {{ $title->getFranchise()->node_name }}<br>
                             フランチャイズ
                         </a>
                     </div>

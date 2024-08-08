@@ -42,6 +42,20 @@ class GameTitle extends \Eloquent
     }
 
     /**
+     * 自身もしくはシリーズに桃づけられたフランチャイズを取得
+     *
+     * @return GameFranchise|null
+     */
+    public function getFranchise(): ?GameFranchise
+    {
+        if ($this->series) {
+            return $this->series->franchise;
+        } else {
+            return $this->franchise;
+        }
+    }
+
+    /**
      * @var string 俗称の改行区切り文字列
      */
     public string $synonymsStr = '';
