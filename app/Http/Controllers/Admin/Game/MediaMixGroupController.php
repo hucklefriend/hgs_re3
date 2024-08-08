@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\MediaMixGroupRequest;
-use App\Http\Requests\Admin\Game\LinkFranchiseRequest;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
-use App\Models\Game\GameFranchise;
 use App\Models\Game\GameMediaMix;
 use App\Models\Game\GameMediaMixGroup;
 use Illuminate\Contracts\Foundation\Application;
@@ -179,10 +177,7 @@ class MediaMixGroupController extends AbstractAdminController
             $mm->game_media_mix_group_id = null;
             $mm->save();
         }
-        \Log::debug($request->validated('media_mix_ids'));
         foreach ($request->validated('media_mix_ids') as $mediaMixId) {
-
-            \Log::debug($mediaMixId);
             $mediaMix = GameMediaMix::find($mediaMixId);
             $mediaMix->game_franchise_id = null;
             $mediaMix->game_media_mix_group_id = $mediaMixGroup->id;

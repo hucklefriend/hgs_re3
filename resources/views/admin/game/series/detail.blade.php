@@ -35,12 +35,7 @@
                 <tr>
                     <th>フランチャイズ</th>
                     <td>
-                        @if ($model->franchise())
-                            <span class="mr-2"><a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise()) }}">{{ $model->franchise()->name }}</a></span>
-                        @endif
-                        <a href="{{ route('Admin.Game.Series.LinkFranchise', $model) }}" class="btn btn-default">
-                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
-                        </a>
+                        {{ $model->franchise->name ?? '--' }}
                     </td>
                 </tr>
                 <tr>

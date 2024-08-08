@@ -18,23 +18,21 @@ class GameSeries extends \Eloquent
     /**
      * フランチャイズ
      *
-     * @return ?GameFranchise
+     * @return BelongsTo
      */
-    public function franchise(): ?GameFranchise
+    public function franchise(): BelongsTo
     {
-        // 1対多だが、中間テーブルを利用しているためこうした
-        $many =  $this->belongsToMany(GameFranchise::class, GameFranchiseSeriesLink::class);
-        return $many->count() == 0 ? null : $many->first();
+        return $this->belongsTo(GameFranchise::class, 'game_franchise_id');
     }
 
     /**
      * タイトル
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function titles(): BelongsToMany
+    public function titles(): HasMany
     {
-        return $this->belongsToMany(GameTitle::class, GameSeriesTitleLink::class);
+        return $this->HasMany(GameTitle::class, 'game_series_id');
     }
 
     /**

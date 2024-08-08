@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
-use App\Http\Requests\Admin\Game\GameSeriesFranchiseLinkRequest;
-use App\Http\Requests\Admin\Game\GameSeriesTitleLinkRequest;
-use App\Models\Game\GameFranchise;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Game\GameSeries;
 use App\Http\Requests\Admin\Game\SeriesRequest;
 use App\Models\Game\GameTitle;
@@ -142,44 +139,13 @@ class SeriesController extends AbstractAdminController
      */
     public function delete(GameSeries $series): RedirectResponse
     {
-        $series->titles()->detach();
+        foreach ($series->titles as $title) {
+            $title->game_series_id = null;
+            $title->save();
+        }
         $series->delete();
 
         return redirect()->route('Admin.Game.Series');
-    }
-
-    /**
-     * フランチャイズとリンク
-     *
-     * @param GameSeries $series
-     * @return Application|Factory|View
-     */
-    public function linkFranchise(GameSeries $series): Application|Factory|View
-    {
-        $franchises = GameFranchise::orderBy('id')->get(['id', 'name']);
-        return view('admin.game.series.link_franchise', [
-            'model' => $series,
-            'franchises' => $franchises,
-        ]);
-    }
-
-    /**
-     * フランチャイズと同期処理
-     *
-     * @param GameSeriesFranchiseLinkRequest $request
-     * @param GameSeries $series
-     * @return RedirectResponse
-     */
-    public function syncFranchise(GameSeriesFranchiseLinkRequest $request, GameSeries $series): RedirectResponse
-    {
-        if ($series->franchise()) {
-            $series->franchise()->series()->detach($series->id);
-        }
-
-        $franchise = GameFranchise::find($request->validated('franchise_id'));
-        $franchise->series()->attach($series->id);
-
-        return redirect()->route('Admin.Game.Series.Detail', $series);
     }
 
     /**
@@ -192,22 +158,32 @@ class SeriesController extends AbstractAdminController
     {
         $titles = GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.series.link_title', [
-            'model' => $series,
+            'model'          => $series,
             'linkedTitleIds' => $series->titles()->pluck('id')->toArray(),
-            'titles' => $titles,
+            'titles'         => $titles,
         ]);
     }
 
     /**
      * タイトルと同期処理
      *
-     * @param GameSeriesTitleLinkRequest $request
+     * @param LinkMultiTitleRequest $request
      * @param GameSeries $series
      * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function syncTitle(GameSeriesTitleLinkRequest $request, GameSeries $series): RedirectResponse
+    public function syncTitle(LinkMultiTitleRequest $request, GameSeries $series): RedirectResponse
     {
-        $series->titles()->sync($request->validated('title_id'));
+        foreach ($series->titles as $title) {
+            $title->game_series_id = null;
+            $title->save();
+        }
+        foreach ($request->validated('game_title_ids') as $titleId) {
+            $title = GameTitle::find($titleId);
+            $title->game_franchise_id = null;
+            $title->game_series_id = $series->id;
+            $title->save();
+        }
         return redirect()->route('Admin.Game.Series.Detail', $series);
     }
 }
