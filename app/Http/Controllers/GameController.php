@@ -8,6 +8,7 @@ use App\Models\Game\GameMakerPackageLink;
 use App\Models\Game\GameMediaMix;
 use App\Models\Game\GamePackage;
 use App\Models\Game\GamePlatform;
+use App\Models\Game\GameSeries;
 use App\Models\Game\GameTitle;
 use App\Models\Game\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
@@ -49,9 +50,9 @@ class GameController extends Controller
             $search['p'] = $platforms;
             $packages = GamePackage::select(['id'])->whereIn('game_platform_id', $platforms)->get()->pluck('id');
             $titles = GameTitlePackageLink::whereIn('game_package_id', $packages)->distinct()->get()->pluck('game_title_id');
-            $series = GameSeriesTitleLink::whereIn('game_title_id', $titles)->distinct()->pluck('game_series_id');
-            $franchisesBySeries = GameFranchiseSeriesLink::whereIn('game_series_id', $series)->distinct()->pluck('game_franchise_id');
-            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $titles)->distinct()->pluck('game_franchise_id');
+            $series = GameTitle::whereIn('id', $titles)->distinct()->pluck('game_series_id');
+            $franchisesBySeries = GameSeries::whereIn('id', $series)->distinct()->pluck('game_franchise_id');
+            $franchisesByTitle = GameTitle::whereIn('id', $titles)->distinct()->pluck('game_franchise_id');
             $linkedFranchiseIds = $franchisesBySeries->merge($franchisesByTitle)->unique();
             $franchisesQuery->whereIn('id', $linkedFranchiseIds);
 
@@ -66,7 +67,7 @@ class GameController extends Controller
             $packages = GamePackage::select(['id'])->whereIn('rating', $ratings)->get()->pluck('id');
             $titles = GameTitlePackageLink::whereIn('game_package_id', $packages->toArray())->distinct()->get()->pluck('game_title_id');
             $titleIds = $titleIds->concat($titles->toArray());
-            $franchisesByTitle = GameFranchiseTitleLink::whereIn('game_title_id', $titleIds)->distinct()->pluck('game_franchise_id');
+            $franchisesByTitle = GameTitle::whereIn('id', $titleIds)->distinct()->pluck('game_franchise_id');
             $franchisesQuery->whereIn('id', $franchisesByTitle->unique());
         }
 
