@@ -100,6 +100,7 @@
         </div>
         <canvas class="popup-node-canvas"></canvas>
         <script>
+
             function search()
             {
                 window.hgn.closePopupNode('search-popup');
