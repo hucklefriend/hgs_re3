@@ -18,13 +18,13 @@
                 <div class="list-group" id="admin-link-list">
                     @foreach ($mediaMixes as $mm)
                         <label class="list-group-item">
-                            <input type="checkbox" name="media_mix_ids[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
+                            <input type="checkbox" name="game_media_mix_ids[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
                             {{ $mm->name }}
                         </label>
                     @endforeach
                 </div>
-                @if ($errors->has('media_mix_ids[]'))
-                    <div class="invalid-feedback">{{ $errors->first('media_mix_ids[]') }}</div>
+                @if ($errors->has('game_media_mix_ids[]'))
+                    <div class="invalid-feedback">{{ $errors->first('game_media_mix_ids[]') }}</div>
                 @endif
             </div>
             <div class="panel-footer text-end">

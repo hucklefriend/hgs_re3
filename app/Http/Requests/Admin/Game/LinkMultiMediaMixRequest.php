@@ -22,8 +22,8 @@ class LinkMultiMediaMixRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->media_mix_ids === null) {
-            $this->merge(['media_mix_ids' => []]);
+        if ($this->game_media_mix_ids === null) {
+            $this->merge(['game_media_mix_ids' => []]);
         }
     }
 
@@ -35,8 +35,8 @@ class LinkMultiMediaMixRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'media_mix_ids'   => 'required|array',
-            'media_mix_ids.*' => 'exists:game_media_mixes,id',
+            'game_media_mix_ids'   => 'required|array',
+            'game_media_mix_ids.*' => 'exists:game_media_mixes,id',
         ];
     }
 }

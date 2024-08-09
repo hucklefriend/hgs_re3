@@ -16,7 +16,11 @@ class SelectGameMediaMixGroup extends Input
     public function render(): View|Closure|string
     {
         $name = $this->name;
-        $list = GameMediaMixGroup::all(['id', 'name'])->pluck('name', 'id')->toArray();
+        $list = [];
+        foreach (GameMediaMixGroup::all() as $mediaMixGroup) {
+            $list[$mediaMixGroup->id] = sprintf("[%s]%s", $mediaMixGroup->franchise->name ?? '--', $mediaMixGroup->name);
+        }
+
         return view('components.admin.select', [
             'list' => ['' => '-'] + $list,
             'selected' => $this->model->$name,

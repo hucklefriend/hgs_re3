@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\PlatformMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\RelatedProductLinkRequest;
+use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
 use App\Models\Game\GamePlatform;
 use App\Http\Requests\Admin\Game\PlatformRequest;
 use App\Models\Game\GameRelatedProduct;
@@ -208,22 +208,22 @@ class PlatformController extends AbstractAdminController
     {
         $relatedProducts = GameRelatedProduct::orderBy('id')->get(['id', 'name']);
         return view('admin.game.platform.link_related_product', [
-            'model' => $platform,
+            'model'                   => $platform,
             'linkedRelatedProductIds' => $platform->relatedProducts()->pluck('id')->toArray(),
-            'relatedProducts' => $relatedProducts,
+            'relatedProducts'         => $relatedProducts,
         ]);
     }
 
     /**
      * 関連商品と同期処理
      *
-     * @param RelatedProductLinkRequest $request
+     * @param LinkMultiRelatedProductRequest $request
      * @param GamePlatform $platform
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(RelatedProductLinkRequest $request, GamePlatform $platform): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GamePlatform $platform): RedirectResponse
     {
-        $platform->relatedProducts()->sync($request->validated('related_product_id'));
+        $platform->relatedProducts()->sync($request->validated('game_related_product_ids'));
         return redirect()->route('Admin.Game.Platform.Detail', $platform);
     }
 }

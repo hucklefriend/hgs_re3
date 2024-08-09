@@ -177,7 +177,7 @@ class MediaMixGroupController extends AbstractAdminController
             $mm->game_media_mix_group_id = null;
             $mm->save();
         }
-        foreach ($request->validated('media_mix_ids') as $mediaMixId) {
+        foreach ($request->validated('game_media_mix_ids') as $mediaMixId) {
             $mediaMix = GameMediaMix::find($mediaMixId);
             $mediaMix->game_franchise_id = null;
             $mediaMix->game_media_mix_group_id = $mediaMixGroup->id;

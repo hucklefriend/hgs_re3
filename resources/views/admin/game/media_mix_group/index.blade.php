@@ -45,6 +45,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>フランチャイズ</th>
                     <th>タイトル</th>
                     <td></td>
                 </tr>
@@ -53,6 +54,7 @@
                 @foreach ($mediaMixGroups as $pg)
                     <tr>
                         <td>{{ $pg->id }}</td>
+                        <td>{{ $pg->franchise->name ?? '--' }}</td>
                         <td>{{ $pg->name }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.Game.MediaMixGroup.Detail', $pg) }}" class="btn btn-default">

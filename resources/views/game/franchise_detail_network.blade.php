@@ -74,7 +74,7 @@
                         @foreach ($mediaMixGroup->mediaMixes as $mediaMix)
                             <div>
                                 <div class="link-node link-node-center fade">
-                                    <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">[{{ $mediaMix->type->text() }}]{!! $mediaMix->node_name !!}</a>
+                                    <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">{!! $mediaMix->node_name !!}</a>
                                 </div>
                             </div>
                         @endforeach

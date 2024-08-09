@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameRelatedProductTitleLinkRequest extends FormRequest
+class LinkMultiPlatformRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class GameRelatedProductTitleLinkRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->title_id === null) {
-            $this->merge(['title_id' => []]);
+        if ($this->game_platform_ids === null) {
+            $this->merge(['game_platform_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class GameRelatedProductTitleLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title_id' => 'nullable|array|exists:game_titles,id',
+            'game_platform_ids' => 'nullable|array|exists:game_platforms,id',
         ];
     }
 }

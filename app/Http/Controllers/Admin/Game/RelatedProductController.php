@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\GameRelatedProductMediaMixLinkRequest;
-use App\Http\Requests\Admin\Game\GameRelatedProductMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GameRelatedProductPlatformLinkRequest;
+use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
+use App\Http\Requests\Admin\Game\RelatedProductMultiUpdateRequest;
+use App\Http\Requests\Admin\Game\LinkMultiPlatformRequest;
 use App\Http\Requests\Admin\Game\RelatedProductRequest;
 use App\Http\Requests\Admin\Game\RelatedProductShopRequest;
-use App\Http\Requests\Admin\Game\GameRelatedProductTitleLinkRequest;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Game\GameMediaMix;
 use App\Models\Game\GamePlatform;
 use App\Models\Game\GameRelatedProduct;
@@ -121,11 +121,11 @@ class RelatedProductController extends AbstractAdminController
     /**
      * 更新処理
      *
-     * @param GameRelatedProductMultiUpdateRequest $request
+     * @param RelatedProductMultiUpdateRequest $request
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updateMulti(GameRelatedProductMultiUpdateRequest $request): RedirectResponse
+    public function updateMulti(RelatedProductMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $h1NodeNames = $request->validated(['h1_node_name']);
@@ -197,22 +197,22 @@ class RelatedProductController extends AbstractAdminController
     {
         $platforms = GamePlatform::orderBy('id')->get(['id', 'name']);
         return view('admin.game.related_product.link_platform', [
-            'model' => $relatedProduct,
+            'model'             => $relatedProduct,
             'linkedPlatformIds' => $relatedProduct->platforms()->pluck('id')->toArray(),
-            'platforms' => $platforms,
+            'platforms'         => $platforms,
         ]);
     }
 
     /**
      * プラットフォームと同期処理
      *
-     * @param GameRelatedProductPlatformLinkRequest $request
+     * @param LinkMultiPlatformRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function syncPlatform(GameRelatedProductPlatformLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function syncPlatform(LinkMultiPlatformRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
     {
-        $relatedProduct->platforms()->sync($request->validated('platform_id'));
+        $relatedProduct->platforms()->sync($request->validated('game_platform_ids'));
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 
@@ -226,22 +226,22 @@ class RelatedProductController extends AbstractAdminController
     {
         $titles = GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.related_product.link_title', [
-            'model' => $relatedProduct,
+            'model'          => $relatedProduct,
             'linkedTitleIds' => $relatedProduct->titles()->pluck('id')->toArray(),
-            'titles' => $titles,
+            'titles'         => $titles,
         ]);
     }
 
     /**
      * タイトルと同期処理
      *
-     * @param GameRelatedProductTitleLinkRequest $request
+     * @param LinkMultiTitleRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function syncTitle(GameRelatedProductTitleLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function syncTitle(LinkMultiTitleRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
     {
-        $relatedProduct->titles()->sync($request->validated('title_id'));
+        $relatedProduct->titles()->sync($request->validated('game_title_ids'));
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 
@@ -264,13 +264,13 @@ class RelatedProductController extends AbstractAdminController
     /**
      * メディアミックスと同期処理
      *
-     * @param GameRelatedProductMediaMixLinkRequest $request
+     * @param LinkMultiMediaMixRequest $request
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function syncMediaMix(GameRelatedProductMediaMixLinkRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function syncMediaMix(LinkMultiMediaMixRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
     {
-        $relatedProduct->mediaMixes()->sync($request->validated('media_mix_id'));
+        $relatedProduct->mediaMixes()->sync($request->validated('game_media_mix_ids'));
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 

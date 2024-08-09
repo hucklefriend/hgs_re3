@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game\GameFranchise;
-use App\Models\Game\GameFranchiseSeriesLink;
-use App\Models\Game\GameFranchiseTitleLink;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GameMakerPackageLink;
 use App\Models\Game\GameMediaMix;
 use App\Models\Game\GamePackage;
 use App\Models\Game\GamePlatform;
-use App\Models\Game\GameSeriesTitleLink;
 use App\Models\Game\GameTitle;
 use App\Models\Game\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
@@ -18,7 +15,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {

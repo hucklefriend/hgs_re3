@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class GameMakerPackageLinkRequest extends FormRequest
+class LinkMultiRelatedProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class GameMakerPackageLinkRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->package_id === null) {
-            $this->merge(['package_id' => []]);
+        if ($this->game_related_product_ids === null) {
+            $this->merge(['game_related_product_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class GameMakerPackageLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_id' => 'nullable|array|exists:game_packages,id',
+            'game_related_product_ids' => 'nullable|array|exists:game_related_products,id',
         ];
     }
 }
