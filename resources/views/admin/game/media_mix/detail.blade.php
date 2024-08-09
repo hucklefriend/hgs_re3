@@ -42,11 +42,27 @@
                 </tr>
                 <tr>
                     <th>フランチャイズ</th>
-                    <td>{{ $model->franchise->name ?? '--' }}</td>
+                    @if ($model->franchise)
+                        <td>
+                            <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise) }}">
+                                {{ $model->franchise->name }}
+                            </a>
+                        </td>
+                    @else
+                        <td>--</td>
+                    @endif
                 </tr>
                 <tr>
                     <th>メディアミックスグループ</th>
-                    <td>{{ $model->mediaMixGroup->name ?? '--' }}</td>
+                    @if ($model->mediaMixGroup)
+                        <td>
+                            <a href="{{ route('Admin.Game.MediaMixGroup.Detail', $model->mediaMixGroup) }}">
+                                [{{ $model->mediaMixGroup->franchise->name ?? '--' }}]{{ $model->mediaMixGroup->name }}
+                            </a>
+                        </td>
+                    @else
+                        <td>--</td>
+                    @endif
                 </tr>
                 <tr>
                     <th>レーティング</th>
