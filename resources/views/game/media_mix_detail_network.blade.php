@@ -30,12 +30,14 @@
             </div>
             <div class="node-map">
                 <div>
+                    @if ($mediaMix->getFranchise())
                     <div class="link-node link-node-center fade">
-                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $mediaMix->franchise->key]) }}">
-                            {{ $mediaMix->franchise->node_name }}<br>
+                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $mediaMix->getFranchise()->key]) }}">
+                            {{ $mediaMix->getFranchise()->node_name }}<br>
                             フランチャイズ
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
         </section>

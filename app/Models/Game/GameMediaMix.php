@@ -41,6 +41,23 @@ class GameMediaMix extends \Eloquent
     }
 
     /**
+     * フランチャイズを取得
+     * メディアミックスグループが設定されている場合はメディアミックスグループ側のフランチャイズを取得
+     *
+     * @return GameFranchise|null
+     */
+    public function getFranchise(): ?GameFranchise
+    {
+        if ($this->franchise) {
+            return $this->franchise;
+        } else if ($this->mediaMixGroup) {
+            return $this->mediaMixGroup->franchise;
+        }
+
+        return null;
+    }
+
+    /**
      * メディアミックスグループを取得
      *
      * @return BelongsTo
