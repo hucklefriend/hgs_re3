@@ -60,6 +60,11 @@ $(()=>{
             }
         });
     });
+
+    $('.description-source-tool-a').click(function(e) {
+        e.preventDefault();
+        $('#description_source').val('<a href="" target="_blank"></a>');
+    });
 });
 
 

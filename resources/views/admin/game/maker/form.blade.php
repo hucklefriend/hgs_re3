@@ -50,7 +50,7 @@
     <tr>
         <th>説明文の引用元</th>
         <td>
-            <x-admin.input name="description_source" :model="$model" maxlength="200" />
+            <x-admin.description-source name="description_source" :model="$model" />
         </td>
     </tr>
     <tr>
