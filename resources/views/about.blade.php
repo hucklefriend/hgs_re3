@@ -86,8 +86,8 @@
             下記は画像生成AIを使って生成しました。
         </p>
         <ul>
-            <li><a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
-            <li><a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
+            <li>・<a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
+            <li>・<a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
         </ul>
     </section>
 
@@ -96,8 +96,8 @@
         <p>
             下記は無料の素材を利用しています。
         </p>
-        <p>
-            ・ローディング画像 <a href="https://pixabay.com/gifs/three-dots-loading-movement-11928/" target="_blank">Pixabay</a>
-        </p>
+        <ul>
+            <li>・ローディング画像 <a href="https://pixabay.com/gifs/three-dots-loading-movement-11928/" target="_blank">Pixabay</a></li>
+        </ul>
     </section>
 @endsection
