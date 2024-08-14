@@ -62,20 +62,19 @@
     </section>
 
     <section>
-        <h2><i class="bi bi-octagon"></i>AIの利用</h2>
-        <p>
-            AIを使っているところがあります。<br>
-            プライバシーポリシーを見てください。
-        </p>
-    </section>
-
-    <section>
         <h2><i class="bi bi-octagon"></i>個人運営</h2>
         <p>
             個人で運営しているため、サポートはなかなか難しいです。<br>
             ご理解頂ける方のみの利用をお願いします。<br>
             <br>
-            問い合わせはX/BlueSky/GitHubでお願いします。<br>
+            問い合わせは下記のSNSでお願いします。<br>
+        </p>
+        <ul>
+            <li><a href="https://x.com/huckle_friend">X（管理人の個人アカウント）</a></li>
+            <li><a href="https://bsky.app/profile/webmaster.horrorgame.net">Bluesky(管理人の個人アカウント)</a></li>
+        </ul>
+        <p>
+            <a href="https://x.com/HorrorGameNet">Bluesky(管理人個人)</a>
             スパムが多いのでメールでの問い合わせには対応していません。<br>
             ご了承ください。
         </p>

@@ -106,19 +106,25 @@
     </section>
     --}}
 
+
+
     <section>
-        <h2><i class="bi bi-octagon"></i>AI</h2>
+        <h2><i class="bi bi-octagon"></i>画像生成AIの利用</h2>
         <p>
-            当サイトではChatGPTを利用して生成したイラストを利用している場合があります。<br>
+            下記は画像生成AIを使って生成しました。
         </p>
+        <ul>
+            <li><a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
+            <li><a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
+        </ul>
     </section>
 
     <section>
         <h2><i class="bi bi-octagon"></i>免責事項</h2>
 
         <p>
-            当サイトで掲載している画像の著作権等は権利所有者のものです。<br>
-            また、AI生成の画像を利用していますが、AI生成画像の著作権については日本国の法律に従います。
+            当サイトで掲載している画像等の著作権等は権利所有者のものです。<br>
+            また生成AIで生成した画像を利用していますが、こちらの著作権については日本国の法律に従います。
         </p>
         <p>
             当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
