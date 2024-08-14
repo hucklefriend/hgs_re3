@@ -35,6 +35,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>表示順</th>
+                    <td>
+                        {{ $model->sort_order }}
+                    </td>
+                </tr>
+                <tr>
                     <th>説明</th>
                     <td>
                         <div class="d-inline-block text-center">

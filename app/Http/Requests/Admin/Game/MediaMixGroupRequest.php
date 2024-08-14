@@ -32,6 +32,7 @@ class MediaMixGroupRequest extends FormRequest
             'name'              => 'required|max:200',
             'node_name'         => 'required|max:200',
             'description'       => 'nullable',
+            'sort_order'        => 'required|integer',
         ];
     }
 }

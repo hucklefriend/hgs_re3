@@ -19,6 +19,12 @@
         </td>
     </tr>
     <tr>
+        <th>表示順</th>
+        <td>
+            <x-admin.input type="number" name="sort_order" :model="$model" required />
+        </td>
+    </tr>
+    <tr>
         <th>ノード表示用の名前</th>
         <td>
             <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />

@@ -71,7 +71,7 @@
                     @endif
 
                     <div class="node-map">
-                        @foreach ($mediaMixGroup->mediaMixes as $mediaMix)
+                        @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
                             <div>
                                 <div class="link-node link-node-center fade">
                                     <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">{!! $mediaMix->node_name !!}</a>
