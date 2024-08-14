@@ -14,7 +14,7 @@
             <section>
                 <div class="node node-center">
                     <div class="text-node fade">
-                        @include('common.description', ['model' => $title])
+                        @include('common.description', ['model' => $mediaMix])
                     </div>
                 </div>
             </section>
