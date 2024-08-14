@@ -109,17 +109,6 @@
 
 
     <section>
-        <h2><i class="bi bi-octagon"></i>画像生成AIの利用</h2>
-        <p>
-            下記は画像生成AIを使って生成しました。
-        </p>
-        <ul>
-            <li><a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
-            <li><a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
-        </ul>
-    </section>
-
-    <section>
         <h2><i class="bi bi-octagon"></i>免責事項</h2>
 
         <p>
