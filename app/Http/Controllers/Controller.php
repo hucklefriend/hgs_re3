@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Information;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -60,8 +61,14 @@ abstract class Controller
         if (self::isAjax()) {
             return response()->json($contentNodeData);
         } else {
+            $infoList = Information::where('open_at', '<', now())
+                ->where('close_at', '>=', now())
+                ->orderBy('priority', 'desc')
+                ->orderBy('open_at', 'desc')
+                ->get();
             return view('entrance', [
                 'contentNode' => $contentNodeData,
+                'infoList'    => $infoList,
             ]);
         }
     }
