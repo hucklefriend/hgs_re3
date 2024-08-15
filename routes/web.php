@@ -201,7 +201,7 @@ Route::group(['prefix' => 'admin'], function () {
             });
 
             // 関連商品
-            $prefix = 'related_product';
+            $prefix = 'relatedProduct';
             Route::group(['prefix' => $prefix], function () use ($prefix) {
                 $basename = 'Admin.Game.RelatedProduct';
                 $class = Admin\Game\RelatedProductController::class;
@@ -220,9 +220,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
                 Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
                 Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
-                Route::get('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
-                Route::put('{' . $prefix . '}/shop/{shop_id}/edit', [$class, 'updateShop'])->name("{$basename}.UpdateShop");
-                Route::delete('{' . $prefix . '}/shop/{shop_id}', [$class, 'deleteShop'])->name("{$basename}.DeleteShop");
+                Route::get('{' . $prefix . '}/shop/{shopId}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
+                Route::put('{' . $prefix . '}/shop/{shopId}/edit', [$class, 'updateShop'])->name("{$basename}.UpdateShop");
+                Route::delete('{' . $prefix . '}/shop/{shopId}', [$class, 'deleteShop'])->name("{$basename}.DeleteShop");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });

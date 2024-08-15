@@ -308,12 +308,12 @@ class RelatedProductController extends AbstractAdminController
      * ショップの編集
      *
      * @param GameRelatedProduct $relatedProduct
-     * @param $shop_id
+     * @param $shopId
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function editShop(GameRelatedProduct $relatedProduct, $shop_id)
+    public function editShop(GameRelatedProduct $relatedProduct, $shopId)
     {
-        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shop_id);
+        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shopId);
         return view('admin.game.related_product.edit_shop', [
             'relatedProduct' => $relatedProduct,
             'model'          => $shop,
@@ -325,12 +325,12 @@ class RelatedProductController extends AbstractAdminController
      *
      * @param RelatedProductShopRequest $request
      * @param GameRelatedProduct $relatedProduct
-     * @param $shop_id
+     * @param $shopId
      * @return RedirectResponse
      */
-    public function updateShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, $shop_id)
+    public function updateShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, $shopId)
     {
-        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shop_id);
+        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shopId);
         $shop->fill($request->validated());
         $shop->save();
 
@@ -341,12 +341,12 @@ class RelatedProductController extends AbstractAdminController
      * ショップの削除
      *
      * @param GameRelatedProduct $relatedProduct
-     * @param $shop_id
+     * @param $shopId
      * @return RedirectResponse
      */
-    public function deleteShop(GameRelatedProduct $relatedProduct, $shop_id)
+    public function deleteShop(GameRelatedProduct $relatedProduct, $shopId)
     {
-        $relatedProduct->shops()->where('shop_id', $shop_id)->delete();
+        $relatedProduct->shops()->where('shop_id', $shopId)->delete();
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
