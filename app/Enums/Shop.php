@@ -7,7 +7,10 @@ namespace App\Enums;
 
 enum Shop: int
 {
+    // ネット通販
     case Amazon = 1;
+
+    // ゲーム配信サイト
     case Steam = 11;
     case PlayStationStore = 12;
     case MicrosoftStore = 13;
@@ -16,14 +19,23 @@ enum Shop: int
     case DMM_GAMES = 16;
     case EGG = 17;
     case XboxStore = 18;
+
+    // スマホアプリ
     case APP_STORE = 31;
     case GooglePlay = 32;
     case SQM = 33;
+
+    // アダルト
     case Getchu = 41;
     case DLsite = 42;
     case DMM = 43;
     case FANZA = 44;
     case FANZA_GAMES = 45;
+
+    // 動画配信サービス
+    case PRIME_VIDEO = 51;
+
+    // 〇〇で検索
     case Amazon_SEARCH = 101;
     case MERCARI_SEARCH = 102;
     case RAKUTEN_SEARCH = 103;
@@ -53,6 +65,7 @@ enum Shop: int
             self::DMM              => 'DMM.com',
             self::FANZA            => 'FANZA',
             self::FANZA_GAMES      => 'FANZA Games',
+            self::PRIME_VIDEO      => 'Prime Video',
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',
