@@ -202,7 +202,7 @@ Route::group(['prefix' => 'admin'], function () {
 
             // 関連商品
             $prefix = 'relatedProduct';
-            Route::group(['prefix' => $prefix], function () use ($prefix) {
+            Route::group(['prefix' => 'related_product'], function () use ($prefix) {
                 $basename = 'Admin.Game.RelatedProduct';
                 $class = Admin\Game\RelatedProductController::class;
                 Route::get('/', [$class, 'index'])->name($basename);
