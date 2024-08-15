@@ -10,6 +10,7 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
 
+        @include ('admin.all_errors')
         <form method="POST" action="{{ route('Admin.Game.Franchise.SyncTitle', $model) }}">
             @csrf
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Enums\Shop;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\PackageMakerLinkRequest;
+use App\Http\Requests\Admin\Game\LinkMultiMakerRequest;
 use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
@@ -355,13 +355,13 @@ class PackageController extends AbstractAdminController
     /**
      * メーカーと同期処理
      *
-     * @param PackageMakerLinkRequest $request
+     * @param LinkMultiMakerRequest $request
      * @param GamePackage $package
      * @return RedirectResponse
      */
-    public function syncMaker(PackageMakerLinkRequest $request, GamePackage $package): RedirectResponse
+    public function syncMaker(LinkMultiMakerRequest $request, GamePackage $package): RedirectResponse
     {
-        $package->makers()->sync($request->validated('maker_id'));
+        $package->makers()->sync($request->validated('game_maker_ids'));
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 

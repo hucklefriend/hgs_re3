@@ -5,7 +5,7 @@ namespace App\Http\Requests\Admin\Game;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class PackageMakerLinkRequest extends FormRequest
+class LinkMultiMakerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class PackageMakerLinkRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->maker_id === null) {
-            $this->merge(['maker_id' => []]);
+        if ($this->game_maker_ids === null) {
+            $this->merge(['game_maker_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class PackageMakerLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'maker_id' => 'nullable|array|exists:game_makers,id',
+            'game_maker_ids' => 'nullable|array|exists:game_makers,id',
         ];
     }
 }

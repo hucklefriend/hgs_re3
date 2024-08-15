@@ -8,6 +8,7 @@
         <div class="panel-body">
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
+        @include ('admin.all_errors')
         <form method="POST" action="{{ route('Admin.Game.RelatedProduct.SyncMediaMix', $model) }}">
             @csrf
 
@@ -15,7 +16,7 @@
                 <div class="list-group" id="admin-link-list">
                 @foreach ($mediaMixes as $mm)
                     <label class="list-group-item">
-                        <input type="checkbox" name="media_mix_id[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
+                        <input type="checkbox" name="game_media_mix_ids[]" value="{{ $mm->id }}" class="form-check-input me-1" @checked(in_array($mm->id, $linkedMediaMixIds))>
                         [{{ $mm->type->text() }}] {{ $mm->name }}
                     </label>
                 @endforeach

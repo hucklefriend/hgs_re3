@@ -10,9 +10,10 @@
                 <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}" placeholder="名前" autocomplete="off">
             </div>
             <div>
-                <x-admin.select-game-platform-multi name="'platform_ids[]'" id="admin-link-platform-filter" />
+                <x-admin.select-game-platform-multi name="platform_ids[]" id="admin-link-platform-filter" />
             </div>
         </div>
+        @include ('admin.all_errors')
         <form method="POST" action="{{ route('Admin.Game.Maker.SyncPackage', $model) }}">
             @csrf
 
@@ -25,8 +26,8 @@
                         </label>
                     @endforeach
                 </div>
-                @if ($errors->has('package_id[]'))
-                    <div class="invalid-feedback">{{ $errors->first('package_id[]') }}</div>
+                @if ($errors->has('game_package_ids[]'))
+                    <div class="invalid-feedback">{{ $errors->first('game_package_ids[]') }}</div>
                 @endif
             </div>
             <div class="panel-footer text-end">

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\MakerMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\GameMakerPackageLinkRequest;
 use App\Http\Requests\Admin\Game\MakerRequest;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GamePackage;
+use App\Models\Game\GamePlatform;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -204,32 +206,27 @@ class MakerController extends AbstractAdminController
      * @param GameMaker $maker
      * @return Application|Factory|View
      */
-    public function linkTitle(GameMaker $maker): Application|Factory|View
+    public function linkPackage(GameMaker $maker): Application|Factory|View
     {
-        $packages = GamePackage::orderBy('id')
-            ->whereNotIn('id', function ($query){
-                $query->select('game_title_id')
-                    ->from('game_series_title_links');
-            })
-            ->get(['id', 'name']);
-
+        $packages = GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
         return view('admin.game.maker.link_package', [
             'model'            => $maker,
             'linkedPackageIds' => $maker->packages()->pluck('id')->toArray(),
             'packages'         => $packages,
+            'platformHash'     => GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
         ]);
     }
 
     /**
      * タイトルと同期処理
      *
-     * @param GameMakerPackageLinkRequest $request
+     * @param LinkMultiPackageRequest $request
      * @param GameMaker $maker
      * @return RedirectResponse
      */
-    public function syncTitle(GameMakerPackageLinkRequest $request, GameMaker $maker): RedirectResponse
+    public function syncTitle(LinkMultiPackageRequest $request, GameMaker $maker): RedirectResponse
     {
-        $maker->packages()->sync($request->validated('package_id'));
+        $maker->packages()->sync($request->validated('game_package_ids'));
         return redirect()->route('Admin.Game.Maker.Detail', $maker);
     }
 }

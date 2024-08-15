@@ -10,6 +10,7 @@
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
 
+        @include ('admin.all_errors')
         <form method="POST" action="{{ route('Admin.Game.PackageGroup.SyncTitle', $model) }}">
             @csrf
 
@@ -17,7 +18,7 @@
                 <div class="list-group" id="admin-link-list">
                     @foreach ($titles as $title)
                         <label class="list-group-item">
-                            <input type="checkbox" name="title_id[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
+                            <input type="checkbox" name="game_title_ids[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
                             {{ $title->name }}
                         </label>
                     @endforeach

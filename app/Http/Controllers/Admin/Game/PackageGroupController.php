@@ -189,7 +189,7 @@ class PackageGroupController extends AbstractAdminController
     public function linkPackage(Request $request, GamePackageGroup $packageGroup): Application|Factory|View
     {
         $packages = GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
-        return view('admin.game.package_group.link_packages', [
+        return view('admin.game.package_group.link_package', [
             'model'            => $packageGroup,
             'linkedPackageIds' => $packageGroup->packages()->pluck('id')->toArray(),
             'packages'         => $packages,
