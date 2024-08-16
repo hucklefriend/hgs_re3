@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'MakerNetwork.hgn')
+@section('title', $maker->name . ' | ホラーゲームネットワーク')
 
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">

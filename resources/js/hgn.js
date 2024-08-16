@@ -383,9 +383,9 @@ export class HorrorGameNetwork
             this.contentNode.open(linkNode);
             this.contentNode.setContent(window.contentNode);
             window.contentNode = null;
-            window.history.pushState({type: 'contentNode', 'linkNodeId': linkNodeId}, '');
+            window.history.pushState({type: 'contentNode', 'linkNodeId': linkNodeId, title:document.title}, '');
         } else {
-            window.history.pushState({type: 'network'}, '');
+            window.history.pushState({type: 'network', title:document.title}, '');
 
             this.appear();
         }
@@ -785,22 +785,25 @@ export class HorrorGameNetwork
         this.contentNode.historyState = window.history.state;
         this.disappear();
 
-        if (!isBack) {
-            // pushStateにつっこむ
-            window.history.pushState({type:'network'}, null, url);
-        }
         this.fetch(url, (data, hasError) => {
             if (hasError) {
                 this.contentNode.open(null);
                 this.showContentNode({
-                    title: 'Error',
+                    title: 'エラー',
                     body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
+                    documentTitle: 'エラー|ホラーゲームネットワーク',
                     mode: ContentNode.MODE_ERROR
                 }, null);
+
+                if (!isBack) {
+                    // pushStateにつっこむ
+                    window.history.pushState({type:'network', title:'エラー|ホラーゲームネットワーク'}, null, url);
+                }
 
                 // 同じネットワークの再表示
                 this.appear();
             } else {
+                data.url = url;
                 if (this.animationMode === HorrorGameNetwork.ANIMATION_MODE_DISAPPEAR) {
                     this.dataCache = data;
                     this.isWaitDisappear = true;
@@ -824,6 +827,14 @@ export class HorrorGameNetwork
         this.bg2.clear();
         this.mainDOM.innerHTML = data.network;
         this.popupDOM.innerHTML = data.popup;
+
+        // windowタイトルの変更
+        if (data.title) {
+            document.title = data.title;
+        }
+
+        window.history.pushState({type:'network', title:data.title}, null, data.url);
+
         this.loadNodes();
         this.appear();
     }

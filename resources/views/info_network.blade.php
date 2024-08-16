@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Information.hgn')
+@section('title', 'Information | ホラーゲームネットワーク')
 
 @section('content')
     <div style="text-align:center; margin: 20px 0;">

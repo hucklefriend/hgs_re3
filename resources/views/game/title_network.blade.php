@@ -1,10 +1,10 @@
 @extends('layout')
 
-@section('title', 'タイトルネットワーク.HGN')
+@section('title', $title->name . ' | ホラーゲームネットワーク')
 
 @section('content')
     <div style="text-align:center; margin: 20px 0;">
-        <h1 class="head1 fade">{{ $title->name }}</h1>
+        <h1 class="head1 fade">{{ $title->hg_node_name }}</h1>
     </div>
 
     @if (!empty($title->description))

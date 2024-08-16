@@ -34,6 +34,7 @@ enum Shop: int
 
     // 動画配信サービス
     case PRIME_VIDEO = 51;
+    case NETFLIX = 52;
 
     // 〇〇で検索
     case Amazon_SEARCH = 101;
@@ -66,6 +67,7 @@ enum Shop: int
             self::FANZA            => 'FANZA',
             self::FANZA_GAMES      => 'FANZA Games',
             self::PRIME_VIDEO      => 'Prime Video',
+            self::NETFLIX          => 'Netflix',
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',

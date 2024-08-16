@@ -183,6 +183,7 @@ export class ContentNode extends OctaNode
 
         this.dataChache = null;
         this.contentLoaded = false;
+        this.prevTitle = document.title;
     }
 
     /**
@@ -243,6 +244,7 @@ export class ContentNode extends OctaNode
         this.state = ContentNode.STATE_OPENING;
         this.openScrollY = window.scrollY;
         this.mode = ContentNode.MODE_NORMAL;
+        this.prevTitle = document.title;
 
         HorrorGameNetwork.getInstance().setContainerScrollMode(0, this.openScrollY);
 
@@ -315,7 +317,7 @@ export class ContentNode extends OctaNode
                 this.historyUrl = null;
                 this.historyState = null;
             } else {
-                window.history.pushState({type: 'network'}, null, window.baseUrl);
+                window.history.pushState({type:'network', title:this.prevTitle}, null, window.baseUrl);
             }
         }
 
@@ -326,6 +328,8 @@ export class ContentNode extends OctaNode
             this.animationFrame = 10;
             this.linkNode.startAnimation();
         }
+
+        document.title = this.prevTitle;
     }
 
     /**
@@ -384,6 +388,7 @@ export class ContentNode extends OctaNode
 
                 this.titleDOM.innerHTML = this.dataChache.title;
                 this.bodyDOM.innerHTML = this.dataChache.body;
+                document.title = this.dataChache.documentTitle;
                 this.dataChache = null;
             }
         }

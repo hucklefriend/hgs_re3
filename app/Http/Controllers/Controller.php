@@ -7,6 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 abstract class Controller
 {
@@ -34,6 +35,7 @@ abstract class Controller
         if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
+                'title'   => $rendered['title'],
                 'network' => $rendered['content'],
                 'popup'   => $rendered['popup'] ?? '',
             ]);
@@ -53,10 +55,11 @@ abstract class Controller
     {
         $rendered = $view->renderSections();
         $contentNodeData = [
-            'linkNodeId' => $rendered['link-node-id'] ?? '',
-            'title'      => $rendered['content-node-title'],
-            'body'       => $rendered['content-node-body'],
-            'footer'     => $rendered['content-node-footer'] ?? '',
+            'linkNodeId'    => $rendered['link-node-id'] ?? '',
+            'title'         => $rendered['content-node-title'],
+            'body'          => $rendered['content-node-body'],
+            'footer'        => $rendered['content-node-footer'] ?? '',
+            'documentTitle' => $rendered['content-node-title'] . ' | ホラーゲームネットワーク',
         ];
         if (self::isAjax()) {
             return response()->json($contentNodeData);

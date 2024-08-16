@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Entrance.hgn')
+@section('title', 'Entrance | ホラーゲームネットワーク')
 
 @section('content')
     {{--

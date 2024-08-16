@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'HorrorGameNetwork.hgn')
+@section('title', 'HorrorGame Network | ホラーゲームネットワーク')
 
 @section('content')
     <style>

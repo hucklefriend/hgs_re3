@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'FranchiseNetwork.hgn')
+@section('title', $franchise->name . 'フランチャイズ | ホラーゲームネットワーク')
 
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">

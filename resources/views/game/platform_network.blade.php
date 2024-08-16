@@ -1,5 +1,7 @@
 @extends('layout')
 
+@section('title', 'Platform Network | ホラーゲームネットワーク')
+
 @section('content')
     <div class="node-list">
         <div style="text-align:center; margin: 20px 0;">

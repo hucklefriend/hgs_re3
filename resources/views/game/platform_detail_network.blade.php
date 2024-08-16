@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $platform->name . '.hgn')
+@section('title', $platform->name . ' | ホラーゲームネットワーク')
 
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">
