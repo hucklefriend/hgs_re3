@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $mediaMix->name . '|ホラーゲームネットワーク')
+@section('title', $mediaMix->name . ' | ホラーゲームネットワーク')
 
 @section('content')
     <div class="node-list" style="margin-bottom: 100px;">
