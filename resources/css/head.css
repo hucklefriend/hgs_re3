@@ -27,7 +27,7 @@ h3.head3 {
     margin: 0 0 1.5rem 0;
     font-size: 15px;
     padding: 5px 15px;
-    background: linear-gradient(to right, rgba(0, 80, 0, 0.6), rgba(0, 0, 0, 0.2));
+    background: linear-gradient(135deg, rgba(0, 80, 0, 0.6), rgba(0, 0, 0, 0.2));
 
     .bi-octagon {
         color: #AAFFAA;

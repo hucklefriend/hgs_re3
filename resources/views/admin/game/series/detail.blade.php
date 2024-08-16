@@ -33,6 +33,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
                     <th>フランチャイズ</th>
                     <td>
                         {{ $model->franchise->name ?? '--' }}
