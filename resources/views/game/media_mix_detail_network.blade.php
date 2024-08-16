@@ -28,7 +28,7 @@
                     関連ネットワーク
                 </h2>
             </div>
-            <div class="node-map">
+            <div class="node-map" style="margin-bottom: 50px;">
                 <div>
                     @if ($mediaMix->getFranchise())
                     <div class="link-node link-node-center fade">

@@ -27,9 +27,7 @@
                 @empty($series->description)
                     <h3 class="head3 fade">{{ $series->node_name }}シリーズ</h3>
                 @else
-                    <h3 class="head3 fade" style="margin-bottom: 5px;">
-                        {{ $series->node_name }}
-                    </h3>
+                    <h3 class="head3 fade" style="margin-bottom: 5px;">{{ $series->node_name }}シリーズ</h3>
                     <div class="node">
                         <div class="text-node small fade">
                             {!! nl2br($series->description) !!}
@@ -99,7 +97,7 @@
         @elseif ($franchise->mediaMixes->isNotEmpty())
             <section style="margin-top: 50px;margin-bottom: 30px;">
                 <h2 class="head2 fade">メディアミックス</h2>
-                <div class="node-map">
+                <div class="node-map" style="margin-bottom: 50px;">
                     @foreach ($franchise->mediaMixes as $mediaMix)
                         <div>
                             <div class="link-node link-node-center fade">
