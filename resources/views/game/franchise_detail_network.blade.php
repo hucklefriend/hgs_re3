@@ -83,7 +83,7 @@
                     </div>
                     @endif
 
-                    <div class="node-map">
+                    <div class="node-map" style="margin-bottom: 50px;">
                         @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
                             <div>
                                 <div class="link-node link-node-center fade">
