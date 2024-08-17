@@ -71,10 +71,10 @@
 
                 @foreach ($franchise->mediaMixGroups as $mediaMixGroup)
                     @empty($mediaMixGroup->description)
-                        <h3 class="head3 fade">{{ $mediaMixGroup->name }}</h3>
+                        <h3 class="head3 fade">{{ $mediaMixGroup->node_name }}</h3>
                     @else
                     <h3 class="head3 fade" style="margin-bottom: 5px;">
-                        {{ $mediaMixGroup->name }}
+                        {{ $mediaMixGroup->node_name }}
                     </h3>
                     <div class="node">
                         <div class="text-node small fade">
