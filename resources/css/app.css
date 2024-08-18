@@ -69,12 +69,12 @@ main {
 }
 
 a:link, a:visited {
-    color: #AAFFAA;
+    color: #88CC88;
     text-decoration: none;
 }
 
 a:hover, a:active {
-    color: white;
+    color: #AAFFAA;
 }
 
 hr {
@@ -205,8 +205,8 @@ hr {
             text-align: center;
 
             img {
-                max-width:100px;
-                max-height:100px;
+                max-width:200px;
+                max-height:200px;
             }
         }
     }
@@ -216,6 +216,7 @@ hr {
     font-size: 12px;
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
 
     > a {
         margin-bottom: 5px;

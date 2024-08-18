@@ -3,6 +3,8 @@
 namespace App\Models\Game;
 
 use App\Enums\Rating;
+use App\Enums\Shop;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -60,6 +62,31 @@ class GameRelatedProduct extends \Eloquent
     public function shops(): HasMany
     {
         return $this->hasMany(GameRelatedProductShop::class, 'game_related_product_id', 'id');
+    }
+
+    /**
+     * 画像表示用ショップ
+     *
+     * @return BelongsTo
+     */
+    public function imgShop(): BelongsTo
+    {
+        return $this->belongsTo(GameRelatedProductShop::class, 'img_shop_id');
+    }
+
+    /**
+     * 選択用ショップリストを取得
+     *
+     * @return string[]
+     */
+    public function getSelectShopList(): array
+    {
+        $shops = $this->shops;
+        $shopList = ['' => '--'];
+        foreach ($shops as $shop) {
+            $shopList[$shop->shop_id] = $shop->shop->name;
+        }
+        return $shopList;
     }
 
     /**

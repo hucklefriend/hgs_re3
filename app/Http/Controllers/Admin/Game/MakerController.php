@@ -6,7 +6,6 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\MakerMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\GameMakerPackageLinkRequest;
 use App\Http\Requests\Admin\Game\MakerRequest;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GamePackage;

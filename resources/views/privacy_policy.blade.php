@@ -68,12 +68,23 @@
             下記のアフィリエイトに参加しています。<br>
             当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクを行っている部分があります。
         </p>
-        <ul class="mb-4">
-            <li class="mb-2"><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト <i class="fas fa-sign-out-alt"></i></a></li>
-            <li class="mb-2">
-                <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト <i class="fas fa-sign-out-alt"></i></a>
+        <ul>
+            <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
+            <li>
+                <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a>
             </li>
         </ul>
+    </section>
+    <section>
+        <h2><i class="bi bi-octagon"></i>アフィリエイト画像について</h2>
+        <p>
+            アフィリエイトサイトから取得・直リンクで表示している画像は、右下に取得元を表記しています。<br>
+            また、画像の利用については各サイトの規約に則り下記の通りに運用しています。
+        </p>
+        <h3>・DMM アフィリエイト</h3>
+        <p>
+            <a href="https://support.dmm.com/affiliate/article/47112" target="_blank">画像は直リンクしていいですか？それともダウンロードして使った方がいいのでしょうか？</a>に則り、ダウンロードして利用しています。
+        </p>
     </section>
 
     {{--
@@ -113,7 +124,7 @@
 
         <p>
             当サイトで掲載している画像等の著作権等は権利所有者のものです。<br>
-            また生成AIで生成した画像を利用していますが、こちらの著作権については日本国の法律に従います。
+            また生成AIで生成した画像の著作権については日本国の法律に従います。
         </p>
         <p>
             当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。

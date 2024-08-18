@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Game;
 
 
 use App\Enums\Rating;
+use App\Enums\Shop;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
@@ -42,9 +43,8 @@ class RelatedProductRequest extends FormRequest
         return [
             'name'               => 'required|max:200',
             'node_name'          => 'required|max:200',
-            'img_s_url'          => 'nullable|max:250',
-            'img_m_url'          => 'nullable|max:250',
             'rating'             => ['required', new Enum(Rating::class)],
+            'img_shop_id'        => ['nullable', new Enum(Shop::class)],
             'description'        => '',
             'description_source' => 'nullable',
         ];

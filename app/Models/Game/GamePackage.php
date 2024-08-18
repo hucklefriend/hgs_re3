@@ -26,6 +26,11 @@ class GamePackage extends \Eloquent
         return $this->belongsToMany(GameMaker::class, GameMakerPackageLink::class);
     }
 
+    /**
+     * メーカーIDを取得
+     *
+     * @return array
+     */
     public function makerIds(): array
     {
         return $this->makers->pluck('id')->toArray();

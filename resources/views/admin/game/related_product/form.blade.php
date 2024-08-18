@@ -25,15 +25,9 @@
         </td>
     </tr>
     <tr>
-        <th>小画像URL</th>
+        <th>画像表示ショップ</th>
         <td>
-            <x-admin.input name="img_s_url" :model="$model" maxlength="250" />
-        </td>
-    </tr>
-    <tr>
-        <th>中画像URL</th>
-        <td>
-            <x-admin.input name="img_m_url" :model="$model" maxlength="250" />
+            <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
         </td>
     </tr>
     <tr>

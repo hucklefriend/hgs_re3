@@ -299,8 +299,20 @@ class RelatedProductController extends AbstractAdminController
     {
         $shop = new GameRelatedProductShop();
         $shop->game_related_product_id = $relatedProduct->id;
-        $shop->fill($request->validated());
+
+        $validated = $request->validated();
+        $useImgTag = ($validated['use_img_tag'] ?? 0) == 1;
+        unset($validated['use_img_tag']);
+
+        $shop->fill($validated);
         $shop->save();
+
+        if ($useImgTag) {
+            $relatedProduct->img_shop_id = $shop->id;
+            $relatedProduct->save();
+        }
+
+
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 
@@ -347,6 +359,10 @@ class RelatedProductController extends AbstractAdminController
     public function deleteShop(GameRelatedProduct $relatedProduct, $shopId)
     {
         $relatedProduct->shops()->where('shop_id', $shopId)->delete();
+        if ($relatedProduct->img_shop_id == $shopId) {
+            $relatedProduct->img_shop_id = null;
+            $relatedProduct->save();
+        }
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }

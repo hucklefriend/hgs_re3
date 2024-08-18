@@ -17,16 +17,8 @@
                     <td>{{ $model->id }}</td>
                 </tr>
                 <tr>
-                    <th>key</th>
-                    <td>{{ $model->key }}</td>
-                </tr>
-                <tr>
                     <th>名称</th>
                     <td>{{ $model->name }}</td>
-                </tr>
-                <tr>
-                    <th>よみがな</th>
-                    <td>{{ $model->phonetic }}</td>
                 </tr>
                 <tr>
                     <th>ノード表示用名称</th>
@@ -47,18 +39,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>小画像</th>
+                    <th>画像表示用ショップ</th>
                     <td>
-                        @if (!empty($model->img_s_url))
-                            <img src="{{ conv_asset_url($model->img_s_url) }}">
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <th>中画像</th>
-                    <td>
-                        @if (!empty($model->img_m_url))
-                            <img src="{{ conv_asset_url($model->img_m_url) }}">
+                        @if ($model->imgShop)
+                            {{ $model->img_shop_id }}: {{ $model->imgShop->shop_id }}: {{ $model->imgShop->shop()->name }}
+                            {!! $model->imgShop->img_tag !!}
+                        @else
+                            --
                         @endif
                     </td>
                 </tr>
