@@ -21,12 +21,12 @@
         <th>画像タグ</th>
         <td>
             <x-admin.textarea name="img_tag" :model="$model" /><br>
-            <label>
-                <small>
-                    <input type="checkbox" name="use_img_tag" value="1">
-                    画像タグを使用する
-                </small>
-            </label>
+            <div class="form-check">
+                <input type="checkbox" name="use_img_tag" id="use_img_tag" value="1" class="form-check-input">
+                <label class="form-check-label" for="use_img_tag">
+                    <small>画像タグを使用する</small>
+                </label>
+            </div>
         </td>
     </tr>
     <tr>
