@@ -12,7 +12,7 @@
                         <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem;">
                             {!! $rp->imgShop->img_tag !!}
                             <div style="font-size: 10px;">
-                                画像提供元: <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name }}</a>
+                                画像提供元 <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name }}</a>
                             </div>
                         </div>
                     @endif
