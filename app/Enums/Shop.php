@@ -9,6 +9,7 @@ enum Shop: int
 {
     // ネット通販
     case Amazon = 1;
+    case DMM = 2;
 
     // ゲーム配信サイト
     case Steam = 11;
@@ -28,13 +29,17 @@ enum Shop: int
     // アダルト
     case Getchu = 41;
     case DLsite = 42;
-    case DMM = 43;
     case FANZA = 44;
     case FANZA_GAMES = 45;
 
     // 動画配信サービス
     case PRIME_VIDEO = 51;
     case NETFLIX = 52;
+    case DMM_TV = 53;
+
+    // 電子書籍
+    case KINDLE = 61;
+    case DMM_BOOKS = 62;
 
     // 〇〇で検索
     case Amazon_SEARCH = 101;
@@ -50,6 +55,7 @@ enum Shop: int
     {
         return match($this) {
             self::Amazon           => 'Amazon',
+            self::DMM              => 'DMM.com',
             self::Steam            => 'Steam',
             self::PlayStationStore => 'PlayStation Store',
             self::MicrosoftStore   => 'Microsoft ストア',
@@ -63,11 +69,13 @@ enum Shop: int
             self::SQM              => 'スクエニマーケット',
             self::Getchu           => 'Getchu.com',
             self::DLsite           => 'DLsite',
-            self::DMM              => 'DMM.com',
             self::FANZA            => 'FANZA',
             self::FANZA_GAMES      => 'FANZA Games',
             self::PRIME_VIDEO      => 'Prime Video',
             self::NETFLIX          => 'Netflix',
+            self::DMM_TV           => 'DMM TV',
+            self::KINDLE           => 'Kindle',
+            self::DMM_BOOKS        => 'DMMブックス',
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',
@@ -97,16 +105,110 @@ enum Shop: int
     /**
      * input[type=select]に渡す用のリスト作成
      *
+     * @param string[] $excludeShopList
      * @return string[]
      */
-    public static function selectList(): array
+    public static function selectList(array $excludeShopList = []): array
     {
         $result = [];
 
-        foreach (self::cases() as $case) {
-            $result[$case->value] = $case->name();
+
+
+        $items = [
+            self::Amazon,
+            self::DMM,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, '通販', $item);
+            }
+        }
+
+        $items = [
+            self::Steam,
+            self::PlayStationStore,
+            self::MicrosoftStore,
+            self::NintendoStore,
+            self::NintendoEShop,
+            self::DMM_GAMES,
+            self::EGG,
+            self::XboxStore,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, 'ゲーム配信サイト', $item);
+            }
+        }
+
+
+        $items = [
+            self::APP_STORE,
+            self::GooglePlay,
+            self::SQM,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, 'スマホアプリ', $item);
+            }
+        }
+
+        $items = [
+            self::Getchu,
+            self::DLsite,
+            self::FANZA,
+            self::FANZA_GAMES,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, 'アダルト', $item);
+            }
+        }
+
+        $items = [
+            self::PRIME_VIDEO,
+            self::NETFLIX,
+            self::DMM_TV,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, '動画配信サービス', $item);
+            }
+        }
+
+        $items = [
+            self::KINDLE,
+            self::DMM_BOOKS,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, '電子書籍', $item);
+            }
+        }
+
+        $items = [
+            self::Amazon_SEARCH,
+            self::MERCARI_SEARCH,
+            self::RAKUTEN_SEARCH,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, '〇〇で検索', $item);
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * ショップを追加
+     *
+     * @param array $result
+     * @param string $category
+     * @param Shop $shop
+     * @return void
+     */
+    private static function addItem(array &$result, string $category, Shop $shop): void
+    {
+        $result[$category][$shop->value] = $shop->name();
     }
 }

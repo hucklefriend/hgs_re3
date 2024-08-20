@@ -282,9 +282,12 @@ class RelatedProductController extends AbstractAdminController
      */
     public function addShop(GameRelatedProduct $relatedProduct)
     {
+        $excludeShopList = $relatedProduct->shops()->pluck('shop_id')->toArray();
+
         return view('admin.game.related_product.add_shop', [
-            'relatedProduct' => $relatedProduct,
-            'model'          => new GameRelatedProductShop(),
+            'relatedProduct'  => $relatedProduct,
+            'excludeShopList' => $excludeShopList,
+            'model'           => new GameRelatedProductShop(),
         ]);
     }
 

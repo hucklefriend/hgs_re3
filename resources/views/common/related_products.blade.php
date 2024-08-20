@@ -34,6 +34,7 @@
     <div class="node node-center">
         <div class="text-node small fade">
             ショップによって廉価版や再発売版など、商品の仕様が異なる場合があります。<br>
+            中古商品もありますので、購入前にショップの商品情報をよく確認してください。<br>
             掲載画像については<a href="{{ route('PrivacyPolicy') }}">Privacy Policy</a>のアフィリエイト項を見てください。
         </div>
     </div>
