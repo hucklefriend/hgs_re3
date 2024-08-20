@@ -51,15 +51,23 @@ $(()=>{
     }
 
     $('textarea').each(function (){
-        $(this).on('input', function(e) {
-            let elem = $(this);
-            const height = this.scrollHeight;
-            const clientHeight = elem.get(0).clientHeight;
-            if (clientHeight < height && height < 400) {
-                elem.css('height', height + 'px');
-            }
+        $(this).on('input', function() {
+            setTextareaHeight(this);
         });
+
+        setTextareaHeight(this);
     });
+
+    // テキストエリアの高さを自動調整
+    function setTextareaHeight(e)
+    {
+        let elem = $(e);
+        const height = e.scrollHeight;
+        const clientHeight = e.clientHeight;
+        if (clientHeight < height && height < 400) {
+            elem.css('height', (height + 5) + 'px');
+        }
+    }
 
     $('.description-source-tool-a').click(function(e) {
         e.preventDefault();
