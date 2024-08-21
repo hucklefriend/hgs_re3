@@ -1,4 +1,4 @@
-<select {{ $attributes->class(['form-control', 'default-select2', 'is-invalid' => $hasError])->merge(['id' => $name, 'name' => $name])->except('list') }}>
+<select {{ $attributes->class(['form-control', 'default-select2', 'is-invalid' => $hasError])->merge(['id' => $name, 'name' => $name])->except(['list', 'forceSelect']) }}>
     @foreach ($list as $key => $val)
         @if (is_array($val))
             <optgroup label="{{ $key }}">

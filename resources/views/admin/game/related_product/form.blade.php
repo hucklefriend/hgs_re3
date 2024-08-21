@@ -33,7 +33,7 @@
     <tr>
         <th>画像表示ショップ</th>
         <td>
-            <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
+            <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" :force-select="$model->imgShop?->shop()->value" />
         </td>
     </tr>
     <tr>

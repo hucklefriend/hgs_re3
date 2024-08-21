@@ -9,14 +9,16 @@ use Illuminate\View\Component;
 class Select extends Input
 {
     public $list;
+    public $forceSelect;
 
     /**
      * Create a new component instance.
      */
-    public function __construct($name, $model, $list)
+    public function __construct($name, $model, $list, $forceSelect = null)
     {
         parent::__construct($name, $model);
         $this->list = $list;
+        $this->forceSelect = $forceSelect;
     }
 
     /**
@@ -26,7 +28,7 @@ class Select extends Input
     {
         $name = $this->name;
         return view('components.admin.select', [
-            'selected' => $this->model->$name,
+            'selected' => $this->forceSelect === null ? $this->model->$name : $this->forceSelect,
         ]);
     }
 }
