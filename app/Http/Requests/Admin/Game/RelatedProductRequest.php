@@ -45,8 +45,9 @@ class RelatedProductRequest extends FormRequest
             'node_name'          => 'required|max:200',
             'rating'             => ['required', new Enum(Rating::class)],
             'img_shop_id'        => ['nullable', new Enum(Shop::class)],
-            'description'        => '',
+            'description'        => 'nullable',
             'description_source' => 'nullable',
+            'sort_order'         => 'nullable',
         ];
     }
 }

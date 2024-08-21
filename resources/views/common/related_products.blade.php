@@ -4,7 +4,7 @@
         <h2 class="head2 fade">関連商品</h2>
     </div>
     <div class="product-list">
-        @foreach ($model->relatedProducts as $rp)
+        @foreach ($model->relatedProducts->sortByDesc('sort_order') as $rp)
             <div class="product-info">
                 <div class="text-node fade">
                     {!! $rp->node_name !!}

@@ -20,8 +20,9 @@ class GameRelatedProduct extends \Eloquent
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'   => '',
-        'rating' => Rating::None,
+        'name'       => '',
+        'rating'     => Rating::None,
+        'sort_order' => 0,
     ];
 
     /**

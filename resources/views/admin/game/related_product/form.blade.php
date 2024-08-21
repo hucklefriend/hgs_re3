@@ -24,6 +24,12 @@
             <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
+        <tr>
+            <th>表示順</th>
+            <td>
+                <x-admin.input type="number" name="sort_order" :model="$model" />
+            </td>
+        </tr>
     <tr>
         <th>画像表示ショップ</th>
         <td>

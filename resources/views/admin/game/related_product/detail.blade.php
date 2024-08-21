@@ -33,20 +33,24 @@
                     <td>{{ $model->rating->text() }}</td>
                 </tr>
                 <tr>
-                    <th>説明</th>
-                    <td>
-                        @include('common.description', ['model' => $model])
-                    </td>
+                    <th>表示順</th>
+                    <td>{{ $model->sort_order }}</td>
                 </tr>
                 <tr>
                     <th>画像表示用ショップ</th>
                     <td>
                         @if ($model->imgShop)
-                            {{ $model->img_shop_id }}: {{ $model->imgShop->shop_id }}: {{ $model->imgShop->shop()->name }}
+                            {{ $model->imgShop->shop()->name }}
                             {!! $model->imgShop->img_tag !!}
                         @else
                             --
                         @endif
+                    </td>
+                </tr>
+                <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
                     </td>
                 </tr>
                 <tr>
