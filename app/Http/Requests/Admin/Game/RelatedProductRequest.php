@@ -44,7 +44,7 @@ class RelatedProductRequest extends FormRequest
             'name'               => 'required|max:200',
             'node_name'          => 'required|max:200',
             'rating'             => ['required', new Enum(Rating::class)],
-            'img_shop_id'        => ['nullable', new Enum(Shop::class)],
+            'img_shop_id'        => 'nullable',
             'description'        => 'nullable',
             'description_source' => 'nullable',
             'sort_order'         => 'nullable',

@@ -85,7 +85,7 @@ class GameRelatedProduct extends \Eloquent
         $shops = $this->shops;
         $shopList = ['' => '--'];
         foreach ($shops as $shop) {
-            $shopList[$shop->shop_id] = $shop->shop()->name;
+            $shopList[$shop->id] = $shop->shop()->name;
         }
         return $shopList;
     }
