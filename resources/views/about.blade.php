@@ -94,10 +94,16 @@
     <section>
         <h2><i class="bi bi-octagon"></i>利用画像</h2>
         <p>
-            下記は無料の素材を利用しています。
+            素材サイト様から、下記の素材を利用させて頂いてます。
         </p>
         <ul>
             <li>・ローディング画像 <a href="https://pixabay.com/gifs/three-dots-loading-movement-11928/" target="_blank">Pixabay</a></li>
+            <li>・ディスクのゲームソフトのアイコン <a href="https://icon-pit.com/pictogram/11686">icon-pit</a></li>
+            <li>・クラウドからダウンロードのアイコン <a href="https://icon-pit.com/pictogram/318">icon-pit</a></li>
+            <li>・ディスクのアイコン <a href="https://icon-pit.com/pictogram/1889">icon-pit</a></li>
+            <li>・動画再生のアイコン02 <a href="https://icon-pit.com/pictogram/761">icon-pit</a></li>
+            <li>・本・辞書のアイコン02 <a href="https://icon-pit.com/pictogram/4693">icon-pit</a></li>
+            <li>・クラウドファイルやドキュメントのアイコン <a href="https://icon-pit.com/pictogram/21624">icon-pit</a></li>
         </ul>
     </section>
 @endsection

@@ -48,6 +48,10 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>デフォルト画像</th>
+                    <td>{{ $model->default_image->text() }}</td>
+                </tr>
+                <tr>
                     <th>説明</th>
                     <td>
                         @include('common.description', ['model' => $model])
@@ -57,9 +61,9 @@
                     <th>プラットフォーム</th>
                     <td>
                         <ul class="list-group">
-                            @foreach ($model->platforms as $plt)
-                                <li class="list-group-item p-2"><a href="{{ route('Admin.Game.Platform.Detail', $plt) }}">{{ $plt->name }}</a></li>
-                            @endforeach
+                        @foreach ($model->platforms as $plt)
+                            <li class="list-group-item p-2"><a href="{{ route('Admin.Game.Platform.Detail', $plt) }}">{{ $plt->name }}</a></li>
+                        @endforeach
                         </ul>
                         <a href="{{ route('Admin.Game.RelatedProduct.LinkPlatform', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>

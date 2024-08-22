@@ -15,6 +15,10 @@
                                 画像提供元 <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name }}</a>
                             </div>
                         </div>
+                    @else
+                        <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem; padding: 2rem 0;">
+                            <img src="{{ $rp->default_image->imgUrl() }}" style="max-width: 100px;max-height: 100px;">
+                        </div>
                     @endif
 
                     @if ($rp->shops->count() > 0)

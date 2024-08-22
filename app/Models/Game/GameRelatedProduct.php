@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
 use App\Enums\Shop;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,16 +14,18 @@ class GameRelatedProduct extends \Eloquent
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [
-        'rating' => Rating::class,
+        'rating'        => Rating::class,
+        'default_image' => ProductDefaultImage::class,
     ];
 
     /**
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'       => '',
-        'rating'     => Rating::None,
-        'sort_order' => 0,
+        'name'          => '',
+        'rating'        => Rating::None,
+        'sort_order'    => 0,
+        'default_image' => ProductDefaultImage::GAME_PACKAGE,
     ];
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Game;
 
 
+use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
 use App\Enums\Shop;
 use Illuminate\Foundation\Http\FormRequest;
@@ -45,6 +46,7 @@ class RelatedProductRequest extends FormRequest
             'node_name'          => 'required|max:200',
             'rating'             => ['required', new Enum(Rating::class)],
             'img_shop_id'        => 'nullable',
+            'default_image'      => ['required', new Enum(ProductDefaultImage::class)],
             'description'        => 'nullable',
             'description_source' => 'nullable',
             'sort_order'         => 'nullable',

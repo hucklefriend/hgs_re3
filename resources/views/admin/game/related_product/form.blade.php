@@ -24,16 +24,22 @@
             <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
-        <tr>
-            <th>表示順</th>
-            <td>
-                <x-admin.input type="number" name="sort_order" :model="$model" />
-            </td>
-        </tr>
+    <tr>
+        <th>表示順</th>
+        <td>
+            <x-admin.input type="number" name="sort_order" :model="$model" />
+        </td>
+    </tr>
     <tr>
         <th>画像表示ショップ</th>
         <td>
             <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
+        </td>
+    </tr>
+    <tr>
+        <th>デフォルト画像</th>
+        <td>
+            <x-admin.select-enum name="default_img" :model="$model" :list="App\Enums\ProductDefaultImage::selectList()" />
         </td>
     </tr>
     <tr>
