@@ -203,6 +203,7 @@ hr {
 
         > .text-node {
             text-align: center;
+            width: 150px;
 
             img {
                 max-width:150px;
