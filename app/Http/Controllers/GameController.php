@@ -414,8 +414,19 @@ class GameController extends Controller
     {
         $mediaMix = GameMediaMix::findByKey($mediaMixKey);
 
+        $relatedNetworks = [];
+        if ($mediaMix->mediaMixGroup !== null) {
+            foreach ($mediaMix->mediaMixGroup->mediaMixes as $relatedMediaMix) {
+                if ($relatedMediaMix->id === $mediaMix->id) {
+                    continue;
+                }
+                $relatedNetworks[] = $relatedMediaMix;
+            }
+        }
+
         return $this->network(view('game.media_mix_detail_network', [
             'mediaMix' => $mediaMix,
+            'relatedNetworks' => $relatedNetworks,
         ]));
     }
 }

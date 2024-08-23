@@ -29,7 +29,18 @@
                 </h2>
             </div>
             <div class="node-map" style="margin-bottom: 50px;">
+
+                @foreach ($relatedNetworks as $relatedNetwork)
+                    <div class="node">
+                        <div class="link-node link-node-center fade">
+                            <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $relatedNetwork->key]) }}">
+                                {!! $relatedNetwork->node_name !!}
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
                 <div>
+
                     @if ($mediaMix->getFranchise())
                     <div class="link-node link-node-center fade">
                         <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $mediaMix->getFranchise()->key]) }}">
