@@ -14,18 +14,18 @@ class GameRelatedProduct extends \Eloquent
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [
-        'rating'        => Rating::class,
-        'default_image' => ProductDefaultImage::class,
+        'rating'           => Rating::class,
+        'default_img_type' => ProductDefaultImage::class,
     ];
 
     /**
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'          => '',
-        'rating'        => Rating::None,
-        'sort_order'    => 0,
-        'default_image' => ProductDefaultImage::GAME_PACKAGE,
+        'name'             => '',
+        'rating'           => Rating::None,
+        'sort_order'       => 0,
+        'default_img_type' => ProductDefaultImage::GAME_PACKAGE,
     ];
 
     /**

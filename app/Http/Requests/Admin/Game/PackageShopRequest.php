@@ -26,11 +26,13 @@ class PackageShopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shop_id'    => ['required', new Enum(\App\Enums\Shop::class)],
-            'url'        => 'required',
-            'param1'     => 'nullable',
-            'param2'     => 'nullable',
-            'param3'     => 'nullable',
+            'shop_id'     => ['required', new Enum(\App\Enums\Shop::class)],
+            'url'         => 'required',
+            'img_tag'     => 'nullable',
+            'param1'      => 'nullable',
+            'param2'      => 'nullable',
+            'param3'      => 'nullable',
+            'use_img_tag' => 'nullable',
         ];
     }
 }

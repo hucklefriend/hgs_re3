@@ -313,6 +313,13 @@ hr {
 
 /* ファブレット～ */
 @media (min-width: 550px) {
+    .product-list {
+        > .product-info {
+            > .text-node {
+                width: auto;
+            }
+        }
+    }
 }
 
 /* タブレット～ */

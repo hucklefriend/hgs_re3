@@ -39,7 +39,7 @@
     <tr>
         <th>デフォルト画像</th>
         <td>
-            <x-admin.select-enum name="default_img" :model="$model" :list="App\Enums\ProductDefaultImage::selectList()" />
+            <x-admin.select-enum name="default_img_type" :model="$model" :list="App\Enums\ProductDefaultImage::selectList()" />
         </td>
     </tr>
     <tr>

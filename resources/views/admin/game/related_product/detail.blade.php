@@ -49,7 +49,7 @@
                 </tr>
                 <tr>
                     <th>デフォルト画像</th>
-                    <td>{{ $model->default_image->text() }}</td>
+                    <td>{{ $model->default_img_type->text() }}</td>
                 </tr>
                 <tr>
                     <th>説明</th>

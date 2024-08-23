@@ -52,15 +52,15 @@
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(小)URL</th>
+        <th>画像表示ショップ</th>
         <td>
-            <x-admin.input name="img_s_url" :model="$model" maxlength="250" />
+            <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
         </td>
     </tr>
     <tr>
-        <th>パッケージ画像(中)URL</th>
+        <th>デフォルト画像</th>
         <td>
-            <x-admin.input name="img_m_url" :model="$model" maxlength="250" />
+            <x-admin.select-enum name="default_img_type" :model="$model" :list="App\Enums\ProductDefaultImage::selectList()" />
         </td>
     </tr>
 </table>

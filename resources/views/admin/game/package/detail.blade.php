@@ -66,20 +66,19 @@
                     <td>{{ $model->release_at }}</td>
                 </tr>
                 <tr>
-                    <th>画像(小)</th>
+                    <th>画像表示用ショップ</th>
                     <td>
-                        @if ($model->img_s_url)
-                            <img src="{{ $model->img_s_url }}">
+                        @if ($model->imgShop)
+                            {{ $model->imgShop->shop()->name }}
+                            {!! $model->imgShop->img_tag !!}
+                        @else
+                            --
                         @endif
                     </td>
                 </tr>
                 <tr>
-                    <th>画像(中)</th>
-                    <td>
-                        @if ($model->img_m_url)
-                            <img src="{{ $model->img_m_url }}">
-                        @endif
-                    </td>
+                    <th>デフォルト画像</th>
+                    <td>{{ $model->default_img_type->text() }}</td>
                 </tr>
                 <tr>
                     <th>タイトル</th>

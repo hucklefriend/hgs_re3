@@ -315,7 +315,6 @@ class RelatedProductController extends AbstractAdminController
             $relatedProduct->save();
         }
 
-
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 

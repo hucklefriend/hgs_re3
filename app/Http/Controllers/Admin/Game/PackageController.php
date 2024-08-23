@@ -265,9 +265,12 @@ class PackageController extends AbstractAdminController
      */
     public function addShop(GamePackage $package)
     {
+        $excludeShopList = $package->shops()->pluck('shop_id')->toArray();
+
         return view('admin.game.package.add_shop', [
-            'package' => $package,
-            'model'   => new GamePackageShop(),
+            'package'         => $package,
+            'excludeShopList' => $excludeShopList,
+            'model'           => new GamePackageShop(),
         ]);
     }
 
@@ -282,8 +285,19 @@ class PackageController extends AbstractAdminController
     {
         $shop = new GamePackageShop();
         $shop->game_package_id = $package->id;
+
+        $validated = $request->validated();
+        $useImgTag = ($validated['use_img_tag'] ?? 0) == 1;
+        unset($validated['use_img_tag']);
+
         $shop->fill($request->validated());
         $shop->save();
+
+        if ($useImgTag) {
+            $package->img_shop_id = $shop->id;
+            $package->save();
+        }
+
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 
@@ -324,12 +338,16 @@ class PackageController extends AbstractAdminController
      * ショップの削除
      *
      * @param GamePackage $package
-     * @param $shop_id
+     * @param $shopId
      * @return RedirectResponse
      */
-    public function deleteShop(GamePackage $package, $shop_id)
+    public function deleteShop(GamePackage $package, $shopId)
     {
-        $package->shops()->where('shop_id', $shop_id)->delete();
+        $package->shops()->where('shop_id', $shopId)->delete();
+        if ($package->img_shop_id == $shopId) {
+            $package->img_shop_id = null;
+            $package->save();
+        }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }

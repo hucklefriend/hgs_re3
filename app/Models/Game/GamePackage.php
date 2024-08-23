@@ -2,6 +2,7 @@
 
 namespace App\Models\Game;
 
+use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,9 +12,18 @@ class GamePackage extends \Eloquent
 {
     protected $guarded = ['id'];
     protected $casts = [
-        'rating' => Rating::class,
+        'rating'           => Rating::class,
+        'default_img_type' => ProductDefaultImage::class,
     ];
     protected $hidden = ['created_at', 'updated_at'];
+
+    /**
+     * @var array デフォルト値
+     */
+    protected $attributes = [
+        'rating'           => Rating::None,
+        'default_img_type' => ProductDefaultImage::GAME_PACKAGE,
+    ];
 
 
     /**
@@ -74,6 +84,31 @@ class GamePackage extends \Eloquent
     public function shops(): HasMany
     {
         return $this->hasMany(GamePackageShop::class, 'game_package_id', 'id');
+    }
+
+    /**
+     * 画像表示用ショップ
+     *
+     * @return BelongsTo
+     */
+    public function imgShop(): BelongsTo
+    {
+        return $this->belongsTo(GamePackageShop::class, 'img_shop_id');
+    }
+
+    /**
+     * 選択用ショップリストを取得
+     *
+     * @return string[]
+     */
+    public function getSelectShopList(): array
+    {
+        $shops = $this->shops;
+        $shopList = ['' => '--'];
+        foreach ($shops as $shop) {
+            $shopList[$shop->id] = $shop->shop()->name;
+        }
+        return $shopList;
     }
 
     /**
