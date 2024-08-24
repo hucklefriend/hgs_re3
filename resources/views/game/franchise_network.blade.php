@@ -3,11 +3,13 @@
 @section('title', 'Franchise Network | ホラーゲームネットワーク')
 
 @section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
+    <section>
+        <div class="node">
             <h1 class="head1 fade">Franchise Network</h1>
         </div>
+    </section>
 
+    <section>
         <div class="paginator" style="margin-bottom: 40px;">
             <div class="link-node link-node-center small fade">
                 <a href="{{ route('Game.FranchiseNetwork', ['prefix' => 'a']) }}">あ</a>
@@ -77,7 +79,7 @@
                 <a href="{{ route('Game.FranchiseNetwork', ['prefix' => 'r']) }}">らわ</a>
             </div>
         </div>
-    </div>
+    </section>
 
     @include('footer')
 @endsection

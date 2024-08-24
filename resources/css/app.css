@@ -60,11 +60,14 @@ p, blockquote {
     margin: 0;
 }
 
+.only_sp {
+}
+
 main {
     padding-top: 50px;
 
     section {
-        margin-bottom: 50px;
+        margin-bottom: 150px;
     }
 }
 
@@ -84,7 +87,7 @@ hr {
 
 .info {
     margin-top: 100px;
-    margin-bottom: 30px;
+    margin-bottom: 100px;
 
     > .node:not(:last-child) {
         margin-bottom: 1rem;
@@ -197,13 +200,12 @@ hr {
     justify-content: start;
 
     > .product-info {
-        flex-basis: 48%;
-        margin-right: 5px;
+        width: 50%;
+        padding: 2px 3px;
         margin-bottom: 1rem;
 
         > .text-node {
             text-align: center;
-            width: 150px;
 
             img {
                 max-width:150px;
@@ -315,10 +317,13 @@ hr {
 @media (min-width: 550px) {
     .product-list {
         > .product-info {
-            > .text-node {
-                width: auto;
-            }
+            width: 33%;
+            padding: 2px 3px;
         }
+    }
+
+    .only_sp {
+        display: none;
     }
 }
 
@@ -330,13 +335,6 @@ hr {
     }
     .container {
         width: 700px;
-    }
-
-    .product-list {
-        > .product-info {
-            flex-basis: 30%;
-            margin-right: 5px;
-        }
     }
 
     .title-packages {

@@ -10,7 +10,7 @@
         </div>
     </div>
     --}}
-    <div class="node node-center" style="margin-top: 10rem;margin-bottom: 10rem;">
+    <div class="node" style="margin-top: 10rem;margin-bottom: 10rem;">
         <div id="entrance-node">
             <a href="{{ route('Game.HorrorGameNetwork') }}" class="fade">
                 <h1>HorrorGame Network</h1>
@@ -72,7 +72,9 @@
     </section>
 --}}
     <section class="info">
-        <h2 class="head2 fade">Information</h2>
+        <div class="node">
+            <h2 class="head2 fade">Information</h2>
+        </div>
 
         @if ($infoList->isEmpty())
             <div class="node">
@@ -90,15 +92,17 @@
             @endforeach
         @endempty
 
-        <div class="node node-center">
-            <div class="link-node link-node-small fade">
+        <div class="node" style="margin-top: 50px;">
+            <div class="link-node small fade">
                 <a href="{{ route('InfoNetwork') }}">過去のお知らせ</a>
             </div>
         </div>
     </section>
 
-    <section style="margin-top:100px;">
-        <h2 class="head2 fade">Network Map</h2>
+    <section>
+        <div class="node">
+            <h2 class="head2 fade">Network Map</h2>
+        </div>
 
         <div class="node-map">
             <div>

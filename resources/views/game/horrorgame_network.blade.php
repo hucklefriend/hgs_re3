@@ -11,7 +11,7 @@
 
 
     <div class="node-list">
-        <div style="text-align:center; margin: 20px 0;">
+        <div class="node h1">
             <h1 class="head1 fade">HorrorGame Network</h1>
         </div>
 

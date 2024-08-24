@@ -3,22 +3,22 @@
 @section('title', $platform->name . ' | ホラーゲームネットワーク')
 
 @section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
+
+    <section>
+        <div class="node h1">
             <h1 class="head1 fade">
                 {!! $platform->h1_node_name !!}
             </h1>
         </div>
 
         @if (!empty($platform->description))
-            <section>
-                <div class="node node-center">
-                    <div class="text-node fade">
-                        @include('common.description', ['model' => $platform])
-                    </div>
+            <div class="node node-center">
+                <div class="text-node fade">
+                    @include('common.description', ['model' => $platform])
                 </div>
-            </section>
+            </div>
         @endif
+    </section>
 
         @if ($platform->relatedProducts->count() > 0)
             <section style="margin-top: 50px;margin-bottom: 30px;">
@@ -51,8 +51,10 @@
         @endif
 
         @if ($titles->count() > 0)
-            <section style="margin-top: 50px;margin-bottom: 30px;">
-                <h2 class="head2 fade">タイトル</h2>
+            <section>
+                <div class="node h2">
+                    <h2 class="head2 fade">タイトル</h2>
+                </div>
                 <div class="node-map">
                     @foreach ($titles as $title)
                         <div>
@@ -64,7 +66,6 @@
                 </div>
             </section>
         @endif
-    </div>
 
     @include('footer')
 @endsection

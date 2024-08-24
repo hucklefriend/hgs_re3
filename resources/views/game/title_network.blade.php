@@ -3,8 +3,8 @@
 @section('title', $title->name . ' | ホラーゲームネットワーク')
 
 @section('content')
-    <div style="text-align:center; margin: 20px 0;">
-        <h1 class="head1 fade">{{ $title->h1_node_name }}</h1>
+    <div class="node h1">
+        <h1 class="head1 fade">{!! $title->h1_node_name !!}</h1>
     </div>
 
     @if (!empty($title->description))
