@@ -197,7 +197,7 @@ hr {
 .product-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: start;
+    justify-content: space-around;
 
     > .product-info {
         width: 50%;
@@ -216,13 +216,18 @@ hr {
 }
 
 .shop-link {
+    margin-top: 10px;
     font-size: 12px;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    justify-content: center;
 
-    > a {
-        margin-bottom: 5px;
+
+    > div {
+        > a {
+            white-space: nowrap;
+            margin-right: 1rem;
+        }
     }
 }
 
