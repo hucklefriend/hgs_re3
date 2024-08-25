@@ -28,6 +28,18 @@
         <th>表示順</th>
         <td>
             <x-admin.input type="number" name="sort_order" :model="$model" />
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999999);">動画配信(吹替)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999998);">動画配信(字幕)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999989);">宅配レンタル(BD)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999988);">宅配レンタル(DVD)</button>
+            </div>
+            <script>
+                function setOrder(val)
+                {
+                    $('#sort_order').val(val);
+                }
+            </script>
         </td>
     </tr>
     <tr>
