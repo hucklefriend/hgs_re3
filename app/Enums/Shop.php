@@ -41,6 +41,9 @@ enum Shop: int
     case KINDLE = 61;
     case DMM_BOOKS = 62;
 
+    // レンタル
+    case DMM_RENTAL = 71;
+
     // 〇〇で検索
     case Amazon_SEARCH = 101;
     case MERCARI_SEARCH = 102;
@@ -55,7 +58,7 @@ enum Shop: int
     {
         return match($this) {
             self::Amazon           => 'Amazon',
-            self::DMM              => 'DMM.com',
+            self::DMM              => 'DMM通販',
             self::Steam            => 'Steam',
             self::PlayStationStore => 'PlayStation Store',
             self::MicrosoftStore   => 'Microsoft ストア',
@@ -76,6 +79,7 @@ enum Shop: int
             self::DMM_TV           => 'DMM TV',
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
+            self::DMM_RENTAL       => 'DMM宅配レンタル',
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',
@@ -182,6 +186,15 @@ enum Shop: int
         foreach ($items as $item) {
             if (!in_array($item->value, $excludeShopList)) {
                 self::addItem($result, '電子書籍', $item);
+            }
+        }
+
+        $items = [
+            self::DMM_RENTAL,
+        ];
+        foreach ($items as $item) {
+            if (!in_array($item->value, $excludeShopList)) {
+                self::addItem($result, 'レンタル', $item);
             }
         }
 

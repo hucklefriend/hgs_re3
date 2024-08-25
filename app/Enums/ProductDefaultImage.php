@@ -13,6 +13,7 @@ enum ProductDefaultImage: int
     case VIDEO_STREAMING = 3;
     case BOOK = 5;
     case DIGITAL_BOOK = 6;
+    case RENTAL = 7;
 
     /**
      * テキストを取得
@@ -28,6 +29,7 @@ enum ProductDefaultImage: int
             ProductDefaultImage::VIDEO_STREAMING => '動画配信',
             ProductDefaultImage::BOOK => '本',
             ProductDefaultImage::DIGITAL_BOOK => '電子書籍',
+            ProductDefaultImage::RENTAL => '宅配レンタル',
         };
     }
 
@@ -45,6 +47,7 @@ enum ProductDefaultImage: int
             ProductDefaultImage::VIDEO_STREAMING => asset('img/pdi/vod.png'),
             ProductDefaultImage::BOOK => asset('img/pdi/book.png'),
             ProductDefaultImage::DIGITAL_BOOK => asset('img/pdi/ebook.png'),
+            ProductDefaultImage::RENTAL => asset('img/pdi/rental.png'),
         };
     }
 

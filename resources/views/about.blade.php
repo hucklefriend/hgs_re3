@@ -104,6 +104,7 @@
             <li>・動画再生のアイコン02 <a href="https://icon-pit.com/pictogram/761">icon-pit</a></li>
             <li>・本・辞書のアイコン02 <a href="https://icon-pit.com/pictogram/4693">icon-pit</a></li>
             <li>・クラウドファイルやドキュメントのアイコン <a href="https://icon-pit.com/pictogram/21624">icon-pit</a></li>
+            <li>・ポストへ投函のアイコン <a href="https://icon-pit.com/pictogram/10517" target="_blank">icon-pit</a></li>
         </ul>
     </section>
 @endsection
