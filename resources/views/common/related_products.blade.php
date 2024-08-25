@@ -11,7 +11,7 @@
                         <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem;">
                             {!! $rp->imgShop->img_tag !!}
                             <div style="font-size: 10px;">
-                                画像提供元 <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name }}</a>
+                                画像提供元 <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name() }}</a>
                             </div>
                         </div>
                     @else
@@ -25,7 +25,7 @@
                         <div style="margin-top: 10px;" class="shop-link">
                             @foreach($rp->shops as $shop)
                                 <a href="{{ $shop->url }}" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
-                                    <i class="bi bi-shop"></i> {{ $shop->shop()->name }}
+                                    <i class="bi bi-shop"></i> {{ $shop->shop()->name() }}
                                 </a>
                             @endforeach
                         </div>
