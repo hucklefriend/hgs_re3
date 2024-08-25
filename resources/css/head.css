@@ -36,11 +36,11 @@ div.h3 {
 }
 
 h3.head3 {
-    width: calc(100% - 80px);
+    width: 100%;
     margin: 0 0 1.5rem 0;
     font-size: 15px;
     padding: 5px 15px;
-    background: radial-gradient(circle, rgba(0, 80, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 100%);
+    background: radial-gradient(circle, rgba(0, 80, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 90%);
     /*background: linear-gradient(135deg, rgba(0, 80, 0, 0.6), rgba(0, 0, 0, 0.2));*/
 
     .bi-octagon {

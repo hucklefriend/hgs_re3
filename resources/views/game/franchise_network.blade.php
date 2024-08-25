@@ -3,7 +3,7 @@
 @section('title', 'Franchise Network | ホラーゲームネットワーク')
 
 @section('content')
-    <section>
+    <section style="margin-bottom: 40px !important;">
         <div class="node">
             <h1 class="head1 fade">Franchise Network</h1>
         </div>
