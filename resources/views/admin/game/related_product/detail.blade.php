@@ -102,7 +102,7 @@
                         <table>
                             @foreach ($model->shops as $shop)
                                 <tr>
-                                    <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name }}</a></td>
+                                    <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name() }}</a></td>
                                     <td>
                                         <a href="{{ route('Admin.Game.RelatedProduct.EditShop', ['relatedProduct' => $model, 'shopId' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
                                     </td>
