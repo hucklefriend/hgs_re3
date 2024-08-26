@@ -48,13 +48,13 @@
                         case 11:
                             $('#name').val($('#name').val() + ' 宅配レンタル(BD)');
                             $('#node_name').val('宅配レンタル(BD)');
-                            $('#sort_order').val(99999989);
+                            $('#sort_order').val(10000002);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
                             break;
                         case 12:
                             $('#name').val($('#name').val() + ' 宅配レンタル(DVD)');
                             $('#node_name').val('宅配レンタル(DVD)');
-                            $('#sort_order').val(99999988);
+                            $('#sort_order').val(10000001);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
                             break;
                         case 21:
