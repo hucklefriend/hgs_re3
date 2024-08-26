@@ -13,6 +13,44 @@
         </td>
     </tr>
     <tr>
+        <th>テンプレート</th>
+        <td>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(1);">動画配信(吹替)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(2);">動画配信(字幕)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(3);">宅配レンタル(BD)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(4);">宅配レンタル(DVD)</button>
+            </div>
+            <script>
+                function setTemplate(type)
+                {
+                    switch (type) {
+                        case 1:
+                            $('#node_name').val('動画配信(吹替)');
+                            $('#sort_order').val(99999999);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
+                            break;
+                        case 2:
+                            $('#node_name').val('動画配信(字幕)');
+                            $('#sort_order').val(99999998);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
+                            break;
+                        case 3:
+                            $('#node_name').val('宅配レンタル(BD)');
+                            $('#sort_order').val(99999989);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
+                            break;
+                        case 4:
+                            $('#node_name').val('宅配レンタル(DVD)');
+                            $('#sort_order').val(99999988);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
+                            break;
+                    }
+                }
+            </script>
+        </td>
+    </tr>
+    <tr>
         <th>ノード表示用の名前</th>
         <td>
             <x-admin.input name="node_name" :model="$model" required maxlength="200" />
@@ -28,18 +66,6 @@
         <th>表示順</th>
         <td>
             <x-admin.input type="number" name="sort_order" :model="$model" />
-            <div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999999);">動画配信(吹替)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999998);">動画配信(字幕)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999989);">宅配レンタル(BD)</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOrder(99999988);">宅配レンタル(DVD)</button>
-            </div>
-            <script>
-                function setOrder(val)
-                {
-                    $('#sort_order').val(val);
-                }
-            </script>
         </td>
     </tr>
     <tr>

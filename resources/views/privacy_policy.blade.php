@@ -14,6 +14,15 @@
             <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
         </p>
     </section>
+    <section>
+        <h2><i class="bi bi-octagon"></i>個人情報の取得</h2>
+        <p>
+            現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
+            休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、<br>
+            ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
+            データ削除の依頼は<a href="https://x.com/huckle_friend" target="_blank">X(Twitter)</a>までお願いします。
+        </p>
+    </section>
     {{--
     <section>
     <h2><i class="bi bi-octagon"></i>メールアドレスの取得</h2>
