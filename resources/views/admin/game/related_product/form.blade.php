@@ -21,35 +21,47 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(3);">動画配信(字幕)</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(11);">宅配レンタル(BD)</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(12);">宅配レンタル(DVD)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(21);">商品を探す</button>
             </div>
             <script>
                 function setTemplate(type)
                 {
                     switch (type) {
                         case 1:
+                            $('#name').val($('#name').val() + ' 動画配信(見放題)');
                             $('#node_name').val('動画配信(見放題)');
                             $('#sort_order').val(99999999);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
                             break;
                         case 2:
+                            $('#name').val($('#name').val() + ' 動画配信(吹替)');
                             $('#node_name').val('動画配信(吹替)');
                             $('#sort_order').val(99999998);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
                             break;
                         case 3:
+                            $('#name').val($('#name').val() + ' 動画配信(字幕)');
                             $('#node_name').val('動画配信(字幕)');
                             $('#sort_order').val(99999997);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
                             break;
                         case 11:
+                            $('#name').val($('#name').val() + ' 宅配レンタル(BD)');
                             $('#node_name').val('宅配レンタル(BD)');
                             $('#sort_order').val(99999989);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
                             break;
                         case 12:
+                            $('#name').val($('#name').val() + ' 宅配レンタル(DVD)');
                             $('#node_name').val('宅配レンタル(DVD)');
                             $('#sort_order').val(99999988);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
+                            break;
+                        case 21:
+                            $('#name').val($('#name').val() + 'を探す');
+                            $('#node_name').val($('#name').val());
+                            $('#sort_order').val(0);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::SEARCH->value }}).trigger('change');
                             break;
                     }
                 }
