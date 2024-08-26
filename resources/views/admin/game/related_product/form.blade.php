@@ -52,7 +52,7 @@
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::RENTAL->value }}).trigger('change');
                             break;
                         case 21:
-                            $('#name').val($('#name').val() + 'を探す');
+                            $('#name').val('「' + $('#name').val() + '」を探す');
                             $('#node_name').val($('#name').val());
                             $('#sort_order').val(0);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::SEARCH->value }}).trigger('change');
