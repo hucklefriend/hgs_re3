@@ -6,11 +6,11 @@
             <h4 class="panel-title">Search</h4>
         </div>
         <div class="panel-body">
-            <form action="{{ route('Admin.Game.Series') }}" method="GET">
+            <form action="{{ route('Admin.Game.RelatedProduct') }}" method="GET">
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">Name</label>
                     <div class="col-md-9">
-                        {{ html()->input('name')->value($search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
+                        {{ html()->text('name', $search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row">
