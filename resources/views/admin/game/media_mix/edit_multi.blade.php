@@ -32,9 +32,12 @@
         <div class="panel-body">
             <div>{{ $mediaMixes->appends($search)->links() }}</div>
             @include ('admin.all_errors')
+
             <form method="POST" action="{{ route('Admin.Game.MediaMix.UpdateMulti', $search) }}">
                 @csrf
                 {{ method_field('PUT') }}
+
+                <x-admin.node-input-support />
                 <table class="table table-hover">
                     <thead>
                     <tr>

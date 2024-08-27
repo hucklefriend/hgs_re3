@@ -63,6 +63,11 @@ p, blockquote {
 .only_sp {
 }
 
+
+.more_than_phablet {
+    display: none;
+}
+
 main {
     padding-top: 50px;
 
@@ -331,6 +336,10 @@ hr {
 
     .only_sp {
         display: none;
+    }
+
+    .more_than_phablet {
+        display: revert;
     }
 }
 

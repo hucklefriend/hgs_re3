@@ -12,6 +12,8 @@
             <form method="POST" action="{{ route('Admin.Game.Title.UpdatePackageMulti', $title) }}">
                 @csrf
                 {{ method_field('PUT') }}
+
+                <x-admin.node-input-support />
                 <table class="table table-hover">
                     <thead>
                     <tr>

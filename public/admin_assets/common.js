@@ -92,3 +92,8 @@ function descriptionFormat(type, name)
 
     $('#' + name).val(format);
 }
+
+function clipboardCopy(text)
+{
+    navigator.clipboard.writeText(text);
+}
