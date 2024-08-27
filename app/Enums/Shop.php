@@ -10,6 +10,8 @@ enum Shop: int
     // ネット通販
     case Amazon = 1;
     case DMM = 2;
+    case RAKUTEN_BOOKS = 3;
+    case SURUGAYA = 4;
 
     // ゲーム配信サイト
     case Steam = 11;
@@ -62,6 +64,8 @@ enum Shop: int
         return match($this) {
             self::Amazon           => 'Amazon',
             self::DMM              => 'DMM通販',
+            self::RAKUTEN_BOOKS    => '楽天ブックス',
+            self::SURUGAYA         => '駿河屋',
             self::Steam            => 'Steam',
             self::PlayStationStore => 'PlayStation Store',
             self::MicrosoftStore   => 'Microsoft ストア',
@@ -122,11 +126,11 @@ enum Shop: int
     {
         $result = [];
 
-
-
         $items = [
             self::Amazon,
             self::DMM,
+            self::RAKUTEN_BOOKS,
+            self::SURUGAYA,
         ];
         foreach ($items as $item) {
             if (!in_array($item->value, $excludeShopList)) {

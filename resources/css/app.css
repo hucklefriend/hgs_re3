@@ -227,6 +227,7 @@ hr {
         > a {
             white-space: nowrap;
             margin-right: 1rem;
+            margin-bottom: 5px;
         }
     }
 }
