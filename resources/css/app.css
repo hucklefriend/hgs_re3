@@ -220,14 +220,15 @@ hr {
     font-size: 12px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
 
 
     > div {
+        margin: 5px;
+
         > a {
             white-space: nowrap;
-            margin-right: 1rem;
-            margin-bottom: 5px;
         }
     }
 }

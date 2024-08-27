@@ -5,6 +5,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Support\Facades\Log;
+
 enum Shop: int
 {
     // ネット通販
@@ -119,106 +121,130 @@ enum Shop: int
     /**
      * input[type=select]に渡す用のリスト作成
      *
+     * @param ?ProductDefaultImage $defaultImgType
      * @param string[] $excludeShopList
      * @return string[]
      */
-    public static function selectList(array $excludeShopList = []): array
+    public static function selectList(?ProductDefaultImage $defaultImgType = null, array $excludeShopList = []): array
     {
         $result = [];
 
-        $items = [
-            self::Amazon,
-            self::DMM,
-            self::RAKUTEN_BOOKS,
-            self::SURUGAYA,
+        $itemType = [
+            ProductDefaultImage::GAME_PACKAGE,
+            ProductDefaultImage::DISC,
         ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, '通販', $item);
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::Amazon,
+                self::DMM,
+                self::RAKUTEN_BOOKS,
+                self::SURUGAYA,
+                self::FANZA,
+                self::Getchu,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '通販', $item);
+                }
             }
         }
 
-        $items = [
-            self::Steam,
-            self::PlayStationStore,
-            self::MicrosoftStore,
-            self::NintendoStore,
-            self::NintendoEShop,
-            self::DMM_GAMES,
-            self::EGG,
-            self::XboxStore,
+        $itemType = [
+            ProductDefaultImage::GAME_DISTRIBUTION,
         ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, 'ゲーム配信サイト', $item);
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::Steam,
+                self::PlayStationStore,
+                self::MicrosoftStore,
+                self::NintendoStore,
+                self::NintendoEShop,
+                self::DMM_GAMES,
+                self::FANZA_GAMES,
+                self::EGG,
+                self::XboxStore,
+                self::DLsite,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'ゲーム配信サイト', $item);
+                }
+            }
+
+            $items = [
+                self::APP_STORE,
+                self::GooglePlay,
+                self::SQM,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'スマホアプリ', $item);
+                }
+            }
+        }
+
+        $itemType = [
+            ProductDefaultImage::VIDEO_STREAMING,
+        ];
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::PRIME_VIDEO,
+                self::PRIME_VIDEO_DUBBING,
+                self::PRIME_VIDEO_SUBTITLES,
+                self::NETFLIX,
+                self::DMM_TV,
+                self::RAKUTEN_TV,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '動画配信サービス', $item);
+                }
+            }
+        }
+
+        $itemType = [
+            ProductDefaultImage::DIGITAL_BOOK,
+        ];
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::KINDLE,
+                self::DMM_BOOKS,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '電子書籍', $item);
+                }
             }
         }
 
 
-        $items = [
-            self::APP_STORE,
-            self::GooglePlay,
-            self::SQM,
+        $itemType = [
+            ProductDefaultImage::RENTAL,
         ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, 'スマホアプリ', $item);
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::DMM_RENTAL,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'レンタル', $item);
+                }
             }
         }
 
-        $items = [
-            self::Getchu,
-            self::DLsite,
-            self::FANZA,
-            self::FANZA_GAMES,
+        $itemType = [
+            ProductDefaultImage::SEARCH,
         ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, 'アダルト', $item);
-            }
-        }
-
-        $items = [
-            self::PRIME_VIDEO,
-            self::PRIME_VIDEO_DUBBING,
-            self::PRIME_VIDEO_SUBTITLES,
-            self::NETFLIX,
-            self::DMM_TV,
-            self::RAKUTEN_TV,
-        ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, '動画配信サービス', $item);
-            }
-        }
-
-        $items = [
-            self::KINDLE,
-            self::DMM_BOOKS,
-        ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, '電子書籍', $item);
-            }
-        }
-
-        $items = [
-            self::DMM_RENTAL,
-        ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, 'レンタル', $item);
-            }
-        }
-
-        $items = [
-            self::Amazon_SEARCH,
-            self::MERCARI_SEARCH,
-            self::RAKUTEN_SEARCH,
-        ];
-        foreach ($items as $item) {
-            if (!in_array($item->value, $excludeShopList)) {
-                self::addItem($result, '〇〇で検索', $item);
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::Amazon_SEARCH,
+                self::MERCARI_SEARCH,
+                self::RAKUTEN_SEARCH,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '〇〇で検索', $item);
+                }
             }
         }
 
