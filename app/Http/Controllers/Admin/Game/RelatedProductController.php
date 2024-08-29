@@ -253,7 +253,7 @@ class RelatedProductController extends AbstractAdminController
      */
     public function linkMediaMix(GameRelatedProduct $relatedProduct): Application|Factory|View
     {
-        $mediaMixes = GameMediaMix::orderBy('id')->get();
+        $mediaMixes = GameMediaMix::orderByDesc('id')->get();
         return view('admin.game.related_product.link_media_mix', [
             'model' => $relatedProduct,
             'linkedMediaMixIds' => $relatedProduct->mediaMixes()->pluck('id')->toArray(),
