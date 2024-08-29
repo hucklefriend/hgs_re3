@@ -132,6 +132,7 @@ enum Shop: int
         $itemType = [
             ProductDefaultImage::GAME_PACKAGE,
             ProductDefaultImage::DISC,
+            ProductDefaultImage::BOOK,
         ];
         if (in_array($defaultImgType, $itemType)) {
             $items = [
