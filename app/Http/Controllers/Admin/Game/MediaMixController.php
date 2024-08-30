@@ -6,10 +6,12 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductsRequest;
+use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameMediaMix;
 use App\Http\Requests\Admin\Game\MediaMixRequest;
 use App\Models\Game\GameMediaMixRelatedProductLink;
+use App\Models\Game\GamePackage;
 use App\Models\Game\GameRelatedProduct;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -172,6 +174,23 @@ class MediaMixController extends AbstractAdminController
         $mediaMix->save();
 
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
+    }
+
+    /**
+     * 複製画面
+     *
+     * @param GameMediaMix $mediaMix
+     * @return Application|Factory|View
+     */
+    public function copy(GameMediaMix $mediaMix): Application|Factory|View
+    {
+        $franchises = GameFranchise::select(['id', 'name'])->orderBy('id')
+            ->get()->pluck('name', 'id');
+        return view('admin.game.media_mix.copy', [
+            'mediaMix'   => $mediaMix,
+            'model'      => $mediaMix->replicate(),
+            'franchises' => $franchises,
+        ]);
     }
 
     /**

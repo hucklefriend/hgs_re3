@@ -255,6 +255,7 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+                Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
                 Route::get('{' . $prefix . '}/link_media_mix_group', [$class, 'linkMediaMixGroup'])->name("{$basename}.LinkMediaMixGroup");
                 Route::post('{' . $prefix . '}/link_media_mix_group', [$class, 'syncMediaMixGroup'])->name("{$basename}.SyncMediaMixGroup");
                 Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
