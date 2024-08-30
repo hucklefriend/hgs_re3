@@ -79,7 +79,7 @@
                 <h2 class="head2 fade">メディアミックス</h2>
             </div>
 
-            @foreach ($franchise->mediaMixGroups as $mediaMixGroup)
+            @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
                 @empty($mediaMixGroup->description)
                     <div class="node h3">
                         <h3 class="head3 fade">{{ $mediaMixGroup->node_name }}</h3>
