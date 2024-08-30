@@ -146,6 +146,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_package', [$class, 'syncPackage'])->name("{$basename}.SyncPackage");
                 Route::get('{' . $prefix . '}/edit_package_multi', [$class, 'editPackageMulti'])->name("{$basename}.EditPackageMulti");
                 Route::put('{' . $prefix . '}/edit_package_multi', [$class, 'updatePackageMulti'])->name("{$basename}.UpdatePackageMulti");
+                Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");
+                Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });

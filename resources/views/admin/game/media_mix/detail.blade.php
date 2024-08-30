@@ -85,6 +85,9 @@
                             <li class="list-group-item p-2"><a href="{{ route('Admin.Game.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
                         @endforeach
                         </ul>
+                        <a href="{{ route('Admin.Game.RelatedProduct.Add') }}?media_mix_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                         <a href="{{ route('Admin.Game.MediaMix.LinkRelatedProduct', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>

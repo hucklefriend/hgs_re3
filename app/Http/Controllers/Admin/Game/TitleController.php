@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\Game\LinkMultiRelatedProductsRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
+use App\Models\Game\GameMediaMix;
 use App\Models\Game\GamePackage;
 use App\Models\Game\GamePackageGroup;
 use App\Models\Game\GamePlatform;
+use App\Models\Game\GameRelatedProduct;
 use App\Models\Game\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -312,5 +315,34 @@ class TitleController extends AbstractAdminController
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * 関連商品とリンク
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function linkRelatedProduct(GameTitle $title): Application|Factory|View
+    {
+        $relatedProducts = GameRelatedProduct::orderBy('id')->get(['id', 'name']);
+        return view('admin.game.media_mix.link_related_product', [
+            'model' => $title,
+            'linkedRelatedProductIds' => $title->relatedProducts()->pluck('id')->toArray(),
+            'relatedProducts' => $relatedProducts,
+        ]);
+    }
+
+    /**
+     * 関連商品と同期処理
+     *
+     * @param LinkMultiRelatedProductsRequest $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     */
+    public function syncRelatedProduct(LinkMultiRelatedProductsRequest $request, GameTitle $title): RedirectResponse
+    {
+        $title->relatedProducts()->sync($request->validated('related_product_ids'));
+        return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 }

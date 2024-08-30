@@ -118,6 +118,22 @@
                         @endif
                     </td>
                 </tr>
+                <tr>
+                    <th>関連商品</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->relatedProducts as $rp)
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.Game.RelatedProduct.Detail', $rp) }}">{{ $rp->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.Game.RelatedProduct.Add') }}?title_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
+                        <a href="{{ route('Admin.Game.Title.LinkRelatedProduct', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
+                </tr>
             </table>
         </div>
 

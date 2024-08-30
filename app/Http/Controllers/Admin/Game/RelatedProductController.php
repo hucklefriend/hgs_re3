@@ -86,8 +86,15 @@ class RelatedProductController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
+        $linked = json_encode([
+            'title_id'     => request()->query('title_id', null),
+            'platform_id'  => request()->query('platform_id', null),
+            'media_mix_id' => request()->query('media_mix_id', null),
+        ]);
+
         return view('admin.game.related_product.add', [
-            'model' => new GameRelatedProduct(),
+            'model'  => new GameRelatedProduct(),
+            'linked' => $linked,
         ]);
     }
 
@@ -101,10 +108,25 @@ class RelatedProductController extends AbstractAdminController
     public function store(RelatedProductRequest $request): RedirectResponse
     {
         $relatedProduct = new GameRelatedProduct();
-        $relatedProduct->fill($request->validated());
+        $validated = $request->validated();
+        $linked = json_decode($validated['linked'], true);
+        unset($validated['linked']);
+
+        $relatedProduct->fill($validated);
         $relatedProduct->save();
 
-        return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
+        if ($linked['title_id'] !== null) {
+            $relatedProduct->titles()->attach($linked['title_id']);
+            return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
+        } else if ($linked['platform_id'] !== null) {
+            $relatedProduct->platforms()->attach($linked['platform_id']);
+            return redirect()->route('Admin.Game.Platform.Detail', ['platform' => $linked['platform_id']]);
+        } else if ($linked['media_mix_id'] !== null) {
+            $relatedProduct->mediaMixes()->attach($linked['media_mix_id']);
+            return redirect()->route('Admin.Game.MediaMix.Detail', ['media_mix' => $linked['media_mix_id']]);
+        } else {
+            return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
+        }
     }
 
     /**

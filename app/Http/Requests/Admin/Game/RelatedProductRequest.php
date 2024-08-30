@@ -50,6 +50,7 @@ class RelatedProductRequest extends FormRequest
             'description'        => 'nullable',
             'description_source' => 'nullable',
             'sort_order'         => 'nullable',
+            'linked'             => 'nullable',
         ];
     }
 }
