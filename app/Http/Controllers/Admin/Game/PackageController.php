@@ -103,8 +103,14 @@ class PackageController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
+        $linked = json_encode([
+            'title_id'         => request()->query('title_id', null),
+            'package_group_id' => request()->query('package_group_id', null),
+        ]);
+
         return view('admin.game.package.add', [
-            'model' => new GamePackage(),
+            'model'  => new GamePackage(),
+            'linked' => $linked,
         ]);
     }
 
@@ -120,8 +126,10 @@ class PackageController extends AbstractAdminController
         $platformIds = $request->validated('game_platform_ids');
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
+        $linked = json_decode($validated['linked'], true);
         unset($validated['game_platform_ids']);
         unset($validated['game_maker_ids']);
+        unset($validated['linked']);
 
         foreach ($platformIds as $platformId) {
             $validated['game_platform_id'] = $platformId;
@@ -132,9 +140,21 @@ class PackageController extends AbstractAdminController
             if (!empty($makerIds)) {
                 $package->makers()->sync($makerIds);
             }
+
+            if ($linked['title_id'] !== null) {
+                $package->titles()->attach($linked['title_id']);
+            } else if ($linked['package_group_id'] !== null) {
+                $package->packageGroups()->attach($linked['package_group_id']);
+            }
         }
 
-        return redirect()->route('Admin.Game.Package.Detail', $package);
+        if ($linked['title_id'] !== null) {
+            return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
+        } else if ($linked['package_group_id'] !== null) {
+            return redirect()->route('Admin.Game.PackageGroup.Detail', ['packageGroup' => $linked['package_group_id']]);
+        } else {
+            return redirect()->route('Admin.Game.Package.Detail', $package);
+        }
     }
 
     /**

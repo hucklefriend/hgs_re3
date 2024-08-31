@@ -206,7 +206,7 @@ class PackageGroupController extends AbstractAdminController
      */
     public function syncPackage(LinkMultiPackageRequest $request, GamePackageGroup $packageGroup): RedirectResponse
     {
-        $packageGroup->packages()->sync($request->validated('package_id'));
+        $packageGroup->packages()->sync($request->validated('game_package_ids'));
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
     }
 }

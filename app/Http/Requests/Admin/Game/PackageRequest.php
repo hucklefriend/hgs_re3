@@ -38,6 +38,7 @@ class PackageRequest extends FormRequest
             'img_s_url'         => 'nullable|max:250',
             'img_m_url'         => 'nullable|max:250',
             'rating'            => ['required', new Enum(Rating::class)],
+            'linked'            => 'nullable',
         ];
     }
 }

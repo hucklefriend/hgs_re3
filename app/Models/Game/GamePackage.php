@@ -67,6 +67,16 @@ class GamePackage extends \Eloquent
     }
 
     /**
+     * パッケージグループを取得
+     *
+     * @return BelongsToMany
+     */
+    public function packageGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(GamePackageGroup::class, GamePackageGroupPackageLink::class);
+    }
+
+    /**
      * プラットフォーム名とセットの名称を取得
      *
      * @return string

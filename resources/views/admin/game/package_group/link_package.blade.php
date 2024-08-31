@@ -26,8 +26,8 @@
                         </label>
                     @endforeach
                 </div>
-                @if ($errors->has('package_id[]'))
-                    <div class="invalid-feedback">{{ $errors->first('package_id[]') }}</div>
+                @if ($errors->has('game_package_ids[]'))
+                    <div class="invalid-feedback">{{ $errors->first('game_package_ids[]') }}</div>
                 @endif
             </div>
             <div class="panel-footer text-end">

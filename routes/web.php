@@ -157,6 +157,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::group(['prefix' => $prefix], function () use ($prefix) {
                 $basename = 'Admin.Game.PackageGroup';
                 $class = Admin\Game\PackageGroupController::class;
+                $prefix = 'packageGroup';
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
