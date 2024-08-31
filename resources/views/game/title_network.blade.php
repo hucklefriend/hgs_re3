@@ -116,14 +116,14 @@
                         <h3 class="head3 fade">{{ $pkgGroup->name }}</h3>
                     </div>
 
-                    <div class="product-list">
+                    <div class="product-list" style="margin-bottom: 50px;">
                         @foreach ($pkgGroup->packages as $pkg)
                             @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                         @endforeach
                     </div>
                 @endforeach
             @else
-                <div class="product-list">
+                <div class="product-list" style="margin-bottom: 50px;">
                     @foreach ($title->packages as $pkg)
                         @include('common.package', ['pkg' => $pkg])
                     @endforeach

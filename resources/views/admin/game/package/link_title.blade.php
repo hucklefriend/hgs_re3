@@ -3,23 +3,21 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">{{ $model->name }} Link Maker</h4>
+            <h4 class="panel-title">{{ $model->name }} Link Title</h4>
         </div>
-
         <div class="panel-body">
             <input type="text" class="form-control" id="admin-link-list-filter" value="{{ $defaultFilter ?? '' }}">
         </div>
-
         @include ('admin.all_errors')
-        <form method="POST" action="{{ route('Admin.Game.Package.SyncMaker', $model) }}">
+        <form method="POST" action="{{ route('Admin.Game.Package.SyncTitle', $model) }}">
             @csrf
 
             <div class="panel-body panel-inverse">
                 <div class="list-group" id="admin-link-list">
-                @foreach ($makers as $m)
+                @foreach ($titles as $title)
                     <label class="list-group-item">
-                        <input type="checkbox" name="game_maker_ids[]" value="{{ $m->id }}" class="form-check-input me-1" @checked(in_array($m->id, $linkedMakerIds))>
-                        {{ $m->name }}
+                        <input type="checkbox" name="game_title_ids[]" value="{{ $title->id }}" class="form-check-input me-1" @checked(in_array($title->id, $linkedTitleIds))>
+                        {{ $title->name }}
                     </label>
                 @endforeach
                 </div>

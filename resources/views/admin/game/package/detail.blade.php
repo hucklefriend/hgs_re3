@@ -94,6 +94,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>パッケージグループ</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->packageGroups as $packageGroup)
+                                <li class="list-group-item"><a href="{{ route('Admin.Game.PackageGroup.Detail', $packageGroup) }}">{{ $packageGroup->name ?? '' }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.Game.Package.LinkPackageGroup', $model) }}" class="btn btn-sm btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
                     <th>ショップ</th>
                     <td>
                         <table>

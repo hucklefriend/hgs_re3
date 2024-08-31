@@ -22,8 +22,8 @@ class LinkMultiPackageGroupRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->package_group_id === null) {
-            $this->merge(['package_group_id' => []]);
+        if ($this->game_package_group_ids === null) {
+            $this->merge(['game_package_group_ids' => []]);
         }
     }
 
@@ -35,7 +35,7 @@ class LinkMultiPackageGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_group_id' => 'nullable|array|exists:game_package_groups,id',
+            'game_package_group_ids' => 'nullable|array|exists:game_package_groups,id',
         ];
     }
 }

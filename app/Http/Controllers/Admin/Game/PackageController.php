@@ -6,13 +6,18 @@ use App\Defines\AdminDefine;
 use App\Enums\Shop;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMakerRequest;
+use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageShopRequest;
 use App\Models\Game\GameMaker;
 use App\Models\Game\GamePackage;
+use App\Models\Game\GamePackageGroup;
 use App\Models\Game\GamePackageShop;
+use App\Models\Game\GameRelatedProduct;
+use App\Models\Game\GameTitle;
 use App\Models\Game\GameTitlePackageLink;
 use App\Models\Game\GameTitleSynonym;
 use Illuminate\Contracts\Foundation\Application;
@@ -400,6 +405,63 @@ class PackageController extends AbstractAdminController
     public function syncMaker(LinkMultiMakerRequest $request, GamePackage $package): RedirectResponse
     {
         $package->makers()->sync($request->validated('game_maker_ids'));
+        return redirect()->route('Admin.Game.Package.Detail', $package);
+    }
+
+    /**
+     * タイトルとリンク
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function linkTitle(GamePackage $package): Application|Factory|View
+    {
+        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        return view('admin.game.package.link_title', [
+            'model'          => $package,
+            'linkedTitleIds' => $package->titles()->pluck('id')->toArray(),
+            'titles'         => $titles,
+        ]);
+    }
+
+    /**
+     * タイトルと同期処理
+     *
+     * @param LinkMultiTitleRequest $request
+     * @param GamePackage $package
+     * @return RedirectResponse
+     */
+    public function syncTitle(LinkMultiTitleRequest $request, GamePackage $package): RedirectResponse
+    {
+        $package->titles()->sync($request->validated('game_title_ids'));
+        return redirect()->route('Admin.Game.Package.Detail', $package);
+    }
+
+    /**
+     * パッケージグループとリンク
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function linkPackageGroup(GamePackage $package): Application|Factory|View
+    {
+        return view('admin.game.package.link_package_group', [
+            'model'  => $package,
+            'linkedPackageGroupIds' => $package->packageGroups()->pluck('id')->toArray(),
+            'packageGroups' => GamePackageGroup::orderBy('id')->get(['id', 'name']),
+        ]);
+    }
+
+    /**
+     * パッケージグループと同期処理
+     *
+     * @param LinkMultiPackageGroupRequest $request
+     * @param GamePackage $package
+     * @return RedirectResponse
+     */
+    public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GamePackage $package): RedirectResponse
+    {
+        $package->packageGroups()->sync($request->validated('game_package_group_ids'));
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 
