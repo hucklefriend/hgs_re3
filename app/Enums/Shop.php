@@ -24,6 +24,7 @@ enum Shop: int
     case DMM_GAMES = 16;
     case EGG = 17;
     case XboxStore = 18;
+    case GOG = 19;
 
     // スマホアプリ
     case APP_STORE = 31;
@@ -76,6 +77,7 @@ enum Shop: int
             self::DMM_GAMES        => 'DMM GAMES',
             self::EGG              => 'EGG',
             self::XboxStore        => 'XBOX ストア',
+            self::GOG              => 'GOG.com',
             self::APP_STORE        => 'App Store',
             self::GooglePlay       => 'Google Play',
             self::SQM              => 'スクエニマーケット',
@@ -164,6 +166,7 @@ enum Shop: int
                 self::FANZA_GAMES,
                 self::EGG,
                 self::XboxStore,
+                self::GOG,
                 self::DLsite,
             ];
             foreach ($items as $item) {

@@ -192,6 +192,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_maker', [$class, 'syncMaker'])->name("{$basename}.SyncMaker");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+                Route::get('{' . $prefix . '}/link_package_group', [$class, 'linkPackageGroup'])->name("{$basename}.LinkPackageGroup");
+                Route::post('{' . $prefix . '}/link_package_group', [$class, 'syncPackageGroup'])->name("{$basename}.SyncPackageGroup");
 
                 Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
                 Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
