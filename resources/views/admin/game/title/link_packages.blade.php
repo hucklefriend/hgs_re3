@@ -25,13 +25,13 @@
                 <div class="list-group" id="admin-link-list">
                     @foreach ($packages as $package)
                         <label class="list-group-item" data-platform="{{ $package->game_platform_id }}">
-                            <input type="checkbox" name="package_id[]" value="{{ $package->id }}" class="form-check-input me-1" @checked(in_array($package->id, $linkedPackageIds))>
+                            <input type="checkbox" name="game_package_ids[]" value="{{ $package->id }}" class="form-check-input me-1" @checked(in_array($package->id, $linkedPackageIds))>
                             {{ $package->name }} ({{ $platformHash[$package->game_platform_id] }})
                         </label>
                     @endforeach
                 </div>
-                @if ($errors->has('package_id[]'))
-                    <div class="invalid-feedback">{{ $errors->first('package_id[]') }}</div>
+                @if ($errors->has('game_package_ids[]'))
+                    <div class="invalid-feedback">{{ $errors->first('game_package_ids[]') }}</div>
                 @endif
             </div>
             <div class="panel-footer text-end">

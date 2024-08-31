@@ -266,7 +266,7 @@ class TitleController extends AbstractAdminController
      */
     public function syncPackage(LinkMultiPackageRequest $request, GameTitle $title): RedirectResponse
     {
-        $title->packages()->sync($request->validated('package_id'));
+        $title->packages()->sync($request->validated('game_package_ids'));
         $title->packageGroups()->detach();
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
