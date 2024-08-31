@@ -41,7 +41,11 @@
                 <tr>
                     <th>フランチャイズ</th>
                     <td>
-                        {{ $model->franchise->name ?? '--' }}
+                        @if ($model->franchise !== null)
+                            <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise) }}">{{ $model->franchise->name }}</a>
+                        @else
+                            --
+                        @endif
                     </td>
                 </tr>
                 <tr>
