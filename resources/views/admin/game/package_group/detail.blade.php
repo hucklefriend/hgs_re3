@@ -51,6 +51,9 @@
                             </li>
                         @endforeach
                         </ul>
+                        <a href="{{ route('Admin.Game.Package.Add') }}?package_group_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                         <a href="{{ route('Admin.Game.PackageGroup.LinkPackage', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
