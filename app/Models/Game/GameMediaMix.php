@@ -68,6 +68,16 @@ class GameMediaMix extends \Eloquent
     }
 
     /**
+     * タイトル
+     *
+     * @return BelongsToMany
+     */
+    public function titles(): BelongsToMany
+    {
+        return $this->belongsToMany(GameTitle::class);
+    }
+
+    /**
      * 関連商品
      *
      * @return BelongsToMany

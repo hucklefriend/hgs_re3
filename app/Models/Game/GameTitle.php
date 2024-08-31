@@ -121,6 +121,16 @@ class GameTitle extends \Eloquent
     }
 
     /**
+     * メディアミックスを取得
+     *
+     * @return BelongsToMany
+     */
+    public function mediaMixes(): BelongsToMany
+    {
+        return $this->belongsToMany(GameMediaMix::class);
+    }
+
+    /**
      * 保存
      *
      * @throws \Throwable

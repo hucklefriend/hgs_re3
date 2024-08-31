@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\LinkMultiRelatedProductsRequest;
+use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
+use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
@@ -336,13 +337,41 @@ class TitleController extends AbstractAdminController
     /**
      * 関連商品と同期処理
      *
-     * @param LinkMultiRelatedProductsRequest $request
+     * @param LinkMultiRelatedProductRequest $request
      * @param GameTitle $title
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(LinkMultiRelatedProductsRequest $request, GameTitle $title): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GameTitle $title): RedirectResponse
     {
-        $title->relatedProducts()->sync($request->validated('related_product_ids'));
+        $title->relatedProducts()->sync($request->validated('game_related_product_ids'));
+        return redirect()->route('Admin.Game.Title.Detail', $title);
+    }
+
+    /**
+     * メディアミックスとリンク
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function linkMediaMix(GameTitle $title): Application|Factory|View
+    {
+        return view('admin.game.title.link_media_mix', [
+            'model' => $title,
+            'linkedMediaMixIds' => $title->mediaMixes()->pluck('id')->toArray(),
+            'mediaMixes' => GameMediaMix::orderBy('id')->get(['id', 'name']),
+        ]);
+    }
+
+    /**
+     * メディアミックスと同期処理
+     *
+     * @param LinkMultiMediaMixRequest $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     */
+    public function syncMediaMix(LinkMultiMediaMixRequest $request, GameTitle $title): RedirectResponse
+    {
+        $title->mediaMixes()->sync($request->validated('game_media_mix_ids'));
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 }

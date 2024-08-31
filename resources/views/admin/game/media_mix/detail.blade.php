@@ -78,6 +78,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>タイトル</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->titles as $title)
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.Game.Title.Detail', $title) }}">{{ $title->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.Game.MediaMix.LinkTitle', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
                     <th>関連商品</th>
                     <td>
                         <ul class="list-group">

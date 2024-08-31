@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\LinkMultiRelatedProductsRequest;
-use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Models\Game\GameFranchise;
 use App\Models\Game\GameMediaMix;
 use App\Http\Requests\Admin\Game\MediaMixRequest;
-use App\Models\Game\GameMediaMixRelatedProductLink;
-use App\Models\Game\GamePackage;
 use App\Models\Game\GameRelatedProduct;
+use App\Models\Game\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -209,6 +208,35 @@ class MediaMixController extends AbstractAdminController
     }
 
     /**
+     * タイトルとリンク
+     *
+     * @param GameMediaMix $mediaMix
+     * @return Application|Factory|View
+     */
+    public function linkTitle(GameMediaMix $mediaMix): Application|Factory|View
+    {
+        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        return view('admin.game.media_mix.link_title', [
+            'model' => $mediaMix,
+            'linkedTitleIds' => $mediaMix->titles()->pluck('id')->toArray(),
+            'titles' => $titles,
+        ]);
+    }
+
+    /**
+     * タイトルと同期処理
+     *
+     * @param LinkMultiTitleRequest $request
+     * @param GameMediaMix $mediaMix
+     * @return RedirectResponse
+     */
+    public function syncTitle(LinkMultiTitleRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    {
+        $mediaMix->titles()->sync($request->validated('game_title_ids'));
+        return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
+    }
+
+    /**
      * 関連商品とリンク
      *
      * @param GameMediaMix $mediaMix
@@ -227,13 +255,13 @@ class MediaMixController extends AbstractAdminController
     /**
      * 関連商品と同期処理
      *
-     * @param LinkMultiRelatedProductsRequest $request
+     * @param LinkMultiRelatedProductRequest $request
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(LinkMultiRelatedProductsRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GameMediaMix $mediaMix): RedirectResponse
     {
-        $mediaMix->relatedProducts()->sync($request->validated('related_product_ids'));
+        $mediaMix->relatedProducts()->sync($request->validated('game_related_product_ids'));
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
     }
 }

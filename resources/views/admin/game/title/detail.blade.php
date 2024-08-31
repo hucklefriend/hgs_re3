@@ -134,6 +134,22 @@
                         </a>
                     </td>
                 </tr>
+                <tr>
+                    <th>メディアミックス</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->mediaMixes as $mm)
+                                <li class="list-group-item p-2"><a href="{{ route('Admin.Game.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></li>
+                            @endforeach
+                        </ul>
+                        <a href="{{ route('Admin.Game.MediaMix.Add') }}?title_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
+                        <a href="{{ route('Admin.Game.Title.LinkMediaMix', $model) }}" class="btn btn-default">
+                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
+                        </a>
+                    </td>
+                </tr>
             </table>
         </div>
 

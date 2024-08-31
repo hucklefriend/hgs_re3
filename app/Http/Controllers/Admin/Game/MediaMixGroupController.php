@@ -157,7 +157,7 @@ class MediaMixGroupController extends AbstractAdminController
      */
     public function linkMediaMix(Request $request, GameMediaMixGroup $mediaMixGroup): Application|Factory|View
     {
-        return view('admin.game.media_mix_group.link_media_mixes', [
+        return view('admin.game.media_mix_group.link_media_mix', [
             'model'             => $mediaMixGroup,
             'linkedMediaMixIds' => $mediaMixGroup->mediaMixes()->pluck('id')->toArray(),
             'mediaMixes'        => GameMediaMix::orderBy('id')->get(['id', 'name']),
