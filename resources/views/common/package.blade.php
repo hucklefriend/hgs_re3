@@ -25,7 +25,7 @@
         @if ($pkg->shops->count() > 0)
             <div style="margin-top: 10px;" class="shop-link">
                 @foreach($pkg->shops as $shop)
-                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored" style="white-space: nowrap;margin-right: 1rem;">
+                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
                         <i class="bi bi-shop"></i> {{ $shop->shop()->name() ?? '--' }}
                     </a>
                 @endforeach
