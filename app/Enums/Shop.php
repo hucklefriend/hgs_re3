@@ -57,6 +57,9 @@ enum Shop: int
     case MERCARI_SEARCH = 102;
     case RAKUTEN_SEARCH = 103;
 
+    // 公式サイト
+    case OFFICIAL_SITE = 201;
+
     /**
      * ショップ名
      *
@@ -97,6 +100,7 @@ enum Shop: int
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',
+            self::OFFICIAL_SITE    => '公式サイト',
         };
     }
 
@@ -168,6 +172,7 @@ enum Shop: int
                 self::XboxStore,
                 self::GOG,
                 self::DLsite,
+                self::OFFICIAL_SITE,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
