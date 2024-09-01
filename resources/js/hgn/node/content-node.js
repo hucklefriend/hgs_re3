@@ -48,7 +48,7 @@ export class ContentLinkNode extends LinkNode
     {
         if (this.url) {
             HorrorGameNetwork.getInstance()
-                .openContentNode(this.url, this.id);
+                .openContentNode(this.url, this.id, false);
         }
     }
 

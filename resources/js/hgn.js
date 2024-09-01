@@ -386,9 +386,9 @@ export class HorrorGameNetwork
             window.history.pushState({type: 'contentNode', 'linkNodeId': linkNodeId, title:document.title}, '');
         } else {
             window.history.pushState({type: 'network', title:document.title}, '');
-
-            this.appear();
         }
+
+        this.appear();
 
         if (Param.SHOW_DEBUG) {
             this.showDebug();
@@ -741,8 +741,9 @@ export class HorrorGameNetwork
      *
      * @param url
      * @param linkNodeId
+     * @param isPopState
      */
-    openContentNode(url, linkNodeId)
+    openContentNode(url, linkNodeId, isPopState)
     {
         let linkNode = null;
         if (this.nodesIdHash.hasOwnProperty(linkNodeId)) {
@@ -750,8 +751,10 @@ export class HorrorGameNetwork
         }
         this.contentNode.open(linkNode);
 
-        // pushStateにつっこむ
-        window.history.pushState({type: 'contentNode', linkNodeId: linkNodeId}, '', url);
+        if (!isPopState) {
+            // pushStateにつっこむ
+            window.history.pushState({type: 'contentNode', linkNodeId: linkNodeId}, '', url);
+        }
         this.fetch(url, (data, hasError) => {
             if (hasError) {
                 this.showContentNode({
@@ -897,7 +900,7 @@ export class HorrorGameNetwork
                 if (e.state.type === 'network') {
                     this.changeNetwork(location.href, true);
                 } else if (e.state.type === 'contentNode') {
-                    this.openContentNode(location.href, e.state.linkNodeId);
+                    this.openContentNode(location.href, e.state.linkNodeId, true);
                 }
             }
         }
