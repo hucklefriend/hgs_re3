@@ -395,7 +395,7 @@ class GameController extends Controller
             }
         }
 
-        return $this->network(view('game.title_network', [
+        return $this->network(view('game.title_detail_network', [
             'title'    => $title,
             'packages' => $packages,
             'makers'   => $makers,

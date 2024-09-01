@@ -131,6 +131,26 @@
             @endif
     </section>
 
+    @if ($title->mediaMixes()->exists())
+        <section>
+            <div class="node">
+                <h2 class="head2 fade">メディアミックス</h2>
+            </div>
+            <div class="node-map">
+                @foreach ($title->mediaMixes as $mm)
+                    <div>
+                        <div class="link-node link-node-center fade">
+                            <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mm->key]) }}">
+                                {!! $mm->node_name !!}
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+
     @include('common.related_products', ['model' => $title])
 
     <section>

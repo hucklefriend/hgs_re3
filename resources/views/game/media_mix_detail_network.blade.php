@@ -37,17 +37,29 @@
                     </div>
                 </div>
             @endforeach
-            <div>
 
-                @if ($mediaMix->getFranchise())
-                <div class="link-node link-node-center fade">
-                    <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $mediaMix->getFranchise()->key]) }}">
-                        {{ $mediaMix->getFranchise()->node_name }}<br>
-                        フランチャイズ
-                    </a>
+            @if ($mediaMix->getFranchise())
+                <div class="node">
+                    <div class="link-node link-node-center fade">
+                        <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $mediaMix->getFranchise()->key]) }}">
+                            {{ $mediaMix->getFranchise()->node_name }}<br>
+                            フランチャイズ
+                        </a>
+                    </div>
                 </div>
-                @endif
-            </div>
+            @endif
+
+            @if ($mediaMix->titles()->exists())
+                @foreach ($mediaMix->titles as $title)
+                    <div class="node">
+                        <div class="link-node link-node-center fade">
+                            <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">
+                                {!! $title->node_name !!}
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </section>
 
