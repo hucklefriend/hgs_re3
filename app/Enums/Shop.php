@@ -174,7 +174,13 @@ enum Shop: int
                     self::addItem($result, 'ゲーム配信サイト', $item);
                 }
             }
+        }
 
+
+        $itemType = [
+            ProductDefaultImage::SMART_PHONE,
+        ];
+        if (in_array($defaultImgType, $itemType)) {
             $items = [
                 self::APP_STORE,
                 self::GooglePlay,

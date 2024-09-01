@@ -15,6 +15,7 @@ enum ProductDefaultImage: int
     case DIGITAL_BOOK = 6;
     case RENTAL = 7;
     case SEARCH = 8;
+    case SMART_PHONE = 9;
 
     /**
      * テキストを取得
@@ -32,6 +33,7 @@ enum ProductDefaultImage: int
             ProductDefaultImage::DIGITAL_BOOK => '電子書籍',
             ProductDefaultImage::RENTAL => '宅配レンタル',
             ProductDefaultImage::SEARCH => '商品を探す',
+            ProductDefaultImage::SMART_PHONE => 'スマホアプリ',
         };
     }
 
@@ -51,6 +53,7 @@ enum ProductDefaultImage: int
             ProductDefaultImage::DIGITAL_BOOK => asset('img/pdi/ebook.png'),
             ProductDefaultImage::RENTAL => asset('img/pdi/rental.png'),
             ProductDefaultImage::SEARCH => asset('img/pdi/search.png'),
+            ProductDefaultImage::SMART_PHONE => asset('img/pdi/sp.png'),
         };
     }
 
