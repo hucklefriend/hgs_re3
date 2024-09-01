@@ -94,18 +94,11 @@
     <section>
         <h2><i class="bi bi-octagon"></i>利用画像</h2>
         <p>
-            素材サイト様から、下記の素材を利用させて頂いてます。
+            下記の素材サイト様から、素材を利用させて頂いてます。
         </p>
         <ul>
-            <li>・<a href="https://pixabay.com/gifs/three-dots-loading-movement-11928/" target="_blank">ローディング画像 - Pixabay</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/11686">ディスクのゲームソフトのアイコン - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/318">クラウドからダウンロードのアイコン - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/1889">ディスクのアイコン - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/761">動画再生のアイコン02 - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/4693">本・辞書のアイコン02 - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/21624">クラウドファイルやドキュメントのアイコン - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/10517" target="_blank">ポストへ投函のアイコン - icon-pit</a></li>
-            <li>・<a href="https://icon-pit.com/pictogram/1024" target="_blank">虫眼鏡・検索のアイコン04 - icon-pit</a></li>
+            <li>・<a href="https://pixabay.com/" target="_blank">Pixabay</a></li>
+            <li>・<a href="https://icon-pit.com/" target="_blank">icon-pit</a></li>
         </ul>
     </section>
 @endsection
