@@ -4,6 +4,18 @@
 
 @section('content-node-body')
     <section>
+        <h2><i class="bi bi-octagon"></i>Intended for users in Japan only</h2>
+        <p>
+            当サイトは日本国内向けです。<br>
+            日本国内の法律に従い、日本語以外でのサービス提供やサポートは行っておりせん。
+        </p>
+        <p>
+            This website is intended for users in Japan.<br>
+            I do not provide services or support in languages other than Japanese.<br>
+            I comply with the laws of Japan.
+        </p>
+    </section>
+    <section>
         <h2><i class="bi bi-octagon"></i>Cookieの利用</h2>
         <p>
             当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
