@@ -89,6 +89,9 @@
             <li>・<a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
             <li>・<a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
         </ul>
+        <p>
+            ゲーム、プラットフォームやフランチャイズ等の紹介文はAIが生成した文章を加筆修正したものが一部あります。
+        </p>
     </section>
 
     <section>

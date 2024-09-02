@@ -160,6 +160,21 @@
         </h2>
     </div>
         <div class="node-map">
+            @if ($title->series)
+                @foreach ($title->series->titles as $sameSeriesTitle)
+                    @if ($sameSeriesTitle->id === $title->id)
+                        @continue
+                    @endif
+                    <div>
+                        <div class="link-node link-node-center fade">
+                            <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $sameSeriesTitle->key]) }}">
+                                {!! $sameSeriesTitle->node_name !!}
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+
             @if ($title->getFranchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center fade">
