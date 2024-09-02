@@ -98,10 +98,10 @@ enum Shop: int
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
             self::DMM_RENTAL       => 'DMM宅配レンタル',
-            self::Amazon_SEARCH    => 'Amazonで探す',
-            self::MERCARI_SEARCH   => 'メルカリで探す',
-            self::RAKUTEN_SEARCH   => '楽天で探す',
-            self::SURUGAYA_SEARCH  => '駿河屋で探す',
+            self::Amazon_SEARCH    => '🔍Amazonで探す',
+            self::MERCARI_SEARCH   => '🔍メルカリで探す',
+            self::RAKUTEN_SEARCH   => '🔍楽天で探す',
+            self::SURUGAYA_SEARCH  => '🔍駿河屋で探す',
             self::OFFICIAL_SITE    => '公式サイト',
         };
     }
