@@ -55,7 +55,7 @@ enum Shop: int
     // 〇〇で検索
     case Amazon_SEARCH = 101;
     case MERCARI_SEARCH = 102;
-    case RAKUTEN_SEARCH = 103;
+    case RAKUTEN_ICHIBA_SEARCH = 103;
     case SURUGAYA_SEARCH = 104;
 
     // 公式サイト
@@ -100,7 +100,7 @@ enum Shop: int
             self::DMM_RENTAL       => 'DMM宅配レンタル',
             self::Amazon_SEARCH    => '🔍Amazonで探す',
             self::MERCARI_SEARCH   => '🔍メルカリで探す',
-            self::RAKUTEN_SEARCH   => '🔍楽天で探す',
+            self::RAKUTEN_ICHIBA_SEARCH   => '🔍楽天市場で探す',
             self::SURUGAYA_SEARCH  => '🔍駿河屋で探す',
             self::OFFICIAL_SITE    => '公式サイト',
         };
@@ -261,7 +261,7 @@ enum Shop: int
             $items = [
                 self::Amazon_SEARCH,
                 self::MERCARI_SEARCH,
-                self::RAKUTEN_SEARCH,
+                self::RAKUTEN_ICHIBA_SEARCH,
                 self::SURUGAYA_SEARCH,
             ];
             foreach ($items as $item) {
