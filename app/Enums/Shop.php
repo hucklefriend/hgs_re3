@@ -56,6 +56,7 @@ enum Shop: int
     case Amazon_SEARCH = 101;
     case MERCARI_SEARCH = 102;
     case RAKUTEN_SEARCH = 103;
+    case SURUGAYA_SEARCH = 104;
 
     // 公式サイト
     case OFFICIAL_SITE = 201;
@@ -100,6 +101,7 @@ enum Shop: int
             self::Amazon_SEARCH    => 'Amazonで探す',
             self::MERCARI_SEARCH   => 'メルカリで探す',
             self::RAKUTEN_SEARCH   => '楽天で探す',
+            self::SURUGAYA_SEARCH  => '駿河屋で探す',
             self::OFFICIAL_SITE    => '公式サイト',
         };
     }
@@ -248,6 +250,11 @@ enum Shop: int
         }
 
         $itemType = [
+            ProductDefaultImage::GAME_PACKAGE,
+            ProductDefaultImage::DISC,
+            ProductDefaultImage::BOOK,
+            ProductDefaultImage::DIGITAL_BOOK,
+            ProductDefaultImage::VIDEO_STREAMING,
             ProductDefaultImage::SEARCH,
         ];
         if (in_array($defaultImgType, $itemType)) {
@@ -255,6 +262,7 @@ enum Shop: int
                 self::Amazon_SEARCH,
                 self::MERCARI_SEARCH,
                 self::RAKUTEN_SEARCH,
+                self::SURUGAYA_SEARCH,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
