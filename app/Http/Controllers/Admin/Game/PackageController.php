@@ -183,10 +183,14 @@ class PackageController extends AbstractAdminController
     public function updateMulti(PackageMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
+        $relelaseAt = $request->validated(['release_at']);
+        $sortOrder = $request->validated(['sort_order']);
         foreach ($nodeNames as $id => $nodeName) {
             $package = GamePackage::find($id);
             if ($package !== null) {
                 $package->node_name = $nodeName;
+                $package->release_at = $relelaseAt[$id];
+                $package->sort_order = $sortOrder[$id];
                 $package->save();
             }
         }

@@ -10,7 +10,7 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3">名前</label>
                     <div class="col-md-9">
-                        {{ Form::text('name', $search['name'], ['class' => 'form-control', 'placeholder' => '名前 or よみがな or タイトルの俗称(半角スペースで単語区切り)', 'autocomplete' => 'off']) }}
+                        {{ html()->text('name', $search['name'])->class('form-control')->placeholder('名称など')->autocomplete('off') }}
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -55,7 +55,9 @@
                         <tr>
                             <td>{{ $pkg->id }}</td>
                             <td>{{ $pkg->name }}</td>
-                            <td><x-admin.multi-edit-textarea name="node_name" :model="$model" /></td>
+                            <td><x-admin.multi-edit-textarea name="node_name" :model="$pkg" /></td>
+                            <td><x-admin.multi-edit-input name="release_at" :model="$pkg" /></td>
+                            <td><x-admin.multi-edit-input type="number" name="sort_order" :model="$pkg" /></td>
                         </tr>
                     @endforeach
                     </tbody>

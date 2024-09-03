@@ -27,6 +27,10 @@ class PackageMultiUpdateRequest extends FormRequest
         return [
             'node_name'   => 'array',
             'node_name.*' => 'string|max:200',
+            'release_at'   => 'array',
+            'release_at.*' => 'string|max:200',
+            'sort_order'   => 'array',
+            'sort_order.*' => 'integer',
         ];
     }
 }
