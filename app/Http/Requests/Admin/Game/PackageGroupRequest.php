@@ -31,6 +31,7 @@ class PackageGroupRequest extends FormRequest
             'name'       => 'required|max:200',
             'node_name'  => 'required|max:200',
             'sort_order' => 'required|integer',
+            'linked'     => 'nullable',
         ];
     }
 }

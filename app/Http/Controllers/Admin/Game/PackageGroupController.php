@@ -82,8 +82,13 @@ class PackageGroupController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
+        $linked = json_encode([
+            'title_id' => request()->query('title_id', null),
+        ]);
+
         return view('admin.game.package_group.add', [
             'model' => new GamePackageGroup(),
+            'linked' => $linked,
         ]);
     }
 
@@ -96,9 +101,18 @@ class PackageGroupController extends AbstractAdminController
      */
     public function store(PackageGroupRequest $request): RedirectResponse
     {
+        $validated = $request->validated();
+        $linked = json_decode($validated['linked'], true);
+        unset($validated['linked']);
+
         $packageGroup = new GamePackageGroup();
-        $packageGroup->fill($request->validated());
+        $packageGroup->fill($validated);
         $packageGroup->save();
+
+        if ($linked['title_id'] !== null) {
+            $packageGroup->titles()->attach($linked['title_id']);
+            return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
+        }
 
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
     }

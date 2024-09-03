@@ -14,6 +14,7 @@
                 <a href="{{ route('Admin.Game.PackageGroup') }}" class="btn btn-default">Cancel</a>&nbsp;
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
+            <input type="hidden" name="linked" value="{{ $linked }}">
         </form>
     </div>
 @endsection

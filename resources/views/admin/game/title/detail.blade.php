@@ -90,6 +90,9 @@
                                 <li class="list-group-item"><a href="{{ route('Admin.Game.PackageGroup.Detail', $pkgGroup) }}">{{ $pkgGroup->name }}</a></li>
                             @endforeach
                         </ul>
+                        <a href="{{ route('Admin.Game.PackageGroup.Add') }}?title_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                         <a href="{{ route('Admin.Game.Title.LinkPackageGroup', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
@@ -108,6 +111,9 @@
                                 <li class="list-group-item"><a href="{{ route('Admin.Game.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
                             @endforeach
                         </ul>
+                        <a href="{{ route('Admin.Game.Package.Add') }}?title_id={{ $model->id }}" class="btn btn-default">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
+                        </a>
                         <a href="{{ route('Admin.Game.Title.LinkPackage', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
