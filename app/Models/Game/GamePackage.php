@@ -23,6 +23,7 @@ class GamePackage extends \Eloquent
     protected $attributes = [
         'rating'           => Rating::None,
         'default_img_type' => ProductDefaultImage::GAME_PACKAGE,
+        'sort_order'       => 0,
     ];
 
 

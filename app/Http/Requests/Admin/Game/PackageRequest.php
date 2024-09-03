@@ -36,6 +36,7 @@ class PackageRequest extends FormRequest
             'game_platform_ids' => 'required_without:game_platform_id|array|exists:game_platforms,id',
             'game_maker_ids'    => 'nullable|array|exists:game_makers,id',
             'release_at'        => 'required|max:100',
+            'sort_order'        => 'required|integer',
             'img_shop_id'       => 'nullable',
             'default_img_type'  => ['required', new Enum(ProductDefaultImage::class)],
             'rating'            => ['required', new Enum(Rating::class)],

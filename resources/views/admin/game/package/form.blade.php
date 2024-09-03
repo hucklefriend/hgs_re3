@@ -47,6 +47,12 @@
         </td>
     </tr>
     <tr>
+        <th>表示順</th>
+        <td>
+            <x-admin.input type="number" name="sort_order" :model="$model" required min="0" maxlength="99999999" />
+        </td>
+    </tr>
+    <tr>
         <th>レーティング</th>
         <td>
             <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
@@ -66,3 +72,69 @@
     </tr>
 </table>
 
+@section('js')
+
+    <script>
+        $(function () {
+            $('#release_at').on('input', function (){
+                let str = $(this).val();
+
+                let str2 = convertDateFormat(str);
+                if (str2 !== null) {
+                    $('#release_at').val(str2);
+                }
+
+                let ymd = convertDateFormatToYmd(str);
+                if (ymd !== null) {
+                    $('#sort_order').val(ymd);
+                }
+            });
+        });
+
+        function convertDateFormat(str)
+        {
+            // 正規表現で日付フォーマットをチェック
+            const datePattern = /^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/;
+            const match = str.match(datePattern);
+
+            if (match) {
+                const year = match[1];
+                const month = match[2];
+                const day = match[3];
+                return `${year}年${month}月${day}日`;
+            }
+
+            return null;
+        }
+
+        function convertDateFormatToYmd(str) {
+            // 正規表現パターンを作成
+            const fullDatePattern = /^(\d{4})[\/\-.年](\d{1,2})[\/\-.月](\d{1,2})[\/\-.日]?$/;
+            const yearMonthPattern = /^(\d{4})[\/\-.年](\d{1,2})[\/\-.月]?$/;
+            const yearPattern = /^(\d{4})[\/\-.年]?$/;
+
+            let match;
+
+            // 年月日がすべてある場合
+            if ((match = str.match(fullDatePattern))) {
+                const year = match[1];
+                const month = match[2].padStart(2, '0');
+                const day = match[3].padStart(2, '0');
+                return `${year}${month}${day}`; // yyyymmdd形式
+
+                // 年月のみの場合
+            } else if ((match = str.match(yearMonthPattern))) {
+                const year = match[1];
+                const month = match[2].padStart(2, '0');
+                return `${year}${month}`; // yyyymm形式
+
+                // 年のみの場合
+            } else if ((match = str.match(yearPattern))) {
+                return match[1]; // yyyy形式
+            }
+
+            // フォーマットに合わない場合はnullを返す
+            return null;
+        }
+    </script>
+@endsection

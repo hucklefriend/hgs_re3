@@ -29,6 +29,10 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>表示順</th>
+                    <td>{{ $model->sort_order }}</td>
+                </tr>
+                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">

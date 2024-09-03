@@ -111,20 +111,20 @@
             <h2 class="head2 fade">パッケージ</h2>
         </div>
             @if ($title->packageGroups()->exists())
-                @foreach ($title->packageGroups as $pkgGroup)
+                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
                     <div class="node">
                         <h3 class="head3 fade">{{ $pkgGroup->name }}</h3>
                     </div>
 
                     <div class="product-list" style="margin-bottom: 50px;">
-                        @foreach ($pkgGroup->packages as $pkg)
+                        @foreach ($pkgGroup->packages->sortByDesc('sort_order') as $pkg)
                             @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                         @endforeach
                     </div>
                 @endforeach
             @else
                 <div class="product-list" style="margin-bottom: 50px;">
-                    @foreach ($title->packages as $pkg)
+                    @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
                         @include('common.package', ['pkg' => $pkg])
                     @endforeach
                 </div>

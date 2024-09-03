@@ -54,16 +54,16 @@
                     <td>{{ $model->platform->name ?? '' }}</td>
                 </tr>
                 <tr>
-                    <th>発売日</th>
-                    <td>{{ $model->release_at }}</td>
-                </tr>
-                <tr>
                     <th>レーティング</th>
                     <td>{{ $model->rating->text() }}</td>
                 </tr>
                 <tr>
                     <th>発売日</th>
                     <td>{{ $model->release_at }}</td>
+                </tr>
+                <tr>
+                    <th>表示順</th>
+                    <td>{{ $model->sort_order }}</td>
                 </tr>
                 <tr>
                     <th>画像表示用ショップ</th>

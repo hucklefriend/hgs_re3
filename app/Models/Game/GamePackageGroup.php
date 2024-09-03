@@ -10,6 +10,13 @@ class GamePackageGroup extends \Eloquent
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
+     * @var array デフォルト値
+     */
+    protected $attributes = [
+        'sort_order' => 0,
+    ];
+
+    /**
      * タイトルを取得
      *
      * @return BelongsToMany

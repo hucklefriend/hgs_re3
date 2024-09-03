@@ -19,5 +19,11 @@
             <x-admin.node-input-support />
         </td>
     </tr>
+    <tr>
+        <th>表示順</th>
+        <td>
+            <x-admin.input type="number" name="sort_order" :model="$model" required min="0" max="99999999" />
+        </td>
+    </tr>
 </table>
 
