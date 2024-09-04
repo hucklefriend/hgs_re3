@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    const ITEM_PER_PAGE = 40;
+    const ITEM_PER_PAGE = 4000;
 
     /**
      * ホラーゲームネットワーク
