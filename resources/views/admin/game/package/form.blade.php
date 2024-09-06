@@ -9,7 +9,7 @@
     <tr>
         <th>略称</th>
         <td>
-            <x-admin.input name="acronym" :model="$model" required maxlength="100" />
+            <x-admin.input name="acronym" :model="$model" maxlength="100" />
         </td>
     </tr>
     <tr>

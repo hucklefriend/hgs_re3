@@ -30,7 +30,7 @@ class PackageRequest extends FormRequest
     {
         return [
             'name'              => 'required|max:200',
-            'acronym'           => 'required|max:30',
+            'acronym'           => 'nullable|max:30',
             'node_name'         => 'required|max:200',
             'game_platform_id'  => 'required_without:game_platform_ids|exists:game_platforms,id',
             'game_platform_ids' => 'required_without:game_platform_id|array|exists:game_platforms,id',
