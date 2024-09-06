@@ -28,10 +28,12 @@ class PackageGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => 'required|max:200',
-            'node_name'  => 'required|max:200',
-            'sort_order' => 'required|integer',
-            'linked'     => 'nullable',
+            'name'               => 'required|max:200',
+            'node_name'          => 'required|max:200',
+            'sort_order'         => 'required|integer',
+            'description'        => 'nullable',
+            'description_source' => 'nullable',
+            'linked'             => 'nullable',
         ];
     }
 }

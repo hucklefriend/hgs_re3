@@ -112,9 +112,22 @@
         </div>
             @if ($title->packageGroups()->exists())
                 @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                    <div class="node">
-                        <h3 class="head3 fade">{{ $pkgGroup->name }}</h3>
-                    </div>
+                    @empty($pkgGroup->description)
+                        <div class="node h3">
+                            <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
+                        </div>
+                    @else
+                        <div class="node h3">
+                            <h3 class="head3 fade" style="margin-bottom: 5px;">
+                                {{ $pkgGroup->node_name }}
+                            </h3>
+                        </div>
+                        <div class="node">
+                            <div class="text-node small fade">
+                                {!! nl2br($pkgGroup->description) !!}
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="product-list" style="margin-bottom: 50px;">
                         @foreach ($pkgGroup->packages->sortByDesc('sort_order') as $pkg)

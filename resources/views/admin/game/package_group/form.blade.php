@@ -25,5 +25,17 @@
             <x-admin.input type="number" name="sort_order" :model="$model" required min="0" max="99999999" />
         </td>
     </tr>
+    <tr>
+        <th>説明文</th>
+        <td>
+            <x-admin.textarea name="description" :model="$model" />
+        </td>
+    </tr>
+    <tr>
+        <th>説明文の引用元</th>
+        <td>
+            <x-admin.description-source name="description_source" :model="$model" />
+        </td>
+    </tr>
 </table>
 

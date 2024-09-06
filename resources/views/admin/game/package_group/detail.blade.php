@@ -33,6 +33,12 @@
                     <td>{{ $model->sort_order }}</td>
                 </tr>
                 <tr>
+                    <th>説明</th>
+                    <td>
+                        @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
                     <th>タイトル</th>
                     <td>
                         <ul class="list-group">

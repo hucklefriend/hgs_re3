@@ -90,11 +90,11 @@
                             {{ $mediaMixGroup->node_name }}
                         </h3>
                     </div>
-                <div class="node">
-                    <div class="text-node small fade">
-                        {!! nl2br($mediaMixGroup->description) !!}
+                    <div class="node">
+                        <div class="text-node small fade">
+                            {!! nl2br($mediaMixGroup->description) !!}
+                        </div>
                     </div>
-                </div>
                 @endif
 
                 <div class="node-map" style="margin-bottom: 50px;">
