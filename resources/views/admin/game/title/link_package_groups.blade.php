@@ -21,13 +21,13 @@
                 <div class="list-group" id="admin-link-list">
                     @foreach ($packageGroups as $pg)
                         <label class="list-group-item">
-                            <input type="checkbox" name="package_group_id[]" value="{{ $pg->id }}" class="form-check-input me-1" @checked(in_array($pg->id, $linkedPackageGroupIds))>
+                            <input type="checkbox" name="game_package_group_ids[]" value="{{ $pg->id }}" class="form-check-input me-1" @checked(in_array($pg->id, $linkedPackageGroupIds))>
                             {{ $pg->name }}
                         </label>
                     @endforeach
                 </div>
-                @if ($errors->has('package_group_id'))
-                    <div class="invalid-feedback">{{$errors->first('package_group_id')}}</div>
+                @if ($errors->has('game_package_group_ids'))
+                    <div class="invalid-feedback">{{$errors->first('game_package_group_ids')}}</div>
                 @endif
             </div>
             <div class="panel-footer text-end">
