@@ -138,27 +138,6 @@ enum Shop: int
         $result = [];
 
         $itemType = [
-            ProductDefaultImage::GAME_PACKAGE,
-            ProductDefaultImage::DISC,
-            ProductDefaultImage::BOOK,
-        ];
-        if (in_array($defaultImgType, $itemType)) {
-            $items = [
-                self::Amazon,
-                self::DMM,
-                self::RAKUTEN_BOOKS,
-                self::SURUGAYA,
-                self::FANZA,
-                self::Getchu,
-            ];
-            foreach ($items as $item) {
-                if (!in_array($item->value, $excludeShopList)) {
-                    self::addItem($result, '通販', $item);
-                }
-            }
-        }
-
-        $itemType = [
             ProductDefaultImage::GAME_DISTRIBUTION,
         ];
         if (in_array($defaultImgType, $itemType)) {
@@ -179,6 +158,28 @@ enum Shop: int
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
                     self::addItem($result, 'ゲーム配信サイト', $item);
+                }
+            }
+        }
+
+        $itemType = [
+            ProductDefaultImage::GAME_PACKAGE,
+            ProductDefaultImage::DISC,
+            ProductDefaultImage::BOOK,
+            ProductDefaultImage::GAME_DISTRIBUTION,
+        ];
+        if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::Amazon,
+                self::DMM,
+                self::RAKUTEN_BOOKS,
+                self::SURUGAYA,
+                self::FANZA,
+                self::Getchu,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '通販', $item);
                 }
             }
         }
