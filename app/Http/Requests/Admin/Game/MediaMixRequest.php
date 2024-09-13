@@ -50,6 +50,7 @@ class MediaMixRequest extends FormRequest
             'sort_order'              => 'required|numeric',
             'description'             => 'nullable',
             'description_source'      => 'nullable',
+            'og_url'                  => 'nullable',
         ];
     }
 }

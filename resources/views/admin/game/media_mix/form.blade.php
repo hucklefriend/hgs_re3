@@ -76,5 +76,11 @@
             <x-admin.description-source name="description_source" :model="$model" />
         </td>
     </tr>
+    <tr>
+        <th>OG URL</th>
+        <td>
+            <x-admin.input type="url" name="og_url" :model="$model" />
+        </td>
+    </tr>
 </table>
 

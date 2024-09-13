@@ -130,7 +130,7 @@
                     @endif
 
                     <div class="product-list" style="margin-bottom: 50px;">
-                        @foreach ($pkgGroup->packages->sortByDesc('sort_order') as $pkg)
+                        @foreach ($pkgGroup->packages->sortByDesc(['sort_order', 'desc'], ['platform_id', 'desc'],) as $pkg)
                             @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                         @endforeach
                     </div>
@@ -163,15 +163,14 @@
         </section>
     @endif
 
-
     @include('common.related_products', ['model' => $title])
 
     <section>
-    <div class="node">
-        <h2 class="head2 fade">
-            関連ネットワーク
-        </h2>
-    </div>
+        <div class="node">
+            <h2 class="head2 fade">
+                関連ネットワーク
+            </h2>
+        </div>
         <div class="node-map">
             @if ($title->series)
                 @foreach ($title->series->titles as $sameSeriesTitle)
