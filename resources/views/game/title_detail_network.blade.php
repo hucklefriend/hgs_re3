@@ -130,7 +130,7 @@
                     @endif
 
                     <div class="product-list" style="margin-bottom: 50px;">
-                        @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc']]) as $pkg)
+                        @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
                             @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                         @endforeach
                     </div>
