@@ -86,7 +86,7 @@
         <th>OGPの説明文を利用する</th>
         <td>
             <label class="form-check-label">
-                <input type="checkbox" name="use_ogp_description" value="1" class="form-check-input me-1" @checked($model->use_ogp_description))>
+                <input type="checkbox" name="use_ogp_description" value="1" class="form-check-input me-1" @checked($model->use_ogp_description == 1)>
                 利用する
             </label>
         </td>
