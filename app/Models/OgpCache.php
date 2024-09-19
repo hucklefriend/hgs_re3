@@ -127,7 +127,7 @@ class OgpCache extends \Eloquent
                     $hasData = true;
                 case 'url':
                     // <br> <br/> <br />などを\r\nに変換
-                    $content = preg_replace('/<br\s*\/?>/', "\r\n", $html);
+                    $content = preg_replace('/<br\s*\/?>/', "\r\n", $content);
 
                     // htmlタグを全て除去
                     $content = strip_tags($content);
