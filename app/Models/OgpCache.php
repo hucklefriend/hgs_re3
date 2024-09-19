@@ -95,6 +95,12 @@ class OgpCache extends \Eloquent
 
         $html = $response->body();
 
+        // <br> <br/> <br />などを\r\nに変換
+        $html = preg_replace('/<br\s*\/?>/', "\r\n", $html);
+
+        // htmlタグを全て除去
+        $html = strip_tags($html);
+
         // Suppress warnings due to malformed HTML
         libxml_use_internal_errors(true);
 
