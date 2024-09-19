@@ -314,6 +314,7 @@ class PackageController extends AbstractAdminController
         unset($validated['use_img_tag']);
 
         $shop->fill($request->validated());
+        $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
         if ($useImgTag) {
@@ -352,6 +353,7 @@ class PackageController extends AbstractAdminController
     {
         $shop = $package->shops()->firstWhere('shop_id', $shop_id);
         $shop->fill($request->validated());
+        $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
         return redirect()->route('Admin.Game.Package.Detail', $package);

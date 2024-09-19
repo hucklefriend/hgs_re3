@@ -30,6 +30,12 @@
         </td>
     </tr>
     <tr>
+        <th>OGP URL</th>
+        <td>
+            <x-admin.input-ogp name="ogp_url" :model="$model" />
+        </td>
+    </tr>
+    <tr>
         <th>パラメーター1</th>
         <td>
             <x-admin.input name="param1" :model="$model" />

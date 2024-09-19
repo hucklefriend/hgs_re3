@@ -6,6 +6,8 @@ use App\Enums\Shop;
 
 class GameRelatedProductShop extends \Eloquent
 {
+    use OgpTrait;
+
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 

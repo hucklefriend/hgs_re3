@@ -7,18 +7,30 @@
         @foreach ($model->relatedProducts->sortByDesc('sort_order') as $rp)
             <div class="product-info">
                 <div class="text-node fade">
-                    @if ($rp->imgShop)
-                        <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem;">
-                            {!! $rp->imgShop->img_tag !!}
-                            <div style="font-size: 10px;">
-                                画像提供元 <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name() }}</a>
-                            </div>
-                        </div>
-                    @else
-                        <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem; padding: 2rem 0;">
-                            <img src="{{ $rp->default_img_type->imgUrl() }}" style="max-width: 100px;max-height: 100px;">
-                        </div>
-                    @endif
+
+                    <div class="pkg-img">
+                        @if ($rp->imgShop)
+                            @if ($rp->imgShop->ogp !== null)
+                                <div>
+                                    <a href="{{ $rp->imgShop->url }}">
+                                        <img src="{{ $rp->imgShop->ogp->image }}" style="max-width: 100%;height: auto;">
+                                    </a>
+                                </div>
+
+                                <div class="shop-title">
+                                    <a href="{{ $rp->imgShop->url }}">{{ $rp->imgShop->ogp->title }}</a>
+                                </div>
+                            @else
+                                {!! $rp->imgShop->img_tag !!}
+                                <div class="shop-title">
+                                    <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name() }}</a>
+                                </div>
+                            @endif
+                        @else
+                            <img src="{{ $rp->default_img_type->imgUrl() }}" class="default-img">
+                        @endif
+                    </div>
+
                     {!! $rp->node_name !!}
 
                     @if ($rp->shops->count() > 0)

@@ -1,24 +1,35 @@
 <div class="product-info">
     <div class="text-node fade">
-        @if ($pkg->imgShop)
-            <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem;">
-                {!! $pkg->imgShop->img_tag !!}
-                <div style="font-size: 10px;">
-                    画像提供元 <a href="{{ $pkg->imgShop->url }}"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name }}</a>
-                </div>
-            </div>
-        @else
-            <div style="display:flex;flex-direction:column;align-items: center;margin-bottom: 1rem; padding: 2rem 0;">
-                <img src="{{ $pkg->default_img_type->imgUrl() }}" style="max-width: 100px;max-height: 100px;">
-            </div>
-        @endif
+        <p class="platform-name">{{ $pkg->platform->name }}</p>
+
+        <div class="pkg-img">
+            @if ($pkg->imgShop)
+                    @if ($pkg->imgShop->ogp !== null)
+                        <div>
+                            <a href="{{ $pkg->imgShop->url }}">
+                                <img src="{{ $pkg->imgShop->ogp->image }}" style="max-width: 100%;height: auto;">
+                            </a>
+                        </div>
+
+                        <div class="shop-title">
+                            <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->ogp->title }}</a>
+                        </div>
+                    @else
+                        {!! $pkg->imgShop->img_tag !!}
+                        <div class="shop-title">
+                            画像提供元 <a href="{{ $pkg->imgShop->url }}"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
+                        </div>
+                    @endif
+            @else
+                <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
+            @endif
+        </div>
         @if (!($isGroup ?? false))
             {!! $pkg->node_name !!}
         @elseif (!empty($pkg->acronym))
             {!! $pkg->acronym !!}
         @endif
         <div style="margin-top: 10px;">
-            {{ $pkg->platform->name }}<br>
             {{ $pkg->release_at }}
         </div>
 

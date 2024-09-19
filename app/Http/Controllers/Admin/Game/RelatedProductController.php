@@ -328,6 +328,7 @@ class RelatedProductController extends AbstractAdminController
         unset($validated['use_img_tag']);
 
         $shop->fill($validated);
+        $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
         if ($useImgTag) {
@@ -366,6 +367,7 @@ class RelatedProductController extends AbstractAdminController
     {
         $shop = $relatedProduct->shops()->firstWhere('shop_id', $shopId);
         $shop->fill($request->validated());
+        $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);

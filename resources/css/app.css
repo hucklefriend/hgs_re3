@@ -212,9 +212,40 @@ hr {
         > .text-node {
             text-align: center;
 
-            img {
-                max-width:150px;
-                max-height:200px;
+            .platform-name {
+                margin-bottom: 1rem;
+            }
+
+            .pkg-img {
+                display:flex;
+                flex-direction:column;
+                align-items: center;
+                text-align: center;
+                position: relative;
+                margin-bottom: 1rem;
+
+                .shop-title {
+                    position: absolute; /* 子要素を絶対位置に設定 */
+                    bottom: 0; /* 子要素を親要素の最下部に配置 */
+                    left: 0; /* 子要素を親要素の左端に配置 */
+                    width: 100%; /* 子要素の幅を親要素に合わせる */
+                    background-color: rgba(0, 0, 0, 0.6); /* 背景色を設定（透明度を追加） */
+                    padding: 0 10px; /* パディングを追加 */
+                    box-sizing: border-box; /* パディングを含めたボックスサイズを設定 */
+                    font-size: 10px;
+                    text-align: center;
+                }
+
+
+                img {
+                    max-width:100%;
+                    height:auto;
+                }
+
+                img.default-img {
+                    max-width: 100px !important;
+                    max-height: 100px;
+                }
             }
         }
     }

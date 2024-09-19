@@ -85,7 +85,10 @@ class OgpCache extends \Eloquent
     public static function getOGPInfo(string $url): array
     {
         // Fetch the HTML content
-        $response = Http::get($url);
+        // 日本からのアクセスとしてリクエストを送信する
+        $response = Http::withHeaders([
+            'Accept-Language' => 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
+        ])->get($url);
 
         if ($response->failed()) {
             // Handle error, return empty array or throw an exception

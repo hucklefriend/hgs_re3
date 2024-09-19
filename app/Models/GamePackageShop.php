@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GamePackageShop extends \Eloquent
 {
+    use OgpTrait;
+
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
