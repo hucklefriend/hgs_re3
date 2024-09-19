@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Information;
-use App\Models\Game\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class HgnController extends Controller
 {

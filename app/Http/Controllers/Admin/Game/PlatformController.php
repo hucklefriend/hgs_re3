@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\PlatformMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
-use App\Models\Game\GamePlatform;
+use App\Http\Requests\Admin\Game\PlatformMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PlatformRequest;
-use App\Models\Game\GameRelatedProduct;
+use App\Models\GamePlatform;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -96,7 +95,7 @@ class PlatformController extends AbstractAdminController
     public function add(): Application|Factory|View
     {
         return view('admin.game.platform.add', [
-            'model'  => new GamePlatform()
+            'model'  => new \App\Models\GamePlatform()
         ]);
     }
 
@@ -141,7 +140,7 @@ class PlatformController extends AbstractAdminController
         $h1NodeNames = $request->validated(['h1_node_name']);
         $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
-            $model = GamePlatform::find($id);
+            $model = \App\Models\GamePlatform::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
                 $model->h1_node_name = $h1NodeNames[$id];
@@ -156,7 +155,7 @@ class PlatformController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GamePlatform $platform
+     * @param \App\Models\GamePlatform $platform
      * @return Application|Factory|View
      */
     public function edit(GamePlatform $platform): Application|Factory|View
@@ -171,11 +170,11 @@ class PlatformController extends AbstractAdminController
      * データ更新
      *
      * @param PlatformRequest $request
-     * @param GamePlatform $platform
+     * @param \App\Models\GamePlatform $platform
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(PlatformRequest $request, GamePlatform $platform): RedirectResponse
+    public function update(PlatformRequest $request, \App\Models\GamePlatform $platform): RedirectResponse
     {
         $platform->fill($request->validated());
         $platform->synonymsStr = $request->post('synonymsStr', '');
@@ -201,12 +200,12 @@ class PlatformController extends AbstractAdminController
     /**
      * 関連商品とリンク
      *
-     * @param GamePlatform $platform
+     * @param \App\Models\GamePlatform $platform
      * @return Application|Factory|View
      */
-    public function linkRelatedProduct(GamePlatform $platform): Application|Factory|View
+    public function linkRelatedProduct(\App\Models\GamePlatform $platform): Application|Factory|View
     {
-        $relatedProducts = GameRelatedProduct::orderBy('id')->get(['id', 'name']);
+        $relatedProducts = \App\Models\GameRelatedProduct::orderBy('id')->get(['id', 'name']);
         return view('admin.game.platform.link_related_product', [
             'model'                   => $platform,
             'linkedRelatedProductIds' => $platform->relatedProducts()->pluck('id')->toArray(),
@@ -218,10 +217,10 @@ class PlatformController extends AbstractAdminController
      * 関連商品と同期処理
      *
      * @param LinkMultiRelatedProductRequest $request
-     * @param GamePlatform $platform
+     * @param \App\Models\GamePlatform $platform
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GamePlatform $platform): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, \App\Models\GamePlatform $platform): RedirectResponse
     {
         $platform->relatedProducts()->sync($request->validated('game_related_product_ids'));
         return redirect()->route('Admin.Game.Platform.Detail', $platform);

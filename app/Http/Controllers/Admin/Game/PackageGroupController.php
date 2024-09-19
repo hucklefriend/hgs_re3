@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\PackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
-use App\Models\Game\GamePackage;
-use App\Models\Game\GamePackageGroup;
-use App\Models\Game\GamePlatform;
-use App\Models\Game\GameTitle;
+use App\Http\Requests\Admin\Game\PackageGroupRequest;
+use App\Models\GamePackage;
+use App\Models\GamePackageGroup;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -172,7 +170,7 @@ class PackageGroupController extends AbstractAdminController
      */
     public function linkTitle(Request $request, GamePackageGroup $packageGroup): Application|Factory|View
     {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        $titles = \App\Models\GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.package_group.link_title', [
             'model'          => $packageGroup,
             'linkedTitleIds' => $packageGroup->titles()->pluck('id')->toArray(),
@@ -210,7 +208,7 @@ class PackageGroupController extends AbstractAdminController
             'model'            => $packageGroup,
             'linkedPackageIds' => $packageGroup->packages()->pluck('id')->toArray(),
             'packages'         => $packages,
-            'platformHash'     => GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
+            'platformHash'     => \App\Models\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
         ]);
     }
 

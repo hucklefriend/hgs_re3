@@ -23,9 +23,10 @@ class TitleRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if ($this->description === null) {
-            $this->merge([
-                'description' => '',
-            ]);
+            $this->merge(['description' => '']);
+        }
+        if ($this->use_ogp_description === null) {
+            $this->merge(['use_ogp_description' => 0]);
         }
     }
 
@@ -48,6 +49,7 @@ class TitleRequest extends FormRequest
             'description'         => '',
             'description_source'  => 'nullable',
             'first_release_int'   => 'required|numeric|max:99999999',
+            'use_ogp_description' => 'required|boolean',
         ];
     }
 }

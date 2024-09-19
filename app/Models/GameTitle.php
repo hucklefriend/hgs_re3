@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 class GameTitle extends \Eloquent
 {
     use KeyFindTrait;
+    use OgpTrait;
 
     protected $guarded = ['id', 'synonymsStr'];
     protected $hidden = ['created_at', 'updated_at'];
@@ -18,8 +19,7 @@ class GameTitle extends \Eloquent
     /**
      * @var array デフォルト値
      */
-    protected $attributes = [
-    ];
+    protected $attributes = [];
 
     /**
      * フランチャイズを取得

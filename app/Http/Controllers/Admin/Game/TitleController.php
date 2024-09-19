@@ -5,18 +5,16 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
+use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
+use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
-use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
-use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
-use App\Models\Game\GameMediaMix;
-use App\Models\Game\GamePackage;
-use App\Models\Game\GamePackageGroup;
-use App\Models\Game\GamePlatform;
-use App\Models\Game\GameRelatedProduct;
-use App\Models\Game\GameTitle;
+use App\Models\GameMediaMix;
+use App\Models\GamePackage;
+use App\Models\GameTitle;
+use App\Models\OgpCache;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -44,7 +42,7 @@ class TitleController extends AbstractAdminController
      */
     private function search(Request $request): array
     {
-        $titles = GameTitle::orderBy('id');
+        $titles = \App\Models\GameTitle::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -85,7 +83,7 @@ class TitleController extends AbstractAdminController
     /**
      * 詳細
      *
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
     public function detail(GameTitle $title): Application|Factory|View
@@ -104,7 +102,7 @@ class TitleController extends AbstractAdminController
     public function add(): Application|Factory|View
     {
         return view('admin.game.title.add', [
-            'model' => new GameTitle(),
+            'model' => new \App\Models\GameTitle(),
         ]);
     }
 
@@ -117,9 +115,10 @@ class TitleController extends AbstractAdminController
      */
     public function store(TitleRequest $request): RedirectResponse
     {
-        $title = new GameTitle();
+        $title = new \App\Models\GameTitle();
         $title->fill($request->validated());
         $title->synonymsStr = $request->post('synonymsStr', '');
+        $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
         return redirect()->route('Admin.Game.Title.Detail', $title);
@@ -149,7 +148,7 @@ class TitleController extends AbstractAdminController
         $h1NodeNames = $request->validated(['h1_node_name']);
         $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
-            $model = GameTitle::find($id);
+            $model = \App\Models\GameTitle::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
                 $model->h1_node_name = $h1NodeNames[$id];
@@ -164,10 +163,10 @@ class TitleController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
-    public function edit(GameTitle $title): Application|Factory|View
+    public function edit(\App\Models\GameTitle $title): Application|Factory|View
     {
         $title->loadSynonyms();
         return view('admin.game.title.edit', [
@@ -179,14 +178,15 @@ class TitleController extends AbstractAdminController
      * 更新処理
      *
      * @param TitleRequest $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(TitleRequest $request, GameTitle $title): RedirectResponse
+    public function update(TitleRequest $request, \App\Models\GameTitle $title): RedirectResponse
     {
         $title->fill($request->validated());
         $title->synonymsStr = $request->post('synonymsStr', '');
+        $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
         return redirect()->route('Admin.Game.Title.Detail', $title);
@@ -195,10 +195,10 @@ class TitleController extends AbstractAdminController
     /**
      * 削除
      *
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      */
-    public function delete(GameTitle $title): RedirectResponse
+    public function delete(\App\Models\GameTitle $title): RedirectResponse
     {
         $title->packages()->detach();
         $title->packageGroups()->detach();
@@ -213,12 +213,12 @@ class TitleController extends AbstractAdminController
      * パッケージグループとリンク
      *
      * @param Request $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
-    public function linkPackageGroup(Request $request, GameTitle $title): Application|Factory|View
+    public function linkPackageGroup(Request $request, \App\Models\GameTitle $title): Application|Factory|View
     {
-        $packageGroups = GamePackageGroup::orderBy('id')->get(['id', 'name']);
+        $packageGroups = \App\Models\GamePackageGroup::orderBy('id')->get(['id', 'name']);
         return view('admin.game.title.link_package_groups', [
             'model'                 => $title,
             'linkedPackageGroupIds' => $title->packageGroups()->pluck('id')->toArray(),
@@ -230,10 +230,10 @@ class TitleController extends AbstractAdminController
      * パッケージグループと同期処理
      *
      * @param LinkMultiPackageGroupRequest $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      */
-    public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GameTitle $title): RedirectResponse
+    public function syncPackageGroup(LinkMultiPackageGroupRequest $request, \App\Models\GameTitle $title): RedirectResponse
     {
         $title->packageGroups()->sync($request->validated('game_package_group_ids'));
         $title->packages()->detach();
@@ -244,17 +244,17 @@ class TitleController extends AbstractAdminController
      * パッケージとリンク
      *
      * @param Request $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
     public function linkPackage(Request $request, GameTitle $title): Application|Factory|View
     {
-        $packages = GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
+        $packages = \App\Models\GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
         return view('admin.game.title.link_packages', [
             'model'            => $title,
             'linkedPackageIds' => $title->packages()->pluck('id')->toArray(),
             'packages'         => $packages,
-            'platformHash'     => GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
+            'platformHash'     => \App\Models\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
         ]);
     }
 
@@ -276,10 +276,10 @@ class TitleController extends AbstractAdminController
      * 関連パッケージの一括更新
      *
      * @param Request $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
-    public function editPackageMulti(Request $request, GameTitle $title): Application|Factory|View
+    public function editPackageMulti(Request $request, \App\Models\GameTitle $title): Application|Factory|View
     {
         $packages = [];
         if ($title->packages->isEmpty()) {
@@ -298,11 +298,11 @@ class TitleController extends AbstractAdminController
      * 関連パッケージの更新処理
      *
      * @param TitleMultiPackageUpdateRequest $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function updatePackageMulti(TitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
+    public function updatePackageMulti(TitleMultiPackageUpdateRequest $request, \App\Models\GameTitle $title): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
         $acronyms = $request->validated(['acronym']);
@@ -321,12 +321,12 @@ class TitleController extends AbstractAdminController
     /**
      * 関連商品とリンク
      *
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
-    public function linkRelatedProduct(GameTitle $title): Application|Factory|View
+    public function linkRelatedProduct(\App\Models\GameTitle $title): Application|Factory|View
     {
-        $relatedProducts = GameRelatedProduct::orderBy('id')->get(['id', 'name']);
+        $relatedProducts = \App\Models\GameRelatedProduct::orderBy('id')->get(['id', 'name']);
         return view('admin.game.media_mix.link_related_product', [
             'model' => $title,
             'linkedRelatedProductIds' => $title->relatedProducts()->pluck('id')->toArray(),
@@ -338,10 +338,10 @@ class TitleController extends AbstractAdminController
      * 関連商品と同期処理
      *
      * @param LinkMultiRelatedProductRequest $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      */
-    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GameTitle $title): RedirectResponse
+    public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, \App\Models\GameTitle $title): RedirectResponse
     {
         $title->relatedProducts()->sync($request->validated('game_related_product_ids'));
         return redirect()->route('Admin.Game.Title.Detail', $title);
@@ -350,10 +350,10 @@ class TitleController extends AbstractAdminController
     /**
      * メディアミックスとリンク
      *
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return Application|Factory|View
      */
-    public function linkMediaMix(GameTitle $title): Application|Factory|View
+    public function linkMediaMix(\App\Models\GameTitle $title): Application|Factory|View
     {
         return view('admin.game.title.link_media_mix', [
             'model' => $title,
@@ -366,10 +366,10 @@ class TitleController extends AbstractAdminController
      * メディアミックスと同期処理
      *
      * @param LinkMultiMediaMixRequest $request
-     * @param GameTitle $title
+     * @param \App\Models\GameTitle $title
      * @return RedirectResponse
      */
-    public function syncMediaMix(LinkMultiMediaMixRequest $request, GameTitle $title): RedirectResponse
+    public function syncMediaMix(LinkMultiMediaMixRequest $request, \App\Models\GameTitle $title): RedirectResponse
     {
         $title->mediaMixes()->sync($request->validated('game_media_mix_ids'));
         return redirect()->route('Admin.Game.Title.Detail', $title);

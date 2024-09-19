@@ -2,10 +2,9 @@
 
 namespace App\View\Components\Admin;
 
-use App\Models\Game\GamePlatform;
+use App\Models\GamePlatform;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\View\Component;
 
 class SelectGamePlatform extends Input
 {

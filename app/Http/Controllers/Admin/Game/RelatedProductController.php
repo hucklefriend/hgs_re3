@@ -5,16 +5,14 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
-use App\Http\Requests\Admin\Game\RelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPlatformRequest;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
+use App\Http\Requests\Admin\Game\RelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\RelatedProductRequest;
 use App\Http\Requests\Admin\Game\RelatedProductShopRequest;
-use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
-use App\Models\Game\GameMediaMix;
-use App\Models\Game\GamePlatform;
-use App\Models\Game\GameRelatedProduct;
-use App\Models\Game\GameRelatedProductShop;
-use App\Models\Game\GameTitle;
+use App\Models\GameMediaMix;
+use App\Models\GameRelatedProduct;
+use App\Models\GameRelatedProductShop;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -42,7 +40,7 @@ class RelatedProductController extends AbstractAdminController
      */
     private function search(Request $request): array
     {
-        $relatedProducts = GameRelatedProduct::orderBy('id');
+        $relatedProducts = \App\Models\GameRelatedProduct::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -107,7 +105,7 @@ class RelatedProductController extends AbstractAdminController
      */
     public function store(RelatedProductRequest $request): RedirectResponse
     {
-        $relatedProduct = new GameRelatedProduct();
+        $relatedProduct = new \App\Models\GameRelatedProduct();
         $validated = $request->validated();
         $linked = json_decode($validated['linked'], true);
         unset($validated['linked']);
@@ -169,7 +167,7 @@ class RelatedProductController extends AbstractAdminController
      * @param GameRelatedProduct $relatedProduct
      * @return Application|Factory|View
      */
-    public function edit(GameRelatedProduct $relatedProduct): Application|Factory|View
+    public function edit(\App\Models\GameRelatedProduct $relatedProduct): Application|Factory|View
     {
         return view('admin.game.related_product.edit', [
             'model' => $relatedProduct
@@ -212,12 +210,12 @@ class RelatedProductController extends AbstractAdminController
     /**
      * プラットフォームとリンク
      *
-     * @param GameRelatedProduct $relatedProduct
+     * @param \App\Models\GameRelatedProduct $relatedProduct
      * @return Application|Factory|View
      */
     public function linkPlatform(GameRelatedProduct $relatedProduct): Application|Factory|View
     {
-        $platforms = GamePlatform::orderBy('id')->get(['id', 'name']);
+        $platforms = \App\Models\GamePlatform::orderBy('id')->get(['id', 'name']);
         return view('admin.game.related_product.link_platform', [
             'model'             => $relatedProduct,
             'linkedPlatformIds' => $relatedProduct->platforms()->pluck('id')->toArray(),
@@ -246,7 +244,7 @@ class RelatedProductController extends AbstractAdminController
      */
     public function linkTitle(GameRelatedProduct $relatedProduct): Application|Factory|View
     {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        $titles = \App\Models\GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.related_product.link_title', [
             'model'          => $relatedProduct,
             'linkedTitleIds' => $relatedProduct->titles()->pluck('id')->toArray(),
@@ -290,7 +288,7 @@ class RelatedProductController extends AbstractAdminController
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function syncMediaMix(LinkMultiMediaMixRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    public function syncMediaMix(LinkMultiMediaMixRequest $request, \App\Models\GameRelatedProduct $relatedProduct): RedirectResponse
     {
         $relatedProduct->mediaMixes()->sync($request->validated('game_media_mix_ids'));
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
@@ -299,7 +297,7 @@ class RelatedProductController extends AbstractAdminController
     /**
      * ショップの登録
      *
-     * @param GameRelatedProduct $relatedProduct
+     * @param \App\Models\GameRelatedProduct $relatedProduct
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
     public function addShop(GameRelatedProduct $relatedProduct)
@@ -320,7 +318,7 @@ class RelatedProductController extends AbstractAdminController
      * @param GameRelatedProduct $relatedProduct
      * @return RedirectResponse
      */
-    public function storeShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct)
+    public function storeShop(RelatedProductShopRequest $request, \App\Models\GameRelatedProduct $relatedProduct)
     {
         $shop = new GameRelatedProductShop();
         $shop->game_related_product_id = $relatedProduct->id;

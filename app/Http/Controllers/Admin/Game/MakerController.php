@@ -7,9 +7,7 @@ use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\MakerMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\MakerRequest;
-use App\Models\Game\GameMaker;
-use App\Models\Game\GamePackage;
-use App\Models\Game\GamePlatform;
+use App\Models\GameMaker;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -136,7 +134,7 @@ class MakerController extends AbstractAdminController
      * データ更新
      *
      * @param MakerRequest $request
-     * @param GameMaker $maker
+     * @param \App\Models\GameMaker $maker
      * @return RedirectResponse
      * @throws \Throwable
      */
@@ -207,12 +205,12 @@ class MakerController extends AbstractAdminController
      */
     public function linkPackage(GameMaker $maker): Application|Factory|View
     {
-        $packages = GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
+        $packages = \App\Models\GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
         return view('admin.game.maker.link_package', [
             'model'            => $maker,
             'linkedPackageIds' => $maker->packages()->pluck('id')->toArray(),
             'packages'         => $packages,
-            'platformHash'     => GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
+            'platformHash'     => \App\Models\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
         ]);
     }
 

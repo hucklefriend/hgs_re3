@@ -2,11 +2,9 @@
 
 namespace App\View\Components\Admin;
 
-use App\Models\Game\GamePlatform;
-use App\Models\Game\GameSeries;
+use App\Models\GameSeries;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\View\Component;
 
 class SelectGameSeries extends Input
 {

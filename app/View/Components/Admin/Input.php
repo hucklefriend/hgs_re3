@@ -11,6 +11,7 @@ class Input extends Component
     public string $name;
     public bool $hasError;
     public mixed $model;
+    public mixed $value;
 
     /**
      * Create a new component instance.
@@ -20,6 +21,7 @@ class Input extends Component
         $this->name = $name;
         $this->model = $model;
         $this->hasError = session('errors') && session('errors')->has($name);
+        $this->value = $model->$name ?? '';
     }
 
     /**

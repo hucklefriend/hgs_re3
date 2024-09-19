@@ -3,20 +3,7 @@
 @section('title', $mediaMix->name . ' | ホラーゲームネットワーク')
 
 @section('content')
-    <section>
-        <div class="node">
-            <h1 class="head1 fade">
-                {!! $mediaMix->h1_node_name !!}
-            </h1>
-        </div>
-        @if (!empty($mediaMix->description))
-            <div class="node">
-                <div class="text-node fade">
-                    @include('common.description', ['model' => $mediaMix])
-                </div>
-            </div>
-        @endif
-    </section>
+    @include('common.head1', ['model' => $mediaMix])
 
     @include('common.related_products', ['model' => $mediaMix])
 

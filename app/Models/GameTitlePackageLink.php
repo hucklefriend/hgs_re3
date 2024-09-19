@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GameTitlePackageGroupLink extends \Eloquent
+class GameTitlePackageLink extends \Eloquent
 {
-    protected $primaryKey = ['game_title_id', 'game_package_group_id'];
+    protected $primaryKey = ['game_title_id', 'game_package_id'];
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
@@ -23,12 +21,12 @@ class GameTitlePackageGroupLink extends \Eloquent
     }
 
     /**
-     * パッケージグループ
+     * パッケージ
      *
      * @return BelongsTo
      */
     public function package(): BelongsTo
     {
-        return $this->belongsTo(GamePackageGroup::class);
+        return $this->belongsTo(GamePackage::class);
     }
 }

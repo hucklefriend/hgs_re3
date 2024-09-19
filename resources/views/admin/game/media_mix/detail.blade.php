@@ -72,9 +72,21 @@
                     <td>{{ $model->rating->text() }}</td>
                 </tr>
                 <tr>
+                    <th>OGP</th>
+                    <td>
+                        <x-admin.ogp :model="$model" />
+                    </td>
+                </tr>
+                <tr>
                     <th>説明</th>
                     <td>
                         @include('common.description', ['model' => $model])
+                    </td>
+                </tr>
+                <tr>
+                    <th>OGPの説明を利用</th>
+                    <td>
+                        {{ $model->use_ogp_description ? '利用する' : '利用しない' }}
                     </td>
                 </tr>
                 <tr>

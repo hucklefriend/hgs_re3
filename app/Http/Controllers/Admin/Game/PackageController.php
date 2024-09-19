@@ -12,20 +12,14 @@ use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageShopRequest;
-use App\Models\Game\GameMaker;
-use App\Models\Game\GamePackage;
-use App\Models\Game\GamePackageGroup;
-use App\Models\Game\GamePackageShop;
-use App\Models\Game\GameRelatedProduct;
-use App\Models\Game\GameTitle;
-use App\Models\Game\GameTitlePackageLink;
-use App\Models\Game\GameTitleSynonym;
+use App\Models\GameMaker;
+use App\Models\GamePackage;
+use App\Models\GamePackageShop;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PackageController extends AbstractAdminController
 {
@@ -65,7 +59,7 @@ class PackageController extends AbstractAdminController
             });
 
             array_walk_synonym($words);
-            $gamePackageIds = GameTitlePackageLink::whereIn('game_title_id', function ($query) use ($words) {
+            $gamePackageIds = \App\Models\GameTitlePackageLink::whereIn('game_title_id', function ($query) use ($words) {
                 $query->select('game_title_id')
                     ->from('game_title_synonyms')
                     ->whereIn('synonym', $words);
@@ -91,10 +85,10 @@ class PackageController extends AbstractAdminController
     /**
      * 詳細
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return Application|Factory|View
      */
-    public function detail(GamePackage $package): Application|Factory|View
+    public function detail(\App\Models\GamePackage $package): Application|Factory|View
     {
         return view('admin.game.package.detail', [
             'model' => $package
@@ -114,7 +108,7 @@ class PackageController extends AbstractAdminController
         ]);
 
         return view('admin.game.package.add', [
-            'model'  => new GamePackage(),
+            'model'  => new \App\Models\GamePackage(),
             'linked' => $linked,
         ]);
     }
@@ -138,7 +132,7 @@ class PackageController extends AbstractAdminController
 
         foreach ($platformIds as $platformId) {
             $validated['game_platform_id'] = $platformId;
-            $package = new GamePackage();
+            $package = new \App\Models\GamePackage();
             $package->fill($validated);
             $package->save();
 
@@ -186,7 +180,7 @@ class PackageController extends AbstractAdminController
         $relelaseAt = $request->validated(['release_at']);
         $sortOrder = $request->validated(['sort_order']);
         foreach ($nodeNames as $id => $nodeName) {
-            $package = GamePackage::find($id);
+            $package = \App\Models\GamePackage::find($id);
             if ($package !== null) {
                 $package->node_name = $nodeName;
                 $package->release_at = $relelaseAt[$id];
@@ -201,10 +195,10 @@ class PackageController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return Application|Factory|View
      */
-    public function edit(GamePackage $package): Application|Factory|View
+    public function edit(\App\Models\GamePackage $package): Application|Factory|View
     {
         return view('admin.game.package.edit', [
             'model' => $package
@@ -219,7 +213,7 @@ class PackageController extends AbstractAdminController
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(PackageRequest $request, GamePackage $package): RedirectResponse
+    public function update(PackageRequest $request, \App\Models\GamePackage $package): RedirectResponse
     {
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
@@ -241,7 +235,7 @@ class PackageController extends AbstractAdminController
      * @param GamePackage $package
      * @return Application|Factory|View
      */
-    public function copy(GamePackage $package): Application|Factory|View
+    public function copy(\App\Models\GamePackage $package): Application|Factory|View
     {
         return view('admin.game.package.copy', [
             'model' => $package
@@ -261,7 +255,7 @@ class PackageController extends AbstractAdminController
         $validated = $request->validated();
         unset($validated['game_maker_ids']);
 
-        $package = new GamePackage();
+        $package = new \App\Models\GamePackage();
         $package->fill($request->validated());
         $package->save();
 
@@ -275,7 +269,7 @@ class PackageController extends AbstractAdminController
     /**
      * 削除
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return RedirectResponse
      * @throws \Throwable
      */
@@ -289,10 +283,10 @@ class PackageController extends AbstractAdminController
     /**
      * ショップの登録
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function addShop(GamePackage $package)
+    public function addShop(\App\Models\GamePackage $package)
     {
         $excludeShopList = $package->shops()->pluck('shop_id')->toArray();
 
@@ -307,10 +301,10 @@ class PackageController extends AbstractAdminController
      * ショップの登録処理
      *
      * @param PackageShopRequest $request
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return RedirectResponse
      */
-    public function storeShop(PackageShopRequest $request, GamePackage $package)
+    public function storeShop(PackageShopRequest $request, \App\Models\GamePackage $package)
     {
         $shop = new GamePackageShop();
         $shop->game_package_id = $package->id;
@@ -333,7 +327,7 @@ class PackageController extends AbstractAdminController
     /**
      * ショップの編集
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @param $shop_id
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
@@ -350,7 +344,7 @@ class PackageController extends AbstractAdminController
      * ショップの編集処理
      *
      * @param PackageShopRequest $request
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @param $shop_id
      * @return RedirectResponse
      */
@@ -366,11 +360,11 @@ class PackageController extends AbstractAdminController
     /**
      * ショップの削除
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @param $shopId
      * @return RedirectResponse
      */
-    public function deleteShop(GamePackage $package, $shopId)
+    public function deleteShop(\App\Models\GamePackage $package, $shopId)
     {
         $package->shops()->where('shop_id', $shopId)->delete();
         if ($package->img_shop_id == $shopId) {
@@ -384,10 +378,10 @@ class PackageController extends AbstractAdminController
     /**
      * メーカーとリンク
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return Application|Factory|View
      */
-    public function linkMaker(GamePackage $package): Application|Factory|View
+    public function linkMaker(\App\Models\GamePackage $package): Application|Factory|View
     {
         $makers = GameMaker::orderBy('id')
             ->get(['id', 'name']);
@@ -403,7 +397,7 @@ class PackageController extends AbstractAdminController
      * メーカーと同期処理
      *
      * @param LinkMultiMakerRequest $request
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return RedirectResponse
      */
     public function syncMaker(LinkMultiMakerRequest $request, GamePackage $package): RedirectResponse
@@ -418,9 +412,9 @@ class PackageController extends AbstractAdminController
      * @param GamePackage $package
      * @return Application|Factory|View
      */
-    public function linkTitle(GamePackage $package): Application|Factory|View
+    public function linkTitle(\App\Models\GamePackage $package): Application|Factory|View
     {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        $titles = \App\Models\GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.package.link_title', [
             'model'          => $package,
             'linkedTitleIds' => $package->titles()->pluck('id')->toArray(),
@@ -432,10 +426,10 @@ class PackageController extends AbstractAdminController
      * タイトルと同期処理
      *
      * @param LinkMultiTitleRequest $request
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return RedirectResponse
      */
-    public function syncTitle(LinkMultiTitleRequest $request, GamePackage $package): RedirectResponse
+    public function syncTitle(LinkMultiTitleRequest $request, \App\Models\GamePackage $package): RedirectResponse
     {
         $package->titles()->sync($request->validated('game_title_ids'));
         return redirect()->route('Admin.Game.Package.Detail', $package);
@@ -444,7 +438,7 @@ class PackageController extends AbstractAdminController
     /**
      * パッケージグループとリンク
      *
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return Application|Factory|View
      */
     public function linkPackageGroup(GamePackage $package): Application|Factory|View
@@ -452,7 +446,7 @@ class PackageController extends AbstractAdminController
         return view('admin.game.package.link_package_group', [
             'model'  => $package,
             'linkedPackageGroupIds' => $package->packageGroups()->pluck('id')->toArray(),
-            'packageGroups' => GamePackageGroup::orderBy('id')->get(['id', 'name']),
+            'packageGroups' => \App\Models\GamePackageGroup::orderBy('id')->get(['id', 'name']),
         ]);
     }
 
@@ -460,10 +454,10 @@ class PackageController extends AbstractAdminController
      * パッケージグループと同期処理
      *
      * @param LinkMultiPackageGroupRequest $request
-     * @param GamePackage $package
+     * @param \App\Models\GamePackage $package
      * @return RedirectResponse
      */
-    public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GamePackage $package): RedirectResponse
+    public function syncPackageGroup(LinkMultiPackageGroupRequest $request, \App\Models\GamePackage $package): RedirectResponse
     {
         $package->packageGroups()->sync($request->validated('game_package_group_ids'));
         return redirect()->route('Admin.Game.Package.Detail', $package);
@@ -486,7 +480,7 @@ class PackageController extends AbstractAdminController
         $packageShops = GamePackageShop::where('shop_id', $searchShop);
 
         if (!empty($searchName) || !empty($searchPlatforms)) {
-            $packages = GamePackage::orderBy('id');
+            $packages = \App\Models\GamePackage::orderBy('id');
 
             if (!empty($searchName)) {
                 $search['name'] = $searchName;

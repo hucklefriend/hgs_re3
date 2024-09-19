@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\Game;
 
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
-use App\Http\Requests\Admin\Game\MediaMixGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
-use App\Models\Game\GameMediaMix;
-use App\Models\Game\GameMediaMixGroup;
+use App\Http\Requests\Admin\Game\MediaMixGroupRequest;
+use App\Models\GameMediaMix;
+use App\Models\GameMediaMixGroup;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -35,7 +35,7 @@ class MediaMixGroupController extends AbstractAdminController
      */
     private function search(Request $request)
     {
-        $mediaMixGroups = GameMediaMixGroup::orderBy('id');
+        $mediaMixGroups = \App\Models\GameMediaMixGroup::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => '', 'platform_ids' => []];
@@ -62,7 +62,7 @@ class MediaMixGroupController extends AbstractAdminController
     /**
      * 詳細
      *
-     * @param GameMediaMixGroup $mediaMixGroup
+     * @param \App\Models\GameMediaMixGroup $mediaMixGroup
      * @return Application|Factory|View
      */
     public function detail(GameMediaMixGroup $mediaMixGroup): Application|Factory|View
@@ -80,7 +80,7 @@ class MediaMixGroupController extends AbstractAdminController
     public function add(): Application|Factory|View
     {
         return view('admin.game.media_mix_group.add', [
-            'model' => new GameMediaMixGroup(),
+            'model' => new \App\Models\GameMediaMixGroup(),
         ]);
     }
 
@@ -93,7 +93,7 @@ class MediaMixGroupController extends AbstractAdminController
      */
     public function store(MediaMixGroupRequest $request): RedirectResponse
     {
-        $mediaMixGroup = new GameMediaMixGroup();
+        $mediaMixGroup = new \App\Models\GameMediaMixGroup();
         $mediaMixGroup->fill($request->validated());
         $mediaMixGroup->save();
 
@@ -103,7 +103,7 @@ class MediaMixGroupController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GameMediaMixGroup $mediaMixGroup
+     * @param \App\Models\GameMediaMixGroup $mediaMixGroup
      * @return Application|Factory|View
      */
     public function edit(GameMediaMixGroup $mediaMixGroup): Application|Factory|View
@@ -132,11 +132,11 @@ class MediaMixGroupController extends AbstractAdminController
     /**
      * 削除
      *
-     * @param GameMediaMixGroup $mediaMixGroup
+     * @param \App\Models\GameMediaMixGroup $mediaMixGroup
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function delete(GameMediaMixGroup $mediaMixGroup): RedirectResponse
+    public function delete(\App\Models\GameMediaMixGroup $mediaMixGroup): RedirectResponse
     {
         // 紐づけを全部削除
         foreach ($mediaMixGroup->mediaMixes as $mm) {
@@ -152,7 +152,7 @@ class MediaMixGroupController extends AbstractAdminController
      * メディアミックスとリンク
      *
      * @param Request $request
-     * @param GameMediaMixGroup $mediaMixGroup
+     * @param \App\Models\GameMediaMixGroup $mediaMixGroup
      * @return Application|Factory|View
      */
     public function linkMediaMix(Request $request, GameMediaMixGroup $mediaMixGroup): Application|Factory|View
@@ -160,7 +160,7 @@ class MediaMixGroupController extends AbstractAdminController
         return view('admin.game.media_mix_group.link_media_mix', [
             'model'             => $mediaMixGroup,
             'linkedMediaMixIds' => $mediaMixGroup->mediaMixes()->pluck('id')->toArray(),
-            'mediaMixes'        => GameMediaMix::orderBy('id')->get(['id', 'name']),
+            'mediaMixes'        => \App\Models\GameMediaMix::orderBy('id')->get(['id', 'name']),
         ]);
     }
 

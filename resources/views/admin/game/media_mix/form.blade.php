@@ -65,6 +65,12 @@
         </td>
     </tr>
     <tr>
+        <th>OGP URL</th>
+        <td>
+            <x-admin.input-ogp name="ogp_url" :model="$model" />
+        </td>
+    </tr>
+    <tr>
         <th>説明文</th>
         <td>
             <x-admin.textarea name="description" :model="$model" />
@@ -77,9 +83,12 @@
         </td>
     </tr>
     <tr>
-        <th>OG URL</th>
+        <th>OGPの説明文を利用する</th>
         <td>
-            <x-admin.input type="url" name="og_url" :model="$model" />
+            <label class="form-check-label">
+                <input type="checkbox" name="use_ogp_description" value="1" class="form-check-input me-1" @checked($model->use_ogp_description))>
+                利用する
+            </label>
         </td>
     </tr>
 </table>

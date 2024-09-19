@@ -3,19 +3,7 @@
 @section('title', $title->name . ' | ホラーゲームネットワーク')
 
 @section('content')
-    <div class="node h1">
-        <h1 class="head1 fade">{!! $title->h1_node_name !!}</h1>
-    </div>
-
-    @if (!empty($title->description))
-        <section>
-            <div class="node node-center">
-                <div class="text-node fade">
-                    @include('common.description', ['model' => $title])
-                </div>
-            </div>
-        </section>
-    @endif
+    @include('common.head1', ['model' => $title])
 
     {{--
     <section>
@@ -110,38 +98,38 @@
         <div class="node">
             <h2 class="head2 fade">パッケージ</h2>
         </div>
-            @if ($title->packageGroups()->exists())
-                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                    @empty($pkgGroup->description)
-                        <div class="node h3">
-                            <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
-                        </div>
-                    @else
-                        <div class="node h3">
-                            <h3 class="head3 fade" style="margin-bottom: 5px;">
-                                {{ $pkgGroup->node_name }}
-                            </h3>
-                        </div>
-                        <div class="node">
-                            <div class="text-node small fade">
-                                {!! nl2br($pkgGroup->description) !!}
-                            </div>
-                        </div>
-                    @endif
-
-                    <div class="product-list" style="margin-bottom: 50px;">
-                        @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
-                            @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
-                        @endforeach
+        @if ($title->packageGroups()->exists())
+            @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
+                @empty($pkgGroup->description)
+                    <div class="node h3">
+                        <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
                     </div>
-                @endforeach
-            @else
+                @else
+                    <div class="node h3">
+                        <h3 class="head3 fade" style="margin-bottom: 5px;">
+                            {{ $pkgGroup->node_name }}
+                        </h3>
+                    </div>
+                    <div class="node">
+                        <div class="text-node small fade">
+                            {!! nl2br($pkgGroup->description) !!}
+                        </div>
+                    </div>
+                @endif
+
                 <div class="product-list" style="margin-bottom: 50px;">
-                    @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
-                        @include('common.package', ['pkg' => $pkg])
+                    @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
+                        @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
                     @endforeach
                 </div>
-            @endif
+            @endforeach
+        @else
+            <div class="product-list" style="margin-bottom: 50px;">
+                @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
+                    @include('common.package', ['pkg' => $pkg])
+                @endforeach
+            </div>
+        @endif
     </section>
 
     @if ($title->mediaMixes()->exists())

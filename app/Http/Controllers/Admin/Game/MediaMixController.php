@@ -7,11 +7,8 @@ use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
-use App\Models\Game\GameFranchise;
-use App\Models\Game\GameMediaMix;
 use App\Http\Requests\Admin\Game\MediaMixRequest;
-use App\Models\Game\GameRelatedProduct;
-use App\Models\Game\GameTitle;
+use App\Models\GameMediaMix;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -67,10 +64,10 @@ class MediaMixController extends AbstractAdminController
     /**
      * 詳細
      *
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return Application|Factory|View
      */
-    public function detail(GameMediaMix $mediaMix): Application|Factory|View
+    public function detail(\App\Models\GameMediaMix $mediaMix): Application|Factory|View
     {
         return view('admin.game.media_mix.detail', [
             'model' => $mediaMix
@@ -84,7 +81,7 @@ class MediaMixController extends AbstractAdminController
      */
     public function add(): Application|Factory|View
     {
-        $franchises = GameFranchise::select(['id', 'name'])->orderBy('id')
+        $franchises = \App\Models\GameFranchise::select(['id', 'name'])->orderBy('id')
             ->get()->pluck('name', 'id');
         return view('admin.game.media_mix.add', [
             'model'      => new GameMediaMix(),
@@ -103,6 +100,7 @@ class MediaMixController extends AbstractAdminController
     {
         $mediaMix = new GameMediaMix();
         $mediaMix->fill($request->validated());
+        $mediaMix->setOgpInfo($request->post('ogp_url'));
         $mediaMix->save();
 
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
@@ -147,12 +145,12 @@ class MediaMixController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return Application|Factory|View
      */
-    public function edit(GameMediaMix $mediaMix): Application|Factory|View
+    public function edit(\App\Models\GameMediaMix $mediaMix): Application|Factory|View
     {
-        $franchises = GameFranchise::select(['id', 'name'])->orderBy('id')->get();
+        $franchises = \App\Models\GameFranchise::select(['id', 'name'])->orderBy('id')->get();
         return view('admin.game.media_mix.edit', [
             'model'      => $mediaMix,
             'franchises' => $franchises,
@@ -163,13 +161,14 @@ class MediaMixController extends AbstractAdminController
      * 更新処理
      *
      * @param MediaMixRequest $request
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(MediaMixRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function update(MediaMixRequest $request, \App\Models\GameMediaMix $mediaMix): RedirectResponse
     {
         $mediaMix->fill($request->validated());
+        $mediaMix->setOgpInfo($request->post('ogp_url'));
         $mediaMix->save();
 
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
@@ -183,7 +182,7 @@ class MediaMixController extends AbstractAdminController
      */
     public function copy(GameMediaMix $mediaMix): Application|Factory|View
     {
-        $franchises = GameFranchise::select(['id', 'name'])->orderBy('id')
+        $franchises = \App\Models\GameFranchise::select(['id', 'name'])->orderBy('id')
             ->get()->pluck('name', 'id');
         return view('admin.game.media_mix.copy', [
             'mediaMix'   => $mediaMix,
@@ -195,7 +194,7 @@ class MediaMixController extends AbstractAdminController
     /**
      * 削除
      *
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return RedirectResponse
      * @throws \Throwable
      */
@@ -213,9 +212,9 @@ class MediaMixController extends AbstractAdminController
      * @param GameMediaMix $mediaMix
      * @return Application|Factory|View
      */
-    public function linkTitle(GameMediaMix $mediaMix): Application|Factory|View
+    public function linkTitle(\App\Models\GameMediaMix $mediaMix): Application|Factory|View
     {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        $titles = \App\Models\GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.media_mix.link_title', [
             'model' => $mediaMix,
             'linkedTitleIds' => $mediaMix->titles()->pluck('id')->toArray(),
@@ -230,7 +229,7 @@ class MediaMixController extends AbstractAdminController
      * @param GameMediaMix $mediaMix
      * @return RedirectResponse
      */
-    public function syncTitle(LinkMultiTitleRequest $request, GameMediaMix $mediaMix): RedirectResponse
+    public function syncTitle(LinkMultiTitleRequest $request, \App\Models\GameMediaMix $mediaMix): RedirectResponse
     {
         $mediaMix->titles()->sync($request->validated('game_title_ids'));
         return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix);
@@ -239,12 +238,12 @@ class MediaMixController extends AbstractAdminController
     /**
      * 関連商品とリンク
      *
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return Application|Factory|View
      */
-    public function linkRelatedProduct(GameMediaMix $mediaMix): Application|Factory|View
+    public function linkRelatedProduct(\App\Models\GameMediaMix $mediaMix): Application|Factory|View
     {
-        $relatedProducts = GameRelatedProduct::orderBy('id')->get(['id', 'name']);
+        $relatedProducts = \App\Models\GameRelatedProduct::orderBy('id')->get(['id', 'name']);
         return view('admin.game.media_mix.link_related_product', [
             'model' => $mediaMix,
             'linkedRelatedProductIds' => $mediaMix->relatedProducts()->pluck('id')->toArray(),
@@ -256,7 +255,7 @@ class MediaMixController extends AbstractAdminController
      * 関連商品と同期処理
      *
      * @param LinkMultiRelatedProductRequest $request
-     * @param GameMediaMix $mediaMix
+     * @param \App\Models\GameMediaMix $mediaMix
      * @return RedirectResponse
      */
     public function syncRelatedProduct(LinkMultiRelatedProductRequest $request, GameMediaMix $mediaMix): RedirectResponse

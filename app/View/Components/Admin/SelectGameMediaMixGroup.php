@@ -2,11 +2,9 @@
 
 namespace App\View\Components\Admin;
 
-use App\Models\Game\GameFranchise;
-use App\Models\Game\GameMediaMixGroup;
+use App\Models\GameMediaMixGroup;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\View\Component;
 
 class SelectGameMediaMixGroup extends Input
 {

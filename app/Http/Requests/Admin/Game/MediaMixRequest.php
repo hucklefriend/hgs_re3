@@ -29,6 +29,9 @@ class MediaMixRequest extends FormRequest
         if ($this->description === null) {
             $this->merge(['description' => '']);
         }
+        if ($this->use_ogp_description === null) {
+            $this->merge(['use_ogp_description' => 0]);
+        }
     }
 
     /**
@@ -50,7 +53,7 @@ class MediaMixRequest extends FormRequest
             'sort_order'              => 'required|numeric',
             'description'             => 'nullable',
             'description_source'      => 'nullable',
-            'og_url'                  => 'nullable',
+            'use_ogp_description'     => 'required|boolean',
         ];
     }
 }

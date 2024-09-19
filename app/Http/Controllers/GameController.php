@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Game\GameFranchise;
-use App\Models\Game\GameMaker;
-use App\Models\Game\GameMakerPackageLink;
-use App\Models\Game\GameMediaMix;
-use App\Models\Game\GamePackage;
-use App\Models\Game\GamePlatform;
-use App\Models\Game\GameSeries;
-use App\Models\Game\GameTitle;
-use App\Models\Game\GameTitlePackageLink;
+use App\Models\GameFranchise;
+use App\Models\GameMaker;
+use App\Models\GameMakerPackageLink;
+use App\Models\GameMediaMix;
+use App\Models\GamePackage;
+use App\Models\GamePlatform;
+use App\Models\GameSeries;
+use App\Models\GameTitle;
+use App\Models\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 class GameController extends Controller
 {
-    const ITEM_PER_PAGE = 4000;
+    const ITEM_PER_PAGE = 50;
 
     /**
      * ホラーゲームネットワーク

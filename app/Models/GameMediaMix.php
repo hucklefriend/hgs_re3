@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models;
 
 use App\Enums\MediaMixType;
 use App\Enums\Rating;
@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class GameMediaMix extends \Eloquent
 {
     use KeyFindTrait;
+    use OgpTrait;
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];

@@ -27,7 +27,7 @@ class SelectGameMakerMulti extends Component
      */
     public function render(): View|Closure|string
     {
-        $list = \App\Models\Game\GameMaker::all(['id', 'name'])
+        $list = \App\Models\GameMaker::all(['id', 'name'])
             ->pluck('name', 'id')
             ->toArray();
         return view('components.admin.select-multi', [

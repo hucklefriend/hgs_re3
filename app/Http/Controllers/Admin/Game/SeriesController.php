@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
-use App\Models\Game\GameSeries;
 use App\Http\Requests\Admin\Game\SeriesRequest;
-use App\Models\Game\GameTitle;
+use App\Models\GameSeries;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -35,7 +34,7 @@ class SeriesController extends AbstractAdminController
      */
     private function search(Request $request): array
     {
-        $series = GameSeries::orderBy('id');
+        $series = \App\Models\GameSeries::orderBy('id');
 
         $searchName = trim($request->query('name', ''));
         $search = ['name' => ''];
@@ -81,7 +80,7 @@ class SeriesController extends AbstractAdminController
     public function add(): Application|Factory|View
     {
         return view('admin.game.series.add', [
-            'model' => new GameSeries(),
+            'model' => new \App\Models\GameSeries(),
         ]);
     }
 
@@ -104,10 +103,10 @@ class SeriesController extends AbstractAdminController
     /**
      * 編集画面
      *
-     * @param GameSeries $series
+     * @param \App\Models\GameSeries $series
      * @return Application|Factory|View
      */
-    public function edit(GameSeries $series): Application|Factory|View
+    public function edit(\App\Models\GameSeries $series): Application|Factory|View
     {
         return view('admin.game.series.edit', [
             'model' => $series
@@ -118,7 +117,7 @@ class SeriesController extends AbstractAdminController
      * 更新処理
      *
      * @param SeriesRequest $request
-     * @param GameSeries $series
+     * @param \App\Models\GameSeries $series
      * @return RedirectResponse
      * @throws \Throwable
      */
@@ -137,7 +136,7 @@ class SeriesController extends AbstractAdminController
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function delete(GameSeries $series): RedirectResponse
+    public function delete(\App\Models\GameSeries $series): RedirectResponse
     {
         foreach ($series->titles as $title) {
             $title->game_series_id = null;
@@ -154,9 +153,9 @@ class SeriesController extends AbstractAdminController
      * @param GameSeries $series
      * @return Application|Factory|View
      */
-    public function linkTitle(GameSeries $series): Application|Factory|View
+    public function linkTitle(\App\Models\GameSeries $series): Application|Factory|View
     {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
+        $titles = \App\Models\GameTitle::orderBy('id')->get(['id', 'name']);
         return view('admin.game.series.link_title', [
             'model'          => $series,
             'linkedTitleIds' => $series->titles()->pluck('id')->toArray(),
@@ -179,7 +178,7 @@ class SeriesController extends AbstractAdminController
             $title->save();
         }
         foreach ($request->validated('game_title_ids') as $titleId) {
-            $title = GameTitle::find($titleId);
+            $title = \App\Models\GameTitle::find($titleId);
             $title->game_franchise_id = null;
             $title->game_series_id = $series->id;
             $title->save();

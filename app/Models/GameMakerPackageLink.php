@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use \Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GameTitlePackageLink extends \Eloquent
+class GameMakerPackageLink extends Model
 {
-    protected $primaryKey = ['game_title_id', 'game_package_id'];
+    protected $primaryKey = ['game_maker_id', 'game_package_id'];
     protected $hidden = ['created_at', 'updated_at'];
     public $incrementing = false;
 
     /**
-     * タイトル
+     * メーカー
      *
      * @return BelongsTo
      */
-    public function title(): BelongsTo
+    public function maker(): BelongsTo
     {
-        return $this->belongsTo(GameTitle::class);
+        return $this->belongsTo(GameMaker::class);
     }
 
     /**

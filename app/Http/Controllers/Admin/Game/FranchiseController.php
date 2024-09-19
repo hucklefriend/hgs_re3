@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin\Game;
 use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\FranchiseMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
-use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
-use App\Models\Game\GameFranchise;
-use App\Models\Game\GameSeries;
 use App\Http\Requests\Admin\Game\FranchiseRequest;
 use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
-use App\Models\Game\GameTitle;
+use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
+use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
+use App\Models\GameFranchise;
+use App\Models\GameSeries;
+use App\Models\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -84,7 +84,7 @@ class FranchiseController extends AbstractAdminController
      * @param GameFranchise $franchise
      * @return Application|Factory|View
      */
-    public function linkTree(GameFranchise $franchise): Application|Factory|View
+    public function linkTree(\App\Models\GameFranchise $franchise): Application|Factory|View
     {
         return view('admin.game.franchise.link_tree', [
             'franchise' => $franchise
@@ -143,7 +143,7 @@ class FranchiseController extends AbstractAdminController
         $h1NodeNames = $request->validated(['h1_node_name']);
         $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
-            $model = GameFranchise::find($id);
+            $model = \App\Models\GameFranchise::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
                 $model->h1_node_name = $h1NodeNames[$id];
@@ -176,7 +176,7 @@ class FranchiseController extends AbstractAdminController
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function update(FranchiseRequest $request, GameFranchise $franchise): RedirectResponse
+    public function update(FranchiseRequest $request, \App\Models\GameFranchise $franchise): RedirectResponse
     {
         $franchise->fill($request->validated());
         $franchise->save();
@@ -261,7 +261,7 @@ class FranchiseController extends AbstractAdminController
                 $series->save();
             }
             foreach ($request->validated('game_series_ids') as $seriesId) {
-                $series = GameSeries::find($seriesId);
+                $series = \App\Models\GameSeries::find($seriesId);
                 $series->game_franchise_id = $franchise->id;
                 $series->save();
             }
@@ -278,10 +278,10 @@ class FranchiseController extends AbstractAdminController
     /**
      * タイトルとリンク
      *
-     * @param GameFranchise $franchise
+     * @param \App\Models\GameFranchise $franchise
      * @return Application|Factory|View
      */
-    public function linkTitle(GameFranchise $franchise): Application|Factory|View
+    public function linkTitle(\App\Models\GameFranchise $franchise): Application|Factory|View
     {
         $titles = GameTitle::orderBy('id')
             ->whereNotIn('id', function ($query){
@@ -314,7 +314,7 @@ class FranchiseController extends AbstractAdminController
                 $title->save();
             }
             foreach ($request->validated('game_title_ids') as $titleId) {
-                $title = GameTitle::find($titleId);
+                $title = \App\Models\GameTitle::find($titleId);
                 $title->game_franchise_id = $franchise->id;
                 $title->save();
             }

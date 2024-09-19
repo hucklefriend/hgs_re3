@@ -1,41 +1,60 @@
 <?php
 
-namespace App\Models\Game;
+namespace App\Models;
 
 use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
-use App\Enums\Shop;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class GameRelatedProduct extends \Eloquent
+class GamePackage extends \Eloquent
 {
     protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
     protected $casts = [
         'rating'           => Rating::class,
         'default_img_type' => ProductDefaultImage::class,
     ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'             => '',
         'rating'           => Rating::None,
-        'sort_order'       => 0,
         'default_img_type' => ProductDefaultImage::GAME_PACKAGE,
+        'sort_order'       => 0,
     ];
+
+
+    /**
+     * メーカー
+     *
+     * @return BelongsToMany
+     */
+    public function makers(): BelongsToMany
+    {
+        return $this->belongsToMany(GameMaker::class, GameMakerPackageLink::class);
+    }
+
+    /**
+     * メーカーIDを取得
+     *
+     * @return array
+     */
+    public function makerIds(): array
+    {
+        return $this->makers->pluck('id')->toArray();
+    }
 
     /**
      * プラットフォームを取得
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function platforms(): BelongsToMany
+    public function platform(): BelongsTo
     {
-        return $this->belongsToMany(GamePlatform::class, GamePlatformRelatedProductLink::class);
+        return $this->belongsTo(GamePlatform::class, 'game_platform_id');
     }
 
     /**
@@ -45,17 +64,27 @@ class GameRelatedProduct extends \Eloquent
      */
     public function titles(): BelongsToMany
     {
-        return $this->belongsToMany(GameTitle::class, GameTitleRelatedProductLink::class);
+        return $this->belongsToMany(GameTitle::class, GameTitlePackageLink::class);
     }
 
     /**
-     * メディアミックスを取得
+     * パッケージグループを取得
      *
      * @return BelongsToMany
      */
-    public function mediaMixes(): BelongsToMany
+    public function packageGroups(): BelongsToMany
     {
-        return $this->belongsToMany(GameMediaMix::class, GameMediaMixRelatedProductLink::class);
+        return $this->belongsToMany(GamePackageGroup::class, GamePackageGroupPackageLink::class);
+    }
+
+    /**
+     * プラットフォーム名とセットの名称を取得
+     *
+     * @return string
+     */
+    public function getNameWithPlatform(): string
+    {
+        return sprintf('%s (%s)', $this->name, $this->platform->acronym ?? '');
     }
 
     /**
@@ -65,7 +94,7 @@ class GameRelatedProduct extends \Eloquent
      */
     public function shops(): HasMany
     {
-        return $this->hasMany(GameRelatedProductShop::class, 'game_related_product_id', 'id');
+        return $this->hasMany(GamePackageShop::class, 'game_package_id', 'id');
     }
 
     /**
@@ -75,7 +104,7 @@ class GameRelatedProduct extends \Eloquent
      */
     public function imgShop(): BelongsTo
     {
-        return $this->belongsTo(GameRelatedProductShop::class, 'img_shop_id');
+        return $this->belongsTo(GamePackageShop::class, 'img_shop_id');
     }
 
     /**
@@ -100,7 +129,7 @@ class GameRelatedProduct extends \Eloquent
      */
     public function delete(): bool|null
     {
-        /* @var GameRelatedProductShop $shop */
+        /* @var GamePackageShop $shop */
         foreach ($this->shops as $shop) {
             // ショップ情報も削除
             $shop->delete();
