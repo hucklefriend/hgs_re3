@@ -58,6 +58,16 @@ class GamePackage extends \Eloquent
     }
 
     /**
+     * プラットフォームIDを取得
+     *
+     * @return array
+     */
+    public function platformIds(): array
+    {
+        return [$this->game_platform_id];
+    }
+
+    /**
      * タイトルを取得
      *
      * @return BelongsToMany

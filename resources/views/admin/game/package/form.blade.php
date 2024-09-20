@@ -29,7 +29,7 @@
         <tr>
             <th>プラットフォーム</th>
             <td>
-                <x-admin.select-game-platform-multi name="game_platform_ids[]" :model="$model" />
+                <x-admin.select-game-platform-multi name="game_platform_ids[]" :selected="$model->platformIds()" :model="$model" />
             </td>
         </tr>
     @else

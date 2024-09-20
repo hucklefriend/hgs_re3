@@ -125,10 +125,9 @@ class PackageController extends AbstractAdminController
         $platformIds = $request->validated('game_platform_ids');
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
-        $linked = json_decode($validated['linked'], true);
+        $linked = json_decode($request->post('linked'), true);
         unset($validated['game_platform_ids']);
         unset($validated['game_maker_ids']);
-        unset($validated['linked']);
 
         foreach ($platformIds as $platformId) {
             $validated['game_platform_id'] = $platformId;
@@ -251,16 +250,33 @@ class PackageController extends AbstractAdminController
      */
     public function makeCopy(PackageRequest $request): RedirectResponse
     {
+        $platformIds = $request->validated('game_platform_ids');
         $makerIds = $request->validated('game_maker_ids', []);
         $validated = $request->validated();
+        unset($validated['game_platform_ids']);
         unset($validated['game_maker_ids']);
 
-        $package = new \App\Models\GamePackage();
-        $package->fill($request->validated());
-        $package->save();
+        $originalPackage = \App\Models\GamePackage::find($request->post('original_package_id'));
 
-        if (!empty($makerIds)) {
-            $package->makers()->sync($makerIds);
+        foreach ($platformIds as $platformId) {
+            $validated['game_platform_id'] = $platformId;
+            $package = new \App\Models\GamePackage();
+            $package->fill($validated);
+            $package->save();
+
+            if (!empty($makerIds)) {
+                $package->makers()->sync($makerIds);
+            }
+
+            if ($originalPackage) {
+                foreach ($originalPackage->titles as $title) {
+                    $package->titles()->attach($title->id);
+                }
+
+                foreach ($originalPackage->packageGroups as $packageGroup) {
+                    $package->packageGroups()->attach($packageGroup->id);
+                }
+            }
         }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);

@@ -40,7 +40,6 @@ class PackageRequest extends FormRequest
             'img_shop_id'       => 'nullable',
             'default_img_type'  => ['required', new Enum(ProductDefaultImage::class)],
             'rating'            => ['required', new Enum(Rating::class)],
-            'linked'            => 'nullable',
         ];
     }
 }
