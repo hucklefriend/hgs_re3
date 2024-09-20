@@ -76,6 +76,26 @@
                         </a>
                     </td>
                 </tr>
+                <tr>
+                    <th>メディアミックスグループ</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->mediaMixGroups as $mmg)
+                                <li class="list-group-item"><a href="{{ route('Admin.Game.MediaMixGroup.Detail', $mmg) }}">{{ $mmg->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <th>メディアミックス</th>
+                    <td>
+                        <ul class="list-group">
+                            @foreach ($model->mediaMixes as $mm)
+                                <li class="list-group-item"><a href="{{ route('Admin.Game.MediaMix.Detail', $mm) }}">{{ $mm->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="panel-footer">
