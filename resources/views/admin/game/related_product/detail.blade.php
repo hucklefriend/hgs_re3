@@ -102,7 +102,21 @@
                         <table>
                             @foreach ($model->shops as $shop)
                                 <tr>
-                                    <td><a href="{{ $shop->url }}" target="_blank">{{ $shop->shop()->name() }}</a></td>
+                                    <td>
+                                        <p>
+                                            <a href="{{ $shop->url ?? '' }}" target="_blank">{{ $shop->shop()?->name() ?? '--' }}</a>
+                                        </p>
+
+                                        @if ($shop->ogp)
+                                            <a href="{{ $shop->ogp->url }}" target="_blank">
+                                                @if ($shop->ogp->image)
+                                                    <img src="{{ $shop->ogp->image }}" class="img-fluid"><br>
+                                                @endif
+                                                {{ $shop->ogp->title }}
+                                            </a><br>
+                                            <textarea class="w-100" style="height:1.5rem;">{{ $shop->ogp->description }}</textarea>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('Admin.Game.RelatedProduct.EditShop', ['relatedProduct' => $model, 'shopId' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
                                     </td>
