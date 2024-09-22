@@ -13,7 +13,7 @@
             {{ method_field('PUT') }}
 
             <div class="panel-body">
-                @include('admin.game.package.form', ['isAdd' => false])
+                @include('admin.game.package.form', ['isAdd' => false, 'isCopy' => false])
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.Game.Package.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;

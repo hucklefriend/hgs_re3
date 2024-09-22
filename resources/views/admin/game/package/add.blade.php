@@ -9,7 +9,7 @@
             @csrf
 
             <div class="panel-body">
-                @include('admin.game.package.form', ['isAdd' => true])
+                @include('admin.game.package.form', ['isAdd' => true, 'isCopy' => false])
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.Game.Package') }}" class="btn btn-default">Cancel</a>&nbsp;

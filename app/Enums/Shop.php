@@ -144,16 +144,16 @@ enum Shop: int
             $items = [
                 self::Steam,
                 self::PlayStationStore,
-                self::MicrosoftStore,
+                self::XboxStore,
                 self::NintendoStore,
-                self::NintendoEShop,
                 self::DMM_GAMES,
                 self::FANZA_GAMES,
                 self::EGG,
-                self::XboxStore,
                 self::GOG,
                 self::DLsite,
                 self::OFFICIAL_SITE,
+                self::MicrosoftStore,
+                self::NintendoEShop,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {

@@ -58,12 +58,14 @@
             <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
         </td>
     </tr>
+    @if (!$isAdd)
     <tr>
         <th>画像表示ショップ</th>
         <td>
             <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
         </td>
     </tr>
+    @endif
     <tr>
         <th>デフォルト画像</th>
         <td>
