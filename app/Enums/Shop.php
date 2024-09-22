@@ -80,7 +80,7 @@ enum Shop: int
             self::NintendoEShop    => 'Nintendo eShop',
             self::DMM_GAMES        => 'DMM GAMES',
             self::EGG              => 'EGG',
-            self::XboxStore        => 'XBOX ストア',
+            self::XboxStore        => 'XBOX Game Store',
             self::GOG              => 'GOG.com',
             self::APP_STORE        => 'App Store',
             self::GooglePlay       => 'Google Play',

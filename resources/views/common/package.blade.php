@@ -38,7 +38,7 @@
                 @foreach($pkg->shops as $shop)
                     <div>
                         <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
-                            <i class="bi bi-shop"></i> {{ $shop->shop()?->name() ?? '--' }}
+                            <i class="bi bi-shop"></i><span class="shop-name">{{ $shop->shop()?->name() ?? '--' }}</span>
                         </a>
                     </div>
                 @endforeach

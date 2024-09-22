@@ -236,7 +236,6 @@ hr {
                     text-align: center;
                 }
 
-
                 img {
                     max-width:100%;
                     height:auto;
@@ -245,6 +244,24 @@ hr {
                 img.default-img {
                     max-width: 100px !important;
                     max-height: 100px;
+                }
+            }
+
+            .shop-link {
+                > div {
+                    > a {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        > i {
+                            margin-right: 2px;
+                        }
+
+                        > span {
+                            padding-top: 2px;
+                        }
+                    }
                 }
             }
         }
