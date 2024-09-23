@@ -33,7 +33,7 @@ class PackageGroupRequest extends FormRequest
             'sort_order'         => 'required|integer',
             'description'        => 'nullable',
             'description_source' => 'nullable',
-            'linked'             => 'nullable',
+            'simple_shop_text'   => 'nullable',
         ];
     }
 }

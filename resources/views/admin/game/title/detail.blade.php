@@ -19,15 +19,25 @@
                 <tr>
                     <th>フランチャイズ</th>
                     <td>
-                        {{ $model->franchise->name ?? '--' }}
+                        @if ($model->franchise)
+                            <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise) }}">{{ $model->franchise->name }}</a>
+                        @else
+                            --
+                        @endif
                     </td>
                 </tr>
                 <tr>
                     <th>シリーズ</th>
                     <td>
                         @if ($model->series)
-                            {{ $model->series->name }}
-                             ({{ $model->series->franchise->name ?? '--' }}フランチャイズ)
+                            <a href="{{ route('Admin.Game.Series.Detail', $model->series) }}">{{ $model->series->name }}</a>
+                            (
+                            @if ($model->series->franchise)
+                                <a href="{{ route('Admin.Game.Franchise.Detail', $model->series->franchise) }}">{{ $model->series->franchise->name }}フランチャイズ</a>
+                            @else
+                                フランチャイズ未設定
+                            @endif
+                            )
                         @else
                             --
                         @endif

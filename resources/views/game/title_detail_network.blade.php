@@ -117,11 +117,19 @@
                     </div>
                 @endif
 
-                <div class="product-list" style="margin-bottom: 50px;">
-                    @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
-                        @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
-                    @endforeach
-                </div>
+                @empty($pkgGroup->simple_shop_text)
+                    <div class="product-list" style="margin-bottom: 50px;">
+                        @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
+                            @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
+                        @endforeach
+                    </div>
+                @else
+                    <div class="node" style="margin-bottom: 50px;margin-top:3px;">
+                        <div class="text-node fade" style="text-align:center;">
+                            {!! nl2br($pkgGroup->simple_shop_text) !!}
+                        </div>
+                    </div>
+                @endif
             @endforeach
         @else
             <div class="product-list" style="margin-bottom: 50px;">
@@ -153,14 +161,12 @@
 
     @include('common.related_products', ['model' => $title])
 
-    <section>
-        <div class="node">
-            <h2 class="head2 fade">
-                関連ネットワーク
-            </h2>
-        </div>
-        <div class="node-map">
-            @if ($title->series)
+    @if ($title->series)
+        <section>
+            <div class="node">
+                <h2 class="head2 fade">シリーズ作品</h2>
+            </div>
+            <div class="node-map">
                 @foreach ($title->series->titles as $sameSeriesTitle)
                     @if ($sameSeriesTitle->id === $title->id)
                         @continue
@@ -173,8 +179,18 @@
                         </div>
                     </div>
                 @endforeach
-            @endif
+            </div>
+        </section>
+    @endif
 
+
+    <section>
+        <div class="node">
+            <h2 class="head2 fade">
+                関連ネットワーク
+            </h2>
+        </div>
+        <div class="node-map">
             @if ($title->getFranchise()->getTitleNum() > 1)
                 <div>
                     <div class="link-node link-node-center fade">

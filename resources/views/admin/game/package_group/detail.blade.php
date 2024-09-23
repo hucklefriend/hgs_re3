@@ -69,6 +69,12 @@
                         </a>
                     </td>
                 </tr>
+                <tr>
+                    <th>簡易ショップテキスト</th>
+                    <td>
+                        {!! nl2br($model->simple_shop_text) !!}
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="panel-footer">

@@ -99,14 +99,11 @@ class PackageGroupController extends AbstractAdminController
      */
     public function store(PackageGroupRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $linked = json_decode($validated['linked'], true);
-        unset($validated['linked']);
-
         $packageGroup = new GamePackageGroup();
-        $packageGroup->fill($validated);
+        $packageGroup->fill($request->validated());
         $packageGroup->save();
 
+        $linked = json_decode($request->post('linked'), true);
         if ($linked['title_id'] !== null) {
             $packageGroup->titles()->attach($linked['title_id']);
             return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);

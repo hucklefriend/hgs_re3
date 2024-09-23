@@ -1,11 +1,9 @@
 @include ('admin.all_errors')
 <table class="table admin-form-table">
-    @if ($model->exists)
-        <tr>
-            <th>ID</th>
-            <td>{{ $model->id }}</td>
-        </tr>
-    @endif
+    <tr>
+        <th>ID</th>
+        <td>{{ $model->id ?? '--' }}</td>
+    </tr>
     <tr>
         <th>名前</th>
         <td>
@@ -35,6 +33,12 @@
         <th>説明文の引用元</th>
         <td>
             <x-admin.description-source name="description_source" :model="$model" />
+        </td>
+    </tr>
+    <tr>
+        <th>簡易ショップテキスト</th>
+        <td>
+            <x-admin.textarea name="simple_shop_text" :model="$model" />
         </td>
     </tr>
 </table>

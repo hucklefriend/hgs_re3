@@ -38,7 +38,7 @@
                             @foreach($rp->shops as $shop)
                                 <div>
                                     <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
-                                        <i class="bi bi-shop"></i> <span>{{ $shop->shop()->name() }}</span>
+                                        <i class="bi bi-shop"></i><span>{{ $shop->shop()->name() }}</span>
                                     </a>
                                 </div>
                             @endforeach
