@@ -84,15 +84,24 @@ class OgpCache extends \Eloquent
      */
     public static function getOGPInfo(string $url): array
     {
+        // ブラウザのUser-Agentを設定
+        $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            . 'AppleWebKit/537.36 (KHTML, like Gecko) '
+            . 'Chrome/85.0.4183.83 Safari/537.36';
+
+
         // Fetch the HTML content
         // 日本からのアクセスとしてリクエストを送信する
         $response = Http::withHeaders([
+            'User-Agent' => $userAgent,
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language' => 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Referer' => $url,
         ])->get($url);
 
         if ($response->failed()) {
             // Handle error, return empty array or throw an exception
-            Log::warning("Ogp: request failed {$url}");
+            Log::warning("Ogp: request failed {$url}.(" . $response->status() . ")");
             return [];
         }
 
