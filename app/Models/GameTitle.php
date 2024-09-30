@@ -19,7 +19,9 @@ class GameTitle extends \Eloquent
     /**
      * @var array デフォルト値
      */
-    protected $attributes = [];
+    protected $attributes = [
+        'first_release_int' => 99999999,
+    ];
 
     /**
      * フランチャイズを取得
@@ -128,6 +130,32 @@ class GameTitle extends \Eloquent
     public function mediaMixes(): BelongsToMany
     {
         return $this->belongsToMany(GameMediaMix::class);
+    }
+
+    /**
+     * 紐づいているパッケージから最初の発売日を設定
+     *
+     * @return self
+     */
+    public function setFirstReleaseInt(): self
+    {
+        $minReleaseInt = 99999999;
+        foreach ($this->packages as $pkg) {
+            if ($pkg->sort_order < $minReleaseInt) {
+                $minReleaseInt = $pkg->sort_order;
+            }
+        }
+
+        foreach ($this->packageGroups as $pkgGroup) {
+            foreach ($pkgGroup->packages as $pkg) {
+                if ($pkg->sort_order < $minReleaseInt) {
+                    $minReleaseInt = $pkg->sort_order;
+                }
+            }
+        }
+
+        $this->first_release_int = $minReleaseInt;
+        return $this;
     }
 
     /**

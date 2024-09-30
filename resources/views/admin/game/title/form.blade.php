@@ -87,6 +87,7 @@
         <th>最初のパッケージ発売日</th>
         <td>
             <x-admin.input name="first_release_int" :model="$model" type="number" min="0" max="99999999" />
+            <p>パッケージと紐づけることで自動設定されるので変更不要</p>
         </td>
     </tr>
 </table>

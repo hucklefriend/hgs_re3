@@ -5,6 +5,8 @@
 
 namespace App\Enums;
 
+use App\Models\GamePackage;
+use App\Models\GamePlatform;
 use Illuminate\Support\Facades\Log;
 
 enum Shop: int
@@ -259,6 +261,134 @@ enum Shop: int
             ProductDefaultImage::SEARCH,
         ];
         if (in_array($defaultImgType, $itemType)) {
+            $items = [
+                self::Amazon_SEARCH,
+                self::MERCARI_SEARCH,
+                self::RAKUTEN_ICHIBA_SEARCH,
+                self::SURUGAYA_SEARCH,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '〇〇で検索', $item);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * input[type=select]に渡す用のリスト作成
+     *
+     * @param GamePackage $pkg
+     * @param string[] $excludeShopList
+     * @return string[]
+     */
+    public static function selectListByPackage(GamePackage $pkg, array $excludeShopList = []): array
+    {
+        $result = [];
+
+        $itemType = [
+            ProductDefaultImage::GAME_DISTRIBUTION,
+        ];
+        if (in_array($pkg->default_img_type, $itemType)) {
+            if ($pkg->platform->isSteam()) {
+                $items = [
+                    self::Steam,
+                ];
+            } else if ($pkg->platform->isSupportedOnPlayStationStore()) {
+                $items = [
+                    self::PlayStationStore,
+                ];
+            } else if ($pkg->platform->isSupportedOnXboxGameStore()) {
+                $items = [
+                    self::XboxStore,
+                ];
+            } else if ($pkg->platform->isSupportedOnMyNintendoStore()) {
+                $items = [
+                    self::NintendoStore,
+                ];
+            } else if ($pkg->platform->isGog()) {
+                $items = [
+                    self::GOG,
+                ];
+            } else if ($pkg->platform->isEgg()) {
+                $items = [
+                    self::EGG,
+                ];
+            } else {
+                $items = [
+                    self::Steam,
+                    self::PlayStationStore,
+                    self::XboxStore,
+                    self::NintendoStore,
+                    self::DMM_GAMES,
+                    self::FANZA_GAMES,
+                    self::EGG,
+                    self::GOG,
+                    self::DLsite,
+                    self::OFFICIAL_SITE,
+                    self::MicrosoftStore,
+                    self::NintendoEShop,
+                ];
+            }
+
+
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'ゲーム配信サイト', $item);
+                }
+            }
+        }
+
+        $itemType = [
+            ProductDefaultImage::GAME_PACKAGE,
+            ProductDefaultImage::DISC,
+            ProductDefaultImage::BOOK,
+            ProductDefaultImage::GAME_DISTRIBUTION,
+        ];
+        if (in_array($pkg->default_img_type, $itemType)) {
+            $items = [
+                self::Amazon,
+                self::DMM,
+                self::RAKUTEN_BOOKS,
+                self::SURUGAYA,
+                self::FANZA,
+                self::Getchu,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, '通販', $item);
+                }
+            }
+        }
+
+
+        $itemType = [
+            ProductDefaultImage::SMART_PHONE,
+        ];
+        if (in_array($pkg->default_img_type, $itemType)) {
+            $items = [
+                self::APP_STORE,
+                self::GooglePlay,
+                self::SQM,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'スマホアプリ', $item);
+                }
+            }
+        }
+
+        $itemType = [
+            ProductDefaultImage::GAME_PACKAGE,
+            ProductDefaultImage::DISC,
+            ProductDefaultImage::BOOK,
+            ProductDefaultImage::DIGITAL_BOOK,
+            ProductDefaultImage::VIDEO_STREAMING,
+            ProductDefaultImage::SEARCH,
+        ];
+        if (in_array($pkg->default_img_type, $itemType)) {
             $items = [
                 self::Amazon_SEARCH,
                 self::MERCARI_SEARCH,

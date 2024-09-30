@@ -144,6 +144,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_package_group', [$class, 'syncPackageGroup'])->name("{$basename}.SyncPackageGroup");
                 Route::get('{' . $prefix . '}/link_package', [$class, 'linkPackage'])->name("{$basename}.LinkPackage");
                 Route::post('{' . $prefix . '}/link_package', [$class, 'syncPackage'])->name("{$basename}.SyncPackage");
+                Route::get('{' . $prefix . '}/edit_package_group_multi', [$class, 'editPackageGroupMulti'])->name("{$basename}.EditPackageGroupMulti");
+                Route::put('{' . $prefix . '}/edit_package_group_multi', [$class, 'updatePackageGroupMulti'])->name("{$basename}.UpdatePackageGroupMulti");
                 Route::get('{' . $prefix . '}/edit_package_multi', [$class, 'editPackageMulti'])->name("{$basename}.EditPackageMulti");
                 Route::put('{' . $prefix . '}/edit_package_multi', [$class, 'updatePackageMulti'])->name("{$basename}.UpdatePackageMulti");
                 Route::get('{' . $prefix . '}/link_related_product', [$class, 'linkRelatedProduct'])->name("{$basename}.LinkRelatedProduct");

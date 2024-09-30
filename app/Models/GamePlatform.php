@@ -10,10 +10,36 @@ use Illuminate\Support\Facades\DB;
 
 class GamePlatform extends Model
 {
+    const ID_STEAM = 45;
+
+    const ID_PS3 = 12;
+    const ID_PSP = 14;
+    const ID_PSV = 28;
+    const ID_PS4 = 33;
+    const ID_PS5 = 44;
+
+    const ID_XB1 = 35;
+    const ID_XBXS = 43;
+
+    const ID_3DS = 26;
+    const ID_N3DS = 32;
+    const ID_WIIU = 29;
+    const ID_SWITCH = 34;
+
+    const ID_GOG = 46;
+    const ID_EGG = 47;
+
     use KeyFindTrait;
 
     protected $guarded = ['id', 'synonymsStr'];
     protected $hidden = ['created_at', 'updated_at'];
+
+    /**
+     * @var array キャスト属性
+     */
+    protected $casts = [
+        'id' => 'integer',
+    ];
 
     /**
      * @var array デフォルト値
@@ -150,5 +176,65 @@ class GamePlatform extends Model
     public function relatedProducts(): BelongsToMany
     {
         return $this->belongsToMany(GameRelatedProduct::class, GamePlatformRelatedProductLink::class);
+    }
+
+    /**
+     * Steamか
+     *
+     * @return bool
+     */
+    public function isSteam(): bool
+    {
+        return $this->id === self::ID_STEAM;
+    }
+
+    /**
+     * PlayStationNetwork対応プラットフォームか
+     *
+     * @return bool
+     */
+    public function isSupportedOnPlayStationStore(): bool
+    {
+        return in_array($this->id, [self::ID_PS3, self::ID_PSP, self::ID_PSV, self::ID_PS4, self::ID_PS5]);
+    }
+
+    /**
+     * XboxGameStore対応プラットフォームか
+     *
+     * @return bool
+     */
+    public function isSupportedOnXboxGameStore(): bool
+    {
+        return in_array($this->id, [self::ID_XB1, self::ID_XBXS]);
+    }
+
+    /**
+     * My Nintendo Store対応プラットフォームか
+     *
+     * @return bool
+     */
+    public function isSupportedOnMyNintendoStore(): bool
+    {
+        return in_array($this->id, [self::ID_3DS, self::ID_N3DS, self::ID_WIIU, self::ID_SWITCH]);
+    }
+
+    /**
+     * GOGか
+     *
+     * @return bool
+     */
+    public function isGog(): bool
+    {
+        return $this->id === self::ID_GOG;
+    }
+
+    /**
+     * Eggか
+     *
+     * @return bool
+     */
+    public function isEgg(): bool
+    {
+        return $this->id === self::ID_EGG;
     }
 }

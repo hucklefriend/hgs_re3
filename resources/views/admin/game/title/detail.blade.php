@@ -77,10 +77,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>原点パッケージ</th>
-                    <td>{{ $model->originalPackage->name ?? '-' }}</td>
-                </tr>
-                <tr>
                     <th>OGP</th>
                     <td>
                         <x-admin.ogp :model="$model" />
@@ -119,8 +115,8 @@
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
                         @if (!$model->packageGroups->isEmpty())
-                            <a href="{{ route('Admin.Game.Title.UpdatePackageMulti', $model) }}" class="btn btn-default">
-                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Package</span>
+                            <a href="{{ route('Admin.Game.Title.UpdatePackageGroupMulti', $model) }}" class="btn btn-default">
+                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Package Group</span>
                             </a>
                         @endif
                     </td>

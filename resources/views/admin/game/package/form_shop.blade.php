@@ -6,7 +6,7 @@
                 {{ $model->shop()->name() }}
                 <input type="hidden" name="shop_id" id="shop_id" value="{{ $model->shop_id }}">
             @else
-                <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectList($package->default_img_type, $excludeShopList)" />
+                <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectListByPackage($package, $excludeShopList)" />
             @endif
         </td>
     </tr>
