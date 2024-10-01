@@ -340,15 +340,14 @@ class PackageController extends AbstractAdminController
         $shop = new GamePackageShop();
         $shop->game_package_id = $package->id;
 
-        $validated = $request->validated();
-        $useImgTag = ($validated['use_img_tag'] ?? 0) == 1;
-        unset($validated['use_img_tag']);
-
         $shop->fill($request->validated());
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
-        if ($useImgTag) {
+        if ($request->post('use_img_tag', 0) == 1) {
+            $package->img_shop_id = $shop->id;
+            $package->save();
+        } else if ($package->img_shop_id === null && $shop->ogp_cache_id !== null) {
             $package->img_shop_id = $shop->id;
             $package->save();
         }
@@ -386,6 +385,14 @@ class PackageController extends AbstractAdminController
         $shop->fill($request->validated());
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
+
+        if ($request->post('use_img_tag', 0) == 1) {
+            $package->img_shop_id = $shop->id;
+            $package->save();
+        } else if ($package->img_shop_id === null && $shop->ogp_cache_id !== null) {
+            $package->img_shop_id = $shop->id;
+            $package->save();
+        }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }

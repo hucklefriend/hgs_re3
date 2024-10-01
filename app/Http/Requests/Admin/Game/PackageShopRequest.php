@@ -32,7 +32,6 @@ class PackageShopRequest extends FormRequest
             'param1'      => 'nullable',
             'param2'      => 'nullable',
             'param3'      => 'nullable',
-            'use_img_tag' => 'nullable',
         ];
     }
 }
