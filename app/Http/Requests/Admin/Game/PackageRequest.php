@@ -22,6 +22,16 @@ class PackageRequest extends FormRequest
     }
 
     /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->node_name === null) {
+            $this->merge(['node_name' => '']);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -31,7 +41,7 @@ class PackageRequest extends FormRequest
         return [
             'name'              => 'required|max:200',
             'acronym'           => 'nullable|max:30',
-            'node_name'         => 'required|max:200',
+            'node_name'         => 'nullable|max:200',
             'game_platform_id'  => 'required_without:game_platform_ids|exists:game_platforms,id',
             'game_platform_ids' => 'required_without:game_platform_id|array|exists:game_platforms,id',
             'game_maker_ids'    => 'nullable|array|exists:game_makers,id',

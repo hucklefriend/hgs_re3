@@ -275,14 +275,19 @@ class TitleController extends AbstractAdminController
      */
     public function updatePackageGroupMulti(TitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
     {
+        $ids = $request->validated('id');
+        $names = $request->validated(['name']);
         $nodeNames = $request->validated(['node_name']);
-        $acronyms = $request->validated(['acronym']);
-        foreach ($nodeNames as $id => $nodeName) {
-            $model = GamePackage::find($id);
-            if ($model !== null) {
-                $model->node_name = $nodeName;
-                $model->acronym = $acronyms[$id];
-                $model->save();
+        $releaseAt = $request->validated(['release_at']);
+        $sortOrder = $request->validated(['sort_order']);
+        foreach ($ids as $id) {
+            $package = GamePackage::find($id);
+            if ($package !== null) {
+                $package->name = $names[$id] ?? '';
+                $package->node_name = $nodeNames[$id] ?? '';
+                $package->release_at = $releaseAt[$id] ?? '';
+                $package->sort_order = $sortOrder[$id] ?? 99999999;
+                $package->save();
             }
         }
 

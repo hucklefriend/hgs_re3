@@ -3,13 +3,13 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">List</h4>
+            <h4 class="panel-title">{{ $model->name }}</h4>
             <div class="panel-heading-btn">
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
             </div>
         </div>
         <div class="panel-body">
-            <form method="POST" action="{{ route('Admin.Game.Title.UpdatePackageMulti', $title) }}">
+            <form method="POST" action="{{ route('Admin.Game.PackageGroup.UpdatePackageMulti', $model) }}">
                 @csrf
                 {{ method_field('PUT') }}
 
@@ -37,7 +37,7 @@
                     </tbody>
                 </table>
                 <div class="my-4 d-flex justify-content-end">
-                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}" class="btn btn-default">Cancel</a>&nbsp;
+                    <a href="{{ route('Admin.Game.PackageGroup.Detail', $model) }}" class="btn btn-default">Cancel</a>&nbsp;
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

@@ -48,13 +48,15 @@
                         <th>ID</th>
                         <th>タイトル</th>
                         <th>ノード名</th>
+                        <th>発売日</th>
+                        <th>表示順</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach ($packages as $pkg)
                         <tr>
-                            <td>{{ $pkg->id }}</td>
-                            <td>{{ $pkg->name }}</td>
+                            <td>{{ $pkg->id }}<input type="hidden" name="id[]" value="{{ $pkg->id }}"></td>
+                            <td><x-admin.multi-edit-input name="name" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-input name="release_at" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-input type="number" name="sort_order" :model="$pkg" /></td>
@@ -63,6 +65,7 @@
                     </tbody>
                 </table>
                 <div class="my-4 d-flex justify-content-end">
+                    <a href="{{ route('Admin.Game.Package') }}" class="btn btn-default">Cancel</a>&nbsp;
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

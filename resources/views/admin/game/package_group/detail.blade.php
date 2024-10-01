@@ -67,6 +67,11 @@
                         <a href="{{ route('Admin.Game.PackageGroup.LinkPackage', $model) }}" class="btn btn-default">
                             <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
                         </a>
+                        @if ($model->packages->count() > 0)
+                            <a href="{{ route('Admin.Game.PackageGroup.EditPackageMulti', $model) }}" class="btn btn-default">
+                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Packages</span>
+                            </a>
+                        @endif
                     </td>
                 </tr>
                 <tr>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\PackageGroupRequest;
+use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Models\GamePackage;
 use App\Models\GamePackageGroup;
 use Illuminate\Contracts\Foundation\Application;
@@ -220,6 +221,50 @@ class PackageGroupController extends AbstractAdminController
     public function syncPackage(LinkMultiPackageRequest $request, GamePackageGroup $packageGroup): RedirectResponse
     {
         $packageGroup->packages()->sync($request->validated('game_package_ids'));
+        return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
+    }
+
+    /**
+     * パッケージ一括更新
+     *
+     * @param Request $request
+     * @param GamePackageGroup $packageGroup
+     * @return Application|Factory|View
+     */
+    public function editPackageMulti(Request $request, GamePackageGroup $packageGroup): Application|Factory|View
+    {
+        return view('admin.game.package_group.edit_package_multi', [
+            'model'    => $packageGroup,
+            'packages' => $packageGroup->packages()->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * パッケージ更新処理
+     *
+     * @param PackageMultiUpdateRequest $request
+     * @param GamePackageGroup $packageGroup
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function updatePackageMulti(PackageMultiUpdateRequest $request, GamePackageGroup $packageGroup): RedirectResponse
+    {
+        $ids = $request->validated('id');
+        $names = $request->validated(['name']);
+        $nodeNames = $request->validated(['node_name']);
+        $relelaseAt = $request->validated(['release_at']);
+        $sortOrder = $request->validated(['sort_order']);
+        foreach ($ids as $id) {
+            $package = GamePackage::find($id);
+            if ($package !== null) {
+                $package->name = $names[$id] ?? '';
+                $package->node_name = $nodeNames[$id] ?? '';
+                $package->release_at = $relelaseAt[$id] ?? '';
+                $package->sort_order = $sortOrder[$id] ?? 99999999;
+                $package->save();
+            }
+        }
+
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
     }
 }

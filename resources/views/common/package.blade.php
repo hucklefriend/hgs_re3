@@ -1,6 +1,12 @@
 <div class="product-info">
     <div class="text-node fade">
-        <p class="platform-name">{{ $pkg->platform->acronym }}</p>
+        <p class="platform-name">
+            @empty($pkg->node_name)
+                {{ $pkg->platform->acronym }}
+            @else
+                {{ $pkg->platform->acronym }}&nbsp;{!! $pkg->node_name !!}
+            @endif
+        </p>
 
         <div class="pkg-img">
             @if ($pkg->imgShop)
@@ -15,7 +21,10 @@
                         <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->ogp->title }}</a>
                     </div>
                 @else
-                    {!! $pkg->imgShop->img_tag !!}
+                    <div>
+                        {!! $pkg->imgShop->img_tag !!}
+                    </div>
+
                     <div class="shop-title">
                         画像提供元 <a href="{{ $pkg->imgShop->url }}"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
                     </div>
@@ -24,11 +33,7 @@
                 <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
             @endif
         </div>
-        @if (!($isGroup ?? false))
-            {!! $pkg->node_name !!}
-        @elseif (!empty($pkg->acronym))
-            {!! $pkg->acronym !!}
-        @endif
+
         <div style="margin-top: 10px;">
             {{ $pkg->release_at }}
         </div>

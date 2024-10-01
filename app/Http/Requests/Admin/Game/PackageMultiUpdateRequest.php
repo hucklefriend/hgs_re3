@@ -18,6 +18,18 @@ class PackageMultiUpdateRequest extends FormRequest
     }
 
     /**
+     * node_name.*がnullだった場合、空文字列でマージ
+     *
+     * @return void
+     */
+    public function prepareForValidation(): void
+    {
+        if ($this->node_name === null) {
+            $this->merge(['node_name' => []]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -25,8 +37,12 @@ class PackageMultiUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'node_name'   => 'array',
-            'node_name.*' => 'string|max:200',
+            'id'           => 'array',
+            'id.*'         => 'integer|exists:game_packages,id',
+            'name'         => 'array',
+            'name.*'       => 'string|max:200',
+            'node_name'    => 'array',
+            'node_name.*'  => 'nullable|string|max:200',
             'release_at'   => 'array',
             'release_at.*' => 'string|max:200',
             'sort_order'   => 'array',
