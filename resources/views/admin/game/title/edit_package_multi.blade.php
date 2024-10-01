@@ -18,6 +18,7 @@
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>PLT</th>
                         <th>パッケージ名</th>
                         <th>ノード名</th>
                         <th>発売日</th>
@@ -28,6 +29,7 @@
                     @foreach ($packages as $pkg)
                         <tr>
                             <td>{{ $pkg->id }}<input type="hidden" name="id[]" value="{{ $pkg->id }}"></td>
+                            <td>{{ $pkg->platform->acronym }}</td>
                             <td><x-admin.multi-edit-input name="name" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-input name="release_at" :model="$pkg" /></td>
