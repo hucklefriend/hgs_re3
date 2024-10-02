@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="shop-title">
-                        <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->ogp->title }}</a>
+                        <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->name() }}</a>
                     </div>
                 @else
                     <div>
