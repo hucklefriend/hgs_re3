@@ -8,11 +8,13 @@ use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
+use App\Http\Requests\Admin\Game\TitleMultiPackageGroupUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
 use App\Models\GameMediaMix;
 use App\Models\GamePackage;
+use App\Models\GamePackageGroup;
 use App\Models\GameTitle;
 use App\Models\OgpCache;
 use Illuminate\Contracts\Foundation\Application;
@@ -268,26 +270,24 @@ class TitleController extends AbstractAdminController
     /**
      * 関連パッケージの更新処理
      *
-     * @param TitleMultiPackageUpdateRequest $request
+     * @param TitleMultiPackageGroupUpdateRequest $request
      * @param GameTitle $title
      * @return RedirectResponse
      * @throws Throwable
      */
-    public function updatePackageGroupMulti(TitleMultiPackageUpdateRequest $request, GameTitle $title): RedirectResponse
+    public function updatePackageGroupMulti(TitleMultiPackageGroupUpdateRequest $request, GameTitle $title): RedirectResponse
     {
         $ids = $request->validated('id');
         $names = $request->validated(['name']);
         $nodeNames = $request->validated(['node_name']);
-        $releaseAt = $request->validated(['release_at']);
         $sortOrder = $request->validated(['sort_order']);
         foreach ($ids as $id) {
-            $package = GamePackage::find($id);
-            if ($package !== null) {
-                $package->name = $names[$id] ?? '';
-                $package->node_name = $nodeNames[$id] ?? '';
-                $package->release_at = $releaseAt[$id] ?? '';
-                $package->sort_order = $sortOrder[$id] ?? 99999999;
-                $package->save();
+            $pkgGroup = GamePackageGroup::find($id);
+            if ($pkgGroup !== null) {
+                $pkgGroup->name = $names[$id] ?? '';
+                $pkgGroup->node_name = $nodeNames[$id] ?? '';
+                $pkgGroup->sort_order = $sortOrder[$id] ?? 99999999;
+                $pkgGroup->save();
             }
         }
 

@@ -3,7 +3,7 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">「{{ $title->name }}」 Package Group Multi Edit</h4>
+            <h4 class="panel-title">{{ $title->name }}</h4>
             <div class="panel-heading-btn">
                 <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
             </div>
@@ -26,10 +26,10 @@
                     <tbody>
                     @foreach ($title->packageGroups as $pkgGroup)
                         <tr>
-                            <td>{{ $pkgGroup->id }}</td>
-                            <td><x-admin.input name="name" :model="$pkgGroup" /></td>
+                            <td>{{ $pkgGroup->id }}<input type="hidden" name="id[]" value="{{ $pkgGroup->id }}"></td>
+                            <td><x-admin.multi-edit-input name="name" :model="$pkgGroup" /></td>
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$pkgGroup" /></td>
-                            <td><x-admin.input type="number" name="sort_order" :model="$pkgGroup" /></td>
+                            <td><x-admin.multi-edit-input type="number" name="sort_order" :model="$pkgGroup" /></td>
                         </tr>
                     @endforeach
                     </tbody>
