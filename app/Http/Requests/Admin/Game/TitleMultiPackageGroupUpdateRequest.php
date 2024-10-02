@@ -26,7 +26,7 @@ class TitleMultiPackageGroupUpdateRequest extends FormRequest
     {
         return [
             'id'           => 'array',
-            'id.*'         => 'integer|exists:game_packages,id',
+            'id.*'         => 'integer|exists:game_package_groups,id',
             'name'         => 'array',
             'name.*'       => 'string|max:200',
             'node_name'    => 'array',

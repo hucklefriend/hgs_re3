@@ -38,7 +38,7 @@ class PackageMultiUpdateRequest extends FormRequest
     {
         return [
             'id'           => 'array',
-            'id.*'         => 'integer|exists:game_package_groups,id',
+            'id.*'         => 'integer|exists:game_packages,id',
             'name'         => 'array',
             'name.*'       => 'string|max:200',
             'node_name'    => 'array',
