@@ -9,6 +9,7 @@
             </div>
         </div>
         <div class="panel-body">
+            @include ('admin.all_errors')
             <form method="POST" action="{{ route('Admin.Game.PackageGroup.UpdatePackageMulti', $model) }}">
                 @csrf
                 {{ method_field('PUT') }}
