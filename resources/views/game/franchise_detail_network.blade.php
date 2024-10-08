@@ -124,4 +124,11 @@
     @endif
 
     @include('footer')
+
+    @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+        <div class="admin-edit">
+            <a href="{{ route('Admin.Game.Franchise.Detail', $franchise) }}">管理</a>
+        </div>
+    @endif
+
 @endsection

@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 use Illuminate\Support\Facades\Auth;
 
 enum UserRole: int

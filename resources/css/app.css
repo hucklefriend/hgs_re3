@@ -364,6 +364,10 @@ hr {
     opacity: 0;
 }
 
+.admin-edit {
+    text-align: right;
+}
+
 #loading {
     position: fixed;
     right: 0;

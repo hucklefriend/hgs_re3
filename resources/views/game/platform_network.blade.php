@@ -20,4 +20,11 @@
     @include('common.paging', ['pager' => $platforms])
 
     @include('footer')
+
+
+    @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+        <div class="admin-edit">
+            <a href="{{ route('Admin.Game.Platform') }}">管理</a>
+        </div>
+    @endif
 @endsection

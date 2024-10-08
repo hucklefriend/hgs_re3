@@ -18,7 +18,7 @@
                 </tr>
                 <tr>
                     <th>key</th>
-                    <td>{{ $model->key }}</td>
+                    <td><a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $model->key]) }}" target="_blank">{{ $model->key }}</a></td>
                 </tr>
                 <tr>
                     <th>名称</th>

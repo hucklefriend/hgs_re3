@@ -2,12 +2,13 @@ Node.jsをインストールする
 
 ZIPファイルをここに置く
 解凍する
+unzip color_admin.zip
 
 admin\srcに移動する
 
 gulpfile.jsを更新する
 
-var distPath     = '../../../../public';
+var distPath     = '../../../../../public';
 
 次のコマンドを実行する
 ※PHP Stormのターミナルからだとうまく動かないので、Windowsターミナル等を使う

@@ -18,7 +18,7 @@
                 </tr>
                 <tr>
                     <th>key</th>
-                    <td>{{ $model->key }}</td>
+                    <td><a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $model->key]) }}">{{ $model->key }}</a></td>
                 </tr>
                 <tr>
                     <th>名称</th>

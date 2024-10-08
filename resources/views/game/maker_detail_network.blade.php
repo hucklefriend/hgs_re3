@@ -37,4 +37,10 @@
     @endif
 
     @include('footer', ['footerLinks' => $footerLinks])
+
+    @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+        <div class="admin-edit">
+            <a href="{{ route('Admin.Game.Maker.Detail', $maker) }}">管理</a>
+        </div>
+    @endif
 @endsection
