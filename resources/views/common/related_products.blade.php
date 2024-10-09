@@ -21,7 +21,9 @@
                                     <a href="{{ $rp->imgShop->url }}">{{ $rp->imgShop->ogp->title }}</a>
                                 </div>
                             @else
-                                {!! $rp->imgShop->img_tag !!}
+                                <div>
+                                    {!! $rp->imgShop->img_tag !!}
+                                </div>
                                 <div class="shop-title">
                                     <a href="{{ $rp->imgShop->url }}"><i class="bi bi-shop"></i> {{ $rp->imgShop->shop()->name() }}</a>
                                 </div>
