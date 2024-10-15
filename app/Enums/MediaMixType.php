@@ -12,6 +12,7 @@ enum MediaMixType: int
     case ANIME = 3;
     case NOVEL = 4;
     case DRAMA = 5;
+    case GAME = 6;
 
     /**
      * テキストを取得
@@ -26,6 +27,7 @@ enum MediaMixType: int
             MediaMixType::ANIME => 'アニメ',
             MediaMixType::NOVEL => '小説',
             MediaMixType::DRAMA => 'ドラマ',
+            MediaMixType::GAME => 'ゲーム',
         };
     }
 
