@@ -7,6 +7,9 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
+                <a href="{{ route('Admin.Game.RelatedProduct.Copy', $model) }}" class="btn btn-default">
+                    <i class="far fa-copy"></i><span class="d-none d-md-inline"> Copy</span>
+                </a>&nbsp;
                 <a href="{{ route('Admin.Game.RelatedProduct.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>

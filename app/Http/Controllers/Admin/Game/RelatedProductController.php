@@ -106,13 +106,10 @@ class RelatedProductController extends AbstractAdminController
     public function store(RelatedProductRequest $request): RedirectResponse
     {
         $relatedProduct = new \App\Models\GameRelatedProduct();
-        $validated = $request->validated();
-        $linked = json_decode($validated['linked'], true);
-        unset($validated['linked']);
-
-        $relatedProduct->fill($validated);
+        $relatedProduct->fill($request->validated());
         $relatedProduct->save();
 
+        $linked = json_decode($request->post('linked'), true);
         if ($linked['title_id'] !== null) {
             $relatedProduct->titles()->attach($linked['title_id']);
             return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
@@ -188,6 +185,47 @@ class RelatedProductController extends AbstractAdminController
         $relatedProduct->save();
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
+    }
+
+    /**
+     * 複製画面
+     *
+     * @param GameRelatedProduct $relatedProduct
+     * @return Application|Factory|View
+     */
+    public function copy(GameRelatedProduct $relatedProduct): Application|Factory|View
+    {
+        return view('admin.game.related_product.copy', [
+            'relatedProduct' => $relatedProduct,
+            'model' => $relatedProduct->replicate(),
+        ]);
+    }
+
+    /**
+     * 複製処理
+     *
+     * @param RelatedProductRequest $request
+     * @param GameRelatedProduct $relatedProduct
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function makeCopy(RelatedProductRequest $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    {
+        $newRP = new \App\Models\GameRelatedProduct();
+        $newRP->fill($request->validated());
+        $newRP->save();
+
+        if ($relatedProduct->platforms->count() > 0) {
+            $newRP->platforms()->sync($relatedProduct->platforms->pluck('id')->toArray());
+        }
+        if ($relatedProduct->titles->count() > 0) {
+            $newRP->titles()->sync($relatedProduct->titles->pluck('id')->toArray());
+        }
+        if ($relatedProduct->mediaMixes->count() > 0) {
+            $newRP->mediaMixes()->sync($relatedProduct->mediaMixes->pluck('id')->toArray());
+        }
+
+        return redirect()->route('Admin.Game.RelatedProduct.Detail', $newRP);
     }
 
     /**

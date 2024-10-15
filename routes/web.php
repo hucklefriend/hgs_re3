@@ -223,6 +223,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
+                Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
+                Route::post('{' . $prefix . '}/copy', [$class, 'makeCopy'])->name("{$basename}.MakeCopy");
                 Route::get('{' . $prefix . '}/link_platform', [$class, 'linkPlatform'])->name("{$basename}.LinkPlatform");
                 Route::post('{' . $prefix . '}/link_platform', [$class, 'syncPlatform'])->name("{$basename}.SyncPlatform");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");

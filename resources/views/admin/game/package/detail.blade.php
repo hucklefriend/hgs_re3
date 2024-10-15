@@ -51,7 +51,13 @@
                 <tr>
                 <tr>
                     <th>プラットフォーム</th>
-                    <td>{{ $model->platform->name ?? '' }}</td>
+                    <td>
+                        @isset ($model->platform)
+                            <a href="{{ route('Admin.Game.Platform.Detail', $model->platform) }}">
+                                {{ $model->platform->name }}
+                            </a>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <th>レーティング</th>
@@ -85,7 +91,9 @@
                     <td>
                         <ul class="list-group">
                             @foreach ($model->titles as $title)
-                                <li class="list-group-item"><a href="{{ route('Admin.Game.Title.Detail', $title) }}">{{ $title->name ?? '' }}</a></li>
+                                <li class="list-group-item">
+                                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}">{{ $title->name ?? '' }}</a>
+                                </li>
                             @endforeach
                         </ul>
                         <a href="{{ route('Admin.Game.Package.LinkTitle', $model) }}" class="btn btn-sm btn-default">

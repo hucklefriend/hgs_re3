@@ -43,6 +43,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>種別</th>
                     <th>タイトル</th>
                     <td></td>
                 </tr>
@@ -51,6 +52,7 @@
                 @foreach ($mediaMixes as $mm)
                     <tr>
                         <td>{{ $mm->id }}</td>
+                        <td>{{ $mm->type->text() }}</td>
                         <td>{{ $mm->name }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.Game.MediaMix.Detail', $mm) }}" class="btn btn-default">
