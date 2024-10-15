@@ -15,6 +15,8 @@ trait OgpTrait
      */
     public function setOgpInfo(?string $url): self
     {
+        $this->ogp_cache_id = null; // 一旦リセットしとく
+
         if (empty($url)) {
             Log::debug("Ogp: url is empty");
             return $this;
