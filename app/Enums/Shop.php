@@ -89,7 +89,7 @@ enum Shop: int
             self::SQM              => 'スクエニマーケット',
             self::Getchu           => 'Getchu.com',
             self::DLsite           => 'DLsite',
-            self::FANZA            => 'FANZA',
+            self::FANZA            => 'FANZA通販',
             self::FANZA_GAMES      => 'FANZA Games',
             self::PRIME_VIDEO      => 'Prime Video',
             self::NETFLIX          => 'Netflix',
