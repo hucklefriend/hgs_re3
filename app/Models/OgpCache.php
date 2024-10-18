@@ -158,6 +158,11 @@ class OgpCache extends \Eloquent
             $ogpData['image'] = $ogpData['url'] . $ogpData['image'];
         }
 
+        // imageが//で始まっている場合は、$ogpData['url']のスキームを付与
+        if (isset($ogpData['image']) && preg_match('/^\/\//', $ogpData['image'])) {
+            $ogpData['image'] = parse_url($ogpData['url'], PHP_URL_SCHEME) . ':' . $ogpData['image'];
+        }
+
 
         // Restore error handling
         libxml_clear_errors();
