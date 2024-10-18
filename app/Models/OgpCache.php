@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -79,8 +80,9 @@ class OgpCache extends \Eloquent
     /**
      * 指定URLのOGP情報を取得する。
      *
-     * @param  string  $url
+     * @param string $url
      * @return array
+     * @throws ConnectionException
      */
     public static function getOGPInfo(string $url): array
     {
@@ -162,7 +164,6 @@ class OgpCache extends \Eloquent
         if (isset($ogpData['image']) && preg_match('/^\/\//', $ogpData['image'])) {
             $ogpData['image'] = parse_url($ogpData['url'], PHP_URL_SCHEME) . ':' . $ogpData['image'];
         }
-
 
         // Restore error handling
         libxml_clear_errors();
