@@ -155,14 +155,14 @@ class OgpCache extends \Eloquent
             $ogpData['url'] = $url;
         }
 
-        // imageがhttp(s)で始まっていない場合は、絶対URLに変換
-        if (isset($ogpData['image']) && !preg_match('/^https?:\/\//', $ogpData['image'])) {
-            $ogpData['image'] = $ogpData['url'] . $ogpData['image'];
-        }
-
         // imageが//で始まっている場合は、$ogpData['url']のスキームを付与
         if (isset($ogpData['image']) && preg_match('/^\/\//', $ogpData['image'])) {
             $ogpData['image'] = parse_url($ogpData['url'], PHP_URL_SCHEME) . ':' . $ogpData['image'];
+        }
+
+        // imageがhttp(s)で始まっていない場合は、絶対URLに変換
+        if (isset($ogpData['image']) && !preg_match('/^https?:\/\//', $ogpData['image'])) {
+            $ogpData['image'] = $ogpData['url'] . $ogpData['image'];
         }
 
         // Restore error handling
