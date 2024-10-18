@@ -29,6 +29,9 @@ class GamePlatform extends Model
     const ID_GOG = 46;
     const ID_EGG = 47;
 
+    const ID_DMM = 48;
+    const ID_FANZA = 49;
+
     use KeyFindTrait;
 
     protected $guarded = ['id', 'synonymsStr'];
@@ -236,5 +239,25 @@ class GamePlatform extends Model
     public function isEgg(): bool
     {
         return $this->id === self::ID_EGG;
+    }
+
+    /**
+     * DMM GAMESか
+     *
+     * @return bool
+     */
+    public function isDMMGames(): bool
+    {
+        return $this->id === self::ID_DMM;
+    }
+
+    /**
+     * FANZA GAMESか
+     *
+     * @return bool
+     */
+    public function isFanzaGames(): bool
+    {
+        return $this->id === self::ID_FANZA;
     }
 }

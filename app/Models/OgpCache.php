@@ -89,7 +89,6 @@ class OgpCache extends \Eloquent
             . 'AppleWebKit/537.36 (KHTML, like Gecko) '
             . 'Chrome/85.0.4183.83 Safari/537.36';
 
-
         // Fetch the HTML content
         // 日本からのアクセスとしてリクエストを送信する
         $response = Http::withHeaders([
@@ -144,7 +143,6 @@ class OgpCache extends \Eloquent
                     // htmlタグを全て除去
                     $content = strip_tags($content);
                     $ogpData[$key] = $content;
-                    Log::debug($content);
                     break;
                 default:
                     break;
@@ -154,6 +152,12 @@ class OgpCache extends \Eloquent
         if ($hasData && !isset($ogpData['url'])) {
             $ogpData['url'] = $url;
         }
+
+        // imageがhttp(s)で始まっていない場合は、絶対URLに変換
+        if (isset($ogpData['image']) && !preg_match('/^https?:\/\//', $ogpData['image'])) {
+            $ogpData['image'] = $ogpData['url'] . $ogpData['image'];
+        }
+
 
         // Restore error handling
         libxml_clear_errors();
