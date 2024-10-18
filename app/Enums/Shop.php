@@ -316,6 +316,14 @@ enum Shop: int
                 $items = [
                     self::EGG,
                 ];
+            } else if ($pkg->platform->isDMMGames()) {
+                $items = [
+                    self::DMM_GAMES,
+                ];
+            } else if ($pkg->platform->isFanzaGames()) {
+                $items = [
+                    self::FANZA_GAMES,
+                ];
             } else {
                 $items = [
                     self::Steam,
