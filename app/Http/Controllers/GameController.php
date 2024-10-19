@@ -291,7 +291,7 @@ class GameController extends Controller
      */
     public function franchiseNetwork(Request $request, string $prefix = 'a'): JsonResponse|Application|Factory|View
     {
-        if (preg_match('/^[akstnhmr]$/', $prefix) !== 1) {
+        if (preg_match('/^[akstnhmry]$/', $prefix) !== 1) {
             $prefix = 'a';
         }
 
