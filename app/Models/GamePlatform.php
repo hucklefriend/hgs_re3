@@ -28,6 +28,7 @@ class GamePlatform extends Model
 
     const ID_GOG = 46;
     const ID_EGG = 47;
+    const ID_EPIC = 50;
 
     const ID_DMM = 48;
     const ID_FANZA = 49;
@@ -259,5 +260,15 @@ class GamePlatform extends Model
     public function isFanzaGames(): bool
     {
         return $this->id === self::ID_FANZA;
+    }
+
+    /**
+     * EpicGamesStoreか
+     *
+     * @return bool
+     */
+    public function isEpic(): bool
+    {
+        return $this->id === self::ID_EPIC;
     }
 }

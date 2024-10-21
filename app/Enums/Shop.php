@@ -27,6 +27,7 @@ enum Shop: int
     case EGG = 17;
     case XboxStore = 18;
     case GOG = 19;
+    case EPIC = 50;
 
     // スマホアプリ
     case APP_STORE = 31;
@@ -84,6 +85,7 @@ enum Shop: int
             self::EGG              => 'EGG',
             self::XboxStore        => 'XBOX Game Store',
             self::GOG              => 'GOG.com',
+            self::EPIC             => 'Epic Games Store',
             self::APP_STORE        => 'App Store',
             self::GooglePlay       => 'Google Play',
             self::SQM              => 'スクエニマーケット',
@@ -96,7 +98,7 @@ enum Shop: int
             self::DMM_TV           => 'DMM TV',
             self::PRIME_VIDEO_DUBBING   => 'Prime Video(吹替)',
             self::PRIME_VIDEO_SUBTITLES => 'Prime Video(字幕)',
-            self::RAKUTEN_TV            => '楽天TV',
+            self::RAKUTEN_TV       => '楽天TV',
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
             self::DMM_RENTAL       => 'DMM宅配レンタル',
@@ -152,6 +154,7 @@ enum Shop: int
                 self::FANZA_GAMES,
                 self::EGG,
                 self::GOG,
+                self::EPIC,
                 self::DLsite,
                 self::OFFICIAL_SITE,
                 self::MicrosoftStore,
@@ -324,6 +327,10 @@ enum Shop: int
                 $items = [
                     self::FANZA_GAMES,
                 ];
+            } else if ($pkg->platform->isEpic()) {
+                $items = [
+                    self::EPIC,
+                ];
             } else {
                 $items = [
                     self::Steam,
@@ -334,6 +341,7 @@ enum Shop: int
                     self::FANZA_GAMES,
                     self::EGG,
                     self::GOG,
+                    self::EPIC,
                     self::DLsite,
                     self::OFFICIAL_SITE,
                     self::MicrosoftStore,
