@@ -19,7 +19,7 @@
                 <tr>
                     <th>フランチャイズ</th>
                     <td>
-                        {{ $model->franchise->name ?? '--' }}
+                        <a href="{{ route('Admin.Game.Franchise.Detail', $model->franchise) }}">{{ $model->franchise->name ?? '--' }}</a>
                     </td>
                 </tr>
                 <tr>
