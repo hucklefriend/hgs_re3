@@ -364,14 +364,22 @@ enum Shop: int
             ProductDefaultImage::GAME_DISTRIBUTION,
         ];
         if (in_array($pkg->default_img_type, $itemType)) {
-            $items = [
-                self::Amazon,
-                self::DMM,
-                self::RAKUTEN_BOOKS,
-                self::SURUGAYA,
-                self::FANZA,
-                self::Getchu,
-            ];
+            if ($pkg->rating == Rating::R18A) {
+                $items = [
+                    self::Amazon,
+                    self::FANZA,
+                    self::RAKUTEN_BOOKS,
+                    self::SURUGAYA,
+                    self::Getchu,
+                ];
+            } else {
+                $items = [
+                    self::Amazon,
+                    self::DMM,
+                    self::RAKUTEN_BOOKS,
+                    self::SURUGAYA,
+                ];
+            }
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
                     self::addItem($result, '通販', $item);
