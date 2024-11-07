@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Extensions;
 
+use App\Models\OgpCache;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Log;
 

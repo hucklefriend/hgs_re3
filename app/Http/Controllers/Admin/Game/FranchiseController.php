@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Game\FranchiseRequest;
 use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameFranchise;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
@@ -74,7 +75,8 @@ class FranchiseController extends AbstractAdminController
     public function detail(GameFranchise $franchise): Application|Factory|View
     {
         return view('admin.game.franchise.detail', [
-            'model' => $franchise
+            'model' => $franchise,
+            'tree'  => GameTree::getTree($franchise),
         ]);
     }
 

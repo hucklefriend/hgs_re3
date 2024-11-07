@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\MediaMixType;
 use App\Enums\Rating;
+use App\Models\Extensions\KeyFindTrait;
+use App\Models\Extensions\OgpTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

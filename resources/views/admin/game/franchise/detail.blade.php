@@ -96,6 +96,14 @@
                         </ul>
                     </td>
                 </tr>
+                <tr>
+                    <th>Tree</th>
+                    <td>
+                        @foreach ($tree as $node)
+                            <x-admin.tree :node="$node" />
+                        @endforeach
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="panel-footer">
@@ -120,4 +128,10 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+
+
+
 @endsection

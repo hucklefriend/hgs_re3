@@ -1,5 +1,4 @@
 @if ($model->ogp)
-
     <img src="{{ $model->ogp->image }}" alt="{{ $model->name }}" class="img-thumbnail" style="max-height: 200px;">
     <p>
         {{ $model->ogp->description }}

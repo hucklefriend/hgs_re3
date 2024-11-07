@@ -6,6 +6,7 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
 use App\Http\Requests\Admin\Game\MediaMixGroupRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use App\Models\GameMediaMixGroup;
 use Illuminate\Contracts\Foundation\Application;
@@ -68,7 +69,8 @@ class MediaMixGroupController extends AbstractAdminController
     public function detail(GameMediaMixGroup $mediaMixGroup): Application|Factory|View
     {
         return view('admin.game.media_mix_group.detail', [
-            'model' => $mediaMixGroup
+            'model' => $mediaMixGroup,
+            'tree'  => GameTree::getTree($mediaMixGroup),
         ]);
     }
 

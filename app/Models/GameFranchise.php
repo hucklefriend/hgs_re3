@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Extensions\KeyFindTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GameFranchise extends \Eloquent
@@ -15,8 +16,8 @@ class GameFranchise extends \Eloquent
      * @var array デフォルト値
      */
     protected $attributes = [
-        'name'        => '',
-        'phonetic'    => '',
+        'name'     => '',
+        'phonetic' => '',
     ];
 
     /**

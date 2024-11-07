@@ -6,6 +6,7 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\SeriesRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameSeries;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -68,7 +69,8 @@ class SeriesController extends AbstractAdminController
     public function detail(GameSeries $series): Application|Factory|View
     {
         return view('admin.game.series.detail', [
-            'model' => $series
+            'model' => $series,
+            'tree'  => GameTree::getTree($series),
         ]);
     }
 

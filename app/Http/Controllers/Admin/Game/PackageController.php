@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageShopRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameMaker;
 use App\Models\GamePackage;
 use App\Models\GamePackageShop;
@@ -92,7 +93,8 @@ class PackageController extends AbstractAdminController
     public function detail(GamePackage $package): Application|Factory|View
     {
         return view('admin.game.package.detail', [
-            'model' => $package
+            'model' => $package,
+            'tree'  => GameTree::getTree($package),
         ]);
     }
 

@@ -25,6 +25,7 @@
     <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/jstree/dist/themes/default/style.min.css') }}" rel="stylesheet">
     <!-- ================== END page-css ================== -->
 </head>
 <body>
@@ -225,6 +226,7 @@
 <script src="{{ asset('assets/plugins/jvectormap-content/world-mill.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
 <script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/jstree/dist/jstree.min.js') }}"></script>
 
 <script src="{{ asset('admin_assets/common.js') }}"></script>
 <script>

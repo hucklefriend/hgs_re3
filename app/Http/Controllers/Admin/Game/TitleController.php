@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\Game\TitleMultiPackageGroupUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use App\Models\GamePackage;
 use App\Models\GamePackageGroup;
@@ -93,7 +94,8 @@ class TitleController extends AbstractAdminController
     {
         $title->loadSynonyms();
         return view('admin.game.title.detail', [
-            'model' => $title
+            'model' => $title,
+            'tree'  => GameTree::getTree($title),
         ]);
     }
 

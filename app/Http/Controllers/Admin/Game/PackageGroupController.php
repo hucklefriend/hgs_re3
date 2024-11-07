@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\PackageGroupRequest;
 use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GamePackage;
 use App\Models\GamePackageGroup;
 use Illuminate\Contracts\Foundation\Application;
@@ -70,7 +71,8 @@ class PackageGroupController extends AbstractAdminController
     public function detail(GamePackageGroup $packageGroup): Application|Factory|View
     {
         return view('admin.game.package_group.detail', [
-            'model' => $packageGroup
+            'model' => $packageGroup,
+            'tree'  => GameTree::getTree($packageGroup),
         ]);
     }
 

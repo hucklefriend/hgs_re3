@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\MediaMixRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -70,7 +71,8 @@ class MediaMixController extends AbstractAdminController
     public function detail(\App\Models\GameMediaMix $mediaMix): Application|Factory|View
     {
         return view('admin.game.media_mix.detail', [
-            'model' => $mediaMix
+            'model' => $mediaMix,
+            'tree'  => GameTree::getTree($mediaMix),
         ]);
     }
 

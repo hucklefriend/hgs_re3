@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Shop;
+use App\Models\Extensions\OgpTrait;
 
 class GameRelatedProductShop extends \Eloquent
 {

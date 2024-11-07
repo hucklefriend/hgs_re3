@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\RelatedProductMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\RelatedProductRequest;
 use App\Http\Requests\Admin\Game\RelatedProductShopRequest;
+use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use App\Models\GameRelatedProduct;
 use App\Models\GameRelatedProductShop;
@@ -73,7 +74,8 @@ class RelatedProductController extends AbstractAdminController
     public function detail(GameRelatedProduct $relatedProduct): Application|Factory|View
     {
         return view('admin.game.related_product.detail', [
-            'model' => $relatedProduct
+            'model' => $relatedProduct,
+            'tree'  => GameTree::getTree($relatedProduct),
         ]);
     }
 
