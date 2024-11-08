@@ -50,6 +50,7 @@
                         <th>ノード名</th>
                         <th>発売日</th>
                         <th>表示順</th>
+                        <th>レーティング</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -60,6 +61,7 @@
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-input name="release_at" :model="$pkg" /></td>
                             <td><x-admin.multi-edit-input type="number" name="sort_order" :model="$pkg" /></td>
+                            <td><x-admin.multi-edit-select-enum name="rating" :list="App\Enums\Rating::selectList()" :model="$pkg" /></td>
                         </tr>
                     @endforeach
                     </tbody>

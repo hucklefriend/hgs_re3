@@ -9,7 +9,8 @@ use Illuminate\View\Component;
 class Select extends Input
 {
     public $list;
-    public $forceSelect;
+    public mixed $forceSelect;
+    public mixed $model;
 
     /**
      * Create a new component instance.
@@ -19,6 +20,7 @@ class Select extends Input
         parent::__construct($name, $model);
         $this->list = $list;
         $this->forceSelect = $forceSelect;
+        $this->model = $model;
     }
 
     /**

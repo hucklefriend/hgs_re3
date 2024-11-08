@@ -183,6 +183,7 @@ class PackageController extends AbstractAdminController
         $nodeNames = $request->validated(['node_name']);
         $relelaseAt = $request->validated(['release_at']);
         $sortOrder = $request->validated(['sort_order']);
+        $rating = $request->validated(['rating']);
         foreach ($ids as $id) {
             $package = GamePackage::find($id);
             if ($package !== null) {
@@ -190,6 +191,7 @@ class PackageController extends AbstractAdminController
                 $package->node_name = $nodeNames[$id] ?? '';
                 $package->release_at = $relelaseAt[$id] ?? '';
                 $package->sort_order = $sortOrder[$id] ?? 99999999;
+                $package->rating = $rating[$id] ?? $package->rating;
                 $package->save();
             }
         }

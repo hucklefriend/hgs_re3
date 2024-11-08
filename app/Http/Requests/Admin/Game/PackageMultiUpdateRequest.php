@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\Game;
 
+use App\Enums\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
 class PackageMultiUpdateRequest extends FormRequest
 {
@@ -47,6 +49,8 @@ class PackageMultiUpdateRequest extends FormRequest
             'release_at.*' => 'string|max:200',
             'sort_order'   => 'array',
             'sort_order.*' => 'integer',
+            'rating'       => 'array',
+            'rating.*'     => [new Enum(Rating::class)],
         ];
     }
 }
