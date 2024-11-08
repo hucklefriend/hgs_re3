@@ -82,7 +82,10 @@ $(()=> {
     $(".game-tree").jstree({
         "plugins": ["types"],
         "core": {
-            "themes": {"responsive": false},
+            "themes": {
+                "responsive": false,
+                "icons": false,
+            },
             "check_callback": true, // 基本的に全ての操作を許可
             "dblclick_toggle": false // ダブルクリックで展開しない
         },

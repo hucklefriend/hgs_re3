@@ -27,9 +27,7 @@ class GameTree
         self::addChild($model, $baseNode);
         $roots = [];
         self::addParent($model, $baseNode, $roots);
-        self::merge($roots);
-
-        return $roots;
+        return self::merge($roots);
     }
 
     /**
@@ -213,20 +211,27 @@ class GameTree
      * ツリーをマージ
      *
      * @param GameTreeNode[] $roots
+     * @return GameTreeNode[]
      */
-    public static function merge(array $roots): void
+    public static function merge(array $roots): array
     {
+        $newRoots = [];
         $prevRoot = null;
         foreach ($roots as $root) {
             if ($prevRoot === null) {
                 $prevRoot = $root;
+                $newRoots[] = $prevRoot;
                 continue;
             }
 
             if ($prevRoot->isSameNode($root)) {
                 $prevRoot->mergeChildren($root);
+            } else {
+                $newRoots[] = $root;
             }
         }
+
+        return $newRoots;
     }
 
     /**
