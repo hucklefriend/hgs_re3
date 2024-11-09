@@ -108,6 +108,15 @@ class OgpCache extends \Eloquent
 
         $html = $response->body();
 
+        // Use regular expression to find the charset in the meta tag
+        if (preg_match('/<meta[^>]+charset=["\']?([^"\'>]+)["\']?/i', $html, $matches)) {
+            $charset = strtolower($matches[1]);
+            if ($charset === 'shift_jis' || $charset === 'sjis') {
+                // Convert HTML encoding to UTF-8
+                $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'SJIS');
+            }
+        }
+
         // Suppress warnings due to malformed HTML
         libxml_use_internal_errors(true);
 
