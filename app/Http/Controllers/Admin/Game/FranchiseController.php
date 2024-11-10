@@ -286,9 +286,10 @@ class FranchiseController extends AbstractAdminController
     public function linkTitle(\App\Models\GameFranchise $franchise): Application|Factory|View
     {
         $titles = GameTitle::orderBy('id')
-            ->whereNotIn('id', function ($query){
-                $query->select('game_title_id')
-                    ->from('game_series_title_links');
+            ->whereIn('id', function ($query){
+                $query->select('id')
+                    ->from('game_titles')
+                    ->whereNull('game_series_id');
             })
             ->get(['id', 'name']);
         return view('admin.game.franchise.link_title', [
