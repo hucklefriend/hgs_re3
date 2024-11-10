@@ -94,51 +94,54 @@
         </div>
     </section>
 --}}
-    <section>
-        <div class="node">
-            <h2 class="head2 fade">パッケージ</h2>
-        </div>
-        @if ($title->packageGroups()->exists())
-            @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                @empty($pkgGroup->description)
-                    <div class="node h3">
-                        <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
-                    </div>
-                @else
-                    <div class="node h3">
-                        <h3 class="head3 fade" style="margin-bottom: 5px;">
-                            {{ $pkgGroup->node_name }}
-                        </h3>
-                    </div>
-                    <div class="node">
-                        <div class="text-node small fade">
-                            {!! nl2br($pkgGroup->description) !!}
-                        </div>
-                    </div>
-                @endif
 
-                @empty($pkgGroup->simple_shop_text)
-                    <div class="product-list" style="margin-bottom: 50px;">
-                        @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
-                            @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
-                        @endforeach
-                    </div>
-                @else
-                    <div class="node" style="margin-bottom: 50px;margin-top:3px;">
-                        <div class="text-node fade" style="text-align:center;">
-                            {!! nl2br($pkgGroup->simple_shop_text) !!}
-                        </div>
-                    </div>
-                @endif
-            @endforeach
-        @else
-            <div class="product-list" style="margin-bottom: 50px;">
-                @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
-                    @include('common.package', ['pkg' => $pkg])
-                @endforeach
+    @if ($title->packageGroups()->exists() && $title->packages()->exists())
+        <section>
+            <div class="node">
+                <h2 class="head2 fade">パッケージ</h2>
             </div>
-        @endif
-    </section>
+            @if ($title->packageGroups()->exists())
+                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
+                    @empty($pkgGroup->description)
+                        <div class="node h3">
+                            <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
+                        </div>
+                    @else
+                        <div class="node h3">
+                            <h3 class="head3 fade" style="margin-bottom: 5px;">
+                                {{ $pkgGroup->node_name }}
+                            </h3>
+                        </div>
+                        <div class="node">
+                            <div class="text-node small fade">
+                                {!! nl2br($pkgGroup->description) !!}
+                            </div>
+                        </div>
+                    @endif
+
+                    @empty($pkgGroup->simple_shop_text)
+                        <div class="product-list" style="margin-bottom: 50px;">
+                            @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
+                                @include('common.package', ['pkg' => $pkg, 'isGroup' => true])
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="node" style="margin-bottom: 50px;margin-top:3px;">
+                            <div class="text-node fade" style="text-align:center;">
+                                {!! nl2br($pkgGroup->simple_shop_text) !!}
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            @else
+                <div class="product-list" style="margin-bottom: 50px;">
+                    @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
+                        @include('common.package', ['pkg' => $pkg])
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    @endif
 
     @if ($title->mediaMixes()->exists())
         <section>
@@ -195,7 +198,7 @@
                 <div>
                     <div class="link-node link-node-center fade">
                         <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->getFranchise()->key]) }}">
-                            {{ $title->getFranchise()->node_name }}<br>
+                            {!! $title->getFranchise()->node_name !!}<br>
                             フランチャイズ
                         </a>
                     </div>
