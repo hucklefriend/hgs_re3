@@ -95,7 +95,7 @@
     </section>
 --}}
 
-    @if ($title->packageGroups()->exists() && $title->packages()->exists())
+    @if ($title->packageGroups()->exists() || $title->packages()->exists())
         <section>
             <div class="node">
                 <h2 class="head2 fade">パッケージ</h2>
