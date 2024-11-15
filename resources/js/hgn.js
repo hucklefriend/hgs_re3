@@ -977,13 +977,11 @@ export class HorrorGameNetwork
      */
     showRatingCheck()
     {
-        this.openPopupNode('rating-check-popup');
-        /*
         if (!document.cookie.includes("over18=true")) {
-
+            this.openPopupNode('rating-check-popup');
         } else {
             this.appear();
-        }*/
+        }
     }
 }
 
