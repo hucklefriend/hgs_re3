@@ -57,11 +57,7 @@
                 </div>
                 <div class="node-map">
                     @foreach ($titles as $title)
-                        <div>
-                            <div class="link-node link-node-center fade">
-                                <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
-                            </div>
-                        </div>
+                        @include('common.nodes.title-node', ['title' => $title])
                     @endforeach
                 </div>
             </section>

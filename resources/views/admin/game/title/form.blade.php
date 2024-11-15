@@ -57,6 +57,12 @@
         </td>
     </tr>
     <tr>
+        <th>レーティング</th>
+        <td>
+            <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
+        </td>
+    </tr>
+    <tr>
         <th>説明文</th>
         <td>
             <x-admin.textarea name="description" :model="$model" />
@@ -88,6 +94,12 @@
         <td>
             <x-admin.input name="first_release_int" :model="$model" type="number" min="0" max="99999999" />
             <p>パッケージと紐づけることで自動設定されるので変更不要</p>
+        </td>
+    </tr>
+    <tr>
+        <th>疑義</th>
+        <td>
+            <x-admin.textarea name="issue" :model="$model" />
         </td>
     </tr>
 </table>

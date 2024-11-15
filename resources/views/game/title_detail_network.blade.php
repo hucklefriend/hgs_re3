@@ -2,6 +2,8 @@
 
 @section('title', $title->name . ' | ホラーゲームネットワーク')
 
+@section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
+
 @section('content')
     @include('common.head1', ['model' => $title])
 

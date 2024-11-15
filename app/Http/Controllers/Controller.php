@@ -25,10 +25,11 @@ abstract class Controller
      * ネットワークの生成
      *
      * @param Factory|View $view
+     * @param bool $ratingCheck
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    protected function network(Factory|View $view): JsonResponse|Application|Factory|View
+    protected function network(Factory|View $view, bool $ratingCheck = false): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
@@ -37,6 +38,7 @@ abstract class Controller
                 'title'   => $rendered['title'],
                 'network' => $rendered['content'],
                 'popup'   => $rendered['popup'] ?? '',
+                'ratingCheck' => $ratingCheck,
             ]);
         }
 

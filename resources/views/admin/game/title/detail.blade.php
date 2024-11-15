@@ -77,6 +77,10 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>レーティング</th>
+                    <td>{{ $model->rating->text() }}</td>
+                </tr>
+                <tr>
                     <th>OGP</th>
                     <td>
                         <x-admin.ogp :model="$model" />
@@ -98,6 +102,15 @@
                     <th>初リリース日</th>
                     <td>
                         {{ $model->first_release_int }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>疑義</th>
+                    <td>
+                        <div>
+                            {!! nl2br(e($model->issue)) !!}
+                        </div>
                     </td>
                 </tr>
                 <tr>

@@ -388,7 +388,12 @@ export class HorrorGameNetwork
             window.history.pushState({type: 'network', title:document.title}, '');
         }
 
-        this.appear();
+        if (window.ratingCheck) {
+            this.showRatingCheck();
+        } else {
+            this.appear();
+        }
+
 
         if (Param.SHOW_DEBUG) {
             this.showDebug();
@@ -541,7 +546,6 @@ export class HorrorGameNetwork
 
                 break;
         }
-
 
         if (this.redrawFlag) {
             this.draw();
@@ -839,7 +843,12 @@ export class HorrorGameNetwork
         window.history.pushState({type:'network', title:data.title}, null, data.url);
 
         this.loadNodes();
-        this.appear();
+
+        if (data.ratingCheck) {
+            this.showRatingCheck();
+        } else {
+            this.appear();
+        }
     }
 
     /**
@@ -961,6 +970,20 @@ export class HorrorGameNetwork
         this.scroller.scrollTo(x, y);
         this.scrollModeStartPosY = y;
         this.scrollModeScrollPosY = y;
+    }
+
+    /**
+     * レーティングチェックの表示
+     */
+    showRatingCheck()
+    {
+        this.openPopupNode('rating-check-popup');
+        /*
+        if (!document.cookie.includes("over18=true")) {
+
+        } else {
+            this.appear();
+        }*/
     }
 }
 

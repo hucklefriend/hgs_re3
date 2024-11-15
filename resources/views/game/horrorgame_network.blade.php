@@ -32,7 +32,7 @@
         <div class="node-map">
             @foreach ($games as $game)
                 <div>
-                    <div class="link-node link-node-center fade" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }}">
+                    <div class="link-node link-node-center fade" id="{{ $game->dom_id }}" data-connect="{{ json_encode($game->connections) }} @if($game->title->rating == \App\Enums\Rating::R18A) link-node-a @endif @if($game->title->rating == \App\Enums\Rating::R18Z) link-node-z @endif ">
                         <a href="{{ route('Game.TitleDetailNetwork',  ['titleKey' => $game->title->key]) }}">{!! $game->title->node_name !!}</a>
                     </div>
                 </div>

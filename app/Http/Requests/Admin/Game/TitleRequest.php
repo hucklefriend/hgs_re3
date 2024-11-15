@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\Game;
 
+use App\Enums\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
 class TitleRequest extends FormRequest
 {
@@ -50,6 +52,8 @@ class TitleRequest extends FormRequest
             'description_source'  => 'nullable',
             'first_release_int'   => 'required|numeric|max:99999999',
             'use_ogp_description' => 'required|boolean',
+            'rating'              => ['required', new Enum(Rating::class)],
+            'issue'               => 'nullable',
         ];
     }
 }

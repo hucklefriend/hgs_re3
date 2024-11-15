@@ -6,7 +6,7 @@
     <div class="product-list">
         @foreach ($model->relatedProducts->sortByDesc('sort_order') as $rp)
             <div class="product-info">
-                <div class="text-node fade">
+                <div class="text-node fade @if ($model->relatedProducts->rating === \App\Enums\Rating::R18A) text-node-a @endif @if($model->relatedProducts->rating == \App\Enums\Rating::R18Z) text-node-z @endif ">
 
                     <div class="pkg-img">
                         @if ($rp->imgShop)

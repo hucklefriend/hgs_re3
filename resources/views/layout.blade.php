@@ -20,6 +20,12 @@
             window.contentNode = null;
         @endif
 
+        @isset($ratingCheck)
+            window.ratingCheck = @json($ratingCheck);
+        @else
+            window.ratingCheck = false;
+        @endif
+
         showBg3 = () => {
             // 10フレームくらいかけてopacityを1にする
             let opacity = 0;
@@ -63,6 +69,30 @@
 </div>
 <div id="popups">
     @yield('popup')
+</div>
+<div>
+    <script>
+        function iamOver18() {
+            document.cookie = "over18=true; path=/"; // Cookieを設定
+            window.hgn.closePopupNode('rating-check-popup');
+            window.hgn.appear();
+        }
+    </script>
+    <div class="popup-node" id="rating-check-popup">
+        <div class="popup-container">
+            <h1>年齢確認</h1>
+            <p>
+                この先、18歳未満の方が購入できないゲームタイトルの情報が含まれます。<br>
+                18歳未満の方は閲覧をご遠慮ください。
+            </p>
+
+            <div>
+                <a href="{{ route('Entrance') }}">エントランスに戻る</a>
+                <a href="#" onclick="iamOver18();">18歳以上です</a>
+            </div>
+        </div>
+        <canvas class="popup-node-canvas"></canvas>
+    </div>
 </div>
 <div id="loading"><img src="{{ asset('img/loading.gif') }}" alt="now loading..."></div>
 <div id="debug" style="visibility: hidden;"></div>

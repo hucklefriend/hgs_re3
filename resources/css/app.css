@@ -369,6 +369,21 @@ hr {
     text-align: right;
 }
 
+#rating-check-popup > div {
+    text-align: center;
+    h1 {
+        text-align: center;
+    }
+
+    p {
+        margin: 2rem 0;
+    }
+
+    a {
+        margin: 0 1rem;
+    }
+}
+
 #loading {
     position: fixed;
     right: 0;

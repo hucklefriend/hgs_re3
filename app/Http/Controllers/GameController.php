@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Rating;
 use App\Models\GameFranchise;
 use App\Models\GameMaker;
 use App\Models\GameMakerPackageLink;
@@ -397,11 +398,9 @@ class GameController extends Controller
             }
         }
 
-        return $this->network(view('game.title_detail_network', [
-            'title'    => $title,
-            'packages' => $packages,
-            'makers'   => $makers,
-        ]));
+        $ratingCheck = $title->rating != Rating::None;
+
+        return $this->network(view('game.title_detail_network', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
     }
 
     /**

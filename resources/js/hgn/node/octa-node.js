@@ -831,6 +831,14 @@ export class TextNode extends DOMNode
 
         super(DOM, notchSize);
         this.alpha = 0.6;
+
+        if (DOM.classList.contains('text-node-a')) {
+            this.backColor = "100,30,20";
+        } else if (DOM.classList.contains('text-node-z')) {
+            this.backColor = "30,5,0";
+        } else {
+            this.backColor = "0,30,0";
+        }
     }
 
     /**
@@ -847,7 +855,9 @@ export class TextNode extends DOMNode
         ctx.lineCap = "butt"; // 線の末端のスタイル
         ctx.shadowColor = "black"; // 影の色
         ctx.shadowBlur = 0; // 影のぼかし効果
-        ctx.fillStyle = "rgba(0,30,0," + this.alpha + ")";
+
+
+        ctx.fillStyle = "rgba(" + this.backColor + "," + this.alpha + ")";
         ctx.fill();
     }
 

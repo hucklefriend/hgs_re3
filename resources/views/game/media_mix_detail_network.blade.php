@@ -39,11 +39,7 @@
             @if ($mediaMix->titles()->exists())
                 @foreach ($mediaMix->titles as $title)
                     <div class="node">
-                        <div class="link-node link-node-center fade">
-                            <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">
-                                {!! $title->node_name !!}
-                            </a>
-                        </div>
+                        @include('common.nodes.title-node', ['title' => $title])
                     </div>
                 @endforeach
             @endif

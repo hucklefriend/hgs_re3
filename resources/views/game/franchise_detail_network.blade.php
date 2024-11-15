@@ -43,11 +43,7 @@
 
             <div class="node-map" style="margin-bottom: 50px;">
                 @foreach ($series->titles as $title)
-                    <div>
-                        <div class="link-node link-node-center fade">
-                            <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
-                        </div>
-                    </div>
+                    @include('common.nodes.title-node', ['title' => $title])
                 @endforeach
             </div>
         @endforeach
@@ -61,11 +57,7 @@
                 @endif
                 <div class="node-map">
                     @foreach ($franchise->titles as $title)
-                        <div>
-                            <div class="link-node link-node-center fade">
-                                <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $title->key]) }}">{!! $title->node_name !!}</a>
-                            </div>
-                        </div>
+                        @include('common.nodes.title-node', ['title' => $title])
                     @endforeach
                 </div>
             </section>
@@ -99,11 +91,7 @@
 
                 <div class="node-map" style="margin-bottom: 50px;">
                     @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
-                        <div>
-                            <div class="link-node link-node-center fade">
-                                <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">{!! $mediaMix->node_name !!}</a>
-                            </div>
-                        </div>
+                        @include('common.nodes.media-mix-node', ['mediaMix' => $mediaMix])
                     @endforeach
                 </div>
             @endforeach
@@ -113,11 +101,7 @@
             <h2 class="head2 fade">メディアミックス</h2>
             <div class="node-map" style="margin-bottom: 50px;">
                 @foreach ($franchise->mediaMixes as $mediaMix)
-                    <div>
-                        <div class="link-node link-node-center fade">
-                            <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mediaMix->key]) }}">[{{ $mediaMix->type->text() }}]{!! $mediaMix->node_name !!}</a>
-                        </div>
-                    </div>
+                    @include('common.nodes.media-mix-node', ['mediaMix' => $mediaMix])
                 @endforeach
             </div>
         </section>

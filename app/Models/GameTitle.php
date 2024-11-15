@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ProductDefaultImage;
+use App\Enums\Rating;
 use App\Models\Extensions\KeyFindTrait;
 use App\Models\Extensions\OgpTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,10 +20,15 @@ class GameTitle extends \Eloquent
     protected $guarded = ['id', 'synonymsStr'];
     protected $hidden = ['created_at', 'updated_at'];
 
+    protected $casts = [
+        'rating' => Rating::class,
+    ];
+
     /**
      * @var array デフォルト値
      */
     protected $attributes = [
+        'rating'           => Rating::None,
         'first_release_int' => 99999999,
     ];
 

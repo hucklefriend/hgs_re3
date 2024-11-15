@@ -18,7 +18,6 @@ export class LinkNode extends DOMNode
             notchSize = 8;
         }
 
-
         super(DOM, notchSize);
 
         this.isEnableMouse = true;
@@ -49,11 +48,30 @@ export class LinkNode extends DOMNode
         this.appearAnimCnt = Util.getRandomInt(1, 10);
         this.animMaxCnt = Util.getRandomInt(10, 15);
         this.hoverOffsetAnimCnt = 0;
-        this.ctxParams = {
-            strokeStyle: "rgba(0, 100, 0, 0.8)",
-            shadowColor: "rgb(0, 150, 0)",
-            shadowBlur: 4
-        };
+
+        if (DOM.classList.contains('link-node-a')) {
+            this.hoverAnimation = this.hoverAnimationAdult;
+            this.leaveAnimation = this.leaveAnimationAdult;
+            this.ctxParams = {
+                strokeStyle: "rgba(240, 103, 166, 0.8)",
+                shadowColor: "rgb(240, 103, 166)",
+                shadowBlur: 4,
+                fillStyle: "black",
+            };
+        } else {
+            this.hoverAnimation = this.hoverAnimationNormal;
+            this.leaveAnimation = this.leaveAnimationNormal;
+            this.ctxParams = {
+                strokeStyle: "rgba(0, 100, 0, 0.8)",
+                shadowColor: "rgb(0, 150, 0)",
+                shadowBlur: 4,
+                fillStyle: "black",
+            };
+
+            if (DOM.classList.contains('link-node-z')) {
+                this.ctxParams.fillStyle = "rgb(40, 0, 0)";
+            }
+        }
     }
 
     /**
@@ -129,7 +147,7 @@ export class LinkNode extends DOMNode
     /**
      * ホバーアニメーション
      */
-    hoverAnimation()
+    hoverAnimationNormal()
     {
         const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
         if (animCnt < 5) {
@@ -148,9 +166,30 @@ export class LinkNode extends DOMNode
     }
 
     /**
+     * ホバーアニメーション
+     */
+    hoverAnimationAdult()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+        } else {
+            this.animFunc = null;
+            this.ctxParams.strokeStyle = "rgba(249, 193, 207, 0.4)";
+            this.ctxParams.shadowColor = "rgb(249, 193, 207)";
+            this.ctxParams.shadowBlur = 8;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
+    /**
      * リーブアニメーション
      */
-    leaveAnimation()
+    leaveAnimationNormal()
     {
         const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
         if (animCnt < 5) {
@@ -162,6 +201,29 @@ export class LinkNode extends DOMNode
             this.animFunc = null;
             this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)";
             this.ctxParams.shadowColor = "rgb(0, 150, 0)";
+            this.ctxParams.shadowBlur = 4;
+        }
+
+        window.hgn.setRedrawMain();
+    }
+
+    /**
+     * リーブアニメーション
+     */
+    leaveAnimationAdult()
+    {
+        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        if (animCnt < 5) {
+            let ratio = 1 - animCnt / 5;
+            this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+        } else {
+            this.animFunc = null;
+            // strokeStyle: "rgba(240, 103, 166, 0.8)",
+            //     shadowColor: "rgb(240, 103, 166)",
+            this.ctxParams.strokeStyle = "rgba(240, 103, 166, 0.8)";
+            this.ctxParams.shadowColor = "rgb(240, 103, 166)";
             this.ctxParams.shadowBlur = 4;
         }
 
@@ -181,7 +243,7 @@ export class LinkNode extends DOMNode
             ctx.strokeStyle = this.ctxParams.strokeStyle;
             ctx.shadowColor = this.ctxParams.shadowColor;
             ctx.shadowBlur = this.ctxParams.shadowBlur;
-            ctx.fillStyle = "black";
+            ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.lineWidth = 2;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
@@ -190,15 +252,15 @@ export class LinkNode extends DOMNode
             ctx.stroke();
             ctx.fill();
         } else if (this.scale < 0.3) {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+            ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.beginPath();
             ctx.arc(this.center.x, this.center.y, 30 * this.scale, 0, Param.MATH_PI_2, false);
             ctx.fill();
         } else {
-            ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            ctx.shadowColor = "rgb(0,150, 0)"; // 影の色
-            ctx.shadowBlur = 8; // 影のぼかし効果
-            ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+            ctx.strokeStyle = this.ctxParams.strokeStyle;
+            ctx.shadowColor = this.ctxParams.shadowColor;
+            ctx.shadowBlur = this.ctxParams.shadowBlur;
+            ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.lineWidth = 2; // 線の太さ
             ctx.lineJoin = "round"; // 線の結合部分のスタイル
             ctx.lineCap = "round"; // 線の末端のスタイル
