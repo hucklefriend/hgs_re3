@@ -7,6 +7,23 @@
 @section('content')
     @include('common.head1', ['model' => $title])
 
+    @if (!empty($title->issue))
+    <section>
+        <div class="node">
+            <div class="text-node fade">
+                <p style="color: #FFFF55;text-align:center;margin-bottom:1rem;">
+                    ⚠️ このタイトルをホラーゲームと扱うことに疑義があります
+                </p>
+
+                <p>
+                    {!! nl2br(e($title->issue)) !!}
+                </p>
+            </div>
+        </div>
+    </section>
+    @endif
+
+
     {{--
     <section>
     <div class="node">
