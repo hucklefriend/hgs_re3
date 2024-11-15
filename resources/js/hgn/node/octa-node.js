@@ -830,7 +830,7 @@ export class TextNode extends DOMNode
         }
 
         super(DOM, notchSize);
-        this.alpha = 0.6;
+        this.alpha = 0;
 
         if (DOM.classList.contains('text-node-a')) {
             this.backColor = "100,30,20";
@@ -855,7 +855,6 @@ export class TextNode extends DOMNode
         ctx.lineCap = "butt"; // 線の末端のスタイル
         ctx.shadowColor = "black"; // 影の色
         ctx.shadowBlur = 0; // 影のぼかし効果
-
 
         ctx.fillStyle = "rgba(" + this.backColor + "," + this.alpha + ")";
         ctx.fill();

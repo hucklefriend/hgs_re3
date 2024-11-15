@@ -23,6 +23,8 @@ export class Head1Node extends DOMNode
         this.alpha1 = 0.4;
         this.alpha2 = 0.7;
         this.alpha3 = 0.8;
+
+        this.initAnimation();
     }
 
     /**
@@ -228,6 +230,7 @@ export class Head2Node extends DOMNode
         this.animAlpha3 = 0.5;
         this.animWidth = 0;
         this.setAnimOctagon(0);
+        this.isAppeared = false;
     }
 
     /**
@@ -237,6 +240,9 @@ export class Head2Node extends DOMNode
      */
     draw(ctx)
     {
+        if (!this.isAppeared) {
+            return;
+        }
         ctx.lineWidth = 0; // 線の太さ
         ctx.shadowBlur = 0; // 影のぼかし効果
 
@@ -276,6 +282,7 @@ export class Head2Node extends DOMNode
 
     appear()
     {
+        this.isAppeared = true;
         super.appear();
         this.setAnimOctagon(0);
     }
@@ -339,6 +346,7 @@ export class Head2Node extends DOMNode
         } else {
             // アニメーション終了
             this.animFunc = null;
+            this.isAppeared = false;
         }
     }
 }
