@@ -412,6 +412,7 @@ enum Shop: int
 
 
         $itemType = [
+            ProductDefaultImage::DISC,
             ProductDefaultImage::RENTAL,
         ];
         if (in_array($pkg->default_img_type, $itemType)) {
