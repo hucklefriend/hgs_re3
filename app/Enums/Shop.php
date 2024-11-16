@@ -51,9 +51,11 @@ enum Shop: int
     // 電子書籍
     case KINDLE = 61;
     case DMM_BOOKS = 62;
+    case FANZA_BOOKS = 63;
 
     // レンタル
     case DMM_RENTAL = 71;
+    case FANZA_RENTAL = 72;
 
     // 〇〇で検索
     case Amazon_SEARCH = 101;
@@ -102,6 +104,8 @@ enum Shop: int
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
             self::DMM_RENTAL       => 'DMM宅配レンタル',
+            self::FANZA_BOOKS      => 'FANZAブックス',
+            self::FANZA_RENTAL     => 'FANZA宅配レンタル',
             self::Amazon_SEARCH    => 'Amazonで検索🔍',
             self::MERCARI_SEARCH   => 'メルカリで検索🔍',
             self::RAKUTEN_ICHIBA_SEARCH   => '楽天市場で検索🔍',
@@ -232,6 +236,7 @@ enum Shop: int
             $items = [
                 self::KINDLE,
                 self::DMM_BOOKS,
+                self::FANZA_BOOKS,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
@@ -247,6 +252,7 @@ enum Shop: int
         if (in_array($defaultImgType, $itemType)) {
             $items = [
                 self::DMM_RENTAL,
+                self::FANZA_RENTAL,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
@@ -400,6 +406,22 @@ enum Shop: int
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
                     self::addItem($result, 'スマホアプリ', $item);
+                }
+            }
+        }
+
+
+        $itemType = [
+            ProductDefaultImage::RENTAL,
+        ];
+        if (in_array($pkg->default_img_type, $itemType)) {
+            $items = [
+                self::DMM_RENTAL,
+                self::FANZA_RENTAL,
+            ];
+            foreach ($items as $item) {
+                if (!in_array($item->value, $excludeShopList)) {
+                    self::addItem($result, 'レンタル', $item);
                 }
             }
         }
