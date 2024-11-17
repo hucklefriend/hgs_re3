@@ -12,7 +12,7 @@
             </div>
             <div class="panel-footer text-end">
                 <a href="{{ route('Admin.Game.RelatedProduct.Detail', $relatedProduct) }}" class="btn btn-default">Cancel</a>&nbsp;
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Copy</button>
             </div>
         </form>
     </div>
