@@ -164,6 +164,11 @@ class OgpCache extends \Eloquent
             $ogpData['url'] = $url;
         }
 
+        // $ogpData['url']が//で始まっている場合、https:を付与
+        if (isset($ogpData['url']) && preg_match('/^\/\//', $ogpData['url'])) {
+            $ogpData['url'] = 'https:' . $ogpData['url'];
+        }
+
         // imageが//で始まっている場合は、$ogpData['url']のスキームを付与
         if (isset($ogpData['image']) && preg_match('/^\/\//', $ogpData['image'])) {
             $ogpData['image'] = parse_url($ogpData['url'], PHP_URL_SCHEME) . ':' . $ogpData['image'];
