@@ -382,6 +382,7 @@ enum Shop: int
                 $items = [
                     self::Amazon,
                     self::DMM,
+                    self::NintendoStore,
                     self::RAKUTEN_BOOKS,
                     self::SURUGAYA,
                 ];
