@@ -1,14 +1,14 @@
 function filterAdminLinkList()
 {
-    $('#admin-link-list-filter').val().toLowerCase().trim().split(/\s+/).forEach((filterText) => {
-        $('#admin-link-list').children().each((index, element) => {
-            const linkText = $(element).text().toLowerCase();
-            if (linkText.includes(filterText)) {
-                $(element).show();
-            } else {
-                $(element).hide();
-            }
-        });
+    let filterTexts = $('#admin-link-list-filter').val().toLowerCase().trim().split(/\s+/);
+
+    $('#admin-link-list').children().each((index, element) => {
+        const linkText = $(element).text().toLowerCase();
+        if (linkText.includes(filterTexts)) {
+            $(element).show();
+        } else {
+            $(element).hide();
+        }
     });
 }
 
