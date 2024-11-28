@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class OgpCache extends \Eloquent
 {
-    protected $fillable = ['url', 'title', 'description', 'image', 'type'];
+    protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
@@ -22,7 +22,7 @@ class OgpCache extends \Eloquent
     {
         $hash = hash('sha256', $url);
         $model = self::where('hash', $hash)->first();
-        return $model ?: new self(['hash' => $hash, 'url' => $url]);
+        return $model ?: new self(['hash' => $hash, 'base_url' => $url]);
     }
 
     /**
@@ -33,19 +33,20 @@ class OgpCache extends \Eloquent
     public function fetch(): self
     {
         $ogpData = array_merge([
+            'base_url'    => null,
             'title'       => null,
             'description' => null,
             'url'         => null,
             'image'       => null,
             'type'        => null,
-        ], self::getOGPInfo($this->url));
+        ], self::getOGPInfo($this->base_url));
 
         $this->fill($ogpData);
 
-        if ($this->url === null) {
+        if ($this->base_url === null) {
             $this->hash = null;
         } else {
-            $this->hash = hash('sha256', $this->url);
+            $this->hash = hash('sha256', $this->base_url);
 
             // hashが重複しているかチェック
             $model = self::where('hash', $this->hash)->first();
@@ -67,7 +68,7 @@ class OgpCache extends \Eloquent
      */
     public function saveOrDelete(): void
     {
-        if (empty($this->url)) {
+        if (empty($this->base_url)) {
             if ($this->exists) {
                 $this->delete();
             }
@@ -130,7 +131,7 @@ class OgpCache extends \Eloquent
         // Query for meta tags with property starting with 'og:'
         $metaTags = $xpath->query("//meta[starts-with(@property, 'og:')]");
 
-        $ogpData = [];
+        $ogpData = ['base_url' => $url];
 
         $hasData = false;
 

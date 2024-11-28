@@ -18,6 +18,6 @@ class InputOgp extends Input
     public function __construct($name, $model)
     {
         parent::__construct($name, $model);
-        $this->value = $model->ogp?->url ?? '';
+        $this->value = $model->ogp?->base_url ?? '';
     }
 }
