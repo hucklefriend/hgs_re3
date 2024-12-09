@@ -535,6 +535,7 @@ export class DOMNode extends OctaNode
 
         this.subNetwork = null;
         this.animFunc = null;
+        this.skipAnim = false;
     }
 
     /**
@@ -753,7 +754,22 @@ export class DOMNode extends OctaNode
             e.classList.remove('fade-in-text', 'fade-out-text');
             e.classList.add('fade-in-text');
         });
+    }
 
+    /**
+     * フェードインせずにテキストを表示
+     */
+    showText()
+    {
+        if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.remove('fade-in-text', 'fade-out-text');
+            this.DOM.classList.add('show-text');
+        }
+
+        this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.remove('fade-in-text', 'fade-out-text');
+            e.classList.add('show-text');
+        });
     }
 
     /**
@@ -762,11 +778,27 @@ export class DOMNode extends OctaNode
     fadeOutText()
     {
         if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.remove('show-text');
             this.DOM.classList.add('fade-out-text');
         }
 
         this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.remove('show-text');
             e.classList.add('fade-out-text');
+        });
+    }
+
+    /**
+     * テキストのフェードイン
+     */
+    hideText()
+    {
+        if (this.DOM.classList.contains('fade')) {
+            this.DOM.classList.remove('fade-in-text', 'fade-out-text', 'show-text');
+        }
+
+        this.DOM.querySelectorAll('.fade').forEach((e) => {
+            e.classList.remove('fade-in-text', 'fade-out-text', 'show-text');
         });
     }
 
@@ -777,6 +809,19 @@ export class DOMNode extends OctaNode
     {
         if (this.animFunc !== null) {
             this.animFunc();
+        }
+    }
+
+    isSkipAnim()
+    {
+        const hgn = HorrorGameNetwork.getInstance();
+        let rect = this.DOM.getBoundingClientRect();
+
+        // 表示領域外にある場合はアニメーションをスキップ
+        if (hgn.getScrollY() - 100 > this.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.y) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -793,6 +838,14 @@ export class DOMNode extends OctaNode
      */
     appearAnimation()
     {
+    }
+
+    /**
+     * 出現済み状態
+     */
+    appeared()
+    {
+
     }
 
     /**
@@ -865,8 +918,12 @@ export class TextNode extends DOMNode
      */
     appear()
     {
-        super.appear();
-        this.alpha = 0;
+        if (this.isSkipAnim()) {
+            this.appeared();
+        } else {
+            super.appear();
+            this.alpha = 0;
+        }
     }
 
     /**
@@ -885,13 +942,24 @@ export class TextNode extends DOMNode
         }
     }
 
+    appeared()
+    {
+        this.alpha = 0.6;
+        this.showText();
+    }
+
     /**
      * 消える
      */
     disappear()
     {
-        super.disappear();
-        this.fadeOutText();
+        if (!this.isSkipAnim()) {
+            super.disappear();
+            this.fadeOutText();
+        } else {
+            this.alpha = 0;
+            this.hideText();
+        }
     }
 
     /**

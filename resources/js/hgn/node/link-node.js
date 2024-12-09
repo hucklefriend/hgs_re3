@@ -304,9 +304,13 @@ export class LinkNode extends DOMNode
      */
     appear()
     {
-        super.appear();
-        this.isEnableMouse = false;
-        this.scale = 0;
+        if (this.isSkipAnim()) {
+            this.appeared();
+        } else {
+            super.appear();
+            this.isEnableMouse = false;
+            this.scale = 0;
+        }
     }
 
     /**
@@ -339,14 +343,31 @@ export class LinkNode extends DOMNode
         }
     }
 
+    appeared()
+    {
+        this.showText();
+        this.scale = 1;
+        if (this.subNetwork !== null) {
+            this.subNetwork.maxDrawDepth = 3;
+            window.hgn.setRedrawBg2();
+        }
+
+        super.appeared();
+
+    }
+
     /**
      * 消える
      */
     disappear()
     {
-        this.fadeOutText();
-        super.disappear();
         this.isEnableMouse = false;
+        if (!this.isSkipAnim()) {
+            this.fadeOutText();
+            super.disappear();
+        } else {
+            this.scale = 0;
+        }
     }
 
     /**

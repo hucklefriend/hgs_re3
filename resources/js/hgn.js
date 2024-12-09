@@ -111,6 +111,7 @@ export class HorrorGameNetwork
         this.dataCache = null;
 
         this.loadingShowTimer = null;
+        this.changeNetworkAppearTimer = null;
     }
 
     /**
@@ -371,6 +372,8 @@ export class HorrorGameNetwork
      */
     start()
     {
+        this.setContainerScrollMode(0, 0);
+
         // ノードの読み取り
         this.loadNodes();
 
@@ -586,6 +589,11 @@ export class HorrorGameNetwork
         if (this.entranceNode) {
             this.entranceNode.appear();
         }
+
+        // 0.2秒後に背景の描画を開始
+        this.changeNetworkAppearTimer = setTimeout(() => {
+            this.setBodyScrollMode(0, 0);
+        }, 500);
     }
 
     /**
@@ -685,9 +693,9 @@ export class HorrorGameNetwork
     /**
      * スクロール
      */
-    scroll()
+    scroll(force = false)
     {
-        if (this.prevScrollX === window.scrollX &&
+        if (!force && this.prevScrollX === window.scrollX &&
             this.prevScrollY === window.scrollY) {
             return;
         }
@@ -788,6 +796,15 @@ export class HorrorGameNetwork
      */
     changeNetwork(url, isBack = false)
     {
+        // 表示処理中だったら表示処理のキャンセル
+        if (this.changeNetworkAppearTimer !== null) {
+            clearTimeout(this.changeNetworkAppearTimer);
+            this.changeNetworkAppearTimer = null;
+        }
+
+        // 遷移中はスクロールさせない
+        this.setContainerScrollMode(window.scrollX, window.scrollY);
+
         this.contentNode.historyUrl = location.href;
         this.contentNode.historyState = window.history.state;
         this.disappear();
@@ -829,11 +846,17 @@ export class HorrorGameNetwork
     showNewNetwork(data)
     {
         window.scrollTo(0, 0);
+        this.scrollModeScrollPosY = 0;
+        this.scrollModeStartPosY = 0;
+        this.scroll(true);
         this.clearNodes();
         this.mainDOM.innerHTML = '';
         this.bg2.clear();
         this.mainDOM.innerHTML = data.network;
         this.popupDOM.innerHTML = data.popup;
+
+        // 遷移中はスクロールさせない
+        this.setContainerScrollMode(window.scrollX, window.scrollY);
 
         // windowタイトルの変更
         if (data.title) {

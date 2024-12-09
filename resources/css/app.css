@@ -406,6 +406,11 @@ hr {
 .fade-in-text {
     animation: fadeIn 0.2s ease-in-out forwards;
 }
+
+.show-text {
+    opacity: 1 !important;
+}
+
 @keyframes fadeOut {
     from {
         opacity: 1;

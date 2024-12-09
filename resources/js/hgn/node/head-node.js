@@ -128,12 +128,16 @@ export class Head1Node extends DOMNode
      */
     appear()
     {
-        super.appear();
-        this.initAnimation();
-        this.setAnimOctagon(0.0);
-        this.alpha1 = 0.0;
-        this.alpha2 = 0.0;
-        this.alpha3 = 0.0;
+        if (this.isSkipAnim()) {
+            this.appeared();
+        } else {
+            super.appear();
+            this.initAnimation();
+            this.setAnimOctagon(0.0);
+            this.alpha1 = 0.0;
+            this.alpha2 = 0.0;
+            this.alpha3 = 0.0;
+        }
     }
 
     /**
@@ -162,6 +166,9 @@ export class Head1Node extends DOMNode
         } else if (window.hgn.animCnt < 30) {
             this.animOffset++;
         } else {
+            this.alpha1 = 0.4;
+            this.alpha2 = 0.7;
+            this.alpha3 = 0.8;
             this.animOffset = 5
             this.animFunc = null;
             this.animVertices = null;
@@ -169,15 +176,28 @@ export class Head1Node extends DOMNode
         }
     }
 
+    appeared()
+    {
+        this.alpha1 = 0.4;
+        this.alpha2 = 0.7;
+        this.alpha3 = 0.8;
+        this.animOffset = 5
+        this.setOctagon();
+    }
+
     /**
      * 消える
      */
     disappear()
     {
-        super.disappear();
-        this.initAnimation();
-        this.setAnimOctagon(1);
-        this.fadeOutText();
+        if (this.isSkipAnim()) {
+            this.disappeared();
+        } else {
+            super.disappear();
+            this.initAnimation();
+            this.setAnimOctagon(1);
+            this.fadeOutText();
+        }
     }
 
     /**
@@ -207,9 +227,16 @@ export class Head1Node extends DOMNode
             this.alpha3 = 0.0;
         }
     }
+
+    disappeared()
+    {
+        this.hideText();
+        this.animVertices = this.minVertices;
+        this.alpha1 = 0.0;
+        this.alpha2 = 0.0;
+        this.alpha3 = 0.0;
+    }
 }
-
-
 
 export class Head2Node extends DOMNode
 {
@@ -282,9 +309,13 @@ export class Head2Node extends DOMNode
 
     appear()
     {
-        this.isAppeared = true;
-        super.appear();
-        this.setAnimOctagon(0);
+        if (this.isSkipAnim()) {
+            this.appeared();
+        } else {
+            this.isAppeared = true;
+            super.appear();
+            this.setAnimOctagon(0);
+        }
     }
 
     appearAnimation()
@@ -324,10 +355,24 @@ export class Head2Node extends DOMNode
         this.vertices[Param.LLT].x = this.x + offsetX - moveX;
     }
 
+    appeared()
+    {
+        this.isAppeared = true;
+        this.animWidth = this.w;
+        this.setOctagon();
+        this.showText();
+    }
+
     disappear()
     {
-        super.disappear();
-        this.fadeOutText();
+        if (this.isSkipAnim()) {
+            this.isAppeared = false;
+            this.setAnimOctagon(0);
+            this.hideText();
+        } else {
+            super.disappear();
+            this.fadeOutText();
+        }
     }
 
     disappearAnimation()

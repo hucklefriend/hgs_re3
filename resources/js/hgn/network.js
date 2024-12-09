@@ -1,7 +1,7 @@
 import {OctaNode, Bg2OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
 import {PointNode, Bg2PointNode} from "./node/point-node.js";
-import {HorrorGameNetwork} from "@/hgn.js";
+import {HorrorGameNetwork} from "../hgn.js";
 
 /**
  * ネットワーク
