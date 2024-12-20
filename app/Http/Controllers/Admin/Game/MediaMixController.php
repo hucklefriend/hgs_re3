@@ -48,8 +48,7 @@ class MediaMixController extends AbstractAdminController
 
             $mediaMixes->where(function ($query) use ($words) {
                 foreach ($words as $word) {
-                    $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
-                    $query->orWhere('phonetic', operator: 'LIKE', value: '%' . $word . '%');
+                    $query->where('name', operator: 'LIKE', value: '%' . $word . '%');
                 }
             });
         }

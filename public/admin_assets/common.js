@@ -4,7 +4,7 @@ function filterAdminLinkList()
 
     $('#admin-link-list').children().each((index, element) => {
         const linkText = $(element).text().toLowerCase();
-        if (linkText.includes(filterTexts)) {
+        if (filterTexts.every(text => linkText.includes(text))) {
             $(element).show();
         } else {
             $(element).hide();

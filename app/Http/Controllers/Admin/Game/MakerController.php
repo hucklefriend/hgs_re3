@@ -45,7 +45,7 @@ class MakerController extends AbstractAdminController
 
             $makers->where(function ($query) use ($words) {
                 foreach ($words as $word) {
-                    $query->orWhere('name', operator: 'LIKE', value: '%' . $word . '%');
+                    $query->where('name', operator: 'LIKE', value: '%' . $word . '%');
                 }
             });
 
