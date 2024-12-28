@@ -6,7 +6,6 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\FranchiseMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\FranchiseRequest;
-use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Extensions\GameTree;
@@ -327,5 +326,33 @@ class FranchiseController extends AbstractAdminController
             throw $e;
         }
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
+    }
+
+    public function editMainNetwork(GameFranchise $franchise): Application|Factory|View
+    {
+        $series = [];
+        $titles = [];
+        foreach ($franchise->series as $s) {
+            $series[$s->id] = $s->name . '<br>シリーズ';
+
+            foreach ($s->titles as $t) {
+                $titles[$t->id] = $t->node_name;
+            }
+        }
+
+        foreach ($franchise->titles as $t) {
+            $titles[$t->id] = $t->node_name;
+        }
+
+        return view('admin.game.franchise.edit_main_network', [
+            'franchise' => $franchise,
+            'series' => $series,
+            'titles' => $titles,
+        ]);
+    }
+
+    public function editNetwork()
+    {
+
     }
 }

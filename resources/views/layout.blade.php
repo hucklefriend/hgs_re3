@@ -6,13 +6,11 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon">
     <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet">
     <script>
         window.Laravel = @json(['csrfToken' => csrf_token()]);
         window.baseUrl = '{{ url('/') }}';
         window.lazyCss = @json([]);
+        window.START_HGN = true;
 
         @isset($contentNode)
             window.contentNode = @json($contentNode);

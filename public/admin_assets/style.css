@@ -34,3 +34,47 @@ table.admin-form-table tr:last-child > th {
 textarea {
     height: 60px;
 }
+
+#network-editor-container {
+    width: 100%;
+    min-height: 500px;
+    overflow: scroll;
+    position: relative;
+
+    #network-editor {
+        position: absolute;
+        top:0;
+        left:0;
+        width: 10000px;
+        height: 10000px;
+
+        .edit-node {
+            position: absolute;
+            display: inline-block;
+            touch-action: none;
+            user-select: none;
+            padding: 13px 20px;
+            font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
+            font-weight: 300;
+            font-style: normal;
+            font-size: 14px;
+            cursor: grab;
+        }
+
+        .edit-node:active {
+            cursor: grabbing;
+        }
+    }
+
+    #network-editor-canvas {
+        position: absolute;
+        top:0;
+        left:0;
+        z-index:-1000;
+        backdrop-filter: blur(3px);
+        pointer-events: none;
+    }
+}
+
+
+
