@@ -1,7 +1,6 @@
 import {OctaNode, Bg2OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
 import {PointNode, Bg2PointNode} from "./node/point-node.js";
-import {HorrorGameNetwork} from "../hgn.js";
 
 /**
  * ネットワーク
@@ -11,11 +10,33 @@ export class Network
     /**
      * コンストラクタ
      */
-    constructor(parentNode, drawParent = false)
+    constructor()
     {
-        this.parentNode = parentNode;
-        this.drawParent = drawParent;
-        this.nodes = [];
+        this.nodes = {};
+    }
+
+    /**
+     * ノードの登録
+     *
+     * @param key
+     * @param node
+     */
+    addNode(key, node)
+    {
+        this.nodes[key] = node;
+    }
+
+    /**
+     * ノードの除去
+     *
+     * @param key
+     */
+    removeNode(key)
+    {
+        if (this.nodes.hasOwnProperty(key)) {
+            this.nodes[key].delete();
+            delete this.nodes[key];
+        }
     }
 
     /**
@@ -24,86 +45,33 @@ export class Network
      */
     delete()
     {
-        this.parentNode = null;
-        this.nodes.forEach(node => {
-            node.delete();
+        Object.keys(this.nodes).forEach(key => {
+            this.nodes[key].delete();
+            this.nodes[key] = null;
         });
         this.nodes = null;
     }
 
     /**
-     * 八角ノードの追加
-     *
-     * @param baseNode
-     * @param vertexNo
-     * @param offsetX
-     * @param offsetY
-     * @param w
-     * @param h
-     * @param n
-     * @param newNodeVertexNo
-     * @returns {*}
-     */
-    addOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
-    {
-        if (Number.isInteger(baseNode)) {
-            baseNode = this.nodes[baseNode];
-        }
-
-        if (h === null) {
-            h = w;
-        }
-        if (n === null) {
-            n = OctaNode.standardNotchSize(w);
-        }
-
-        let newNode = new OctaNode(baseNode.x + offsetX, baseNode.y + offsetY, w, h, n);
-        this.nodes.push(newNode);
-        this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
-
-        return newNode;
-    }
-
-    /**
-     * 点ノードの追加
-     *
-     * @param baseNode
-     * @param vertexNo
-     * @param offsetX
-     * @param offsetY
-     * @param r
-     * @returns {*}
-     */
-    addPointNode(baseNode, vertexNo, offsetX, offsetY, r = 5)
-    {
-        if (Number.isInteger(baseNode)) {
-            baseNode = this.nodes[baseNode];
-        }
-
-        let newNode = new PointNode(baseNode.x + offsetX, baseNode.y + offsetY, r);
-        this.nodes.push(newNode);
-        this.addNodeConnection(baseNode, newNode, vertexNo);
-
-        return newNode;
-    }
-
-    /**
      * ノード間コネクションの追加
      *
-     * @param node1
-     * @param node2
+     * @param node1Key
+     * @param node2Key
      * @param node1VertexNo
      * @param node2VertexNo
      */
-    addNodeConnection(node1, node2, node1VertexNo = null, node2VertexNo = null)
+    addNodeConnection(node1Key, node2Key, node1VertexNo = null, node2VertexNo = null)
     {
-        if (Number.isInteger(node1)) {
-            node1 = this.nodes[node1];
+        if (!this.nodes.hasOwnProperty(node1Key)) {
+            console.error(node1Key + ' not found');
+            return;
+        } else if (!this.nodes.hasOwnProperty(node2Key)) {
+            console.error(node2Key + ' not found');
+            return;
         }
 
-        if (Number.isInteger(node2)) {
-            node2 = this.nodes[node2];
-        }
+        let node1 = this.nodes[node1Key];
+        let node2 = this.nodes[node2Key];
 
         if (node1 instanceof OctaNode && node1VertexNo === null) {
             node1VertexNo = node1.getNearVertexNo(node2);
@@ -139,26 +107,17 @@ export class Network
      */
     draw(ctx, offsetX, offsetY, drawIdxText = false)
     {
-        if (this.drawParent) {
-            this.parentNode.draw(ctx, offsetX, offsetY);
-        }
+        this.nodes.forEach((key) => {
+            let node = this.nodes[key];
 
-        if (this.parentNode !== null) {
-            this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
-        }
-
-        this.nodes.forEach((node, i) => {
             let offsetY1 = offsetY;
-            if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
-                offsetY1 -= node.drawOffsetY;
-            }
 
             this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
 
             node.draw(ctx, offsetX, offsetY1);
 
             if (drawIdxText) {
-                ctx.fillText(i.toString(), node.x, node.y);
+                ctx.fillText(key, node.x, node.y);
             }
         });
     }
@@ -175,7 +134,7 @@ export class Network
      */
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
-        const hgn = HorrorGameNetwork.getInstance();
+        const hgn = window.hgn;
 
         const maxY = hgn.getScrollY() + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {
@@ -381,7 +340,7 @@ export class Bg2Network extends Network
      */
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
-        const hgn = HorrorGameNetwork.getInstance();
+        const hgn = window.hgn;
 
         const maxY = hgn.getScrollY() + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {

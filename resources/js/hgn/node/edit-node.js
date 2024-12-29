@@ -5,18 +5,31 @@ import {DOMNode} from './octa-node.js';
 
 export class EditNode extends DOMNode
 {
+    static create(node, networkPosition)
+    {
+        let DOM = document.createElement('div');
+        DOM.classList.add('edit-node');
+        DOM.innerHTML = node.name;
+        window.networkEditor.editorDOM.appendChild(DOM);
+
+        DOM.style.left = `${networkPosition.x + node.x - (DOM.offsetWidth / 2)}px`;
+        DOM.style.top = `${networkPosition.y + node.y - (DOM.offsetHeight / 2)}px`;
+
+        return new EditNode(DOM);
+    }
+
     /**
      * コンストラクタ
      *
      * @param DOM
-     * @param notchSize
+     * @param posX
+     * @param posY
      */
-    constructor(DOM, notchSize = 13)
+    constructor(DOM, posX, posY)
     {
-        super(DOM, notchSize);
+        super(DOM, 13);
 
-        this.offsetX = 0;
-        this.offsetY = 0;
+        this.positionInNetwork = {x: posX, y: posY};
 
         DOM.addEventListener('mousedown', (e) => {return this.mouseDown(e)});
 

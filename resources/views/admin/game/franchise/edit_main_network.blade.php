@@ -11,12 +11,7 @@
 
             </div>
             <div id="network-editor-container">
-                <div id="network-editor">
-                    <div class="edit-node">
-                        バイオハザード<br>
-                        フランチャイズ
-                    </div>
-                </div>
+                <div id="network-editor"></div>
                 <canvas id="network-editor-canvas"></canvas>
             </div>
         </div>
@@ -28,7 +23,7 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            window.networkEditor.start();
+            window.networkEditor.start({'nodes': [{'id': 'franchise_1', 'name': 'バイオハザード<br>フランチャイズ', 'x': 0, 'y': 0}]});
         });
     </script>
 @endsection

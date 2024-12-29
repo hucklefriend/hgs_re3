@@ -1,5 +1,5 @@
 import {EditNode} from './hgn/node/edit-node.js';
-// import {PointNode} from './hgn/node/point-node.js';
+import {PointNode} from './hgn/node/point-node.js';
 // import {Param} from './hgn/param.js';
 // import {Util} from './hgn/util.js';
 
@@ -32,34 +32,39 @@ export class NetworkEditor
         }
 
         // ノード
-        this.nodes = [];
+        this.nodes = {};
+        this.points = [];
+        this.connections = [];
 
         this.isDragging = false;
         this.offsetX = 0;
         this.offsetY = 0;
 
         this.draggingNode = null;
+
+        this.center = {x: 0, y: 0};
     }
 
     /**
      * エディタ起動
      */
-    start()
+    start(nodes)
     {
         // containerDOMのスクロール位置をeditorDOMの中央に
-        this.containerDOM.scrollTop = this.editorDOM.offsetTop - (window.innerHeight - this.editorDOM.offsetHeight) / 2;
-        this.containerDOM.scrollLeft = this.editorDOM.offsetLeft - (window.innerWidth - this.editorDOM.offsetWidth) / 2;
-
-        // ノードの読み込み
-        let elems = document.querySelectorAll('.edit-node');
-        elems.forEach(elem => {
-            this.nodes.push(new EditNode(elem));
-        });
+        this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
+        this.containerDOM.scrollLeft = this.editorDOM.offsetLeft - (this.containerDOM.offsetWidth - this.editorDOM.offsetWidth) / 2;
+        this.center.x = this.editorDOM.offsetWidth / 2;
+        this.center.y = this.editorDOM.offsetHeight / 2;
 
         this.editorDOM.addEventListener('mousedown', (e) => this.startDrag(e));
         this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.editorDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
+
+        // ノードの読み込み
+        nodes.nodes.forEach(node => {
+            this.nodes[node.id] = EditNode.create(node, this.center);
+        });
 
         this.draw();
     }
@@ -149,9 +154,7 @@ export class NetworkEditor
      */
     reloadNodes()
     {
-        this.nodes.forEach(node => {
-            node.reload();
-        });
+
     }
 
     /**
@@ -159,9 +162,10 @@ export class NetworkEditor
      */
     clearNodes()
     {
-        this.nodes.forEach(node =>  {
+        Object.values(this.nodes).forEach(node => {
             node.delete();
         });
+        this.nodes = {};
     }
 
     /**
@@ -170,25 +174,8 @@ export class NetworkEditor
     draw()
     {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawEdge();
-        this.drawNodes();
-    }
-
-    /**
-     * エッジの描画
-     */
-    drawEdge()
-    {
-
-    }
-
-    /**
-     * ノードの描画
-     */
-    drawNodes()
-    {
-        this.nodes.forEach(node => {
-            node.draw(this.ctx);
+        Object.values(this.nodes).forEach(node => {
+            node.draw(this.ctx, this.center.x, this.center.y);
         });
     }
 
@@ -215,6 +202,17 @@ export class NetworkEditor
     {
 
     }
+
+    getScrollX()
+    {
+        return 0;
+    }
+
+    getScrollY()
+    {
+        return 0;
+    }
 }
 
 window.networkEditor = new NetworkEditor();
+window.hgn = window.networkEditor;
