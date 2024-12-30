@@ -168,6 +168,18 @@ export class NetworkEditor
         this.nodes = {};
     }
 
+    removeNode(id)
+    {
+        if (this.nodes.hasOwnProperty(id)) {
+            this.editorDOM.removeChild(this.nodes[id].DOM);
+
+            this.nodes[id].delete();
+            delete this.nodes[id];
+
+            this.draw();
+        }
+    }
+
     /**
      * 描画
      */

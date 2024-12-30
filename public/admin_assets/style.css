@@ -59,6 +59,18 @@ textarea {
             font-style: normal;
             font-size: 14px;
             cursor: grab;
+
+            .edit-node-remove {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                padding: 3px;
+                font-size: 12px;
+                cursor: pointer;
+                display: none;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+            }
         }
 
         .edit-node:active {

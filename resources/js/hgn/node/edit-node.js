@@ -5,12 +5,25 @@ import {DOMNode} from './octa-node.js';
 
 export class EditNode extends DOMNode
 {
+    /**
+     * インスタンス生成
+     *
+     * @param node
+     * @param networkPosition
+     * @returns {EditNode}
+     */
     static create(node, networkPosition)
     {
         let DOM = document.createElement('div');
         DOM.classList.add('edit-node');
         DOM.innerHTML = node.name;
+        DOM.id = node.id;
         window.networkEditor.editorDOM.appendChild(DOM);
+
+        let remove = document.createElement('span');
+        remove.classList.add('edit-node-remove');
+        remove.innerHTML = '×';
+        DOM.appendChild(remove);
 
         DOM.style.left = `${networkPosition.x + node.x - (DOM.offsetWidth / 2)}px`;
         DOM.style.top = `${networkPosition.y + node.y - (DOM.offsetHeight / 2)}px`;
@@ -32,6 +45,15 @@ export class EditNode extends DOMNode
         this.positionInNetwork = {x: posX, y: posY};
 
         DOM.addEventListener('mousedown', (e) => {return this.mouseDown(e)});
+        DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
+        DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+
+        // DOMのidを取得
+        this.id = DOM.id;
+
+        this.removeDOM = DOM.querySelector('.edit-node-remove');
+        this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+
 
         if (DOM.classList.contains('link-node-a')) {
             this.ctxParams = {
@@ -73,6 +95,36 @@ export class EditNode extends DOMNode
         this.DOM.style.cursor = "grabbing";
 
         window.networkEditor.mouseDownInEditNode(e, this);
+    }
+
+    /**
+     * マウスエンター
+     *
+     * @param e
+     */
+    mouseEnter(e)
+    {
+        this.removeDOM.style.display = 'inline';
+    }
+
+    /**
+     * マウスリーブ
+     *
+     * @param e
+     */
+    mouseLeave(e)
+    {
+        this.removeDOM.style.display = 'none';
+    }
+
+    /**
+     * removeDOMクリック
+     *
+     * @param e
+     */
+    mouseClickRemoveDOM(e)
+    {
+        window.networkEditor.removeNode(this.id);
     }
 
     /**
