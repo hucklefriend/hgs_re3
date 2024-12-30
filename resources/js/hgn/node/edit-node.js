@@ -14,11 +14,13 @@ export class EditNode extends DOMNode
      */
     static create(node, networkPosition)
     {
+        console.log(node);
         let DOM = document.createElement('div');
         DOM.classList.add('edit-node');
         DOM.innerHTML = node.name;
         DOM.id = node.id;
         window.networkEditor.editorDOM.appendChild(DOM);
+
 
         let remove = document.createElement('span');
         remove.classList.add('edit-node-remove');

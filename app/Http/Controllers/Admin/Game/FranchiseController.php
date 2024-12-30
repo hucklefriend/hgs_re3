@@ -333,15 +333,24 @@ class FranchiseController extends AbstractAdminController
         $series = [];
         $titles = [];
         foreach ($franchise->series as $s) {
-            $series[$s->id] = $s->name . '<br>シリーズ';
+            $series[$s->id] = [
+                'name' => $s->name,
+                'node_name' => $s->name . '<br>シリーズ'
+            ];
 
             foreach ($s->titles as $t) {
-                $titles[$t->id] = $t->node_name;
+                $titles[$t->id] = [
+                    'name' => $t->name,
+                    'node_name' => $t->node_name
+                ];
             }
         }
 
         foreach ($franchise->titles as $t) {
-            $titles[$t->id] = $t->node_name;
+            $titles[$t->id] = [
+                'name' => $t->name,
+                'node_name' => $t->node_name
+            ];
         }
 
         return view('admin.game.franchise.edit_main_network', [

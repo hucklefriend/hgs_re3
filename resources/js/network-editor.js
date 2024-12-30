@@ -163,11 +163,32 @@ export class NetworkEditor
     clearNodes()
     {
         Object.values(this.nodes).forEach(node => {
+            this.editorDOM.removeChild(node.DOM);
             node.delete();
         });
         this.nodes = {};
     }
 
+    /**
+     * ノードの追加
+     *
+     * @param id
+     * @param name
+     */
+    appendNode(id, name)
+    {
+        let x = this.containerDOM.scrollLeft - this.center.x + 60;
+        let y = this.containerDOM.scrollTop - this.center.y + 60;
+        this.nodes[id] = EditNode.create({id: id, name: name, x: x, y: y}, this.center);
+        this.editorDOM.appendChild(this.nodes[id].DOM);
+        this.draw();
+    }
+
+    /**
+     * ノードの削除
+     *
+     * @param id
+     */
     removeNode(id)
     {
         if (this.nodes.hasOwnProperty(id)) {
