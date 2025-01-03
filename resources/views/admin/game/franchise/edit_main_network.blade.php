@@ -7,34 +7,64 @@
         </div>
 
         <div class="panel-body">
-            <div class="d-flex">
-                <div>
-                    <label for="series_nodes" class="form-label mt-2">Series</label>
-                </div>
-                <div style="padding-left: 10px;">
-                    <select id="series_nodes" class="form-control default-select2">
-                        @foreach($series as $value => $label)
-                            <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div style="padding-left: 10px;">
-                    <button id="add_series_node" class="btn btn-white">+</button>
-                </div>
-            </div>
-            <div class="d-flex mt-3">
-                <div>
-                    <label for="title_nodes" class="form-label mt-2">Title</label>
-                </div>
-                <div style="padding-left: 10px;">
-                    <select id="title_nodes" class="form-control default-select2">
-                        @foreach($titles as $value => $label)
-                            <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div style="padding-left: 10px;">
-                    <button id="add_title_node" class="btn btn-white">+</button>
+            <form>
+                <fieldset>
+                    <legend class="col-form-label col-sm-2 pt-0">ノード追加</legend>
+                    <div>
+                        <div class="form-group row">
+                            <div class="col-1">
+                                <label for="series_nodes" class="form-label mt-2">Series</label>
+                            </div>
+                            <div class="col-auto">
+                                <select id="series_nodes" class="form-control default-select2">
+                                    @foreach($series as $value => $label)
+                                        <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button id="add_series_node" class="btn btn-white">+</button>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-1">
+                                <label for="title_nodes" class="form-label mt-2">Title</label>
+                            </div>
+                            <div class="col-auto">
+                                <select id="title_nodes" class="form-control default-select2">
+                                    @foreach($titles as $value => $label)
+                                        <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button id="add_title_node" class="btn btn-white">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="mt-3">
+                    <legend class="col-form-label col-sm-2 pt-0">エッジ追加</legend>
+                    <div class="form-group row">
+                        <div class="col-1">
+                            <label for="edge_from" class="col-form-label">From</label>
+                        </div>
+                        <div class="col-auto">
+                            <select id="edge_from" class="form-control default-select2">
+                                <option value="franchise_1">バイオハザード<br>フランチャイズ</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+
+
+            <div id="network-editor-control">
+                <div class="btn-group">
+                    <button class="btn btn-white active" id="mode_select_node">Node Mode</button>
+                    <button class="btn btn-white" id="mode_select_edge">Edge Mode</button>
                 </div>
             </div>
             <div id="network-editor-container">

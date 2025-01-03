@@ -21,7 +21,6 @@ export class EditNode extends DOMNode
         DOM.id = node.id;
         window.networkEditor.editorDOM.appendChild(DOM);
 
-
         let remove = document.createElement('span');
         remove.classList.add('edit-node-remove');
         remove.innerHTML = '×';
@@ -30,7 +29,68 @@ export class EditNode extends DOMNode
         DOM.style.left = `${networkPosition.x + node.x - (DOM.offsetWidth / 2)}px`;
         DOM.style.top = `${networkPosition.y + node.y - (DOM.offsetHeight / 2)}px`;
 
+        EditNode.appendEdgeSelect(node, DOM);
+
         return new EditNode(DOM);
+    }
+
+    static appendEdgeSelect(node, DOM)
+    {
+        let edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_0';
+        edge.style.left = `5px`;
+        edge.style.top = `-8px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_1';
+        edge.style.right = `5px`;
+        edge.style.top = `-8px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_2';
+        edge.style.right = `-8px`;
+        edge.style.top = `5px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_3';
+        edge.style.right = `-8px`;
+        edge.style.bottom = `4px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_4';
+        edge.style.right = `5px`;
+        edge.style.bottom = `-8px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_5';
+        edge.style.left = `-8px`;
+        edge.style.bottom = `4px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_6';
+        edge.style.left = `5px`;
+        edge.style.bottom = `-8px`;
+        DOM.appendChild(edge);
+
+        edge = document.createElement('span');
+        edge.classList.add('edit-node-edge-select');
+        edge.id = node.id + '_7';
+        edge.style.left = `-8px`;
+        edge.style.top = `6px`;
+        DOM.appendChild(edge);
     }
 
     /**
@@ -55,6 +115,10 @@ export class EditNode extends DOMNode
 
         this.removeDOM = DOM.querySelector('.edit-node-remove');
         this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+        this.edgeSelectDOMs = DOM.querySelectorAll('.edit-node-edge-select');
+        this.edgeSelectDOMs.forEach(edgeSelectDOM => {
+            edgeSelectDOM.addEventListener('click', (e) => this.mouseClickEdgeSelectDOM(e));
+        });
 
 
         if (DOM.classList.contains('link-node-a')) {
@@ -93,10 +157,14 @@ export class EditNode extends DOMNode
      */
     mouseDown(e)
     {
-        this.isDragging = true;
-        this.DOM.style.cursor = "grabbing";
+        if (window.networkEditor.isNodeMode()) {
+            this.isDragging = true;
+            this.DOM.style.cursor = "grabbing";
 
-        window.networkEditor.mouseDownInEditNode(e, this);
+            window.networkEditor.mouseDownInEditNode(e, this);
+        } else {
+            this.DOM.style.cursor = "unset";
+        }
     }
 
     /**
@@ -106,7 +174,12 @@ export class EditNode extends DOMNode
      */
     mouseEnter(e)
     {
-        this.removeDOM.style.display = 'inline';
+        if (window.networkEditor.isNodeMode()) {
+            this.DOM.style.cursor = "grab";
+            this.removeDOM.style.display = 'inline';
+        } else {
+            this.DOM.style.cursor = "unset";
+        }
     }
 
     /**
@@ -116,7 +189,9 @@ export class EditNode extends DOMNode
      */
     mouseLeave(e)
     {
-        this.removeDOM.style.display = 'none';
+        if (window.networkEditor.isNodeMode()) {
+            this.removeDOM.style.display = 'none';
+        }
     }
 
     /**
@@ -127,6 +202,39 @@ export class EditNode extends DOMNode
     mouseClickRemoveDOM(e)
     {
         window.networkEditor.removeNode(this.id);
+    }
+
+    /**
+     * edge-select DOMクリック
+     *
+     * @param e
+     */
+    mouseClickEdgeSelectDOM(e)
+    {
+        // idの最後の_の後ろの数字を取得
+        let edgeIndex = e.target.id.slice(-1);
+        // intに変換
+        edgeIndex = parseInt(edgeIndex);
+
+        // idの最後の_から後ろを除去
+        let nodeId = e.target.id.slice(0, -2);
+
+        e.target.classList.add('selected');
+
+        window.networkEditor.edgeSelect(nodeId, edgeIndex);
+
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    /**
+     * エッジ選択のキャンセル
+     *
+     * @param vertexNo
+     */
+    cancelEdgeSelect(vertexNo)
+    {
+        this.edgeSelectDOMs[vertexNo].classList.remove('selected');
     }
 
     /**

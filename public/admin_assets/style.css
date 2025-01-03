@@ -35,6 +35,10 @@ textarea {
     height: 60px;
 }
 
+#network-editor-control {
+    margin-top: 3rem;
+}
+
 #network-editor-container {
     width: 100%;
     min-height: 500px;
@@ -59,6 +63,7 @@ textarea {
             font-style: normal;
             font-size: 14px;
             cursor: grab;
+            text-align: center;
 
             .edit-node-remove {
                 position: absolute;
@@ -71,10 +76,44 @@ textarea {
                 border: solid 2px #c9302c;
                 border-radius: 6px;
             }
+
+            .edit-node-remove {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                padding: 3px;
+                font-size: 12px;
+                cursor: pointer;
+                display: none;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+            }
+
+            .edit-node-edge-select {
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                font-size: 12px;
+                display: none;
+                border: solid 2px #777;
+                border-radius: 50%;
+            }
         }
 
         .edit-node:active {
             cursor: grabbing;
+        }
+
+        .edit-node.edge-mode, .edit-node:active.edge-mode {
+            cursor: unset;
+
+            .edit-node-edge-select {
+                display: inline-block;
+            }
+
+            .edit-node-edge-select:hover, .edit-node-edge-select.selected {
+                border: solid 2px white;
+            }
         }
     }
 

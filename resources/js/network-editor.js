@@ -8,6 +8,10 @@ import {PointNode} from './hgn/node/point-node.js';
  */
 export class NetworkEditor
 {
+    static MODE_NODE = 1;
+    static MODE_EDGE = 2;
+
+
     /**
      * コンストラクタ
      */
@@ -36,13 +40,19 @@ export class NetworkEditor
         this.points = [];
         this.connections = [];
 
+        // ノードモード用変数
         this.isDragging = false;
         this.offsetX = 0;
         this.offsetY = 0;
-
         this.draggingNode = null;
 
+        // エッジモード用変数
+        this.edgeFromNode = null;
+        this.edgeFromVertexNo = null;
+
         this.center = {x: 0, y: 0};
+
+        this.mode = NetworkEditor.MODE_NODE;
     }
 
     /**
@@ -56,7 +66,7 @@ export class NetworkEditor
         this.center.x = this.editorDOM.offsetWidth / 2;
         this.center.y = this.editorDOM.offsetHeight / 2;
 
-        this.editorDOM.addEventListener('mousedown', (e) => this.startDrag(e));
+        this.editorDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.editorDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
@@ -67,6 +77,49 @@ export class NetworkEditor
         });
 
         this.draw();
+
+        this.nodeModeBtn = document.querySelector('#mode_select_node');
+        this.edgeModeBtn = document.querySelector('#mode_select_edge');
+
+        this.nodeModeBtn.addEventListener('click', () => {
+            this.mode = NetworkEditor.MODE_NODE;
+            this.nodeModeBtn.classList.add('active');
+            this.edgeModeBtn.classList.remove('active');
+
+            Object.values(this.nodes).forEach(node => {
+                node.DOM.classList.remove('edge-mode');
+            });
+
+            this.draw();
+        });
+
+        this.edgeModeBtn.addEventListener('click', () => {
+            this.mode = NetworkEditor.MODE_EDGE;
+            this.edgeModeBtn.classList.add('active');
+            this.nodeModeBtn.classList.remove('active');
+
+            Object.values(this.nodes).forEach(node => {
+                node.DOM.classList.add('edge-mode');
+            });
+
+            this.draw();
+        });
+    }
+
+    mouseDown(e)
+    {
+        if (this.isNodeMode()) {
+            this.startDrag(e);
+        } else if (this.isEdgeMode()) {
+            if (this.edgeFromNode !== null) {
+                this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
+
+                this.edgeFromNode = null;
+                this.edgeFromVertexNo = null;
+
+                this.draw();
+            }
+        }
     }
 
     /**
@@ -88,7 +141,7 @@ export class NetworkEditor
      */
     startDrag(e)
     {
-        if (!this.isDragging) {
+        if (this.isNodeMode() && !this.isDragging) {
             this.isDragging = true;
 
             if (this.draggingNode !== null) {
@@ -109,17 +162,32 @@ export class NetworkEditor
      */
     mouseMove(e)
     {
-        if (this.isDragging) {
-            if (this.draggingNode !== null) {
-                // ノードの移動
-                this.draggingNode.mouseMove(e, this.offsetX, this.offsetY);
-            } else {
-                // スクロール
-                this.containerDOM.scrollLeft = e.clientX - this.offsetX;
-                this.containerDOM.scrollTop = e.clientY - this.offsetY;
-            }
+        if (this.isNodeMode()) {
+            if (this.isDragging) {
+                if (this.draggingNode !== null) {
+                    // ノードの移動
+                    this.draggingNode.mouseMove(e, this.offsetX, this.offsetY);
+                } else {
+                    // スクロール
+                    this.containerDOM.scrollLeft = e.clientX - this.offsetX;
+                    this.containerDOM.scrollTop = e.clientY - this.offsetY;
+                }
 
-            this.draw();
+                this.draw();
+            }
+        } else if (this.isEdgeMode()) {
+            if (this.edgeFromNode !== null) {
+                this.draw();
+                this.ctx.beginPath();
+                let vertex = this.edgeFromNode.vertices[this.edgeFromVertexNo];
+                this.ctx.moveTo(vertex.x, vertex.y);
+
+                let rect = this.containerDOM.getBoundingClientRect();
+                let x = e.clientX - rect.left + this.containerDOM.scrollLeft; // スクロール量を考慮
+                let y = e.clientY - rect.top + this.containerDOM.scrollTop;  // スクロール量を考慮
+                this.ctx.lineTo(x, y);
+                this.ctx.stroke();
+            }
         }
     }
 
@@ -137,7 +205,6 @@ export class NetworkEditor
             this.draggingNode = null;
         }
     }
-
 
     /**
      * 高さの取得
@@ -167,6 +234,21 @@ export class NetworkEditor
             node.delete();
         });
         this.nodes = {};
+    }
+
+    /**
+     * ノードの取得
+     *
+     * @param id
+     * @returns {*|null}
+     */
+    getNodeById(id)
+    {
+        if (!this.nodes.hasOwnProperty(id)) {
+            console.error(`Node ${id} not found.`);
+            return null;
+        }
+        return this.nodes[id];
     }
 
     /**
@@ -200,6 +282,25 @@ export class NetworkEditor
             this.draw();
         }
     }
+
+    appendEdge(node1Id, node2Id, node1VertexNo, node2VertexNo)
+    {
+        if (!this.nodes.hasOwnProperty(node1Id)) {
+            console.error(`Node ${node1Id} not found.`);
+            return;
+        }
+        if (!this.nodes.hasOwnProperty(node2Id)) {
+            console.error(`Node ${node2Id} not found.`);
+            return;
+        }
+
+        let node1 = this.nodes[node1Id];
+        let node2 = this.nodes[node2Id];
+
+        node1.connect(node1VertexNo, node2, node2VertexNo);
+    }
+
+
 
     /**
      * 描画
@@ -236,14 +337,34 @@ export class NetworkEditor
 
     }
 
-    getScrollX()
+    isNodeMode()
     {
-        return 0;
+        return this.mode === NetworkEditor.MODE_NODE;
     }
 
-    getScrollY()
+    isEdgeMode()
     {
-        return 0;
+        return this.mode === NetworkEditor.MODE_EDGE;
+    }
+
+    edgeSelect(nodeId, vertexNo)
+    {
+        let node = this.getNodeById(nodeId);
+        if (node === null) {
+            return;
+        }
+
+        if (this.edgeFromNode === null) {
+            this.edgeFromNode = node;
+            this.edgeFromVertexNo = vertexNo;
+        } else {
+            if (this.edgeFromNode === node) {
+                return;
+            }
+
+            this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
+            this.edgeFromNode = null;
+        }
     }
 }
 
