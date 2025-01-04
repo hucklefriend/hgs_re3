@@ -1,6 +1,8 @@
 import {EditNode} from './hgn/node/edit-node.js';
-import {PointNode} from './hgn/node/point-node.js';
-// import {Param} from './hgn/param.js';
+import {Bg2PointNode, PointNode} from './hgn/node/point-node.js';
+import {Param} from './hgn/param.js';
+import {Bg2OctaNode} from "./hgn/node/octa-node.js";
+import {Util} from "./hgn/util.js";
 // import {Util} from './hgn/util.js';
 
 /**
@@ -69,6 +71,7 @@ export class NetworkEditor
         this.editorDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.editorDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
+        this.editorDOM.addEventListener('click', (e) => this.mouseClick(e));
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // ノードの読み込み
@@ -110,7 +113,12 @@ export class NetworkEditor
     {
         if (this.isNodeMode()) {
             this.startDrag(e);
-        } else if (this.isEdgeMode()) {
+        }
+    }
+
+    mouseClick(e)
+    {
+        if (this.isEdgeMode()) {
             if (this.edgeFromNode !== null) {
                 this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
 
@@ -119,6 +127,32 @@ export class NetworkEditor
 
                 this.draw();
             }
+        }
+    }
+
+    edgeSelect(nodeId, vertexNo)
+    {
+        let node = this.getNodeById(nodeId);
+        if (node === null) {
+            return;
+        }
+
+        if (this.edgeFromNode === null) {
+            this.edgeFromNode = node;
+            this.edgeFromVertexNo = vertexNo;
+        } else {
+            node.cancelEdgeSelect(vertexNo);
+            if (this.edgeFromNode.id === node.id) {
+                // 同じノードを選択した場合はキャンセル
+                return;
+            }
+
+            this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
+
+            this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
+
+            this.edgeFromNode = null;
+            this.edgeFromVertexNo = null;
         }
     }
 
@@ -308,9 +342,29 @@ export class NetworkEditor
     draw()
     {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         Object.values(this.nodes).forEach(node => {
+            this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.ctx.lineWidth = 1; // 線の太さ
+            this.ctx.shadowColor = "lime"; // 影の色
+            this.ctx.shadowBlur = 5; // 影のぼかし効果
+
+            node.connects.forEach((connect, vertexNo) => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
+                    let targetVertex = connect.getVertex();
+
+                    this.ctx.beginPath();
+
+                    this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                    this.ctx.stroke();
+                }
+            });
+
             node.draw(this.ctx, this.center.x, this.center.y);
         });
+
+
     }
 
     /**
@@ -345,26 +399,6 @@ export class NetworkEditor
     isEdgeMode()
     {
         return this.mode === NetworkEditor.MODE_EDGE;
-    }
-
-    edgeSelect(nodeId, vertexNo)
-    {
-        let node = this.getNodeById(nodeId);
-        if (node === null) {
-            return;
-        }
-
-        if (this.edgeFromNode === null) {
-            this.edgeFromNode = node;
-            this.edgeFromVertexNo = vertexNo;
-        } else {
-            if (this.edgeFromNode === node) {
-                return;
-            }
-
-            this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
-            this.edgeFromNode = null;
-        }
     }
 }
 

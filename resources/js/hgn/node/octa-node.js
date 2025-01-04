@@ -347,6 +347,16 @@ export class OctaNode
         return true;
     }
 
+    disconnect(vertexNo)
+    {
+        if (this.connects[vertexNo] !== null) {
+            let targetNode = this.connects[vertexNo].node;
+            let targetNodeVertexNo = this.connects[vertexNo].vertexNo;
+            this.connects[vertexNo] = null;
+            targetNode.connects[targetNodeVertexNo] = null;
+        }
+    }
+
     /**
      * 接続済みの頂点か
      *

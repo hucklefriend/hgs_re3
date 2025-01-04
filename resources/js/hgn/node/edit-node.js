@@ -14,7 +14,6 @@ export class EditNode extends DOMNode
      */
     static create(node, networkPosition)
     {
-        console.log(node);
         let DOM = document.createElement('div');
         DOM.classList.add('edit-node');
         DOM.innerHTML = node.name;
@@ -34,6 +33,12 @@ export class EditNode extends DOMNode
         return new EditNode(DOM);
     }
 
+    /**
+     * エッジ選択DOM追加
+     *
+     * @param node
+     * @param DOM
+     */
     static appendEdgeSelect(node, DOM)
     {
         let edge = document.createElement('span');
@@ -74,15 +79,15 @@ export class EditNode extends DOMNode
         edge = document.createElement('span');
         edge.classList.add('edit-node-edge-select');
         edge.id = node.id + '_5';
-        edge.style.left = `-8px`;
-        edge.style.bottom = `4px`;
+        edge.style.left = `5px`;
+        edge.style.bottom = `-8px`;
         DOM.appendChild(edge);
 
         edge = document.createElement('span');
         edge.classList.add('edit-node-edge-select');
         edge.id = node.id + '_6';
-        edge.style.left = `5px`;
-        edge.style.bottom = `-8px`;
+        edge.style.left = `-8px`;
+        edge.style.bottom = `4px`;
         DOM.appendChild(edge);
 
         edge = document.createElement('span');
@@ -212,16 +217,19 @@ export class EditNode extends DOMNode
     mouseClickEdgeSelectDOM(e)
     {
         // idの最後の_の後ろの数字を取得
-        let edgeIndex = e.target.id.slice(-1);
+        let vertexNo = e.target.id.slice(-1);
         // intに変換
-        edgeIndex = parseInt(edgeIndex);
+        vertexNo = parseInt(vertexNo);
 
         // idの最後の_から後ろを除去
         let nodeId = e.target.id.slice(0, -2);
 
         e.target.classList.add('selected');
 
-        window.networkEditor.edgeSelect(nodeId, edgeIndex);
+        window.networkEditor.edgeSelect(nodeId, vertexNo);
+
+        // 他と接続している場合は接続を解除
+        this.disconnect(vertexNo);
 
         e.preventDefault();
         e.stopPropagation();
