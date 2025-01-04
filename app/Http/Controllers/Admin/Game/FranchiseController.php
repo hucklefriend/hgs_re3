@@ -328,32 +328,66 @@ class FranchiseController extends AbstractAdminController
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
     }
 
+    /**
+     * メインネットワーク用のネットワーク編集
+     *
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View
+     */
     public function editMainNetwork(GameFranchise $franchise): Application|Factory|View
     {
+        if ($franchise->mainNetwork !== null) {
+            $data = json_decode($franchise->mainNetwork->json);
+        } else {
+            $data = [
+                'parent' => [
+                    'id' => 'f_' . $franchise->id,
+                    'name' => $franchise->node_name . '<br>フランチャイズ',
+                    'x' => 0,
+                    'y' => 0,
+                    'con' => [],
+                ]
+            ];
+        }
+
         $series = [];
         $titles = [];
         foreach ($franchise->series as $s) {
-            $series[$s->id] = [
+            $key = 's_' . $s->id;
+            $series[$key] = [
                 'name' => $s->name,
                 'node_name' => $s->name . '<br>シリーズ'
             ];
+            if (isset($data['nodes'][$key])) {
+                $data['nodes'][$key]['name'] = $s->name . '<br>シリーズ';
+            }
 
             foreach ($s->titles as $t) {
-                $titles[$t->id] = [
+                $key = 't_' . $t->id;
+                $titles[$key] = [
                     'name' => $t->name,
                     'node_name' => $t->node_name
                 ];
+                if (isset($data['nodes'][$key])) {
+                    $data['nodes'][$key]['name'] = $t->node_name;
+                }
             }
         }
 
         foreach ($franchise->titles as $t) {
-            $titles[$t->id] = [
+            $key = 't_' . $t->id;
+            $titles[$key] = [
                 'name' => $t->name,
                 'node_name' => $t->node_name
             ];
+
+            if (isset($data['nodes'][$key])) {
+                $data['nodes'][$key]['name'] = $t->node_name;
+            }
         }
 
         return view('admin.game.franchise.edit_main_network', [
+            'data' => $data,
             'franchise' => $franchise,
             'series' => $series,
             'titles' => $titles,

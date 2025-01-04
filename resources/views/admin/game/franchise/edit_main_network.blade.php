@@ -41,23 +41,8 @@
                         </div>
                     </div>
                 </div>
+
             </fieldset>
-
-            <fieldset class="mt-3">
-                <legend class="col-form-label col-sm-2 pt-0">エッジ追加</legend>
-                <div class="form-group row">
-                    <div class="col-1">
-                        <label for="edge_from" class="col-form-label">From</label>
-                    </div>
-                    <div class="col-auto">
-                        <select id="edge_from" class="form-control default-select2">
-                            <option value="franchise_1">バイオハザード<br>フランチャイズ</option>
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
-
-
 
             <div id="network-editor-control">
                 <div class="btn-group">
@@ -69,6 +54,12 @@
                 <div id="network-editor"></div>
                 <canvas id="network-editor-canvas"></canvas>
             </div>
+
+            <form id="save_form" action="{{ route('Admin.Game.Franchise.SaveMainNetwork', $franchise) }}" method="POST" class="mt-3">
+                @csrf
+                <textarea class="form-control w-100" id="json" readonly></textarea>
+                <button type="submit" class="btn btn-primary mt-3">Save</button>
+            </form>
         </div>
     </div>
 @endsection
@@ -78,7 +69,7 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            window.networkEditor.start({'nodes': [{'id': 'franchise_1', 'name': 'バイオハザード<br>フランチャイズ', 'x': 0, 'y': 0}]});
+            window.networkEditor.start(@json($data));
         });
 
         document.getElementById('add_series_node').addEventListener('click', function() {

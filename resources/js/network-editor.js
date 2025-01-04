@@ -38,6 +38,7 @@ export class NetworkEditor
         }
 
         // ノード
+        this.parent = null;
         this.nodes = {};
         this.points = [];
         this.connections = [];
@@ -60,7 +61,7 @@ export class NetworkEditor
     /**
      * エディタ起動
      */
-    start(nodes)
+    start(data)
     {
         // containerDOMのスクロール位置をeditorDOMの中央に
         this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
@@ -75,9 +76,14 @@ export class NetworkEditor
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // ノードの読み込み
-        nodes.nodes.forEach(node => {
-            this.nodes[node.id] = EditNode.create(node, this.center);
-        });
+        this.parent = EditNode.create(data.parent, this.center);
+        if (data.nodes !== undefined) {
+            Object.keys(data.nodes).forEach(id => {
+                let node = data.nodes[id];
+                node.id = id;
+                this.nodes[node.id] = EditNode.create(node, this.center);
+            });
+        }
 
         this.draw();
 
@@ -107,6 +113,8 @@ export class NetworkEditor
 
             this.draw();
         });
+
+        this.setJson();
     }
 
     mouseDown(e)
@@ -153,6 +161,8 @@ export class NetworkEditor
 
             this.edgeFromNode = null;
             this.edgeFromVertexNo = null;
+
+            this.setJson();
         }
     }
 
@@ -237,6 +247,8 @@ export class NetworkEditor
         if (this.draggingNode !== null) {
             this.draggingNode.mouseUp(e);
             this.draggingNode = null;
+
+            this.setJson();
         }
     }
 
@@ -293,11 +305,18 @@ export class NetworkEditor
      */
     appendNode(id, name)
     {
+        if (this.nodes.hasOwnProperty(id)) {
+            alert("すでに登録されています。");
+            return;
+        }
+
         let x = this.containerDOM.scrollLeft - this.center.x + 60;
         let y = this.containerDOM.scrollTop - this.center.y + 60;
         this.nodes[id] = EditNode.create({id: id, name: name, x: x, y: y}, this.center);
         this.editorDOM.appendChild(this.nodes[id].DOM);
         this.draw();
+
+        this.setJson();
     }
 
     /**
@@ -314,27 +333,10 @@ export class NetworkEditor
             delete this.nodes[id];
 
             this.draw();
+
+            this.setJson();
         }
     }
-
-    appendEdge(node1Id, node2Id, node1VertexNo, node2VertexNo)
-    {
-        if (!this.nodes.hasOwnProperty(node1Id)) {
-            console.error(`Node ${node1Id} not found.`);
-            return;
-        }
-        if (!this.nodes.hasOwnProperty(node2Id)) {
-            console.error(`Node ${node2Id} not found.`);
-            return;
-        }
-
-        let node1 = this.nodes[node1Id];
-        let node2 = this.nodes[node2Id];
-
-        node1.connect(node1VertexNo, node2, node2VertexNo);
-    }
-
-
 
     /**
      * 描画
@@ -343,28 +345,33 @@ export class NetworkEditor
     {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.drawNode(this.parent);
+
         Object.values(this.nodes).forEach(node => {
-            this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.ctx.lineWidth = 1; // 線の太さ
-            this.ctx.shadowColor = "lime"; // 影の色
-            this.ctx.shadowBlur = 5; // 影のぼかし効果
+            this.drawNode(node);
+        });
+    }
 
-            node.connects.forEach((connect, vertexNo) => {
-                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
-                    let targetVertex = connect.getVertex();
+    drawNode(node)
+    {
+        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 5; // 影のぼかし効果
 
-                    this.ctx.beginPath();
+        node.connects.forEach((connect, vertexNo) => {
+            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
+                let targetVertex = connect.getVertex();
 
-                    this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
-                    this.ctx.stroke();
-                }
-            });
+                this.ctx.beginPath();
 
-            node.draw(this.ctx, this.center.x, this.center.y);
+                this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                this.ctx.stroke();
+            }
         });
 
-
+        node.draw(this.ctx, this.center.x, this.center.y);
     }
 
     /**
@@ -399,6 +406,24 @@ export class NetworkEditor
     isEdgeMode()
     {
         return this.mode === NetworkEditor.MODE_EDGE;
+    }
+
+    setJson()
+    {
+        document.querySelector('#json').value = JSON.stringify(this.toJson());
+    }
+
+    toJson()
+    {
+        let nodes = {};
+        Object.values(this.nodes).forEach(node => {
+            nodes[node.id] = node.toJson(this.parent);
+        });
+
+        return {
+            parent: this.parent.toJson(null),
+            nodes: nodes,
+        };
     }
 }
 

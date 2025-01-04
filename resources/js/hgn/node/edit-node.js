@@ -102,14 +102,10 @@ export class EditNode extends DOMNode
      * コンストラクタ
      *
      * @param DOM
-     * @param posX
-     * @param posY
      */
-    constructor(DOM, posX, posY)
+    constructor(DOM)
     {
         super(DOM, 13);
-
-        this.positionInNetwork = {x: posX, y: posY};
 
         DOM.addEventListener('mousedown', (e) => {return this.mouseDown(e)});
         DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
@@ -124,7 +120,6 @@ export class EditNode extends DOMNode
         this.edgeSelectDOMs.forEach(edgeSelectDOM => {
             edgeSelectDOM.addEventListener('click', (e) => this.mouseClickEdgeSelectDOM(e));
         });
-
 
         if (DOM.classList.contains('link-node-a')) {
             this.ctxParams = {
@@ -268,6 +263,26 @@ export class EditNode extends DOMNode
     }
 
     /**
+     * 中心X取得
+     *
+     * @returns {number}
+     */
+    getCenterX()
+    {
+        return parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
+    }
+
+    /**
+     * 中心Y取得
+     *
+     * @returns {number}
+     */
+    getCenterY()
+    {
+        return parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
+    }
+
+    /**
      * マウス移動
      *
      * @param e
@@ -290,6 +305,9 @@ export class EditNode extends DOMNode
     mouseUp(e)
     {
         this.DOM.style.cursor = "grab";
+
+        this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
+        this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
     }
 
     /**
@@ -312,5 +330,28 @@ export class EditNode extends DOMNode
         super.setShapePath(ctx);
         ctx.stroke();
         ctx.fill();
+    }
+
+    toJson(parent)
+    {
+        let connects = [];
+        for (let i = 0; i < 8; i++) {
+            if (this.connects[i] !== null) {
+                if (this.connects[i].node instanceof EditNode) {
+                    connects.push({
+                        vn: i,
+                        type: this.connects[i].type,
+                        ti: this.connects[i].node.id,
+                        tvn: this.connects[i].vertexNo,
+                    });
+                }
+            }
+        }
+
+        return {
+            x: parent === null ? 0 : this.getCenterX() - parent.getCenterX(),
+            y: parent === null ? 0 : this.getCenterY() - parent.getCenterY(),
+            con: connects,
+        };
     }
 }

@@ -12,11 +12,11 @@ class GamePlatformSynonym extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
-     * メーカーを取得
+     * プラットフォームを取得
      *
      * @return BelongsTo
      */
-    public function maker(): BelongsTo
+    public function platform(): BelongsTo
     {
         return $this->belongsTo(GamePlatform::class, 'game_platform_id');
     }
