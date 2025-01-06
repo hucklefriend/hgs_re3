@@ -10,9 +10,10 @@ export class EditNode extends DOMNode
      *
      * @param node
      * @param networkPosition
+     * @param isRemovable
      * @returns {EditNode}
      */
-    static create(node, networkPosition)
+    static create(node, networkPosition, isRemovable = true)
     {
         let DOM = document.createElement('div');
         DOM.classList.add('edit-node');
@@ -20,10 +21,12 @@ export class EditNode extends DOMNode
         DOM.id = node.id;
         window.networkEditor.editorDOM.appendChild(DOM);
 
-        let remove = document.createElement('span');
-        remove.classList.add('edit-node-remove');
-        remove.innerHTML = '×';
-        DOM.appendChild(remove);
+        if (isRemovable) {
+            let remove = document.createElement('span');
+            remove.classList.add('edit-node-remove');
+            remove.innerHTML = '×';
+            DOM.appendChild(remove);
+        }
 
         DOM.style.left = `${networkPosition.x + node.x - (DOM.offsetWidth / 2)}px`;
         DOM.style.top = `${networkPosition.y + node.y - (DOM.offsetHeight / 2)}px`;
@@ -115,7 +118,9 @@ export class EditNode extends DOMNode
         this.id = DOM.id;
 
         this.removeDOM = DOM.querySelector('.edit-node-remove');
-        this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+        if (this.removeDOM !== null) {
+            this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+        }
         this.edgeSelectDOMs = DOM.querySelectorAll('.edit-node-edge-select');
         this.edgeSelectDOMs.forEach(edgeSelectDOM => {
             edgeSelectDOM.addEventListener('click', (e) => this.mouseClickEdgeSelectDOM(e));
@@ -176,7 +181,9 @@ export class EditNode extends DOMNode
     {
         if (window.networkEditor.isNodeMode()) {
             this.DOM.style.cursor = "grab";
-            this.removeDOM.style.display = 'inline';
+            if (this.removeDOM !== null) {
+                this.removeDOM.style.display = 'inline';
+            }
         } else {
             this.DOM.style.cursor = "unset";
         }
@@ -190,7 +197,9 @@ export class EditNode extends DOMNode
     mouseLeave(e)
     {
         if (window.networkEditor.isNodeMode()) {
-            this.removeDOM.style.display = 'none';
+            if (this.removeDOM !== null) {
+                this.removeDOM.style.display = 'none';
+            }
         }
     }
 

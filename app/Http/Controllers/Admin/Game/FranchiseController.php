@@ -337,7 +337,8 @@ class FranchiseController extends AbstractAdminController
     public function editMainNetwork(GameFranchise $franchise): Application|Factory|View
     {
         if ($franchise->mainNetwork !== null) {
-            $data = json_decode($franchise->mainNetwork->json);
+            $data = json_decode($franchise->mainNetwork->json, true);
+            $data['parent']['name'] = $franchise->node_name . '<br>フランチャイズ';
         } else {
             $data = [
                 'parent' => [
@@ -392,6 +393,28 @@ class FranchiseController extends AbstractAdminController
             'series' => $series,
             'titles' => $titles,
         ]);
+    }
+
+    /**
+     * メインネットワーク用フランチャイズネットワークの保存
+     *
+     * @param Request $request
+     * @param GameFranchise $franchise
+     * @return RedirectResponse
+     */
+    public function saveMainNetwork(Request $request, GameFranchise $franchise): RedirectResponse
+    {
+        if ($franchise->mainNetwork !== null) {
+            $network = $franchise->mainNetwork;
+        } else {
+            $network = new \App\Models\GameMainNetworkFranchise();
+            $network->game_franchise_id = $franchise->id;
+        }
+
+        $network->json = $request->post('json');
+        $network->save();
+
+        return redirect()->route('Admin.Game.Franchise.EditMainNetwork', $franchise);
     }
 
     public function editNetwork()

@@ -13,7 +13,6 @@ export class NetworkEditor
     static MODE_NODE = 1;
     static MODE_EDGE = 2;
 
-
     /**
      * コンストラクタ
      */
@@ -76,7 +75,7 @@ export class NetworkEditor
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // ノードの読み込み
-        this.parent = EditNode.create(data.parent, this.center);
+        this.parent = EditNode.create(data.parent, this.center, false);
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
                 let node = data.nodes[id];
@@ -95,6 +94,7 @@ export class NetworkEditor
             this.nodeModeBtn.classList.add('active');
             this.edgeModeBtn.classList.remove('active');
 
+            this.parent.DOM.classList.remove('edge-mode');
             Object.values(this.nodes).forEach(node => {
                 node.DOM.classList.remove('edge-mode');
             });
@@ -107,6 +107,7 @@ export class NetworkEditor
             this.edgeModeBtn.classList.add('active');
             this.nodeModeBtn.classList.remove('active');
 
+            this.parent.DOM.classList.add('edge-mode');
             Object.values(this.nodes).forEach(node => {
                 node.DOM.classList.add('edge-mode');
             });
@@ -290,10 +291,15 @@ export class NetworkEditor
      */
     getNodeById(id)
     {
+        if (this.parent.id === id) {
+            return this.parent;
+        }
+
         if (!this.nodes.hasOwnProperty(id)) {
             console.error(`Node ${id} not found.`);
             return null;
         }
+
         return this.nodes[id];
     }
 

@@ -57,7 +57,7 @@
 
             <form id="save_form" action="{{ route('Admin.Game.Franchise.SaveMainNetwork', $franchise) }}" method="POST" class="mt-3">
                 @csrf
-                <textarea class="form-control w-100" id="json" readonly></textarea>
+                <textarea class="form-control w-100" id="json" name="json" readonly></textarea>
                 <button type="submit" class="btn btn-primary mt-3">Save</button>
             </form>
         </div>
