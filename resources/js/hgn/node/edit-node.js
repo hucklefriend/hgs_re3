@@ -357,7 +357,7 @@ export class EditNode extends DOMNode
     {
         let arr = [];
         this.connects.forEach((con, vertexNo) => {
-            if (con !== null && con.type === Param.CONNECT_TYPE_NODE) {
+            if (con !== null && con.type === Param.CONNECT_TYPE_OUTGOING) {
                 arr.push({
                     from: this.id,
                     from_vn: vertexNo,

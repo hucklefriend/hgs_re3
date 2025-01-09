@@ -84,6 +84,16 @@ export class NetworkEditor
         }
 
         // エッジの読み込み
+        if (data.connects !== undefined) {
+            data.connects.forEach(connect => {
+                let fromNode = this.getNodeById(connect.from);
+                let toNode = this.getNodeById(connect.to);
+
+                if (fromNode !== null && toNode !== null) {
+                    fromNode.connect(connect.from_vn, toNode, connect.to_vn);
+                }
+            });
+        }
 
         this.draw();
 
@@ -135,6 +145,8 @@ export class NetworkEditor
                 this.edgeFromNode = null;
                 this.edgeFromVertexNo = null;
 
+                this.setJson();
+
                 this.draw();
             }
         }
@@ -142,7 +154,6 @@ export class NetworkEditor
 
     edgeSelect(nodeId, vertexNo)
     {
-        console.log(this.parent.connects);
         let node = this.getNodeById(nodeId);
         if (node === null) {
             console.error(nodeId + " Node not found.");
@@ -431,12 +442,12 @@ export class NetworkEditor
     toJson()
     {
         let nodes = {};
+        let connects = [];
+        connects.push(...this.parent.getConnectJsonArr());
         Object.values(this.nodes).forEach(node => {
             nodes[node.id] = node.toJson(this.parent);
+            connects.push(...node.getConnectJsonArr());
         });
-
-        let connects = [];
-        connects.concat(this.parent.getConnectJsonArr());
 
         return {
             parent: this.parent.toJson(null),
