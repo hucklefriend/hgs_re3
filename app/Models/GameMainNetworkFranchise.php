@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GameMainNetworkFranchise extends Model
+class GameMainNetworkFranchise extends \Eloquent
 {
     public $incrementing = false;
-    protected $primaryKey = ['game_franchise_id'];
+    protected $primaryKey = 'game_franchise_id';
     protected $fillable = ['game_franchise_id', 'json'];
     protected $hidden = ['created_at', 'updated_at'];
 

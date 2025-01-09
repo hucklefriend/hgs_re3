@@ -18,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FranchiseController extends AbstractAdminController
 {
@@ -405,7 +406,7 @@ class FranchiseController extends AbstractAdminController
     public function saveMainNetwork(Request $request, GameFranchise $franchise): RedirectResponse
     {
         if ($franchise->mainNetwork !== null) {
-            $network = $franchise->mainNetwork;
+            $network = \App\Models\GameMainNetworkFranchise::find($franchise->id);
         } else {
             $network = new \App\Models\GameMainNetworkFranchise();
             $network->game_franchise_id = $franchise->id;

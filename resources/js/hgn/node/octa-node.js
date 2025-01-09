@@ -302,9 +302,11 @@ export class OctaNode
             if (targetNodeVertexNo === null) {
                 targetNodeVertexNo = targetNode.getNearVertexNo(this.vertices[vertexNo]);
             }
+
             return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
         }
 
+        console.warn('Invalid target node');
         return false;
     }
 
@@ -338,6 +340,7 @@ export class OctaNode
     connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo)
     {
         if (this.isConnectedVertex(vertexNo) || targetNode.isConnectedVertex(targetNodeVertexNo)) {
+            console.warn('Already connected');
             return false;
         }
 

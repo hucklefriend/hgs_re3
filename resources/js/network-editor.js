@@ -3,7 +3,6 @@ import {Bg2PointNode, PointNode} from './hgn/node/point-node.js';
 import {Param} from './hgn/param.js';
 import {Bg2OctaNode} from "./hgn/node/octa-node.js";
 import {Util} from "./hgn/util.js";
-// import {Util} from './hgn/util.js';
 
 /**
  * ネットワークエディタ
@@ -84,6 +83,8 @@ export class NetworkEditor
             });
         }
 
+        // エッジの読み込み
+
         this.draw();
 
         this.nodeModeBtn = document.querySelector('#mode_select_node');
@@ -141,20 +142,26 @@ export class NetworkEditor
 
     edgeSelect(nodeId, vertexNo)
     {
+        console.log(this.parent.connects);
         let node = this.getNodeById(nodeId);
         if (node === null) {
+            console.error(nodeId + " Node not found.");
             return;
         }
 
         if (this.edgeFromNode === null) {
             this.edgeFromNode = node;
             this.edgeFromVertexNo = vertexNo;
+
+            this.edgeFromNode.disconnect(vertexNo);
         } else {
             node.cancelEdgeSelect(vertexNo);
             if (this.edgeFromNode.id === node.id) {
                 // 同じノードを選択した場合はキャンセル
                 return;
             }
+
+            node.disconnect(vertexNo);
 
             this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
 
@@ -164,6 +171,8 @@ export class NetworkEditor
             this.edgeFromVertexNo = null;
 
             this.setJson();
+
+            this.draw();
         }
     }
 
@@ -426,9 +435,13 @@ export class NetworkEditor
             nodes[node.id] = node.toJson(this.parent);
         });
 
+        let connects = [];
+        connects.concat(this.parent.getConnectJsonArr());
+
         return {
             parent: this.parent.toJson(null),
             nodes: nodes,
+            connects: connects,
         };
     }
 }

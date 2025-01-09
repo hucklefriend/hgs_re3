@@ -232,9 +232,6 @@ export class EditNode extends DOMNode
 
         window.networkEditor.edgeSelect(nodeId, vertexNo);
 
-        // 他と接続している場合は接続を解除
-        this.disconnect(vertexNo);
-
         e.preventDefault();
         e.stopPropagation();
     }
@@ -341,26 +338,35 @@ export class EditNode extends DOMNode
         ctx.fill();
     }
 
+    /**
+     * JSON化
+     *
+     * @param parent
+     * @returns {{x: (number|number), y: (number|number)}}
+     */
     toJson(parent)
     {
-        let connects = [];
-        for (let i = 0; i < 8; i++) {
-            if (this.connects[i] !== null) {
-                if (this.connects[i].node instanceof EditNode) {
-                    connects.push({
-                        vn: i,
-                        type: this.connects[i].type,
-                        ti: this.connects[i].node.id,
-                        tvn: this.connects[i].vertexNo,
-                    });
-                }
-            }
-        }
-
         return {
+            id: this.id,
             x: parent === null ? 0 : this.getCenterX() - parent.getCenterX(),
             y: parent === null ? 0 : this.getCenterY() - parent.getCenterY(),
-            con: connects,
         };
+    }
+
+    getConnectJsonArr()
+    {
+        let arr = [];
+        this.connects.forEach((con, vertexNo) => {
+            if (con !== null && con.type === Param.CONNECT_TYPE_NODE) {
+                arr.push({
+                    from: this.id,
+                    from_vn: vertexNo,
+                    to: con.node.id,
+                    to_vn: con.vertexNo,
+                });
+            }
+        });
+
+        return arr;
     }
 }
