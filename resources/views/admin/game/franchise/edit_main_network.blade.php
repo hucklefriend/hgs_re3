@@ -40,6 +40,14 @@
                             <button id="add_title_node" class="btn btn-white">+</button>
                         </div>
                     </div>
+                    <div class="row mt-3">
+                        <div class="col-1">
+                            <label class="form-label mt-2">Point</label>
+                        </div>
+                        <div class="col-auto">
+                            <button id="add_point_node" class="btn btn-white">+</button>
+                        </div>
+                    </div>
                 </div>
 
             </fieldset>
@@ -85,6 +93,10 @@
             const selectedTitleNode = titleNodes.options[titleNodes.selectedIndex];
             const titleNodeName = selectedTitleNode.getAttribute('data-name');
             window.networkEditor.appendNode(selectedTitleNode.value, titleNodeName);
+        });
+
+        document.getElementById('add_point_node').addEventListener('click', function() {
+            window.networkEditor.appendPointNode();
         });
     </script>
 @endsection

@@ -1,6 +1,7 @@
 import {Param} from '../param.js';
 import {Util} from '../util.js';
 import {DOMNode} from './octa-node.js';
+import {PointNode} from './point-node.js';
 
 
 export class EditNode extends DOMNode
@@ -370,3 +371,217 @@ export class EditNode extends DOMNode
         return arr;
     }
 }
+
+export class EditPointNode extends PointNode
+{
+    /**
+     * コンストラクタ
+     *
+     * @param id
+     * @param x
+     * @param y
+     */
+    constructor(id, x, y)
+    {
+        super(x, y, 6);
+
+        this.id = id;
+
+        // 移動用DOM
+        this.DOM = document.createElement('div');
+        this.DOM.classList.add('edit-pt-node');
+        window.networkEditor.editorDOM.appendChild(this.DOM);
+
+        this.DOM.style.left = `${x - (this.DOM.offsetWidth / 2)}px`;
+        this.DOM.style.top = `${y - (this.DOM.offsetHeight / 2)}px`;
+
+        this.DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+        this.DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
+        this.DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+
+        // 削除用DOM
+        this.removeDOM = document.createElement('span');
+        this.removeDOM.classList.add('edit-pt-node-remove');
+        this.removeDOM.innerHTML = '×';
+        this.DOM.appendChild(this.removeDOM);
+        this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+
+
+        this.setForceDraw();
+    }
+
+    /**
+     * 削除
+     */
+    delete()
+    {
+        super.delete();
+    }
+
+    /**
+     * オフセットX取得
+     *
+     * @param e
+     * @returns {number}
+     */
+    getOffsetX(e)
+    {
+        return e.clientX - this.DOM.offsetLeft;
+    }
+
+    /**
+     * オフセットY取得
+     *
+     * @param e
+     * @returns {number}
+     */
+    getOffsetY(e)
+    {
+        return e.clientY - this.DOM.offsetTop;
+    }
+
+    /**
+     * リロード
+     */
+    reload()
+    {
+        this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
+        this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
+    }
+
+    /**
+     * マウスダウン
+     *
+     * @param e
+     */
+    mouseDown(e)
+    {
+        if (window.networkEditor.isNodeMode()) {
+            this.isDragging = true;
+            this.DOM.style.cursor = "grabbing";
+
+            window.networkEditor.mouseDownInEditNode(e, this);
+        } else {
+            this.DOM.style.cursor = "unset";
+        }
+    }
+
+    /**
+     * マウスエンター
+     *
+     * @param e
+     */
+    mouseEnter(e)
+    {
+        if (window.networkEditor.isNodeMode()) {
+            this.DOM.style.cursor = "grab";
+            if (this.removeDOM !== null) {
+                this.removeDOM.style.display = 'inline';
+            }
+        } else {
+            this.DOM.style.cursor = "unset";
+        }
+    }
+
+    /**
+     * マウス移動
+     *
+     * @param e
+     * @param offsetX
+     * @param offsetY
+     */
+    mouseMove(e, offsetX, offsetY)
+    {
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+
+        this.DOM.style.left = `${x}px`;
+        this.DOM.style.top = `${y}px`;
+
+        this.reload();
+    }
+
+    /**
+     * マウスリーブ
+     *
+     * @param e
+     */
+    mouseLeave(e)
+    {
+        if (window.networkEditor.isNodeMode()) {
+            if (this.removeDOM !== null) {
+                this.removeDOM.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * マウスアップ
+     *
+     * @param e
+     */
+    mouseUp(e)
+    {
+        this.DOM.style.cursor = "grab";
+        this.reload();
+    }
+
+    /**
+     * removeDOMクリック
+     *
+     * @param e
+     */
+    mouseClickRemoveDOM(e)
+    {
+        window.networkEditor.removePointNode(this.id);
+    }
+
+    /**
+     * edge-select DOMクリック
+     *
+     * @param e
+     */
+    mouseClickEdgeSelectDOM(e)
+    {
+        // idの最後の_の後ろの数字を取得
+        let vertexNo = e.target.id.slice(-1);
+        // intに変換
+        vertexNo = parseInt(vertexNo);
+
+        // idの最後の_から後ろを除去
+        let nodeId = e.target.id.slice(0, -2);
+
+        e.target.classList.add('selected');
+
+        window.networkEditor.edgeSelect(nodeId, vertexNo);
+
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    /**
+     * エッジ選択のキャンセル
+     *
+     * @param vertexNo
+     */
+    cancelEdgeSelect(vertexNo)
+    {
+        this.edgeSelectDOMs[vertexNo].classList.remove('selected');
+    }
+
+    /**
+     * JSON化
+     *
+     * @param parent
+     * @returns {{x: (number|number), y: (number|number)}}
+     */
+    toJson(parent)
+    {
+        return {
+            id: this.id,
+            x: parent === null ? 0 : this.x - parent.getCenterX(),
+            y: parent === null ? 0 : this.y - parent.getCenterY(),
+        };
+    }
+}
+

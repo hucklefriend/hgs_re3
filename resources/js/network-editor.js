@@ -1,7 +1,5 @@
-import {EditNode} from './hgn/node/edit-node.js';
-import {Bg2PointNode, PointNode} from './hgn/node/point-node.js';
+import {EditNode, EditPointNode} from './hgn/node/edit-node.js';
 import {Param} from './hgn/param.js';
-import {Bg2OctaNode} from "./hgn/node/octa-node.js";
 import {Util} from "./hgn/util.js";
 
 /**
@@ -25,6 +23,7 @@ export class NetworkEditor
         this.ctx = null;
         if (this.canvas.getContext) {
             this.ctx = this.canvas.getContext('2d');
+            this.ctx.save();
         }
         this.canvas.width = this.editorDOM.offsetWidth;
         this.canvas.height = this.editorDOM.offsetHeight;
@@ -39,6 +38,7 @@ export class NetworkEditor
         this.parent = null;
         this.nodes = {};
         this.points = [];
+        this.pointsIndex = 0;
         this.connections = [];
 
         // ノードモード用変数
@@ -346,6 +346,24 @@ export class NetworkEditor
     }
 
     /**
+     * ポイントノードの追加
+     */
+    appendPointNode()
+    {
+        let x = this.center.x - (this.containerDOM.offsetWidth / 2) + 60;
+        let y = this.center.y - (this.containerDOM.offsetHeight / 2) + 60;
+
+        let id = "pt" + this.pointsIndex;
+        this.pointsIndex++;
+
+        this.points[id] = new EditPointNode(id, x, y);
+
+        this.draw();
+
+        this.setJson();
+    }
+
+    /**
      * ノードの削除
      *
      * @param id
@@ -365,16 +383,44 @@ export class NetworkEditor
     }
 
     /**
+     * ポイントノードの削除
+     *
+     * @param id
+     */
+    removePointNode(id)
+    {
+        if (this.points.hasOwnProperty(id)) {
+            this.editorDOM.removeChild(this.points[id].DOM);
+
+            this.points[id].delete();
+            delete this.points[id];
+
+            this.draw();
+
+            this.setJson();
+        }
+    }
+
+    /**
      * 描画
      */
     draw()
     {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.restore();
 
         this.drawNode(this.parent);
 
         Object.values(this.nodes).forEach(node => {
             this.drawNode(node);
+        });
+
+        this.ctx.restore();
+
+        this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+
+        Object.values(this.points).forEach(point => {
+            point.draw(this.ctx, 0, 0);
         });
     }
 
@@ -439,6 +485,11 @@ export class NetworkEditor
         document.querySelector('#json').value = JSON.stringify(this.toJson());
     }
 
+    /**
+     * JSON化
+     *
+     * @returns {{parent: *, nodes: {}, connects: *[]}}
+     */
     toJson()
     {
         let nodes = {};
@@ -449,10 +500,17 @@ export class NetworkEditor
             connects.push(...node.getConnectJsonArr());
         });
 
+        let points = [];
+        Object.values(this.points).forEach(point => {
+            points.push(point.toJson(this.parent));
+        });
+
         return {
             parent: this.parent.toJson(null),
             nodes: nodes,
             connects: connects,
+            ptIdx: this.pointsIndex,
+            points: points,
         };
     }
 }
