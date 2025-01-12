@@ -350,14 +350,62 @@ export class OctaNode
         return true;
     }
 
+    /**
+     * 接続解除
+     *
+     * @param vertexNo
+     */
     disconnect(vertexNo)
     {
         if (this.connects[vertexNo] !== null) {
             let targetNode = this.connects[vertexNo].node;
             let targetNodeVertexNo = this.connects[vertexNo].vertexNo;
             this.connects[vertexNo] = null;
-            targetNode.connects[targetNodeVertexNo] = null;
+            targetNode.disconnectByNode(this, targetNodeVertexNo);
         }
+    }
+
+    /**
+     * ノードを指定して接続解除
+     *
+     * @param node
+     * @param vertexNo
+     */
+    disconnectByNode(node, vertexNo)
+    {
+        this.connects.forEach((connect, idx) => {
+            if (node instanceof OctaNode) {
+                if (connect !== null && connect.node === node && connect.vertexNo === vertexNo) {
+                    this.disconnect(idx);
+                }
+            } else if (node instanceof PointNode) {
+                if (connect !== null && connect.node === node) {
+                    this.disconnect(idx);
+                }
+            }
+        });
+    }
+
+    /**
+     * 接続済みか
+     *
+     * @returns {boolean}
+     */
+    isConnected(vertexNo, targetNode, targetVertexNo)
+    {
+        let connect = this.connects[vertexNo];
+        console.log(vertexNo, this.connects);
+        console.log(targetNode, targetVertexNo);
+
+        if (connect !== null) {
+            if (targetNode instanceof PointNode) {
+                return connect.node === targetNode;
+            } else if (targetNode instanceof OctaNode) {
+                return connect.node === targetNode && connect.vertexNo === targetVertexNo;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -70,7 +70,7 @@ export class NetworkEditor
         this.editorDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.editorDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
-        this.editorDOM.addEventListener('click', (e) => this.mouseClick(e));
+        this.editorDOM.addEventListener('click', (e) => this.click(e));
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // ノードの読み込み
@@ -83,6 +83,16 @@ export class NetworkEditor
             });
         }
 
+        // ポイントの読み取り
+        if (data.hasOwnProperty('ptIdx')) {
+            this.pointsIndex = data.ptIdx;
+        }
+        if (data.hasOwnProperty('points')) {
+            data.points.forEach(point => {
+                this.points[point.id] = new EditPointNode(point.id, point.x + this.center.x, point.y + this.center.y);
+            });
+        }
+
         // エッジの読み込み
         if (data.connects !== undefined) {
             data.connects.forEach(connect => {
@@ -90,7 +100,11 @@ export class NetworkEditor
                 let toNode = this.getNodeById(connect.to);
 
                 if (fromNode !== null && toNode !== null) {
-                    fromNode.connect(connect.from_vn, toNode, connect.to_vn);
+                    if (fromNode instanceof EditNode) {
+                        fromNode.connect(connect.from_vn ?? null, toNode, connect.to_vn ?? null);
+                    } else if (fromNode instanceof EditPointNode) {
+                        fromNode.connect(toNode, connect.to_vn ?? null);
+                    }
                 }
             });
         }
@@ -101,34 +115,51 @@ export class NetworkEditor
         this.edgeModeBtn = document.querySelector('#mode_select_edge');
 
         this.nodeModeBtn.addEventListener('click', () => {
+            if (this.mode === NetworkEditor.MODE_NODE) {
+                return;
+            }
             this.mode = NetworkEditor.MODE_NODE;
             this.nodeModeBtn.classList.add('active');
             this.edgeModeBtn.classList.remove('active');
 
-            this.parent.DOM.classList.remove('edge-mode');
+            this.parent.startNodeMode();
             Object.values(this.nodes).forEach(node => {
-                node.DOM.classList.remove('edge-mode');
+                node.startNodeMode();
+            });
+            Object.values(this.points).forEach(node => {
+                node.startNodeMode();
             });
 
             this.draw();
         });
 
         this.edgeModeBtn.addEventListener('click', () => {
+            if (this.mode === NetworkEditor.MODE_EDGE) {
+                return;
+            }
             this.mode = NetworkEditor.MODE_EDGE;
             this.edgeModeBtn.classList.add('active');
             this.nodeModeBtn.classList.remove('active');
 
-            this.parent.DOM.classList.add('edge-mode');
+            this.parent.startEdgeMode();
             Object.values(this.nodes).forEach(node => {
-                node.DOM.classList.add('edge-mode');
+                node.startEdgeMode();
+            });
+            Object.values(this.points).forEach(node => {
+                node.startEdgeMode();
             });
 
             this.draw();
         });
 
-        this.setJson();
+        this.writeJson();
     }
 
+    /**
+     * マウスダウン
+     *
+     * @param e
+     */
     mouseDown(e)
     {
         if (this.isNodeMode()) {
@@ -136,7 +167,12 @@ export class NetworkEditor
         }
     }
 
-    mouseClick(e)
+    /**
+     * マウスクリック
+     *
+     * @param e
+     */
+    click(e)
     {
         if (this.isEdgeMode()) {
             if (this.edgeFromNode !== null) {
@@ -145,13 +181,19 @@ export class NetworkEditor
                 this.edgeFromNode = null;
                 this.edgeFromVertexNo = null;
 
-                this.setJson();
+                this.writeJson();
 
                 this.draw();
             }
         }
     }
 
+    /**
+     * エッジ選択
+     *
+     * @param nodeId
+     * @param vertexNo
+     */
     edgeSelect(nodeId, vertexNo)
     {
         let node = this.getNodeById(nodeId);
@@ -163,8 +205,6 @@ export class NetworkEditor
         if (this.edgeFromNode === null) {
             this.edgeFromNode = node;
             this.edgeFromVertexNo = vertexNo;
-
-            this.edgeFromNode.disconnect(vertexNo);
         } else {
             node.cancelEdgeSelect(vertexNo);
             if (this.edgeFromNode.id === node.id) {
@@ -172,16 +212,36 @@ export class NetworkEditor
                 return;
             }
 
-            node.disconnect(vertexNo);
-
-            this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
+            // 同じエッジを選択した場合はエッジ削除
+            if (this.edgeFromNode instanceof EditNode) {
+                if (this.edgeFromNode.isConnected(this.edgeFromVertexNo, node, vertexNo)) {
+                    console.log("disconnect");
+                    this.edgeFromNode.disconnectByNode(node, vertexNo);
+                } else {
+                    // 未接続のエッジを選択した場合は接続
+                    if (node instanceof EditNode) {
+                        node.disconnect(vertexNo);  // 別のノードとの接続があれば切る
+                    }
+                    this.edgeFromNode.connect(this.edgeFromVertexNo, node, vertexNo);
+                }
+            } else if (this.edgeFromNode instanceof EditPointNode) {
+                if (this.edgeFromNode.isConnected(node, vertexNo)) {
+                    console.log("disconnect");
+                    this.edgeFromNode.disconnectByNode(node, vertexNo);
+                } else {
+                    if (node instanceof EditNode) {
+                        node.disconnect(vertexNo);  // 別のノードとの接続があれば切る
+                    }
+                    this.edgeFromNode.connect(node, vertexNo);
+                }
+            }
 
             this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
 
             this.edgeFromNode = null;
             this.edgeFromVertexNo = null;
 
-            this.setJson();
+            this.writeJson();
 
             this.draw();
         }
@@ -244,8 +304,12 @@ export class NetworkEditor
             if (this.edgeFromNode !== null) {
                 this.draw();
                 this.ctx.beginPath();
-                let vertex = this.edgeFromNode.vertices[this.edgeFromVertexNo];
-                this.ctx.moveTo(vertex.x, vertex.y);
+                if (this.edgeFromNode instanceof EditNode) {
+                    let vertex = this.edgeFromNode.vertices[this.edgeFromVertexNo];
+                    this.ctx.moveTo(vertex.x, vertex.y);
+                } else if (this.edgeFromNode instanceof EditPointNode) {
+                    this.ctx.moveTo(this.edgeFromNode.x, this.edgeFromNode.y);
+                }
 
                 let rect = this.containerDOM.getBoundingClientRect();
                 let x = e.clientX - rect.left + this.containerDOM.scrollLeft; // スクロール量を考慮
@@ -269,7 +333,7 @@ export class NetworkEditor
             this.draggingNode.mouseUp(e);
             this.draggingNode = null;
 
-            this.setJson();
+            this.writeJson();
         }
     }
 
@@ -284,26 +348,6 @@ export class NetworkEditor
     }
 
     /**
-     * Windowサイズ変更などによるNodeの再読取り
-     */
-    reloadNodes()
-    {
-
-    }
-
-    /**
-     * ノードのクリア
-     */
-    clearNodes()
-    {
-        Object.values(this.nodes).forEach(node => {
-            this.editorDOM.removeChild(node.DOM);
-            node.delete();
-        });
-        this.nodes = {};
-    }
-
-    /**
      * ノードの取得
      *
      * @param id
@@ -315,12 +359,16 @@ export class NetworkEditor
             return this.parent;
         }
 
-        if (!this.nodes.hasOwnProperty(id)) {
-            console.error(`Node ${id} not found.`);
-            return null;
+        if (this.nodes.hasOwnProperty(id)) {
+            return this.nodes[id];
         }
 
-        return this.nodes[id];
+        if (this.points.hasOwnProperty(id)) {
+            return this.points[id];
+        }
+
+        console.error(`Node ${id} not found.`);
+        return null;
     }
 
     /**
@@ -342,7 +390,7 @@ export class NetworkEditor
         this.editorDOM.appendChild(this.nodes[id].DOM);
         this.draw();
 
-        this.setJson();
+        this.writeJson();
     }
 
     /**
@@ -350,8 +398,8 @@ export class NetworkEditor
      */
     appendPointNode()
     {
-        let x = this.center.x - (this.containerDOM.offsetWidth / 2) + 60;
-        let y = this.center.y - (this.containerDOM.offsetHeight / 2) + 60;
+        let x = this.containerDOM.scrollLeft + 30;
+        let y = this.containerDOM.scrollTop + 30;
 
         let id = "pt" + this.pointsIndex;
         this.pointsIndex++;
@@ -360,7 +408,7 @@ export class NetworkEditor
 
         this.draw();
 
-        this.setJson();
+        this.writeJson();
     }
 
     /**
@@ -378,7 +426,7 @@ export class NetworkEditor
 
             this.draw();
 
-            this.setJson();
+            this.writeJson();
         }
     }
 
@@ -397,7 +445,7 @@ export class NetworkEditor
 
             this.draw();
 
-            this.setJson();
+            this.writeJson();
         }
     }
 
@@ -420,10 +468,27 @@ export class NetworkEditor
         this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
 
         Object.values(this.points).forEach(point => {
+            point.connects.forEach(connect => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
+                    let targetVertex = connect.getVertex();
+
+                    this.ctx.beginPath();
+
+                    this.ctx.moveTo(point.x, point.y);
+                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                    this.ctx.stroke();
+                }
+            });
+
             point.draw(this.ctx, 0, 0);
         });
     }
 
+    /**
+     * ノードの描画
+     *
+     * @param node
+     */
     drawNode(node)
     {
         this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
@@ -447,40 +512,29 @@ export class NetworkEditor
     }
 
     /**
-     * 更新
+     * ノードモードか
+     *
+     * @returns {boolean}
      */
-    update()
-    {
-
-    }
-
-    /**
-     * ウィンドウサイズの変更
-     */
-    changeSize()
-    {
-
-    }
-
-    /**
-     * スクロール
-     */
-    scroll()
-    {
-
-    }
-
     isNodeMode()
     {
         return this.mode === NetworkEditor.MODE_NODE;
     }
 
+    /**
+     * エッジモードか
+     *
+     * @returns {boolean}
+     */
     isEdgeMode()
     {
         return this.mode === NetworkEditor.MODE_EDGE;
     }
 
-    setJson()
+    /**
+     * JSONを書き込み
+     */
+    writeJson()
     {
         document.querySelector('#json').value = JSON.stringify(this.toJson());
     }
@@ -503,6 +557,7 @@ export class NetworkEditor
         let points = [];
         Object.values(this.points).forEach(point => {
             points.push(point.toJson(this.parent));
+            connects.push(...point.getConnectJsonArr());
         });
 
         return {

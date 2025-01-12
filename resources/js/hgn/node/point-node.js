@@ -51,12 +51,14 @@ export class PointNode extends Vertex
      */
     connect(targetNode, targetNodeVertexNo = null)
     {
+
         if (targetNode instanceof PointNode) {
             return this.connect2PointNode(targetNode);
         } else if (targetNode instanceof OctaNode) {
             if (targetNodeVertexNo === null) {
                 targetNodeVertexNo = targetNode.getNearVertexNo(this);
             }
+
             return this.connect2OctaNode(targetNode, targetNodeVertexNo);
         }
 
@@ -87,13 +89,74 @@ export class PointNode extends Vertex
     connect2OctaNode(targetNode, targetNodeVertexNo)
     {
         if (targetNode.isConnectedVertex(targetNodeVertexNo)) {
+            console.warn('Already connected');
             return false;
         }
 
         this.connects.push(new OctaNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode, targetNodeVertexNo));
         targetNode.connects[targetNodeVertexNo] = new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
 
+
+
         return true;
+    }
+
+    /**
+     * 接続解除
+     *
+     * @param idx
+     */
+    disconnect(idx)
+    {
+        if (this.connects[idx] !== null) {
+            let targetNode = this.connects[idx].node;
+            let targetNodeVertexNo = this.connects[idx].vertexNo;
+            this.connects[idx] = null;
+            targetNode.disconnectByNode(this, targetNodeVertexNo);
+        }
+    }
+
+    /**
+     * ノードを指定して接続解除
+     *
+     * @param node
+     * @param vertexNo
+     */
+    disconnectByNode(node, vertexNo)
+    {
+        this.connects.forEach((connect, idx) => {
+            if (node instanceof OctaNode) {
+                if (connect !== null && connect.node === node && connect.vertexNo === vertexNo) {
+                    this.disconnect(idx);
+                }
+            } else if (node instanceof PointNode) {
+                if (connect !== null && connect.node === node) {
+                    this.disconnect(idx);
+                }
+            }
+        });
+    }
+
+    /**
+     * 接続済みか
+     *
+     * @returns {boolean}
+     */
+    isConnected(node, vertexNo)
+    {
+        let result = false;
+
+        if (node instanceof PointNode) {
+            result = this.connects.some(connect => {
+                return connect !== null && connect.node === node;
+            });
+        } else if (node instanceof OctaNode) {
+            result = this.connects.some(connect => {
+                return connect !== null && connect.node === node && connect.vertexNo === vertexNo;
+            });
+        }
+
+        return result;
     }
 
     /**

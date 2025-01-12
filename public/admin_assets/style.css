@@ -130,6 +130,16 @@ textarea {
         .edit-pt-node:hover {
             border: solid 1px #CCC;
         }
+
+        .edit-pt-node.edge-mode, .edit-pt-node:active.edge-mode {
+            cursor: unset;
+            border: solid 2px #777;
+            border-radius: 50%;
+        }
+
+        .edit-pt-node.edge-mode:hover, .edit-pt-node.edge-mode.selected {
+            border: solid 2px white;
+        }
     }
 
     #network-editor-canvas {

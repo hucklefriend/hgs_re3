@@ -157,6 +157,25 @@ export class EditNode extends DOMNode
     }
 
     /**
+     * ノード配置モード開始
+     */
+    startNodeMode()
+    {
+        this.DOM.classList.remove('edge-mode');
+    }
+
+    /**
+     * エッジ選択モード開始
+     */
+    startEdgeMode()
+    {
+        this.DOM.classList.add('edge-mode');
+        this.edgeSelectDOMs.forEach(edgeSelectDOM => {
+            edgeSelectDOM.classList.remove('selected');
+        });
+    }
+
+    /**
      * マウスダウン
      *
      * @param e
@@ -354,17 +373,30 @@ export class EditNode extends DOMNode
         };
     }
 
+    /**
+     * エッジ用のJSON
+     *
+     * @returns {*[]}
+     */
     getConnectJsonArr()
     {
         let arr = [];
         this.connects.forEach((con, vertexNo) => {
             if (con !== null && con.type === Param.CONNECT_TYPE_OUTGOING) {
-                arr.push({
-                    from: this.id,
-                    from_vn: vertexNo,
-                    to: con.node.id,
-                    to_vn: con.vertexNo,
-                });
+                if (con.node instanceof EditNode) {
+                    arr.push({
+                        from: this.id,
+                        from_vn: vertexNo,
+                        to: con.node.id,
+                        to_vn: con.vertexNo,
+                    });
+                } else if (con.node instanceof EditPointNode) {
+                    arr.push({
+                        from: this.id,
+                        from_vn: vertexNo,
+                        to: con.node.id,
+                    });
+                }
             }
         });
 
@@ -389,6 +421,7 @@ export class EditPointNode extends PointNode
 
         // 移動用DOM
         this.DOM = document.createElement('div');
+        this.DOM.id = id;
         this.DOM.classList.add('edit-pt-node');
         window.networkEditor.editorDOM.appendChild(this.DOM);
 
@@ -398,6 +431,7 @@ export class EditPointNode extends PointNode
         this.DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
         this.DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        this.DOM.addEventListener('click', (e) => this.click(e));
 
         // 削除用DOM
         this.removeDOM = document.createElement('span');
@@ -405,7 +439,6 @@ export class EditPointNode extends PointNode
         this.removeDOM.innerHTML = '×';
         this.DOM.appendChild(this.removeDOM);
         this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
-
 
         this.setForceDraw();
     }
@@ -447,6 +480,23 @@ export class EditPointNode extends PointNode
     {
         this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
         this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
+    }
+
+    /**
+     * ノード配置モード開始
+     */
+    startNodeMode()
+    {
+        this.DOM.classList.remove('edge-mode');
+    }
+
+    /**
+     * エッジ選択モード開始
+     */
+    startEdgeMode()
+    {
+        this.DOM.classList.add('edge-mode');
+        this.DOM.classList.remove('selected');
     }
 
     /**
@@ -502,6 +552,23 @@ export class EditPointNode extends PointNode
     }
 
     /**
+     * DOMクリック
+     *
+     * @param e
+     */
+    click(e)
+    {
+        if (window.networkEditor.isEdgeMode()) {
+            e.target.classList.add('selected');
+
+            window.networkEditor.edgeSelect(e.target.id, this.connects.length);
+
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
+
+    /**
      * マウスリーブ
      *
      * @param e
@@ -537,36 +604,11 @@ export class EditPointNode extends PointNode
     }
 
     /**
-     * edge-select DOMクリック
-     *
-     * @param e
-     */
-    mouseClickEdgeSelectDOM(e)
-    {
-        // idの最後の_の後ろの数字を取得
-        let vertexNo = e.target.id.slice(-1);
-        // intに変換
-        vertexNo = parseInt(vertexNo);
-
-        // idの最後の_から後ろを除去
-        let nodeId = e.target.id.slice(0, -2);
-
-        e.target.classList.add('selected');
-
-        window.networkEditor.edgeSelect(nodeId, vertexNo);
-
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    /**
      * エッジ選択のキャンセル
-     *
-     * @param vertexNo
      */
-    cancelEdgeSelect(vertexNo)
+    cancelEdgeSelect()
     {
-        this.edgeSelectDOMs[vertexNo].classList.remove('selected');
+        this.DOM.classList.remove('selected');
     }
 
     /**
@@ -582,6 +624,34 @@ export class EditPointNode extends PointNode
             x: parent === null ? 0 : this.x - parent.getCenterX(),
             y: parent === null ? 0 : this.y - parent.getCenterY(),
         };
+    }
+
+    /**
+     * エッジ用のJSON
+     *
+     * @returns {*[]}
+     */
+    getConnectJsonArr()
+    {
+        let arr = [];
+        this.connects.forEach(con => {
+            if (con !== null && con.type === Param.CONNECT_TYPE_OUTGOING) {
+                if (con.node instanceof EditNode) {
+                    arr.push({
+                        from: this.id,
+                        to: con.node.id,
+                        to_vn: con.vertexNo,
+                    });
+                } else if (con.node instanceof EditPointNode) {
+                    arr.push({
+                        from: this.id,
+                        to: con.node.id,
+                    });
+                }
+            }
+        });
+
+        return arr;
     }
 }
 
