@@ -274,8 +274,8 @@ export class NetworkEditor
                 this.offsetY = this.draggingNode.getOffsetY(e);
             } else {
                 // ノードがドラッグされない場合はスクロール
-                this.offsetX = e.clientX - this.containerDOM.scrollLeft;
-                this.offsetY = e.clientY - this.containerDOM.scrollTop;
+                this.offsetX = e.clientX;
+                this.offsetY = e.clientY;
             }
         }
     }
@@ -294,8 +294,10 @@ export class NetworkEditor
                     this.draggingNode.mouseMove(e, this.offsetX, this.offsetY);
                 } else {
                     // スクロール
-                    this.containerDOM.scrollLeft = e.clientX - this.offsetX;
-                    this.containerDOM.scrollTop = e.clientY - this.offsetY;
+                    this.containerDOM.scrollLeft -= e.clientX - this.offsetX;
+                    this.containerDOM.scrollTop -= e.clientY - this.offsetY;
+                    this.offsetX = e.clientX;
+                    this.offsetY = e.clientY;
                 }
 
                 this.draw();
