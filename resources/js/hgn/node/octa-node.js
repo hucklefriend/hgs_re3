@@ -44,8 +44,9 @@ export class OctaNode
     delete()
     {
         this.vertices = null;
-        this.connects.forEach(connect => {
+        this.connects.forEach((connect, vertexNo) => {
             if (connect !== null) {
+                this.disconnect(vertexNo);
                 connect.delete();
             }
         });

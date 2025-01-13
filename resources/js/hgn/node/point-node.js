@@ -32,6 +32,9 @@ export class PointNode extends Vertex
      */
     delete()
     {
+        this.connects.forEach((connect, idx) => {
+            this.disconnect(idx);
+        });
         this.connects = null;
     }
 
