@@ -398,6 +398,10 @@ export class NetworkEditor
         this.editorDOM.appendChild(this.nodes[id].DOM);
         this.draw();
 
+        if (this.isEdgeMode()) {
+            this.nodes[id].startEdgeMode();
+        }
+
         this.writeJson();
     }
 
