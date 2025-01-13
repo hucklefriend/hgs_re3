@@ -359,9 +359,8 @@ export class OctaNode
     {
         if (this.connects[vertexNo] !== null) {
             let targetNode = this.connects[vertexNo].node;
-            let targetNodeVertexNo = this.connects[vertexNo].vertexNo;
             this.connects[vertexNo] = null;
-            targetNode.disconnectByNode(this, targetNodeVertexNo);
+            targetNode.disconnectByNode(this);
         }
     }
 
@@ -369,19 +368,12 @@ export class OctaNode
      * ノードを指定して接続解除
      *
      * @param node
-     * @param vertexNo
      */
-    disconnectByNode(node, vertexNo)
+    disconnectByNode(node)
     {
         this.connects.forEach((connect, idx) => {
-            if (node instanceof OctaNode) {
-                if (connect !== null && connect.node === node && connect.vertexNo === vertexNo) {
-                    this.disconnect(idx);
-                }
-            } else if (node instanceof PointNode) {
-                if (connect !== null && connect.node === node) {
-                    this.disconnect(idx);
-                }
+            if (connect !== null && connect.node === node) {
+                this.disconnect(idx);
             }
         });
     }
@@ -394,8 +386,6 @@ export class OctaNode
     isConnected(vertexNo, targetNode, targetVertexNo)
     {
         let connect = this.connects[vertexNo];
-        console.log(vertexNo, this.connects);
-        console.log(targetNode, targetVertexNo);
 
         if (connect !== null) {
             if (targetNode instanceof PointNode) {
@@ -406,6 +396,19 @@ export class OctaNode
         }
 
         return false;
+    }
+
+    /**
+     * 接続済みのノードか
+     *
+     * @param targetNode
+     * @returns {boolean}
+     */
+    isConnectedNode(targetNode)
+    {
+        return this.connects.some(connect => {
+            return connect !== null && connect.node === targetNode;
+        });
     }
 
     /**

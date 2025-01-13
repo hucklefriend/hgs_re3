@@ -120,19 +120,12 @@ export class PointNode extends Vertex
      * ノードを指定して接続解除
      *
      * @param node
-     * @param vertexNo
      */
-    disconnectByNode(node, vertexNo)
+    disconnectByNode(node)
     {
         this.connects.forEach((connect, idx) => {
-            if (node instanceof OctaNode) {
-                if (connect !== null && connect.node === node && connect.vertexNo === vertexNo) {
-                    this.disconnect(idx);
-                }
-            } else if (node instanceof PointNode) {
-                if (connect !== null && connect.node === node) {
-                    this.disconnect(idx);
-                }
+            if (connect !== null && connect.node === node) {
+                this.disconnect(idx);
             }
         });
     }
@@ -157,6 +150,19 @@ export class PointNode extends Vertex
         }
 
         return result;
+    }
+
+    /**
+     * 接続済みのノードか
+     *
+     * @param targetNode
+     * @returns {boolean}
+     */
+    isConnectedNode(targetNode)
+    {
+        return this.connects.some(connect => {
+            return connect !== null && connect.node === targetNode;
+        });
     }
 
     /**

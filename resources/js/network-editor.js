@@ -207,17 +207,21 @@ export class NetworkEditor
             this.edgeFromVertexNo = vertexNo;
         } else {
             node.cancelEdgeSelect(vertexNo);
-            if (this.edgeFromNode.id === node.id) {
-                // 同じノードを選択した場合はキャンセル
+            this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
+            if (this.edgeFromNode === node) {
+                // 自分自身を選択した場合は何もしない
                 return;
             }
 
-            // 同じエッジを選択した場合はエッジ削除
             if (this.edgeFromNode instanceof EditNode) {
                 if (this.edgeFromNode.isConnected(this.edgeFromVertexNo, node, vertexNo)) {
-                    console.log("disconnect");
                     this.edgeFromNode.disconnectByNode(node, vertexNo);
                 } else {
+                    if (this.edgeFromNode.isConnectedNode(node)) {
+                        // 対象ノードに対して1つでも接続済みであれば、接続を全部切る
+                        this.edgeFromNode.disconnectByNode(node);
+                    }
+
                     // 未接続のエッジを選択した場合は接続
                     if (node instanceof EditNode) {
                         node.disconnect(vertexNo);  // 別のノードとの接続があれば切る
@@ -226,17 +230,19 @@ export class NetworkEditor
                 }
             } else if (this.edgeFromNode instanceof EditPointNode) {
                 if (this.edgeFromNode.isConnected(node, vertexNo)) {
-                    console.log("disconnect");
                     this.edgeFromNode.disconnectByNode(node, vertexNo);
                 } else {
+                    if (this.edgeFromNode.isConnectedNode(node)) {
+                        // 対象ノードに対して1つでも接続済みであれば、接続を全部切る
+                        this.edgeFromNode.disconnectByNode(node);
+                    }
+
                     if (node instanceof EditNode) {
                         node.disconnect(vertexNo);  // 別のノードとの接続があれば切る
                     }
                     this.edgeFromNode.connect(node, vertexNo);
                 }
             }
-
-            this.edgeFromNode.cancelEdgeSelect(this.edgeFromVertexNo);
 
             this.edgeFromNode = null;
             this.edgeFromVertexNo = null;
