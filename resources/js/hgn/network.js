@@ -2,6 +2,7 @@ import {OctaNode, Bg2OctaNode} from './node/octa-node.js';
 import {Param} from './param.js';
 import {PointNode, Bg2PointNode} from "./node/point-node.js";
 import {HorrorGameNetwork} from "../hgn.js";
+import {Vertex} from './vertex.js';
 
 /**
  * ネットワーク
@@ -11,11 +12,13 @@ export class Network
     /**
      * コンストラクタ
      */
-    constructor(parentNode, drawParent = false)
+    constructor(parentNode)
     {
         this.parentNode = parentNode;
-        this.drawParent = drawParent;
-        this.nodes = [];
+        this.drawParent = true;
+        this.nodes = {};
+
+        this.pos = new Vertex(0, 0);
     }
 
     /**
@@ -25,98 +28,60 @@ export class Network
     delete()
     {
         this.parentNode = null;
-        this.nodes.forEach(node => {
+        Object.values(this.nodes).forEach(node => {
             node.delete();
         });
         this.nodes = null;
     }
 
     /**
-     * 八角ノードの追加
+     * 親ノードを描画するか
      *
-     * @param baseNode
-     * @param vertexNo
-     * @param offsetX
-     * @param offsetY
-     * @param w
-     * @param h
-     * @param n
-     * @param newNodeVertexNo
-     * @returns {*}
+     * @param drawParent
+     * @returns {Network}
      */
-    addOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
+    setDrawParent(drawParent)
     {
-        if (Number.isInteger(baseNode)) {
-            baseNode = this.nodes[baseNode];
-        }
-
-        if (h === null) {
-            h = w;
-        }
-        if (n === null) {
-            n = OctaNode.standardNotchSize(w);
-        }
-
-        let newNode = new OctaNode(baseNode.x + offsetX, baseNode.y + offsetY, w, h, n);
-        this.nodes.push(newNode);
-        this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
-
-        return newNode;
+        this.drawParent = drawParent;
+        return this;
     }
 
     /**
-     * 点ノードの追加
+     * 配置座標の設定
      *
-     * @param baseNode
-     * @param vertexNo
-     * @param offsetX
-     * @param offsetY
-     * @param r
-     * @returns {*}
+     * @param x
+     * @param y
+     * @returns {Network}
      */
-    addPointNode(baseNode, vertexNo, offsetX, offsetY, r = 5)
+    setPos(x, y)
     {
-        if (Number.isInteger(baseNode)) {
-            baseNode = this.nodes[baseNode];
-        }
-
-        let newNode = new PointNode(baseNode.x + offsetX, baseNode.y + offsetY, r);
-        this.nodes.push(newNode);
-        this.addNodeConnection(baseNode, newNode, vertexNo);
-
-        return newNode;
+        this.pos.x = x;
+        this.pos.y = y;
+        return this;
     }
 
     /**
-     * ノード間コネクションの追加
+     * 配置座標xの設定
      *
-     * @param node1
-     * @param node2
-     * @param node1VertexNo
-     * @param node2VertexNo
+     * @param x
+     * @returns {Network}
      */
-    addNodeConnection(node1, node2, node1VertexNo = null, node2VertexNo = null)
+    setPosX(x)
     {
-        if (Number.isInteger(node1)) {
-            node1 = this.nodes[node1];
-        }
+        this.pos.x = x;
+        return this;
+    }
 
-        if (Number.isInteger(node2)) {
-            node2 = this.nodes[node2];
-        }
-
-        if (node1 instanceof OctaNode && node1VertexNo === null) {
-            node1VertexNo = node1.getNearVertexNo(node2);
-        }
-        if (node2 instanceof OctaNode && node2VertexNo === null) {
-            node2VertexNo = node2.getNearVertexNo(node1);
-        }
-
-        if (node1 instanceof OctaNode) {
-            node1.connect(node1VertexNo, node2, node2VertexNo);
-        } else {
-            node1.connect(node2, node2VertexNo);
-        }
+    /**
+     * 配置座標yの設定
+     *
+     * @param y
+     * @returns {Network}
+     */
+    setPosY(y)
+    {
+        this.pos.y = y;
+        return this;
     }
 
     /**
@@ -124,42 +89,61 @@ export class Network
      */
     reload()
     {
-        this.nodes.forEach(node => {
+        this.parentNode.reload();
+        Object.values(this.nodes).forEach(node => {
             node.reload();
         });
+    }
+
+    /**
+     * ノードの追加
+     *
+     * @param node
+     */
+    addNode(node)
+    {
+        this.nodes[node.id] = node;
+    }
+
+    /**
+     * ノードの取得
+     *
+     * @param id
+     * @returns {*|null}
+     */
+    getNodeById(id)
+    {
+        if (this.parentNode.id === id) {
+            return this.parentNode;
+        }
+
+        return this.nodes[id] ?? null;
     }
 
     /**
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
-     * @param drawIdxText
      */
-    draw(ctx, offsetX, offsetY, drawIdxText = false)
+    draw(ctx)
     {
-        if (this.drawParent) {
-            this.parentNode.draw(ctx, offsetX, offsetY);
-        }
-
         if (this.parentNode !== null) {
+            if (this.drawParent) {
+                this.parentNode.draw(ctx, offsetX, offsetY);
+            }
+
             this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
         }
 
         this.nodes.forEach((node, i) => {
             let offsetY1 = offsetY;
-            if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
+            if (node instanceof OctaNode || node instanceof PointNode) {
                 offsetY1 -= node.drawOffsetY;
             }
 
             this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
 
             node.draw(ctx, offsetX, offsetY1);
-
-            if (drawIdxText) {
-                ctx.fillText(i.toString(), node.x, node.y);
-            }
         });
     }
 
@@ -230,6 +214,7 @@ export class Bg2Network extends Network
         this.maxDrawDepth = 0;
         this.drawRateInDepth = 0;
         this.maxDepth = 0;
+        this.nodes = [];    // こっちは配列で管理
     }
 
     /**
@@ -293,6 +278,38 @@ export class Bg2Network extends Network
         this.addNodeConnection(baseNode, newNode, vertexNo);
 
         return newNode;
+    }
+
+    /**
+     * ノード間コネクションの追加
+     *
+     * @param node1
+     * @param node2
+     * @param node1VertexNo
+     * @param node2VertexNo
+     */
+    addNodeConnection(node1, node2, node1VertexNo = null, node2VertexNo = null)
+    {
+        if (Number.isInteger(node1)) {
+            node1 = this.nodes[node1];
+        }
+
+        if (Number.isInteger(node2)) {
+            node2 = this.nodes[node2];
+        }
+
+        if (node1 instanceof OctaNode && node1VertexNo === null) {
+            node1VertexNo = node1.getNearVertexNo(node2);
+        }
+        if (node2 instanceof OctaNode && node2VertexNo === null) {
+            node2VertexNo = node2.getNearVertexNo(node1);
+        }
+
+        if (node1 instanceof OctaNode) {
+            node1.connect(node1VertexNo, node2, node2VertexNo);
+        } else {
+            node1.connect(node2, node2VertexNo);
+        }
     }
 
     /**

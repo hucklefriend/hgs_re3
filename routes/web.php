@@ -288,8 +288,8 @@ Route::group(['prefix' => 'admin'], function () {
             Route::group(['prefix' => $prefix], function () use ($prefix) {
                 $basename = 'Admin.Game.MainNetwork';
                 $class = Admin\Game\MainNetworkController::class;
-                Route::get('/', [$class, 'editNetwork'])->name($basename);
-                Route::post('/', [$class, 'saveNetwork'])->name("{$basename}.Save");
+                Route::get('/', [$class, 'edit'])->name($basename);
+                Route::post('/', [$class, 'save'])->name("{$basename}.Save");
             });
         });
     });

@@ -73,7 +73,7 @@
 @endsection
 
 @section('js')
-    @vite(['resources/js/app.js', 'resources/js/editor.js'])
+    @vite(['resources/js/app.js', 'resources/js/network-editor.js'])
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {

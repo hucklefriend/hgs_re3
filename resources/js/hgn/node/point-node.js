@@ -15,11 +15,13 @@ export class PointNode extends Vertex
      * @param x
      * @param y
      * @param r
+     * @param id
      */
-    constructor(x = 0, y = 0, r = 0)
+    constructor(x = 0, y = 0, r = 0, id = null)
     {
         super(x, y);
         this.r = r;
+        this.id = id;
         this.connects = [];
         this.forceDraw = false;
 

@@ -31,6 +31,7 @@ export class OctaNode
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
+        this.id = null;
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -580,15 +581,43 @@ export class Bg2OctaNode extends OctaNode
 export class DOMNode extends OctaNode
 {
     /**
+     * DOMノードを生成
+     *
+     * @param containerDOM
+     * @param containerWidth
+     * @param containerHeight
+     * @param id
+     * @param html
+     * @param x
+     * @param y
+     * @returns {DOMNode}
+     */
+    static create(containerDOM, containerWidth, containerHeight, id, html, x, y)
+    {
+        let DOM = document.createElement('div');
+        DOM.innerHTML = html;
+        DOM.classList.add('dom-node');
+
+        containerDOM.appendChild(DOM);
+
+        DOM.style.left = `${(containerWidth / 2) + x - DOM.offsetWidth / 2}px`;
+        DOM.style.top = `${(containerHeight / 2) + y - DOM.offsetHeight / 2}px`;
+
+        return new DOMNode(DOM, 13, id);
+    }
+
+    /**
      * コンストラクタ
      *
      * @param DOM
      * @param notchSize
+     * @param id
      */
-    constructor(DOM, notchSize)
+    constructor(DOM, notchSize, id = null)
     {
         super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
+        this.id = id;
         this.DOM = DOM;
 
         // DOMからdata-subを取得

@@ -17,7 +17,7 @@ class GameMainNetworkFranchise extends \Eloquent
      *
      * @return BelongsTo
      */
-    public function maker(): BelongsTo
+    public function franchise(): BelongsTo
     {
         return $this->belongsTo(GameFranchise::class, 'game_franchise_id');
     }

@@ -560,16 +560,55 @@ export class NetworkEditor
     {
         let nodes = {};
         let connects = [];
+        let left = this.parent.x - this.parent.DOM.offsetWidth / 2;
+        let top = this.parent.y - this.parent.DOM.offsetHeight / 2;
+        let right = this.parent.x + this.parent.DOM.offsetWidth / 2;
+        let bottom = this.parent.y + this.parent.DOM.offsetHeight / 2;
         connects.push(...this.parent.getConnectJsonArr());
         Object.values(this.nodes).forEach(node => {
             nodes[node.id] = node.toJson(this.parent);
             connects.push(...node.getConnectJsonArr());
+
+            let l = node.x - node.DOM.offsetWidth / 2;
+            let t = node.y - node.DOM.offsetHeight / 2;
+            let r = node.x + node.DOM.offsetWidth / 2;
+            let b = node.y + node.DOM.offsetHeight / 2;
+            if (l < left) {
+                left = l;
+            }
+            if (t < top) {
+                top = t;
+            }
+            if (r > right) {
+                right = r;
+            }
+            if (b > bottom) {
+                bottom = b;
+            }
         });
 
         let points = [];
         Object.values(this.points).forEach(point => {
             points.push(point.toJson(this.parent));
             connects.push(...point.getConnectJsonArr());
+
+
+            let l = point.x - 10;
+            let t = point.y - 10;
+            let r = point.x + 10;
+            let b = point.y + 10;
+            if (l < left) {
+                left = l;
+            }
+            if (t < top) {
+                top = t;
+            }
+            if (r > right) {
+                right = r;
+            }
+            if (b > bottom) {
+                bottom = b;
+            }
         });
 
         return {
@@ -578,6 +617,8 @@ export class NetworkEditor
             connects: connects,
             ptIdx: this.pointsIndex,
             points: points,
+            width: Math.abs(right - left),
+            height: Math.abs(bottom - top)
         };
     }
 }

@@ -57,7 +57,7 @@ textarea {
             display: inline-block;
             touch-action: none;
             user-select: none;
-            padding: 13px 20px;
+            padding: 13px 18px;
             font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
             font-weight: 300;
             font-style: normal;
@@ -139,6 +139,29 @@ textarea {
 
         .edit-pt-node.edge-mode:hover, .edit-pt-node.edge-mode.selected {
             border: solid 2px white;
+        }
+
+        .dom-node {
+            position: absolute;
+            padding: 13px 18px;
+            display: inline-block;
+            font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
+            font-weight: 300;
+            font-style: normal;
+            font-size: 14px;
+            cursor: grab;
+            text-align: center;
+            left: 0;
+            top: 0;
+        }
+
+        .edit-network {
+            position: absolute;
+            display: inline-block;
+        }
+
+        .edit-network:hover {
+            background-color: rgba(100, 200, 100, 0.4);
         }
     }
 
