@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Extensions\KeyFindTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class GameFranchise extends \Eloquent
 {
@@ -58,6 +59,16 @@ class GameFranchise extends \Eloquent
     public function mediaMixes(): HasMany
     {
         return $this->hasMany(GameMediaMix::class);
+    }
+
+    /**
+     * メインネットワーク
+     *
+     * @return HasOne
+     */
+    public function mainNetwork(): HasOne
+    {
+        return $this->hasOne(GameMainNetworkFranchise::class);
     }
 
     /**

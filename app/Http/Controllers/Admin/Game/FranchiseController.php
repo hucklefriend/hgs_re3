@@ -6,7 +6,6 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\FranchiseMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\FranchiseRequest;
-use App\Http\Requests\Admin\Game\GameFranchiseSeriesLinkRequest;
 use App\Http\Requests\Admin\Game\LinkMultiSeriesRequest;
 use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Models\Extensions\GameTree;
@@ -19,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FranchiseController extends AbstractAdminController
 {
@@ -327,5 +327,99 @@ class FranchiseController extends AbstractAdminController
             throw $e;
         }
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
+    }
+
+    /**
+     * メインネットワーク用のネットワーク編集
+     *
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View
+     */
+    public function editMainNetwork(GameFranchise $franchise): Application|Factory|View
+    {
+        if ($franchise->mainNetwork !== null) {
+            $data = json_decode($franchise->mainNetwork->json, true);
+            $data['parent']['name'] = $franchise->node_name . '<br>フランチャイズ';
+        } else {
+            $data = [
+                'parent' => [
+                    'id' => 'f_' . $franchise->id,
+                    'name' => $franchise->node_name . '<br>フランチャイズ',
+                    'x' => 0,
+                    'y' => 0,
+                    'con' => [],
+                ]
+            ];
+        }
+
+        $series = [];
+        $titles = [];
+        foreach ($franchise->series as $s) {
+            $key = 's_' . $s->id;
+            $series[$key] = [
+                'name' => $s->name,
+                'node_name' => $s->name . '<br>シリーズ'
+            ];
+            if (isset($data['nodes'][$key])) {
+                $data['nodes'][$key]['name'] = $s->name . '<br>シリーズ';
+            }
+
+            foreach ($s->titles as $t) {
+                $key = 't_' . $t->id;
+                $titles[$key] = [
+                    'name' => $t->name,
+                    'node_name' => $t->node_name
+                ];
+                if (isset($data['nodes'][$key])) {
+                    $data['nodes'][$key]['name'] = $t->node_name;
+                }
+            }
+        }
+
+        foreach ($franchise->titles as $t) {
+            $key = 't_' . $t->id;
+            $titles[$key] = [
+                'name' => $t->name,
+                'node_name' => $t->node_name
+            ];
+
+            if (isset($data['nodes'][$key])) {
+                $data['nodes'][$key]['name'] = $t->node_name;
+            }
+        }
+
+        return view('admin.game.franchise.edit_main_network', [
+            'data' => $data,
+            'franchise' => $franchise,
+            'series' => $series,
+            'titles' => $titles,
+        ]);
+    }
+
+    /**
+     * メインネットワーク用フランチャイズネットワークの保存
+     *
+     * @param Request $request
+     * @param GameFranchise $franchise
+     * @return RedirectResponse
+     */
+    public function saveMainNetwork(Request $request, GameFranchise $franchise): RedirectResponse
+    {
+        if ($franchise->mainNetwork !== null) {
+            $network = \App\Models\GameMainNetworkFranchise::find($franchise->id);
+        } else {
+            $network = new \App\Models\GameMainNetworkFranchise();
+            $network->game_franchise_id = $franchise->id;
+        }
+
+        $network->json = $request->post('json');
+        $network->save();
+
+        return redirect()->route('Admin.Game.Franchise.EditMainNetwork', $franchise);
+    }
+
+    public function editNetwork()
+    {
+
     }
 }

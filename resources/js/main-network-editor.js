@@ -1,0 +1,256 @@
+import {Param} from './hgn/param.js';
+import {Util} from "./hgn/util.js";
+import {Vertex} from "./hgn/vertex.js";
+import {EditNetwork} from "./hgn/edit-network.js";
+
+/**
+ * メインネットワークエディタ
+ */
+export class MainNetworkEditor
+{
+    /**
+     * コンストラクタ
+     */
+    constructor()
+    {
+        // #network-editor
+        this.editorDOM = document.querySelector('#network-editor');
+
+        // #network-editor-container なければ body
+        this.containerDOM = document.querySelector('#network-editor-container');
+        if (this.containerDOM === null) {
+            this.containerDOM = document.body;
+        }
+
+        // ネットワーク
+        this.networks = {};
+        this.draggingNetwork = null;
+
+        this.center = new Vertex();
+
+        this.data = null;
+    }
+
+    /**
+     * エディタ起動
+     */
+    start(initialPosition, data)
+    {
+        this.data = data;
+
+        // containerDOMのスクロール位置をeditorDOMの中央に
+        this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
+        this.containerDOM.scrollLeft = this.editorDOM.offsetLeft - (this.containerDOM.offsetWidth - this.editorDOM.offsetWidth) / 2;
+        this.center.x = this.editorDOM.offsetWidth / 2;
+        this.center.y = this.editorDOM.offsetHeight / 2;
+
+        this.editorDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+        this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
+        this.editorDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
+        this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
+
+        // 配置済みネットワークの読み込み
+        initialPosition.forEach(pos => {
+            this.addNetwork(pos.id, pos.x, pos.y);
+        });
+
+        this.writeJson();
+    }
+
+    /**
+     * ネットワーク登録済みか
+     *
+     * @param id
+     * @returns {*|boolean}
+     */
+    hasNetwork(id)
+    {
+        return this.networks.hasOwnProperty(id);
+    }
+
+    /**
+     * ネットワーク追加
+     *
+     * @param id
+     * @param x
+     * @param y
+     */
+    addNetwork(id, x = null, y = null)
+    {
+        if (this.hasNetwork(id)) {
+            console.error("Network " + id + " already exists.");
+            return;
+        }
+
+        if (!this.data.hasOwnProperty(id)) {
+            console.error("Network " + id + " not found in data.");
+            return;
+        }
+
+        this.networks[id] = EditNetwork.create(this.data[id]);
+
+        // x, yがnullなら現在のスクロール位置の中心に配置
+        if (x === null) {
+            x = Math.round(this.containerDOM.scrollLeft + this.containerDOM.offsetWidth / 2);
+        } else {
+            x += this.center.x;
+        }
+        if (y === null) {
+            y = Math.round(this.containerDOM.scrollTop + this.containerDOM.offsetHeight / 2);
+        } else {
+            y += this.center.y;
+        }
+
+        this.networks[id].setPos(x, y);
+
+        this.writeJson();
+    }
+
+    /**
+     * ネットワークの削除
+     *
+     * @param id
+     */
+    removeNetwork(id)
+    {
+        if (this.networks.hasOwnProperty(id)) {
+            this.editorDOM.removeChild(this.networks[id].containerDOM);
+
+            this.networks[id].delete();
+            delete this.networks[id];
+
+            this.writeJson();
+        }
+    }
+
+    /**
+     * マウスダウン
+     *
+     * @param e
+     */
+    mouseDown(e)
+    {
+        this.startDrag(e);
+    }
+
+    /**
+     * EditNetworkからドラッグ開始
+     *
+     * @param e
+     * @param network
+     */
+    mouseDownInEditNetwork(e, network)
+    {
+        this.draggingNetwork = network;
+        this.startDrag(e);
+    }
+
+    /**
+     * ドラッグ開始
+     *
+     * @param e
+     */
+    startDrag(e)
+    {
+        if (!this.isDragging) {
+            this.isDragging = true;
+
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
+        }
+    }
+
+    /**
+     * ドラッグ中
+     *
+     * @param e
+     */
+    mouseMove(e)
+    {
+        if (this.isDragging) {
+            let moveX = e.clientX - this.offsetX;
+            let moveY = e.clientY - this.offsetY;
+
+            if (this.draggingNetwork !== null) {
+                // ノードの移動
+                this.draggingNetwork.dragging(this.center.x, this.center.y, moveX, moveY);
+            } else {
+                // スクロール
+                this.containerDOM.scrollLeft -= moveX;
+                this.containerDOM.scrollTop -= moveY;
+            }
+
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
+        }
+    }
+
+    /**
+     * ドラッグ終了
+     *
+     * @param e
+     */
+    mouseUp(e)
+    {
+        this.isDragging = false;
+
+        if (this.draggingNetwork !== null) {
+            this.draggingNetwork.mouseUp(e);
+            this.draggingNetwork = null;
+
+            this.writeJson();
+        }
+    }
+
+    /**
+     * 高さの取得
+     *
+     * @returns {number}
+     */
+    getHeight()
+    {
+        return this.containerDOM.offsetHeight;
+    }
+
+    /**
+     * ネットワークの削除
+     *
+     * @param id
+     */
+    removeNode(id)
+    {
+        if (this.hasNetwork(id)) {
+            this.editorDOM.removeChild(this.networks[id].containerDOM);
+
+            this.networks[id].delete();
+            delete this.networks[id];
+
+            this.writeJson();
+        }
+    }
+
+    /**
+     * JSONを書き込み
+     */
+    writeJson()
+    {
+        document.querySelector('#json').value = JSON.stringify(this.toJson());
+    }
+
+    /**
+     * JSON化
+     */
+    toJson()
+    {
+        let json = [];
+
+        for (let id in this.networks) {
+            json.push(this.networks[id].toJson(id, this.center.x, this.center.y));
+        }
+
+        return json;
+    }
+}
+
+window.mainNetworkEditor = new MainNetworkEditor();
+window.hgn = window.networkEditor;

@@ -106,6 +106,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/link_tree', [$class, 'linkTree'])->name("{$basename}.LinkTree");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+                Route::get('{' . $prefix . '}/edit-main-net', [$class, 'editMainNetwork'])->name("{$basename}.EditMainNetwork");
+                Route::post('{' . $prefix . '}/edit-main-net', [$class, 'saveMainNetwork'])->name("{$basename}.SaveMainNetwork");
             });
 
             // シリーズ
@@ -122,6 +124,8 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+                Route::get('{' . $prefix . '}/edit-net', [$class, 'editNetwork'])->name("{$basename}.EditNetwork");
+                Route::post('{' . $prefix . '}/edit-net', [$class, 'saveNetwork'])->name("{$basename}.SaveNetwork");
             });
 
             // タイトル
@@ -277,6 +281,15 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
+            });
+
+            // メインネットワーク
+            $prefix = 'main_network';
+            Route::group(['prefix' => $prefix], function () use ($prefix) {
+                $basename = 'Admin.Game.MainNetwork';
+                $class = Admin\Game\MainNetworkController::class;
+                Route::get('/', [$class, 'edit'])->name($basename);
+                Route::post('/', [$class, 'save'])->name("{$basename}.Save");
             });
         });
     });

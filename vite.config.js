@@ -8,7 +8,9 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/head.css',
                 'resources/css/node.css',
-                'resources/js/app.js'
+                'resources/js/app.js',
+                'resources/js/network-editor.js',
+                'resources/js/main-network-editor.js'
             ],
             refresh: true,
         }),

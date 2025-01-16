@@ -15,11 +15,13 @@ export class PointNode extends Vertex
      * @param x
      * @param y
      * @param r
+     * @param id
      */
-    constructor(x = 0, y = 0, r = 0)
+    constructor(x = 0, y = 0, r = 0, id = null)
     {
         super(x, y);
         this.r = r;
+        this.id = id;
         this.connects = [];
         this.forceDraw = false;
 
@@ -32,6 +34,9 @@ export class PointNode extends Vertex
      */
     delete()
     {
+        this.connects.forEach((connect, idx) => {
+            this.disconnect(idx);
+        });
         this.connects = null;
     }
 
@@ -51,12 +56,14 @@ export class PointNode extends Vertex
      */
     connect(targetNode, targetNodeVertexNo = null)
     {
+
         if (targetNode instanceof PointNode) {
             return this.connect2PointNode(targetNode);
         } else if (targetNode instanceof OctaNode) {
             if (targetNodeVertexNo === null) {
                 targetNodeVertexNo = targetNode.getNearVertexNo(this);
             }
+
             return this.connect2OctaNode(targetNode, targetNodeVertexNo);
         }
 
@@ -87,13 +94,80 @@ export class PointNode extends Vertex
     connect2OctaNode(targetNode, targetNodeVertexNo)
     {
         if (targetNode.isConnectedVertex(targetNodeVertexNo)) {
+            console.warn('Already connected');
             return false;
         }
 
         this.connects.push(new OctaNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode, targetNodeVertexNo));
         targetNode.connects[targetNodeVertexNo] = new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
 
+
+
         return true;
+    }
+
+    /**
+     * 接続解除
+     *
+     * @param idx
+     */
+    disconnect(idx)
+    {
+        if (this.connects[idx] !== null) {
+            let targetNode = this.connects[idx].node;
+            let targetNodeVertexNo = this.connects[idx].vertexNo;
+            this.connects[idx] = null;
+            targetNode.disconnectByNode(this, targetNodeVertexNo);
+        }
+    }
+
+    /**
+     * ノードを指定して接続解除
+     *
+     * @param node
+     */
+    disconnectByNode(node)
+    {
+        this.connects.forEach((connect, idx) => {
+            if (connect !== null && connect.node === node) {
+                this.disconnect(idx);
+            }
+        });
+    }
+
+    /**
+     * 接続済みか
+     *
+     * @returns {boolean}
+     */
+    isConnected(node, vertexNo)
+    {
+        let result = false;
+
+        if (node instanceof PointNode) {
+            result = this.connects.some(connect => {
+                return connect !== null && connect.node === node;
+            });
+        } else if (node instanceof OctaNode) {
+            result = this.connects.some(connect => {
+                return connect !== null && connect.node === node && connect.vertexNo === vertexNo;
+            });
+        }
+
+        return result;
+    }
+
+    /**
+     * 接続済みのノードか
+     *
+     * @param targetNode
+     * @returns {boolean}
+     */
+    isConnectedNode(targetNode)
+    {
+        return this.connects.some(connect => {
+            return connect !== null && connect.node === targetNode;
+        });
     }
 
     /**
@@ -178,5 +252,20 @@ export class Bg2PointNode extends PointNode
         const v = this.connection.getVertex();
         this.x = v.x + this.offsetX;
         this.y = v.y + this.offsetY;
+    }
+
+
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX, offsetY)
+    {
+        ctx.fillStyle = "rgba(0, 200, 0, 0.8)";
+
+        super.draw(ctx, offsetX, offsetY);
     }
 }

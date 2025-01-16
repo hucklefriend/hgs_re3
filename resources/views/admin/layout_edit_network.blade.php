@@ -89,94 +89,6 @@
     </div>
     <!-- END #header -->
 
-    <!-- BEGIN #sidebar -->
-    <div id="sidebar" class="app-sidebar">
-        <!-- BEGIN scrollbar -->
-        <div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
-            <!-- BEGIN menu -->
-            <div class="menu">
-                <div class="menu-header">Navigation</div>
-                <div class="menu-item {{ menu_active("Admin.Dashboard") }}">
-                    <a href="{{ route("Admin.Dashboard") }}" class="menu-link">
-                        <div class="menu-icon">
-                            <i class="fa fa-sitemap"></i>
-                        </div>
-                        <div class="menu-text">Dashboard</div>
-                    </a>
-                </div>
-                <div class="menu-item has-sub {{ menu_active("Admin.Manage") }}">
-                    <a href="javascript:;" class="menu-link">
-                        <div class="menu-icon">
-                            <i class="far fa-calendar"></i>
-                        </div>
-                        <div class="menu-text">Manage</div>
-                        <div class="menu-caret"></div>
-                    </a>
-                    <div class="menu-submenu">
-                        <div class="menu-item  {{ menu_active("Admin.Manage.Information") }}">
-                            <a href="{{ route("Admin.Manage.Information") }}" class="menu-link"><div class="menu-text">Information</div></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="menu-item has-sub {{ menu_active("Admin.Game") }}">
-                    <a href="javascript:;" class="menu-link">
-                        <div class="menu-icon">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
-                        <div class="menu-text">Game</div>
-                        <div class="menu-caret"></div>
-                    </a>
-                    <div class="menu-submenu">
-                        <div class="menu-item  {{ menu_active("Admin.Game.Maker") }}">
-                            <a href="{{ route("Admin.Game.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.Platform") }}">
-                            <a href="{{ route("Admin.Game.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.Franchise") }}">
-                            <a href="{{ route("Admin.Game.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.Series") }}">
-                            <a href="{{ route("Admin.Game.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.Title") }}">
-                            <a href="{{ route("Admin.Game.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.PackageGroup") }}">
-                            <a href="{{ route("Admin.Game.PackageGroup") }}" class="menu-link"><div class="menu-text">Package Group</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.Package") }}">
-                            <a href="{{ route("Admin.Game.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.RelatedProduct") }}">
-                            <a href="{{ route("Admin.Game.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.MediaMixGroup") }}">
-                            <a href="{{ route("Admin.Game.MediaMixGroup") }}" class="menu-link"><div class="menu-text">Media Mix Group</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.MediaMix") }}">
-                            <a href="{{ route("Admin.Game.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
-                        </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.MainNetwork") }}">
-                            <a href="{{ route("Admin.Game.MainNetwork") }}" class="menu-link"><div class="menu-text">Main Network</div></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BEGIN minify-button -->
-                <div class="menu-item d-flex">
-                    <a href="javascript:;" class="app-sidebar-minify-btn ms-auto d-flex align-items-center text-decoration-none" data-toggle="app-sidebar-minify"><i class="fa fa-angle-double-left"></i></a>
-                </div>
-                <!-- END minify-button -->
-            </div>
-            <!-- END menu -->
-        </div>
-        <!-- END scrollbar -->
-    </div>
-    <div class="app-sidebar-bg"></div>
-    <div class="app-sidebar-mobile-backdrop"><a href="#" data-dismiss="app-sidebar-mobile" class="stretched-link"></a></div>
-    <!-- END #sidebar -->
-
     <!-- BEGIN #content -->
     <div id="content" class="app-content">
         @php $pageTitle = ''; @endphp
@@ -235,13 +147,69 @@
 <script src="{{ asset('assets/plugins/jstree/dist/jstree.min.js') }}"></script>
 
 <script src="{{ asset('admin_assets/common.js') }}"></script>
+<script src="{{ asset('admin_assets/interact.min.js') }}"></script>
+
 <script>
-    $(()=> {
-        $(".default-select2").select2();
-        $(".multiple-select2").select2();
-    });
+    const parent = document.getElementById('parent');
+
+    // target elements with the "draggable" class
+    interact('.draggable')
+        .draggable({
+            // enable inertial throwing
+            inertia: true,
+            // keep the element within the area of it's parent
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: 'parent',
+                    endOnly: true
+                })
+            ],
+            // enable autoScroll
+            autoScroll: true,
+
+            listeners: {
+                // call this function on every dragmove event
+                move: dragMoveListener,
+
+                // call this function on every dragend event
+                end (event) {
+                    var textEl = event.target.querySelector('p')
+
+                    textEl && (textEl.textContent =
+                        'moved a distance of ' +
+                        (Math.sqrt(Math.pow(event.pageX - event.x0, 2) +
+                            Math.pow(event.pageY - event.y0, 2) | 0))
+                            .toFixed(2) + 'px')
+                }
+            }
+        })
+
+    function dragMoveListener (event) {
+        var target = event.target
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        // translate the element
+        target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+
+        // 親領域を広げるロジック
+        const rect = target.getBoundingClientRect();
+        const parentRect = parent.getBoundingClientRect();
+
+        if (rect.right > parentRect.right || rect.bottom > parentRect.bottom) {
+            parent.style.width = `${Math.max(parentRect.width, rect.right - parentRect.left)}px`;
+            parent.style.height = `${Math.max(parentRect.height, rect.bottom - parentRect.top)}px`;
+        }
+    }
+
+    // this function is used later in the resizing and gesture demos
+    window.dragMoveListener = dragMoveListener;
 </script>
-@hasSection('js') @yield('js') @endif
 
 <!-- ================== END page-js ================== -->
 </body>

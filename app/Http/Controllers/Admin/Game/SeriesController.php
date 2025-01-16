@@ -186,4 +186,30 @@ class SeriesController extends AbstractAdminController
         }
         return redirect()->route('Admin.Game.Series.Detail', $series);
     }
+
+    /**
+     * ネットワーク編集
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function editNetwork(GameSeries $series): Application|Factory|View
+    {
+        return view('admin.game.series.edit_network', [
+            'parent' => $series,
+            'children' => $series->titles,
+        ]);
+    }
+
+    /**
+     * ネットワーク保存
+     *
+     * @param Request $request
+     * @param GameSeries $series
+     * @return RedirectResponse
+     */
+    public function saveNetwork(Request $request, GameSeries $series): RedirectResponse
+    {
+        return redirect()->route('Admin.Game.Series.Detail', $series);
+    }
 }

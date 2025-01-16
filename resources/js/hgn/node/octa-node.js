@@ -31,6 +31,7 @@ export class OctaNode
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
+        this.id = null;
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -44,8 +45,9 @@ export class OctaNode
     delete()
     {
         this.vertices = null;
-        this.connects.forEach(connect => {
+        this.connects.forEach((connect, vertexNo) => {
             if (connect !== null) {
+                this.disconnect(vertexNo);
                 connect.delete();
             }
         });
@@ -302,9 +304,11 @@ export class OctaNode
             if (targetNodeVertexNo === null) {
                 targetNodeVertexNo = targetNode.getNearVertexNo(this.vertices[vertexNo]);
             }
+
             return this.connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo);
         }
 
+        console.warn('Invalid target node');
         return false;
     }
 
@@ -338,6 +342,7 @@ export class OctaNode
     connect2OctaNode(vertexNo, targetNode, targetNodeVertexNo)
     {
         if (this.isConnectedVertex(vertexNo) || targetNode.isConnectedVertex(targetNodeVertexNo)) {
+            console.warn('Already connected');
             return false;
         }
 
@@ -345,6 +350,67 @@ export class OctaNode
         targetNode.connects[targetNodeVertexNo] = new OctaNodeConnect(Param.CONNECT_TYPE_INCOMING, this, vertexNo);
 
         return true;
+    }
+
+    /**
+     * 接続解除
+     *
+     * @param vertexNo
+     */
+    disconnect(vertexNo)
+    {
+        if (this.connects[vertexNo] !== null) {
+            let targetNode = this.connects[vertexNo].node;
+            this.connects[vertexNo] = null;
+            targetNode.disconnectByNode(this);
+        }
+    }
+
+    /**
+     * ノードを指定して接続解除
+     *
+     * @param node
+     */
+    disconnectByNode(node)
+    {
+        this.connects.forEach((connect, idx) => {
+            if (connect !== null && connect.node === node) {
+                this.disconnect(idx);
+            }
+        });
+    }
+
+    /**
+     * 接続済みか
+     *
+     * @returns {boolean}
+     */
+    isConnected(vertexNo, targetNode, targetVertexNo)
+    {
+        let connect = this.connects[vertexNo];
+
+        if (connect !== null) {
+            if (targetNode instanceof PointNode) {
+                return connect.node === targetNode;
+            } else if (targetNode instanceof OctaNode) {
+                return connect.node === targetNode && connect.vertexNo === targetVertexNo;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 接続済みのノードか
+     *
+     * @param targetNode
+     * @returns {boolean}
+     */
+    isConnectedNode(targetNode)
+    {
+        return this.connects.some(connect => {
+            return connect !== null && connect.node === targetNode;
+        });
     }
 
     /**
@@ -382,6 +448,7 @@ export class OctaNode
 
         this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
+        ctx.fill();
     }
 
     /**
@@ -505,6 +572,9 @@ export class Bg2OctaNode extends OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
+        // ctx.fillStyleを未設定にする
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+
         super.draw(ctx, offsetX, offsetY);
     }
 }
@@ -515,15 +585,43 @@ export class Bg2OctaNode extends OctaNode
 export class DOMNode extends OctaNode
 {
     /**
+     * DOMノードを生成
+     *
+     * @param containerDOM
+     * @param containerWidth
+     * @param containerHeight
+     * @param id
+     * @param html
+     * @param x
+     * @param y
+     * @returns {DOMNode}
+     */
+    static create(containerDOM, containerWidth, containerHeight, id, html, x, y)
+    {
+        let DOM = document.createElement('div');
+        DOM.innerHTML = html;
+        DOM.classList.add('dom-node');
+
+        containerDOM.appendChild(DOM);
+
+        DOM.style.left = `${(containerWidth / 2) + x - DOM.offsetWidth / 2}px`;
+        DOM.style.top = `${(containerHeight / 2) + y - DOM.offsetHeight / 2}px`;
+
+        return new DOMNode(DOM, 13, id);
+    }
+
+    /**
      * コンストラクタ
      *
      * @param DOM
      * @param notchSize
+     * @param id
      */
-    constructor(DOM, notchSize)
+    constructor(DOM, notchSize, id = null)
     {
         super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
+        this.id = id;
         this.DOM = DOM;
 
         // DOMからdata-subを取得

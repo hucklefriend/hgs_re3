@@ -31,7 +31,6 @@ $(()=> {
         filterAdminLinkList();
     }
 
-
     let adminLinkPlatformFilter = $('#admin-link-platform-filter');
     if (adminLinkPlatformFilter.length > 0) {
         adminLinkPlatformFilter.select2({placeholder: "プラットフォーム"});
