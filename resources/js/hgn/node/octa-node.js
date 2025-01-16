@@ -448,6 +448,7 @@ export class OctaNode
 
         this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
+        ctx.fill();
     }
 
     /**

@@ -91,7 +91,9 @@ export class Network
     {
         this.parentNode.reload();
         Object.values(this.nodes).forEach(node => {
-            node.reload();
+            if (!(node instanceof PointNode)) {
+                node.reload();
+            }
         });
     }
 

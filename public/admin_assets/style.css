@@ -149,15 +149,30 @@ textarea {
             font-weight: 300;
             font-style: normal;
             font-size: 14px;
-            cursor: grab;
             text-align: center;
             left: 0;
             top: 0;
+            touch-action: none;
+            user-select: none;
         }
 
         .edit-network {
             position: absolute;
             display: inline-block;
+
+            .edit-network-remove {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 2px;
+                font-size: 15px;
+                cursor: pointer;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+                width: 33px;
+                height: 33px;
+                text-align: center;
+            }
         }
 
         .edit-network:hover {

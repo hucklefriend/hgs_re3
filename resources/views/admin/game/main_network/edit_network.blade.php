@@ -42,15 +42,13 @@
     @vite(['resources/js/app.js', 'resources/js/main-network-editor.js'])
 
     <script>
-        const allNetworkData = @json($data);
-
         window.addEventListener('DOMContentLoaded', function() {
-            window.mainNetworkEditor.start(@json([]));
+            window.mainNetworkEditor.start(@json($mainNetworks), @json($data));
 
             let select = document.getElementById('franchise_network');
             document.getElementById('add_franchise_network').addEventListener('click', () => {
                 let networkId = select.options[select.selectedIndex].value;
-                window.mainNetworkEditor.addNetwork(allNetworkData[networkId]);
+                window.mainNetworkEditor.addNetwork(networkId);
             });
         });
 

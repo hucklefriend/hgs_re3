@@ -20,12 +20,17 @@ export class EditNetwork extends Network
         let canvasDOM = document.createElement('canvas');
         containerDOM.appendChild(canvasDOM);
 
+        let removeDOM = document.createElement('span');
+        removeDOM.classList.add('edit-network-remove');
+        removeDOM.innerHTML = '×';
+        containerDOM.appendChild(removeDOM);
+
         // 親ノードの生成
         let parent = DOMNode.create(containerDOM, data.width, data.height, data.id, data.parent.name, 0, 0);
         parent.setForceDraw();
 
         // ネットワークのインスタンス
-        let network = new EditNetwork(containerDOM, canvasDOM, parent);
+        let network = new EditNetwork(containerDOM, canvasDOM, removeDOM, parent);
 
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
@@ -41,14 +46,14 @@ export class EditNetwork extends Network
             data.points.forEach(point => {
                 let x = point.x + data.width / 2;
                 let y = point.y + data.height / 2;
-                let node = new PointNode(x, y, 10, point.id);
+                let node = new PointNode(x, y, 6, point.id);
                 node.setForceDraw();
                 network.addNode(node);
             });
         }
 
         // エッジの読み込み
-        if (data.connects !== undefined) {
+        if (data.hasOwnProperty('connects')) {
             data.connects.forEach(connect => {
                 let fromNode = network.getNodeById(connect.from);
                 let toNode = network.getNodeById(connect.to);
@@ -69,24 +74,44 @@ export class EditNetwork extends Network
         return network;
     }
 
-    constructor(containerDOM, canvas, parentNode)
+    /**
+     * コンストラクタ
+     *
+     * @param containerDOM
+     * @param canvas
+     * @param removeDOM
+     * @param parentNode
+     */
+    constructor(containerDOM, canvas, removeDOM, parentNode)
     {
         super(parentNode);
 
         this.containerDOM = containerDOM;
-        this.canvas = canvas;
+        this.containerDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+        this.containerDOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
+        this.containerDOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
 
+        this.canvas = canvas;
         this.ctx = null;
         if (this.canvas.getContext) {
             this.ctx = this.canvas.getContext('2d');
             this.ctx.save();
         }
+
+        this.removeDOM = removeDOM;
+        this.removeDOM.addEventListener('click', (e) => this.mouseClickRemoveDOM(e));
+
+        this.x = 0;
+        this.y = 0;
     }
 
     setPos(x, y)
     {
-        this.containerDOM.style.left = (x - this.containerDOM.clientWidth / 2) + 'px';
-        this.containerDOM.style.top = (y - this.containerDOM.clientHeight / 2) + 'px';
+        this.x = Math.round(x);
+        this.y = Math.round(y);
+
+        this.containerDOM.style.left = Math.round(x - this.containerDOM.clientWidth / 2) + 'px';
+        this.containerDOM.style.top = Math.round(y - this.containerDOM.clientHeight / 2) + 'px';
     }
 
     reload()
@@ -94,6 +119,99 @@ export class EditNetwork extends Network
         super.reload();
         this.canvas.width = this.containerDOM.clientWidth;
         this.canvas.height = this.containerDOM.clientHeight;
+    }
+
+    /**
+     * オフセットX取得
+     *
+     * @param e
+     * @returns {number}
+     */
+    getOffsetX(e)
+    {
+        return e.clientX - this.x;
+    }
+
+    /**
+     * オフセットY取得
+     *
+     * @param e
+     * @returns {number}
+     */
+    getOffsetY(e)
+    {
+        return e.clientY - this.y;
+    }
+
+    /**
+     * マウスダウン
+     *
+     * @param e
+     */
+    mouseDown(e)
+    {
+        this.isDragging = true;
+        this.containerDOM.style.cursor = "grabbing";
+
+        window.mainNetworkEditor.mouseDownInEditNetwork(e, this);
+    }
+
+    /**
+     * マウスアップ
+     *
+     * @param e
+     */
+    mouseUp(e)
+    {
+        this.containerDOM.style.cursor = "grab";
+    }
+
+    /**
+     * マウスエンター
+     *
+     * @param e
+     */
+    mouseEnter(e)
+    {
+        this.containerDOM.style.cursor = "grab";
+        if (this.removeDOM !== null) {
+            this.removeDOM.style.display = 'inline';
+        }
+    }
+
+    /**
+     * ドラッグ中
+     *
+     * @param centerX
+     * @param centerY
+     * @param moveX
+     * @param moveY
+     */
+    dragging(centerX, centerY, moveX, moveY)
+    {
+        this.setPos(this.x + moveX, this.y + moveY);
+    }
+
+    /**
+     * マウスリーブ
+     *
+     * @param e
+     */
+    mouseLeave(e)
+    {
+        if (this.removeDOM !== null) {
+            this.removeDOM.style.display = 'none';
+        }
+    }
+
+    /**
+     * removeDOMクリック
+     *
+     * @param e
+     */
+    mouseClickRemoveDOM(e)
+    {
+        window.mainNetworkEditor.removeNetwork(this.parentNode.id);
     }
 
     draw()
@@ -118,8 +236,6 @@ export class EditNetwork extends Network
             }
         });
 
-        this.parentNode.draw(this.ctx, 0, 0);
-
         Object.values(this.nodes).forEach(node => {
             node.connects.forEach((connect, vertexNo) => {
                 if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
@@ -136,12 +252,44 @@ export class EditNetwork extends Network
                     this.ctx.stroke();
                 }
             });
+        });
+
+        Object.values(this.nodes).forEach(node => {
+            this.ctx.restore();
+            if (node instanceof DOMNode) {
+                this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+                this.ctx.lineWidth = 1; // 線の太さ
+                this.ctx.shadowColor = "lime"; // 影の色
+                this.ctx.shadowBlur = 5; // 影のぼかし効果
+                this.ctx.fillStyle = "black";
+            } else if (node instanceof PointNode) {
+                this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+            }
 
             node.draw(this.ctx, 0, 0);
         });
 
-        this.ctx.restore();
+        if (this.parentNode instanceof DOMNode) {
+            this.ctx.restore();
+            this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+            this.ctx.lineWidth = 1; // 線の太さ
+            this.ctx.shadowColor = "lime"; // 影の色
+            this.ctx.shadowBlur = 5; // 影のぼかし効果
+            this.ctx.fillStyle = "black";
+        } else if (node instanceof PointNode) {
+            this.ctx.restore();
+            this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+        }
 
-        //this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
+        this.parentNode.draw(this.ctx, 0, 0);
+    }
+
+    toJson(id, centerX, centerY)
+    {
+        return {
+            id: id,
+            x: Math.round(this.x - centerX),
+            y: Math.round(this.y - centerY),
+        };
     }
 }

@@ -560,54 +560,54 @@ export class NetworkEditor
     {
         let nodes = {};
         let connects = [];
-        let left = this.parent.x - this.parent.DOM.offsetWidth / 2;
-        let top = this.parent.y - this.parent.DOM.offsetHeight / 2;
-        let right = this.parent.x + this.parent.DOM.offsetWidth / 2;
-        let bottom = this.parent.y + this.parent.DOM.offsetHeight / 2;
+        let w = this.parent.DOM.offsetWidth / 2;
+        let h = this.parent.DOM.offsetHeight / 2;
+
         connects.push(...this.parent.getConnectJsonArr());
         Object.values(this.nodes).forEach(node => {
-            nodes[node.id] = node.toJson(this.parent);
+            let json = node.toJson(this.parent);
+            nodes[node.id] = json;
             connects.push(...node.getConnectJsonArr());
 
-            let l = node.x - node.DOM.offsetWidth / 2;
-            let t = node.y - node.DOM.offsetHeight / 2;
-            let r = node.x + node.DOM.offsetWidth / 2;
-            let b = node.y + node.DOM.offsetHeight / 2;
-            if (l < left) {
-                left = l;
+            let l = Math.abs(json.x - node.DOM.offsetWidth / 2);
+            let t = Math.abs(json.y - node.DOM.offsetHeight / 2);
+            let r = Math.abs(json.x + node.DOM.offsetWidth / 2);
+            let b = Math.abs(json.y + node.DOM.offsetHeight / 2);
+            if (w < l) {
+                w = l;
             }
-            if (t < top) {
-                top = t;
+            if (h < t) {
+                h = t;
             }
-            if (r > right) {
-                right = r;
+            if (w < r) {
+                w = r;
             }
-            if (b > bottom) {
-                bottom = b;
+            if (h < b) {
+                h = b;
             }
         });
 
         let points = [];
         Object.values(this.points).forEach(point => {
-            points.push(point.toJson(this.parent));
+            let json = point.toJson(this.parent);
+            points.push(json);
             connects.push(...point.getConnectJsonArr());
 
-
-            let l = point.x - 10;
-            let t = point.y - 10;
-            let r = point.x + 10;
-            let b = point.y + 10;
-            if (l < left) {
-                left = l;
+            let l = Math.abs(json.x - 10);
+            let t = Math.abs(json.y - 10);
+            let r = Math.abs(json.x + 10);
+            let b = Math.abs(json.y + 10);
+            if (w < l) {
+                w = l;
             }
-            if (t < top) {
-                top = t;
+            if (h < t) {
+                h = t;
             }
-            if (r > right) {
-                right = r;
+            if (w < r) {
+                w = r;
             }
-            if (b > bottom) {
-                bottom = b;
+            if (h < b) {
+                h = b;
             }
         });
 
@@ -617,8 +617,8 @@ export class NetworkEditor
             connects: connects,
             ptIdx: this.pointsIndex,
             points: points,
-            width: Math.abs(right - left),
-            height: Math.abs(bottom - top)
+            width: w*2 + 20,
+            height: h*2 + 20,
         };
     }
 }

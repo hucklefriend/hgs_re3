@@ -27,13 +27,17 @@ export class MainNetworkEditor
         this.draggingNetwork = null;
 
         this.center = new Vertex();
+
+        this.data = null;
     }
 
     /**
      * エディタ起動
      */
-    start(data)
+    start(initialPosition, data)
     {
+        this.data = data;
+
         // containerDOMのスクロール位置をeditorDOMの中央に
         this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
         this.containerDOM.scrollLeft = this.editorDOM.offsetLeft - (this.containerDOM.offsetWidth - this.editorDOM.offsetWidth) / 2;
@@ -46,9 +50,8 @@ export class MainNetworkEditor
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // 配置済みネットワークの読み込み
-        data.forEach(networkData => {
-            this.networks[networkData.id] = EditNetwork.create(networkData);
-            this.editorDOM.appendChild(this.networks[networkData.id].DOM);
+        initialPosition.forEach(pos => {
+            this.addNetwork(pos.id, pos.x, pos.y);
         });
 
         this.writeJson();
@@ -68,22 +71,56 @@ export class MainNetworkEditor
     /**
      * ネットワーク追加
      *
-     * @param networkData
+     * @param id
+     * @param x
+     * @param y
      */
-    addNetwork(networkData)
+    addNetwork(id, x = null, y = null)
     {
-        if (this.hasNetwork(networkData.id)) {
-            console.error("Network " + networkData.id + " already exists.");
+        if (this.hasNetwork(id)) {
+            console.error("Network " + id + " already exists.");
             return;
         }
 
-        this.networks[networkData.id] = EditNetwork.create(networkData);
+        if (!this.data.hasOwnProperty(id)) {
+            console.error("Network " + id + " not found in data.");
+            return;
+        }
 
-        // 現在のスクロール位置の中心に配置
-        this.networks[networkData.id].setPos(
-            this.containerDOM.scrollLeft + this.containerDOM.offsetWidth / 2,
-            this.containerDOM.scrollTop + this.containerDOM.offsetHeight / 2
-        );
+        this.networks[id] = EditNetwork.create(this.data[id]);
+
+        // x, yがnullなら現在のスクロール位置の中心に配置
+        if (x === null) {
+            x = Math.round(this.containerDOM.scrollLeft + this.containerDOM.offsetWidth / 2);
+        } else {
+            x += this.center.x;
+        }
+        if (y === null) {
+            y = Math.round(this.containerDOM.scrollTop + this.containerDOM.offsetHeight / 2);
+        } else {
+            y += this.center.y;
+        }
+
+        this.networks[id].setPos(x, y);
+
+        this.writeJson();
+    }
+
+    /**
+     * ネットワークの削除
+     *
+     * @param id
+     */
+    removeNetwork(id)
+    {
+        if (this.networks.hasOwnProperty(id)) {
+            this.editorDOM.removeChild(this.networks[id].containerDOM);
+
+            this.networks[id].delete();
+            delete this.networks[id];
+
+            this.writeJson();
+        }
     }
 
     /**
@@ -118,14 +155,8 @@ export class MainNetworkEditor
         if (!this.isDragging) {
             this.isDragging = true;
 
-            if (this.draggingNetwork !== null) {
-                this.offsetX = this.draggingNetwork.getOffsetX(e);
-                this.offsetY = this.draggingNetwork.getOffsetY(e);
-            } else {
-                // ノードがドラッグされない場合はスクロール
-                this.offsetX = e.clientX;
-                this.offsetY = e.clientY;
-            }
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
         }
     }
 
@@ -137,16 +168,20 @@ export class MainNetworkEditor
     mouseMove(e)
     {
         if (this.isDragging) {
+            let moveX = e.clientX - this.offsetX;
+            let moveY = e.clientY - this.offsetY;
+
             if (this.draggingNetwork !== null) {
                 // ノードの移動
-                this.draggingNetwork.mouseMove(e, this.offsetX, this.offsetY);
+                this.draggingNetwork.dragging(this.center.x, this.center.y, moveX, moveY);
             } else {
                 // スクロール
-                this.containerDOM.scrollLeft -= e.clientX - this.offsetX;
-                this.containerDOM.scrollTop -= e.clientY - this.offsetY;
-                this.offsetX = e.clientX;
-                this.offsetY = e.clientY;
+                this.containerDOM.scrollLeft -= moveX;
+                this.containerDOM.scrollTop -= moveY;
             }
+
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
         }
     }
 
@@ -204,14 +239,16 @@ export class MainNetworkEditor
 
     /**
      * JSON化
-     *
-     * @returns {}
      */
     toJson()
     {
-        return {
+        let json = [];
 
-        };
+        for (let id in this.networks) {
+            json.push(this.networks[id].toJson(id, this.center.x, this.center.y));
+        }
+
+        return json;
     }
 }
 
