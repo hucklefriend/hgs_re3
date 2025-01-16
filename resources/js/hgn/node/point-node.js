@@ -253,4 +253,19 @@ export class Bg2PointNode extends PointNode
         this.x = v.x + this.offsetX;
         this.y = v.y + this.offsetY;
     }
+
+
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     */
+    draw(ctx, offsetX, offsetY)
+    {
+        ctx.fillStyle = "rgba(0, 200, 0, 0.8)";
+
+        super.draw(ctx, offsetX, offsetY);
+    }
 }

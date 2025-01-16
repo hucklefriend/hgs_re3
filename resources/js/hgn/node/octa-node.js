@@ -572,6 +572,9 @@ export class Bg2OctaNode extends OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
+        // ctx.fillStyleを未設定にする
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+
         super.draw(ctx, offsetX, offsetY);
     }
 }

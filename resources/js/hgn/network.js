@@ -87,9 +87,12 @@ export class Network
     /**
      * リロード
      */
-    reload()
+    reload(reloadParent = false)
     {
-        this.parentNode.reload();
+        if (reloadParent) {
+            this.parentNode.reload();
+        }
+
         Object.values(this.nodes).forEach(node => {
             if (!(node instanceof PointNode)) {
                 node.reload();
@@ -356,6 +359,19 @@ export class Bg2Network extends Network
     isNotDraw()
     {
         return this.minDrawDepth === 0 && this.maxDrawDepth === 0;
+    }
+
+    /**
+     * リロード
+     */
+    reload()
+    {
+        // サブノードだけリロードされる
+        Object.values(this.nodes).forEach(node => {
+            if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
+                node.reload();
+            }
+        });
     }
 
     /**
