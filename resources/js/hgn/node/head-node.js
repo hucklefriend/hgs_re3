@@ -98,14 +98,14 @@ export class Head1Node extends DOMNode
             new Vertex(0, 0),
         ];
         this.minVertices = [
-            new Vertex(this.center.x - this.notchSize, this.center.y - this.notchSize * 2),
-            new Vertex(this.center.x + this.notchSize, this.center.y - this.notchSize * 2),
-            new Vertex(this.center.x + this.notchSize * 2, this.center.y - this.notchSize),
-            new Vertex(this.center.x + this.notchSize * 2, this.center.y + this.notchSize),
-            new Vertex(this.center.x + this.notchSize, this.center.y + this.notchSize * 2),
-            new Vertex(this.center.x - this.notchSize, this.center.y + this.notchSize * 2),
-            new Vertex(this.center.x - this.notchSize * 2, this.center.y + this.notchSize),
-            new Vertex(this.center.x - this.notchSize * 2, this.center.y - this.notchSize),
+            new Vertex(this.x - this.notchSize, this.y - this.notchSize * 2),
+            new Vertex(this.x + this.notchSize, this.y - this.notchSize * 2),
+            new Vertex(this.x + this.notchSize * 2, this.y - this.notchSize),
+            new Vertex(this.x + this.notchSize * 2, this.y + this.notchSize),
+            new Vertex(this.x + this.notchSize, this.y + this.notchSize * 2),
+            new Vertex(this.x - this.notchSize, this.y + this.notchSize * 2),
+            new Vertex(this.x - this.notchSize * 2, this.y + this.notchSize),
+            new Vertex(this.x - this.notchSize * 2, this.y - this.notchSize),
         ];
         this.isUseAnimVertices = true;
     }
@@ -274,8 +274,7 @@ export class Head2Node extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
 
         // 中央から外に向かってグラデーション
-        let center = this.center;
-        let grad = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, this.animWidth / 2);
+        let grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.animWidth / 2);
         grad.addColorStop(0, "rgba(0, 70, 0, " + this.animAlpha2 + ")");
         grad.addColorStop(1, "rgba(0, 50, 0, " + this.animAlpha3 + ")");
         ctx.fillStyle = grad;

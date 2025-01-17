@@ -254,7 +254,7 @@ export class LinkNode extends DOMNode
         } else if (this.scale < 0.3) {
             ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.beginPath();
-            ctx.arc(this.center.x, this.center.y, 30 * this.scale, 0, Param.MATH_PI_2, false);
+            ctx.arc(this.x, this.y, 30 * this.scale, 0, Param.MATH_PI_2, false);
             ctx.fill();
         } else {
             ctx.strokeStyle = this.ctxParams.strokeStyle;
@@ -266,9 +266,9 @@ export class LinkNode extends DOMNode
             ctx.lineCap = "round"; // 線の末端のスタイル
 
             ctx.beginPath();
-            ctx.moveTo(this.center.x + (this.center.x - this.vertices[0].x) * this.scale, this.center.y + (this.center.y - this.vertices[0].y) * this.scale);
+            ctx.moveTo(this.x + (this.x - this.vertices[0].x) * this.scale, this.y + (this.y - this.vertices[0].y) * this.scale);
             for (let i = 1; i < this.vertices.length; i++) {
-                ctx.lineTo(this.center.x + (this.center.x - this.vertices[i].x) * this.scale, this.center.y + (this.center.y - this.vertices[i].y) * this.scale);
+                ctx.lineTo(this.x + (this.x - this.vertices[i].x) * this.scale, this.y + (this.y - this.vertices[i].y) * this.scale);
             }
             ctx.closePath();
             ctx.stroke();

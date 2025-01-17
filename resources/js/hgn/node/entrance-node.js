@@ -373,8 +373,8 @@ export class EntranceNode extends LinkNode
     {
         this.lightRadius = Util.getMidpoint(1, 70, ratio);
         for (let i = 0; i < this.animVertices.length; i++) {
-            this.animVertices[i].x = Util.getMidpoint(this.center.x, this.vertices[i].x, ratio);
-            this.animVertices[i].y = Util.getMidpoint(this.center.y, this.vertices[i].y, ratio);
+            this.animVertices[i].x = Util.getMidpoint(this.x, this.vertices[i].x, ratio);
+            this.animVertices[i].y = Util.getMidpoint(this.y, this.vertices[i].y, ratio);
         }
     }
 }

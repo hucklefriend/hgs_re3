@@ -32,5 +32,7 @@ export class Param
 
     static CONTENT_NODE_NOTCH_SIZE = 70;
 
+    static DRAG_FLICK_RATE = 0.9;
+
     static SHOW_DEBUG = true;
 }

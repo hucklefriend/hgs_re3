@@ -26,12 +26,17 @@ export class OctaNode
         this.y = y;
         this.w = w;
         this.h = h;
+        this.left = 0;
+        this.right = 0;
+        this.top = 0;
+        this.bottom = 0;
         this.notchSize = notchSize;
         this.vertices = [];
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
-        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
         this.id = null;
+
+        this.setRect();
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -55,46 +60,6 @@ export class OctaNode
     }
 
     /**
-     * 左辺
-     *
-     * @returns {number}
-     */
-    get left()
-    {
-        return this.x - this.w / 2;
-    }
-
-    /**
-     * 右辺
-     *
-     * @returns {number}
-     */
-    get right()
-    {
-        return this.x + this.w / 2;
-    }
-
-    /**
-     * 上辺
-     *
-     * @returns {number}
-     */
-    get top()
-    {
-        return this.y - this.h / 2;
-    }
-
-    /**
-     * 下辺
-     *
-     * @returns {number}
-     */
-    get bottom()
-    {
-        return this.y + this.h / 2;
-    }
-
-    /**
      * 再ロード（再配置）
      *
      * @param x
@@ -108,12 +73,19 @@ export class OctaNode
         this.y = y;
         this.w = w;
         this.h = h;
-        this.center.x = this.x + this.w / 2;
-        this.center.y = this.y + this.h / 2;
+        this.setRect();
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+    }
+
+    setRect()
+    {
+        this.left = this.x - this.w / 2;
+        this.right = this.left + this.w;
+        this.top = this.y - this.h / 2;
+        this.bottom = this.top + this.h;
     }
 
     /**
@@ -122,14 +94,14 @@ export class OctaNode
     setOctagon()
     {
         this.vertices = [
-            new Vertex(this.x + this.notchSize, this.y),
-            new Vertex(this.x + this.w - this.notchSize, this.y),
-            new Vertex(this.x + this.w, this.y + this.notchSize),
-            new Vertex(this.x + this.w, this.y + this.h - this.notchSize),
-            new Vertex(this.x + this.w - this.notchSize, this.y + this.h),
-            new Vertex(this.x + this.notchSize, this.y + this.h),
-            new Vertex(this.x, this.y + this.h - this.notchSize),
-            new Vertex(this.x, this.y +  this.notchSize),
+            new Vertex(this.left + this.notchSize, this.top),
+            new Vertex(this.right - this.notchSize, this.top),
+            new Vertex(this.right, this.top + this.notchSize),
+            new Vertex(this.right, this.bottom - this.notchSize),
+            new Vertex(this.right - this.notchSize, this.bottom),
+            new Vertex(this.left + this.notchSize, this.bottom),
+            new Vertex(this.left, this.bottom - this.notchSize),
+            new Vertex(this.left, this.top + this.notchSize),
         ];
     }
 
@@ -619,7 +591,8 @@ export class DOMNode extends OctaNode
      */
     constructor(DOM, notchSize, id = null)
     {
-        super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
+        super(DOM.offsetLeft + DOM.offsetWidth / 2, DOM.offsetTop + DOM.offsetHeight / 2,
+            DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
         this.id = id;
         this.DOM = DOM;
@@ -835,7 +808,12 @@ export class DOMNode extends OctaNode
      */
     reload()
     {
-        super.reload(this.DOM.offsetLeft, this.DOM.offsetTop, this.DOM.offsetWidth, this.DOM.offsetHeight);
+        super.reload(
+            this.DOM.offsetLeft + this.DOM.offsetWidth / 2,
+            this.DOM.offsetTop + this.DOM.offsetHeight / 2,
+            this.DOM.offsetWidth,
+            this.DOM.offsetHeight
+        );
     }
 
     /**

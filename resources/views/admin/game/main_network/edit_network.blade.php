@@ -51,6 +51,5 @@
                 window.mainNetworkEditor.addNetwork(networkId);
             });
         });
-
     </script>
 @endsection

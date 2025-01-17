@@ -6,6 +6,7 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Models\GameMainNetwork;
 use App\Models\GameMainNetworkFranchise;
+use App\Models\GameMainNetworkParam;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
 use Illuminate\Contracts\Foundation\Application;
@@ -77,7 +78,7 @@ class MainNetworkController extends AbstractAdminController
     {
         $json = json_decode($request->post('json'));
 
-        foreach ($json as $network) {
+        foreach ($json->networks as $network) {
             [$prefix, $id] = explode('_', $network->id);
 
             $mainNetwork = GameMainNetwork::find($id);
@@ -89,6 +90,12 @@ class MainNetworkController extends AbstractAdminController
             $mainNetwork->y = $network->y;
             $mainNetwork->save();
         }
+
+        GameMainNetworkParam::saveNetworkRect(
+            $json->rect->left, $json->rect->right,
+            $json->rect->top, $json->rect->bottom
+        );
+
 
         return redirect()->route('Admin.Game.MainNetwork');
     }

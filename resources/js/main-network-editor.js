@@ -242,13 +242,31 @@ export class MainNetworkEditor
      */
     toJson()
     {
-        let json = [];
+        let networks = [];
+        let rect = {left:0, right:0, top:0, bottom:0};
 
         for (let id in this.networks) {
-            json.push(this.networks[id].toJson(id, this.center.x, this.center.y));
+            networks.push(this.networks[id].toJson(id, this.center.x, this.center.y));
+
+            let r = this.networks[id].getRect(this.center.x, this.center.y);
+            if (rect.left === 0 || rect.left > r.left) {
+                rect.left = r.left;
+            }
+            if (rect.right === 0 || rect.right < r.right) {
+                rect.right = r.right;
+            }
+            if (rect.top === 0 || rect.top > r.top) {
+                rect.top = r.top;
+            }
+            if (rect.bottom === 0 || rect.bottom < r.bottom) {
+                rect.bottom = r.bottom;
+            }
         }
 
-        return json;
+        return {
+            networks: networks,
+            rect: rect
+        };
     }
 }
 

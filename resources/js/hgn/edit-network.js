@@ -85,6 +85,7 @@ export class EditNetwork extends Network
     constructor(containerDOM, canvas, removeDOM, parentNode)
     {
         super(parentNode);
+        console.log(parentNode);
 
         this.containerDOM = containerDOM;
         this.containerDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
@@ -230,7 +231,7 @@ export class EditNetwork extends Network
 
                 this.ctx.beginPath();
 
-                this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
+                this.ctx.moveTo(this.parentNode.vertices[vertexNo].x, this.parentNode.vertices[vertexNo].y);
                 this.ctx.lineTo(targetVertex.x, targetVertex.y);
                 this.ctx.stroke();
             }
@@ -282,6 +283,57 @@ export class EditNetwork extends Network
         }
 
         this.parentNode.draw(this.ctx, 0, 0);
+    }
+
+    getRect(centerX, centerY)
+    {
+        let x = this.x - centerX - this.containerDOM.offsetWidth / 2;
+        let y = this.y - centerY - this.containerDOM.offsetHeight / 2;
+
+
+        let left = x + this.parentNode.x - this.parentNode.DOM.offsetWidth / 2;
+        let right = x + this.parentNode.x + this.parentNode.DOM.offsetWidth / 2;
+        let top = y + this.parentNode.y - this.parentNode.DOM.offsetHeight / 2;
+        let bottom = y + this.parentNode.y + this.parentNode.DOM.offsetHeight / 2;
+        console.log(y, this.parentNode.y, this.parentNode.DOM.offsetHeight / 2);
+        let l = 0;
+        let r = 0;
+        let t = 0;
+        let b = 0;
+
+        Object.values(this.nodes).forEach(node => {
+            if (node instanceof DOMNode) {
+                l = x + node.x - node.DOM.offsetWidth / 2;
+                r = x + node.x + node.DOM.offsetWidth / 2;
+                t = y + node.y - node.DOM.offsetHeight / 2;
+                b = y + node.y + node.DOM.offsetHeight / 2;
+            } else if (node instanceof PointNode) {
+                l = x + node.x - node.r;
+                r = x + node.x + node.r;
+                t = y + node.y - node.r;
+                b = y + node.y + node.r;
+            }
+
+            if (left > l) {
+                left = l;
+            }
+            if (right < r) {
+                right = r;
+            }
+            if (top > t) {
+                top = t;
+            }
+            if (bottom < b) {
+                bottom = b;
+            }
+        });
+
+        return {
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+        };
     }
 
     toJson(id, centerX, centerY)

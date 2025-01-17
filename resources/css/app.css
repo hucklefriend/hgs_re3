@@ -425,6 +425,27 @@ hr {
 }
 
 
+
+body#main-network {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0a2d49;
+}
+
+div#main-network-debug {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.7);
+    touch-action: none;
+    user-select: none;
+    color: white;
+}
+
 /* スマホ～ */
 @media (min-width: 400px) {
 
