@@ -1009,7 +1009,7 @@ export class HorrorGameNetwork
 }
 
 window.onload = function() {
-    if (window.START_HGN) {
+    if (window.START_HGN !== undefined && window.START_HGN) {
         const hgn = new HorrorGameNetwork();
         hgn.start();
 

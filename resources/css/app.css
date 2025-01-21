@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --mntx: 0px;
+    --mnty: 0px;
+}
+
+
 body {
     background-color: black;
     color: white;
@@ -433,7 +439,26 @@ body#main-network {
     overflow: hidden;
     width: 100vw;
     height: 100vh;
-    background-color: #0a2d49;
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1000;
+    }
+
+    .franchise {
+        position: absolute;
+        touch-action: none;
+        user-select: none;
+    }
+
+    .dom-node {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translate(calc(var(--mntx)), calc(var(--mnty)));
+    }
 }
 
 div#main-network-debug {

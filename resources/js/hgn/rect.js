@@ -8,56 +8,70 @@ export class Rect
     /**
      * コンストラクタ
      *
-     * @param x
-     * @param y
-     * @param w
-     * @param h
+     * @param left
+     * @param right
+     * @param top
+     * @param bottom
      */
-    constructor(x = 0, y = 0, w = 0, h = 0)
+    constructor(left = 0, right = 0, top = 0, bottom = 0)
     {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
     }
 
     /**
-     * 左上の座標を取得
+     * 設定
      *
-     * @returns {Vertex}
+     * @param left
+     * @param right
+     * @param top
+     * @param bottom
      */
-    get leftTop()
+    setRect(left, right, top, bottom)
     {
-        return new Vertex(this.x, this.y);
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
+    }
+
+    setRectByXYWH(x, y, w, h)
+    {
+        this.left = x - w / 2;
+        this.right = this.left + w;
+        this.top = y - h / 2;
+        this.bottom = this.top + h;
     }
 
     /**
-     * 右上の座標を取得
-     *
-     * @returns {Vertex}
+     * 別のRectと重なっているか
      */
-    get rightTop()
+    isOverlap(rect)
     {
-        return new Vertex(this.x + this.w, this.y);
+        return this.left < rect.right && this.right > rect.left && this.top < rect.bottom && this.bottom > rect.top;
     }
 
     /**
-     * 右下の座標を取得
-     *
-     * @returns {Vertex}
+     * 別のRectとマージ（より大きなRectにする）
      */
-    get rightBottom()
+    merge(rect)
     {
-        return new Vertex(this.x + this.w, this.y + this.h);
+        this.left = Math.min(this.left, rect.left);
+        this.right = Math.max(this.right, rect.right);
+        this.top = Math.min(this.top, rect.top);
+        this.bottom = Math.max(this.bottom, rect.bottom);
     }
 
     /**
-     * 左下の座標を取得
-     *
-     * @returns {Vertex}
+     * 移動
      */
-    get leftBottom()
+    move(x, y)
     {
-        return new Vertex(this.x, this.y + this.h);
+        this.left += x;
+        this.right += x;
+        this.top += y;
+        this.bottom += y;
     }
 }

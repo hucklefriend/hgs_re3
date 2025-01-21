@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Rating;
 use App\Models\GameFranchise;
 use App\Models\GameMainNetwork;
+use App\Models\GameMainNetworkFranchise;
 use App\Models\GameMainNetworkParam;
 use App\Models\GameMaker;
 use App\Models\GameMakerPackageLink;
@@ -36,7 +37,9 @@ class GameController extends Controller
      */
     public function horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $mainNetworks = GameMainNetwork::all();
+        $mainNetworks = GameMainNetworkFranchise::whereNotNull('x')
+            ->whereNotNull('y')
+            ->get();
         $seriesNames = GameSeries::all()->pluck('name', 'id');
         $titleNames = GameTitle::all()->pluck('node_name', 'id');
 
@@ -48,17 +51,17 @@ class GameController extends Controller
 
             $json = json_decode($mainNetwork->franchise->mainNetwork->json, true);
 
-            $json['parent']['name'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
+            $json['parent']['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
 
             foreach ($json['nodes'] as $key => $node) {
                 [$prefix, $id] = explode('_', $key);
 
                 if ($prefix === 'f') {
-                    $json['nodes'][$key]['name'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
+                    $json['nodes'][$key]['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
                 } else if ($prefix === 's') {
-                    $json['nodes'][$key]['name'] = $seriesNames[$id] . '<br>シリーズ';
+                    $json['nodes'][$key]['html'] = $seriesNames[$id] . '<br>シリーズ';
                 } else if ($prefix === 't') {
-                    $json['nodes'][$key]['name'] = $titleNames[$id];
+                    $json['nodes'][$key]['html'] = $titleNames[$id];
                 }
             }
 

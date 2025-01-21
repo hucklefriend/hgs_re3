@@ -27,6 +27,8 @@
 .dom-node {
     padding: 13px 18px;
     display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 
     a:link, a:visited {
         color: #AAFFAA;
@@ -37,6 +39,8 @@
         color: white;
     }
 }
+
+
 
 .link-node, .content-link-node, .popup-link-node {
     padding: 13px 18px;
@@ -293,6 +297,12 @@
 .text-node.small {
     padding: 6px 10px;
     font-size: 11px;
+}
+
+body#main-network {
+    .dom-node, .link-node, .text-node {
+        position: absolute;
+    }
 }
 
 /* スマホ～ */

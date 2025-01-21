@@ -49,6 +49,18 @@ export class PointNode extends Vertex
     }
 
     /**
+     * オフセット移動
+     * 何もしない
+     *
+     * @param offsetX
+     * @param offsetY
+     */
+    moveOffset(offsetX, offsetY)
+    {
+
+    }
+
+    /**
      * 別のノードと接続
      *
      * @param targetNode
@@ -174,10 +186,10 @@ export class PointNode extends Vertex
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * @param screenOffsetX
+     * @param screenOffsetY
      */
-    draw(ctx, offsetX, offsetY)
+    draw(ctx, screenOffsetX, screenOffsetY)
     {
         if (!this.forceDraw) {
             const hgn = HorrorGameNetwork.getInstance();
@@ -192,7 +204,7 @@ export class PointNode extends Vertex
         }
 
         ctx.beginPath();
-        ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
+        ctx.arc(this.x + screenOffsetX, this.y + screenOffsetY, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
     }
 }
@@ -213,7 +225,6 @@ export class Bg2PointNode extends PointNode
      */
     constructor(parent, vertexNo, offsetX, offsetY, r)
     {
-
         let x = parent.x;
         let y = parent.y;
         if (parent instanceof OctaNode) {

@@ -5,7 +5,6 @@
         <div class="panel-heading">
             <h4 class="panel-title">Main Network</h4>
         </div>
-
         <div class="panel-body">
             <fieldset>
                 <legend class="col-form-label col-sm-2 pt-0">ネットワーク追加</legend>

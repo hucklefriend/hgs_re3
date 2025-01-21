@@ -1,4 +1,5 @@
 import {Vertex} from '../vertex.js';
+import {Rect} from '../rect.js';
 import {Param} from '../param.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
@@ -22,14 +23,10 @@ export class OctaNode
      */
     constructor(x = 0, y = 0, w = 0, h = 0, notchSize = 0)
     {
-        this.x = x;
-        this.y = y;
+        this.pos = new Vertex(x, y);
         this.w = w;
         this.h = h;
-        this.left = 0;
-        this.right = 0;
-        this.top = 0;
-        this.bottom = 0;
+        this.rect = new Rect();
         this.notchSize = notchSize;
         this.vertices = [];
         this.connects = new Array(8).fill(null);
@@ -69,8 +66,8 @@ export class OctaNode
      */
     reload(x, y, w, h)
     {
-        this.x = x;
-        this.y = y;
+        this.pos.x = x;
+        this.pos.y = y;
         this.w = w;
         this.h = h;
         this.setRect();
@@ -80,28 +77,28 @@ export class OctaNode
         }
     }
 
+    /**
+     * 矩形を設定
+     */
     setRect()
     {
-        this.left = this.x - this.w / 2;
-        this.right = this.left + this.w;
-        this.top = this.y - this.h / 2;
-        this.bottom = this.top + this.h;
+        this.rect.setRectByXYWH(this.pos.x, this.pos.y, this.w, this.h);
     }
 
     /**
-     * 八角形の挑戦を設定
+     * 八角形の頂点を設定
      */
     setOctagon()
     {
         this.vertices = [
-            new Vertex(this.left + this.notchSize, this.top),
-            new Vertex(this.right - this.notchSize, this.top),
-            new Vertex(this.right, this.top + this.notchSize),
-            new Vertex(this.right, this.bottom - this.notchSize),
-            new Vertex(this.right - this.notchSize, this.bottom),
-            new Vertex(this.left + this.notchSize, this.bottom),
-            new Vertex(this.left, this.bottom - this.notchSize),
-            new Vertex(this.left, this.top + this.notchSize),
+            new Vertex(this.rect.left + this.notchSize, this.rect.top),
+            new Vertex(this.rect.right - this.notchSize, this.rect.top),
+            new Vertex(this.rect.right, this.rect.top + this.notchSize),
+            new Vertex(this.rect.right, this.rect.bottom - this.notchSize),
+            new Vertex(this.rect.right - this.notchSize, this.rect.bottom),
+            new Vertex(this.rect.left + this.notchSize, this.rect.bottom),
+            new Vertex(this.rect.left, this.rect.bottom - this.notchSize),
+            new Vertex(this.rect.left, this.rect.top + this.notchSize),
         ];
     }
 
@@ -156,8 +153,8 @@ export class OctaNode
      */
     move(offsetX, offsetY)
     {
-        this.x += offsetX;
-        this.y += offsetY;
+        this.pos.x += offsetX;
+        this.pos.y += offsetY;
         this.setOctagon();
     }
 
@@ -560,15 +557,14 @@ export class DOMNode extends OctaNode
      * DOMノードを生成
      *
      * @param containerDOM
-     * @param containerWidth
-     * @param containerHeight
      * @param id
      * @param html
      * @param x
      * @param y
+     * @param {Vertex}screenOffset
      * @returns {DOMNode}
      */
-    static create(containerDOM, containerWidth, containerHeight, id, html, x, y)
+    static create(containerDOM, id, html, x, y, screenOffset)
     {
         let DOM = document.createElement('div');
         DOM.innerHTML = html;
@@ -576,23 +572,39 @@ export class DOMNode extends OctaNode
 
         containerDOM.appendChild(DOM);
 
-        DOM.style.left = `${(containerWidth / 2) + x - DOM.offsetWidth / 2}px`;
-        DOM.style.top = `${(containerHeight / 2) + y - DOM.offsetHeight / 2}px`;
+        DOM.style.left = `${x + screenOffset.x - DOM.offsetWidth / 2}px`;
+        DOM.style.top = `${y + screenOffset.y - DOM.offsetHeight / 2}px`;
 
-        return new DOMNode(DOM, 13, id);
+        return new DOMNode(id, x, y, DOM);
+    }
+
+    static createFromDOM(containerDOM, DOM)
+    {
+        // containerDOMの中央を(0,0)とした座標軸に変換
+        let containerRect = containerDOM.getBoundingClientRect();
+        let rect = DOM.getBoundingClientRect();
+        let x = (containerRect.width / 2) - rect.left - containerRect.left + rect.width / 2;
+        let y = (containerRect.height / 2) - rect.top - containerRect.top + rect.height / 2;
+
+        return new DOMNode(DOM.id, x, y, DOM);
     }
 
     /**
      * コンストラクタ
      *
-     * @param DOM
-     * @param notchSize
      * @param id
+     * @param x
+     * @param y
+     * @param DOM
      */
-    constructor(DOM, notchSize, id = null)
+    constructor(id, x, y, DOM)
     {
-        super(DOM.offsetLeft + DOM.offsetWidth / 2, DOM.offsetTop + DOM.offsetHeight / 2,
-            DOM.offsetWidth, DOM.offsetHeight, notchSize);
+        let notchSize = 13;
+        if (DOM.classList.contains('small')) {
+            notchSize = 8;
+        }
+
+        super(x, y, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
         this.id = id;
         this.DOM = DOM;
@@ -809,11 +821,21 @@ export class DOMNode extends OctaNode
     reload()
     {
         super.reload(
-            this.DOM.offsetLeft + this.DOM.offsetWidth / 2,
-            this.DOM.offsetTop + this.DOM.offsetHeight / 2,
+            this.pos.x,
+            this.pos.y,
             this.DOM.offsetWidth,
             this.DOM.offsetHeight
         );
+    }
+
+    setPos(x, y, screenOffset)
+    {
+        this.pos.x = x;
+        this.pos.y = y;
+        this.DOM.style.left = `${x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
+        this.DOM.style.top = `${y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
+
+        this.reload();
     }
 
     /**
@@ -894,7 +916,7 @@ export class DOMNode extends OctaNode
         let rect = this.DOM.getBoundingClientRect();
 
         // 表示領域外にある場合はアニメーションをスキップ
-        if (hgn.getScrollY() - 100 > this.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.y) {
+        if (hgn.getScrollY() - 100 > this.pos.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.pos.y) {
             return true;
         } else {
             return false;

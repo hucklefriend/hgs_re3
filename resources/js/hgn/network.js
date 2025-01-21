@@ -19,6 +19,7 @@ export class Network
         this.nodes = {};
 
         this.pos = new Vertex(0, 0);
+        this.screenOffset = new Vertex(0, 0);
     }
 
     /**
@@ -43,7 +44,6 @@ export class Network
     setDrawParent(drawParent)
     {
         this.drawParent = drawParent;
-        return this;
     }
 
     /**
@@ -51,37 +51,11 @@ export class Network
      *
      * @param x
      * @param y
-     * @returns {Network}
      */
     setPos(x, y)
     {
         this.pos.x = x;
         this.pos.y = y;
-        return this;
-    }
-
-    /**
-     * 配置座標xの設定
-     *
-     * @param x
-     * @returns {Network}
-     */
-    setPosX(x)
-    {
-        this.pos.x = x;
-        return this;
-    }
-
-    /**
-     * 配置座標yの設定
-     *
-     * @param y
-     * @returns {Network}
-     */
-    setPosY(y)
-    {
-        this.pos.y = y;
-        return this;
     }
 
     /**
@@ -129,8 +103,10 @@ export class Network
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
         if (this.parentNode !== null) {
             if (this.drawParent) {

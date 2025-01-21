@@ -1,6 +1,7 @@
 import {EditNode, EditPointNode} from './hgn/node/edit-node.js';
 import {Param} from './hgn/param.js';
 import {Util} from "./hgn/util.js";
+import {Vertex} from "./hgn/vertex.js";
 
 /**
  * ネットワークエディタ
@@ -51,7 +52,7 @@ export class NetworkEditor
         this.edgeFromNode = null;
         this.edgeFromVertexNo = null;
 
-        this.center = {x: 0, y: 0};
+        this.center = new Vertex(this.canvas.width / 2, this.canvas.height / 2);
 
         this.mode = NetworkEditor.MODE_NODE;
     }
@@ -89,7 +90,7 @@ export class NetworkEditor
         }
         if (data.hasOwnProperty('points')) {
             data.points.forEach(point => {
-                this.points[point.id] = new EditPointNode(point.id, point.x + this.center.x, point.y + this.center.y);
+                this.points[point.id] = new EditPointNode(point.id, point.x, point.y, this.center);
             });
         }
 
@@ -275,14 +276,8 @@ export class NetworkEditor
         if (this.isNodeMode() && !this.isDragging) {
             this.isDragging = true;
 
-            if (this.draggingNode !== null) {
-                this.offsetX = this.draggingNode.getOffsetX(e);
-                this.offsetY = this.draggingNode.getOffsetY(e);
-            } else {
-                // ノードがドラッグされない場合はスクロール
-                this.offsetX = e.clientX;
-                this.offsetY = e.clientY;
-            }
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
         }
     }
 
@@ -295,16 +290,20 @@ export class NetworkEditor
     {
         if (this.isNodeMode()) {
             if (this.isDragging) {
+                let moveX = e.clientX - this.offsetX;
+                let moveY = e.clientY - this.offsetY;
+
                 if (this.draggingNode !== null) {
                     // ノードの移動
-                    this.draggingNode.mouseMove(e, this.offsetX, this.offsetY);
+                    this.draggingNode.mouseMove(moveX, moveY, this.center);
                 } else {
                     // スクロール
                     this.containerDOM.scrollLeft -= e.clientX - this.offsetX;
                     this.containerDOM.scrollTop -= e.clientY - this.offsetY;
-                    this.offsetX = e.clientX;
-                    this.offsetY = e.clientY;
                 }
+
+                this.offsetX = e.clientX;
+                this.offsetY = e.clientY;
 
                 this.draw();
             }
@@ -410,13 +409,13 @@ export class NetworkEditor
      */
     appendPointNode()
     {
-        let x = this.containerDOM.scrollLeft + 30;
-        let y = this.containerDOM.scrollTop + 30;
+        let x = this.containerDOM.scrollLeft - this.center.x + 30;
+        let y = this.containerDOM.scrollTop - this.center.y + 30;
 
         let id = "pt" + this.pointsIndex;
         this.pointsIndex++;
 
-        this.points[id] = new EditPointNode(id, x, y);
+        this.points[id] = new EditPointNode(id, x, y, this.center);
 
         this.draw();
 
@@ -486,13 +485,13 @@ export class NetworkEditor
 
                     this.ctx.beginPath();
 
-                    this.ctx.moveTo(point.x, point.y);
-                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                    this.ctx.moveTo(point.x + this.center.x, point.y + this.center.y);
+                    this.ctx.lineTo(targetVertex.x + this.center.x, targetVertex.y + this.center.y);
                     this.ctx.stroke();
                 }
             });
 
-            point.draw(this.ctx, 0, 0);
+            point.draw(this.ctx, this.center.x, this.center.y);
         });
     }
 
@@ -514,13 +513,13 @@ export class NetworkEditor
 
                 this.ctx.beginPath();
 
-                this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                this.ctx.moveTo(node.vertices[vertexNo].x + this.center.x, node.vertices[vertexNo].y + this.center.y);
+                this.ctx.lineTo(targetVertex.x + this.center.x, targetVertex.y + this.center.y);
                 this.ctx.stroke();
             }
         });
 
-        node.draw(this.ctx, this.center.x, this.center.y);
+        node.draw(this.ctx, this.center);
     }
 
     /**
