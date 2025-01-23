@@ -40,9 +40,7 @@ export class MainFranchiseNetwork extends Network
         // ポイントノードの読み取り
         if (data.hasOwnProperty('points')) {
             data.points.forEach(point => {
-                let px = x + point.x;
-                let py = y + point.y;
-                let node = new PointNode(px, py, 6, point.id);
+                let node = new PointNode(point.x, point.y, 6, point.id);
                 node.setForceDraw();
                 network.addNode(node);
             });
@@ -124,7 +122,7 @@ export class MainFranchiseNetwork extends Network
      * @param ctx
      * @param {Vertex}screenOffset
      */
-    draw(ctx, screenOffset)
+    draw(ctx, viewRect, screenOffset)
     {
         ctx.restore();
 

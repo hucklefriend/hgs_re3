@@ -118,8 +118,8 @@ export class EditNetwork extends Network
     {
         super.setPos(x, y);
 
-        this.containerDOM.style.left = Math.round(screenOffset.x - this.screenOffset.x + x) + 'px';
-        this.containerDOM.style.top = Math.round(screenOffset.y - this.screenOffset.y + y) + 'px';
+        this.containerDOM.style.left = Math.round(screenOffset.x + x - this.screenOffset.x) + 'px';
+        this.containerDOM.style.top = Math.round(screenOffset.y + y - this.screenOffset.y) + 'px';
     }
 
     reload()
@@ -167,14 +167,13 @@ export class EditNetwork extends Network
     /**
      * ドラッグ中
      *
-     * @param screenOffsetX
-     * @param screenOffsetY
      * @param moveX
      * @param moveY
+     * @param screenOffset
      */
-    dragging(screenOffsetX, screenOffsetY, moveX, moveY)
+    dragging(moveX, moveY, screenOffset)
     {
-        this.setPos(this.pos.x + moveX, this.pos.y + moveY, screenOffsetX, screenOffsetY);
+        this.setPos(this.pos.x + moveX, this.pos.y + moveY, screenOffset);
     }
 
     /**
@@ -269,10 +268,10 @@ export class EditNetwork extends Network
         this.parentNode.draw(this.ctx, this.screenOffset.x, this.screenOffset.y);
     }
 
-    getRect(screenOffset)
+    getRect()
     {
-        let x = this.pos.x - this.containerDOM.offsetWidth / 2;
-        let y = this.pos.y - this.containerDOM.offsetHeight / 2;
+        let x = this.pos.x;
+        let y = this.pos.y;
 
         let left = x + this.parentNode.pos.x - this.parentNode.DOM.offsetWidth / 2;
         let right = x + this.parentNode.pos.x + this.parentNode.DOM.offsetWidth / 2;

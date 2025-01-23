@@ -451,13 +451,14 @@ body#main-network {
         position: absolute;
         touch-action: none;
         user-select: none;
+        border: solid 1px white;
+        transform: translate(calc(var(--mntx)), calc(var(--mnty)));
     }
 
     .dom-node {
         position: absolute;
         left: 0;
         top: 0;
-        transform: translate(calc(var(--mntx)), calc(var(--mnty)));
     }
 }
 
@@ -465,10 +466,19 @@ div#main-network-debug {
     position: fixed;
     left: 0;
     top: 0;
-    background-color: rgba(0,0,0,0.7);
+    background-color: black;
     touch-action: none;
     user-select: none;
     color: white;
+    z-index: 10000;
+}
+
+canvas#main-network-debug-canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    border: dotted 1px red;
 }
 
 /* スマホ～ */

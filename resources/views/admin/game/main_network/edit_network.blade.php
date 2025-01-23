@@ -25,7 +25,9 @@
             </fieldset>
 
             <div id="network-editor-container">
-                <div id="network-editor"></div>
+                <div id="network-editor">
+                    <div id="size-checker"></div>
+                </div>
             </div>
 
             <form id="save_form" action="{{ route('Admin.Game.MainNetwork.Save') }}" method="POST" class="mt-3">

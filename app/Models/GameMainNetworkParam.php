@@ -71,7 +71,7 @@ class GameMainNetworkParam extends \Eloquent
      */
     public static function saveNetworkRect(int $left, int $right, int $top, int $bottom): void
     {
-        $obj = self::where('id', self::PARAM_LEFT)->first();
+        $obj = self::find(self::PARAM_LEFT);
         if ($obj) {
             $obj->val = $left;
             $obj->save();
@@ -79,7 +79,7 @@ class GameMainNetworkParam extends \Eloquent
             self::create(['id' => self::PARAM_LEFT, 'val' => $left]);
         }
 
-        $obj = self::where('id', self::PARAM_RIGHT)->first();
+        $obj = self::find(self::PARAM_RIGHT);
         if ($obj) {
             $obj->val = $right;
             $obj->save();
@@ -87,7 +87,7 @@ class GameMainNetworkParam extends \Eloquent
             self::create(['id' => self::PARAM_RIGHT, 'val' => $right]);
         }
 
-        $obj = self::where('id', self::PARAM_TOP)->first();
+        $obj = self::find(self::PARAM_TOP);
         if ($obj) {
             $obj->val = $top;
             $obj->save();
@@ -95,7 +95,7 @@ class GameMainNetworkParam extends \Eloquent
             self::create(['id' => self::PARAM_TOP, 'val' => $top]);
         }
 
-        $obj = self::where('id', self::PARAM_BOTTOM)->first();
+        $obj = self::find(self::PARAM_BOTTOM);
         if ($obj) {
             $obj->val = $bottom;
             $obj->save();

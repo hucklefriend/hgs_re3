@@ -1,6 +1,7 @@
 import {Param} from './hgn/param.js';
 import {Util} from "./hgn/util.js";
 import {Vertex} from "./hgn/vertex.js";
+import {Rect} from "./hgn/rect.js";
 import {EditNetwork} from "./hgn/edit-network.js";
 
 /**
@@ -21,6 +22,9 @@ export class MainNetworkEditor
         if (this.containerDOM === null) {
             this.containerDOM = document.body;
         }
+
+        // #size-checker
+        this.sizeCheckerDOM = document.querySelector('#size-checker');
 
         // ネットワーク
         this.networks = {};
@@ -167,8 +171,7 @@ export class MainNetworkEditor
 
             if (this.draggingNetwork !== null) {
                 // ノードの移動
-                this.draggingNetwork.dragging(this.screenOffset.x, this.screenOffset.y, moveX, moveY);
-                console.log(this.draggingNetwork.x, this.draggingNetwork.y);
+                this.draggingNetwork.dragging(moveX, moveY, this.screenOffset);
             } else {
                 // スクロール
                 this.containerDOM.scrollLeft -= moveX;
@@ -238,30 +241,29 @@ export class MainNetworkEditor
     toJson()
     {
         let networks = [];
-        let rect = {left:0, right:0, top:0, bottom:0};
+        let rect = new Rect(0, 0, 0, 0);
 
         for (let id in this.networks) {
             networks.push(this.networks[id].toJson(id));
 
             let r = this.networks[id].getRect(this.screenOffset);
-            if (rect.left === 0 || rect.left > r.left) {
-                rect.left = r.left;
-            }
-            if (rect.right === 0 || rect.right < r.right) {
-                rect.right = r.right;
-            }
-            if (rect.top === 0 || rect.top > r.top) {
-                rect.top = r.top;
-            }
-            if (rect.bottom === 0 || rect.bottom < r.bottom) {
-                rect.bottom = r.bottom;
-            }
+            rect.merge(r);
         }
+
+        this.setSizeChecker(rect);
 
         return {
             networks: networks,
-            rect: rect
+            rect: rect.toJson()
         };
+    }
+
+    setSizeChecker(rect)
+    {
+        this.sizeCheckerDOM.style.left = this.screenOffset.x + rect.left + 'px';
+        this.sizeCheckerDOM.style.top = this.screenOffset.y + rect.top + 'px';
+        this.sizeCheckerDOM.style.width = (rect.right - rect.left) + 'px';
+        this.sizeCheckerDOM.style.height = (rect.bottom - rect.top) + 'px';
     }
 }
 

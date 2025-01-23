@@ -19,6 +19,19 @@ export class Rect
         this.right = right;
         this.top = top;
         this.bottom = bottom;
+        this.width = 0;
+        this.height = 0;
+
+        this.calcSize();
+    }
+
+    /**
+     * サイズ計算
+     */
+    calcSize()
+    {
+        this.width = this.right - this.left;
+        this.height = this.bottom - this.top;
     }
 
     /**
@@ -35,14 +48,24 @@ export class Rect
         this.right = right;
         this.top = top;
         this.bottom = bottom;
+        this.calcSize();
     }
 
+    /**
+     * 中心座標とサイズから設定
+     *
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
     setRectByXYWH(x, y, w, h)
     {
         this.left = x - w / 2;
         this.right = this.left + w;
         this.top = y - h / 2;
         this.bottom = this.top + h;
+        this.calcSize();
     }
 
     /**
@@ -73,5 +96,124 @@ export class Rect
         this.right += x;
         this.top += y;
         this.bottom += y;
+    }
+
+    /**
+     * 空のRectを設定
+     */
+    setEmpty()
+    {
+        this.left = 0;
+        this.right = 0;
+        this.top = 0;
+        this.bottom = 0;
+    }
+
+    /**
+     * 空かどうか
+     *
+     * @returns {boolean}
+     */
+    isEmpty()
+    {
+        return (this.left === this.right) || (this.top === this.bottom);
+    }
+
+    /**
+     * 引数で渡されたrectと重なっている部分だけにする
+     */
+    intersect(rect)
+    {
+        this.left = Math.max(this.left, rect.left);
+        this.right = Math.min(this.right, rect.right);
+        this.top = Math.max(this.top, rect.top);
+        this.bottom = Math.min(this.bottom, rect.bottom);
+    }
+
+    toJson()
+    {
+        return {
+            left: this.left,
+            right: this.right,
+            top: this.top,
+            bottom: this.bottom
+        };
+    }
+
+    /**
+     * 2つのRectが重なっている部分の新しいRectを返す
+     * 重なりがなければsetEmptyしたRectを返す
+     */
+    static getOverlapRect(rect1, rect2)
+    {
+        let overlapRect = new Rect();
+
+        if (rect1.isOverlap(rect2)) {
+            overlapRect.left = Math.max(rect1.left, rect2.left);
+            overlapRect.right = Math.min(rect1.right, rect2.right);
+            overlapRect.top = Math.max(rect1.top, rect2.top);
+            overlapRect.bottom = Math.min(rect1.bottom, rect2.bottom);
+        } else {
+            overlapRect.setEmpty();
+        }
+
+        return overlapRect;
+    }
+}
+
+export class ViewRect
+{
+    constructor(left = 0, right = 0, top = 0, bottom = 0)
+    {
+        this.view = new Rect(left, right, top, bottom);
+        this.origin = new Rect(left, right, top, bottom);
+    }
+
+    setRect(left, right, top, bottom)
+    {
+        this.view.setRect(left, right, top, bottom);
+        this.origin.setRect(left, right, top, bottom);
+    }
+
+    calcSize()
+    {
+        this.view.calcSize();
+        this.origin.calcSize();
+    }
+
+    setEmpty()
+    {
+        this.view.setEmpty();
+        this.origin.setEmpty();
+    }
+
+    trimOrigin(left, right, top, bottom)
+    {
+        this.view.setRect(
+            this.origin.left + left,
+            this.origin.right - right,
+            this.origin.top + top,
+            this.origin.bottom - bottom
+        );
+    }
+
+    trimLeft(left)
+    {
+        this.view.setRect(this.origin.left + left, 0, 0, 0);
+    }
+
+    trimRight(right)
+    {
+        this.view.setRect(0, this.origin.right - right, 0, 0);
+    }
+
+    trimTop(top)
+    {
+        this.view.setRect(0, 0, this.origin.top + top, 0);
+    }
+
+    trimBottom(bottom)
+    {
+        this.view.setRect(0, 0, 0, this.origin.bottom - bottom);
     }
 }
