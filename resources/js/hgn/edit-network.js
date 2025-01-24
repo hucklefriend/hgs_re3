@@ -311,10 +311,10 @@ export class EditNetwork extends Network
         });
 
         return {
-            left: left,
-            right: right,
-            top: top,
-            bottom: bottom,
+            left: left - 15,
+            right: right + 15,
+            top: top - 15,
+            bottom: bottom + 15,
         };
     }
 

@@ -122,7 +122,7 @@ export class MainFranchiseNetwork extends Network
      * @param ctx
      * @param {Vertex}screenOffset
      */
-    draw(ctx, viewRect, screenOffset)
+    draw(ctx, viewRect, screenOffset, cameraPos, viewOffsetX, viewOffsetY)
     {
         ctx.restore();
 
@@ -173,5 +173,7 @@ export class MainFranchiseNetwork extends Network
         if (this.parentNode !== null) {
             this.parentNode.draw(ctx, offsetX, offsetY);
         }
+
+        this.DOM.style.transform = 'translate(' + (-cameraPos.x + viewOffsetX) + 'px, ' + (-cameraPos.y + viewOffsetY) + 'px)';
     }
 }

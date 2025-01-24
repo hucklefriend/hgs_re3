@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --mntx: 0px;
-    --mnty: 0px;
-}
-
-
 body {
     background-color: black;
     color: white;
@@ -452,7 +446,6 @@ body#main-network {
         touch-action: none;
         user-select: none;
         border: solid 1px white;
-        transform: translate(calc(var(--mntx)), calc(var(--mnty)));
     }
 
     .dom-node {

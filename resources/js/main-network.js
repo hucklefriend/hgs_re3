@@ -244,16 +244,16 @@ export class MainNetwork
 
 
         if (this.cameraPos.x + hw < this.networkRect.left) {
-            this.cameraPos.x = this.networkRect.right - (this.networkRect.left - this.cameraPos.x) + hw;
+            this.cameraPos.x = this.networkRect.right - (this.networkRect.left - this.cameraPos.x);
         }
         if (this.cameraPos.x - hw > this.networkRect.right) {
-            this.cameraPos.x = this.networkRect.left + (this.cameraPos.x - this.networkRect.right) - hw;
+            this.cameraPos.x = this.networkRect.left + (this.cameraPos.x - this.networkRect.right);
         }
         if (this.cameraPos.y < this.networkRect.top - hh) {
-            this.cameraPos.y = this.networkRect.bottom - (this.networkRect.top - this.cameraPos.y) + hh;
+            this.cameraPos.y = this.networkRect.bottom - (this.networkRect.top - this.cameraPos.y);
         }
         if (this.cameraPos.y > this.networkRect.bottom + hh) {
-            this.cameraPos.y = this.networkRect.top + (this.cameraPos.y - this.networkRect.bottom) - hh;
+            this.cameraPos.y = this.networkRect.top + (this.cameraPos.y - this.networkRect.bottom);
         }
 
         this.viewRect1.setRect(
@@ -263,65 +263,69 @@ export class MainNetwork
             this.cameraPos.y + this.canvas.height / 2
         );
 
+        this.viewRect2.setEmpty();
+        this.viewRect3.setEmpty();
+        this.viewRect4.setEmpty();
+
         // 無限スクロールのため、上下左右にはみ出した分の描画領域を作成
         let xDiff = 0;
         let yDiff = 0;
         this.viewRect2OffsetX = 0;
         if (this.viewRect1.left < this.networkRect.left) {
             // 表示領域が左にはみ出している場合、右側に表示領域を作成
-            let xDiff = this.networkRect.left - this.viewRect1.left;
+            xDiff = this.networkRect.left - this.viewRect1.left;
             //this.viewRect1.left = this.networkRect.left;
 
             this.viewRect2.setRect(
-                this.networkRect.right - xDiff,
-                this.networkRect.right,
-                this.viewRect1.top,
-                this.viewRect1.bottom
-            );
-
-            this.viewRect2OffsetX = this.networkRect.width;
-        } else if (this.viewRect1.right > this.networkRect.right) {
-            // 表示領域が右にはみ出している場合、左側に表示領域を作成
-            let xDiff = this.viewRect1.right - this.networkRect.right;
-            //this.viewRect1.right = this.networkRect.right;
-
-            this.viewRect2.setRect(
-                this.networkRect.left,
-                this.networkRect.left + xDiff,
+                this.viewRect1.left + this.networkRect.width,
+                this.viewRect1.right + this.networkRect.width,
                 this.viewRect1.top,
                 this.viewRect1.bottom
             );
 
             this.viewRect2OffsetX = -this.networkRect.width;
+        } else if (this.viewRect1.right > this.networkRect.right) {
+            // 表示領域が右にはみ出している場合、左側に表示領域を作成
+            xDiff = this.viewRect1.right - this.networkRect.right;
+            //this.viewRect1.right = this.networkRect.right;
+
+            this.viewRect2.setRect(
+                this.viewRect1.left - this.networkRect.width,
+                this.viewRect1.right - this.networkRect.width,
+                this.viewRect1.top,
+                this.viewRect1.bottom
+            );
+
+            this.viewRect2OffsetX = this.networkRect.width;
         }
 
         this.viewRect3OffsetY = 0;
         if (this.viewRect1.top < this.networkRect.top) {
             // 表示領域が上にはみ出している場合、下側に表示領域を作成
-            let yDiff = this.networkRect.top - this.viewRect1.top;
+            yDiff = this.networkRect.top - this.viewRect1.top;
             //this.viewRect1.top = this.networkRect.top;
 
             this.viewRect3.setRect(
                 this.viewRect1.left,
                 this.viewRect1.right,
-                this.networkRect.bottom - yDiff,
-                this.networkRect.bottom
+                this.viewRect1.top + this.networkRect.height,
+                this.viewRect1.bottom + this.networkRect.height
             );
 
-            this.viewRect3OffsetY = this.networkRect.height;
+            this.viewRect3OffsetY = -this.networkRect.height;
         } else if (this.viewRect1.bottom > this.networkRect.bottom) {
             // 表示領域が下にはみ出している場合、上側に表示領域を作成
-            let yDiff = this.viewRect1.bottom - this.networkRect.bottom;
+            yDiff = this.viewRect1.bottom - this.networkRect.bottom;
             //this.viewRect1.bottom = this.networkRect.bottom;
 
             this.viewRect3.setRect(
                 this.viewRect1.left,
                 this.viewRect1.right,
-                this.networkRect.top,
-                this.networkRect.top + yDiff
+                this.viewRect1.top - this.networkRect.height,
+                this.viewRect1.bottom - this.networkRect.height
             );
 
-            this.viewRect3OffsetY = -this.networkRect.height;
+            this.viewRect3OffsetY = this.networkRect.height;
         }
 
         if (xDiff !== 0 && yDiff !== 0) {
@@ -362,23 +366,26 @@ export class MainNetwork
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         let offset = new Vertex(this.screenOffset.x - this.cameraPos.x*2, this.screenOffset.y - this.cameraPos.y*2);
+        let offset2 = new Vertex(offset.x + this.viewRect2OffsetX, offset.y);
+        let offset3 = new Vertex(offset.x, offset.y + this.viewRect3OffsetY);
+        let offset4 = new Vertex(offset.x + this.viewRect2OffsetX, offset.y + this.viewRect3OffsetY);
 
         // 描画領域内にあるネットワークを描画
         this.networks.forEach(network => {
             if (!this.viewRect1.isEmpty() && this.viewRect1.isOverlap(network.viewRect)) {
-                network.draw(this.ctx, this.viewRect1, offset);
+                network.draw(this.ctx, this.viewRect1, offset, this.cameraPos, 0, 0);
             } else if (!this.viewRect2.isEmpty() && this.viewRect2.isOverlap(network.viewRect)) {
-                //network.draw(this.ctx, {x: this.screenOffset.x + this.viewRect2OffsetX, y: this.screenOffset.y});
+                network.draw(this.ctx, this.viewRect2, offset2, this.cameraPos, this.viewRect2OffsetX, 0);
             } else if (!this.viewRect3.isEmpty() && this.viewRect3.isOverlap(network.viewRect)) {
-                //network.draw(this.ctx, {x: this.screenOffset.x, y: this.screenOffset.y + this.viewRect3OffsetY});
+                network.draw(this.ctx, this.viewRect3, offset3, this.cameraPos, 0, this.viewRect3OffsetY);
             } else if (!this.viewRect4.isEmpty() && this.viewRect4.isOverlap(network.viewRect)) {
-                //network.draw(this.ctx, {x: this.screenOffset.x + this.viewRect2OffsetX, y: this.screenOffset.y + this.viewRect3OffsetY});
+                network.draw(this.ctx, this.viewRect4, offset4, this.cameraPos, this.viewRect2OffsetX, this.viewRect3OffsetY);
             }
         });
 
         // CSS変数を動的に更新
-        document.documentElement.style.setProperty('--mntx', `${-this.cameraPos.x}px`);
-        document.documentElement.style.setProperty('--mnty', `${-this.cameraPos.y}px`);
+        // document.documentElement.style.setProperty('--mntx', `${-this.cameraPos.x}px`);
+        // document.documentElement.style.setProperty('--mnty', `${-this.cameraPos.y}px`);
 
         this.drawMiniMap();
     }
@@ -421,6 +428,33 @@ export class MainNetwork
         this.ctx.lineTo(centerX + this.viewRect1.left * rate, centerY + this.viewRect1.top * rate);
         this.ctx.stroke();
 
+        if (!this.viewRect2.isEmpty()) {
+            this.ctx.moveTo(centerX + this.viewRect2.left * rate, centerY + this.viewRect2.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect2.right * rate, centerY + this.viewRect2.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect2.right * rate, centerY + this.viewRect2.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect2.left * rate, centerY + this.viewRect2.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect2.left * rate, centerY + this.viewRect2.top * rate);
+            this.ctx.stroke();
+        }
+
+        if (!this.viewRect3.isEmpty()) {
+            this.ctx.moveTo(centerX + this.viewRect3.left * rate, centerY + this.viewRect3.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect3.right * rate, centerY + this.viewRect3.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect3.right * rate, centerY + this.viewRect3.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect3.left * rate, centerY + this.viewRect3.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect3.left * rate, centerY + this.viewRect3.top * rate);
+            this.ctx.stroke();
+        }
+
+        if (!this.viewRect4.isEmpty()) {
+            this.ctx.moveTo(centerX + this.viewRect4.left * rate, centerY + this.viewRect4.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect4.right * rate, centerY + this.viewRect4.top * rate);
+            this.ctx.lineTo(centerX + this.viewRect4.right * rate, centerY + this.viewRect4.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect4.left * rate, centerY + this.viewRect4.bottom * rate);
+            this.ctx.lineTo(centerX + this.viewRect4.left * rate, centerY + this.viewRect4.top * rate);
+            this.ctx.stroke();
+        }
+
         this.ctx.restore();
     }
 
@@ -432,6 +466,9 @@ export class MainNetwork
         html += `screenOffset: ${this.screenOffset.x}, ${this.screenOffset.y}<br>`;
         html += `networkRect: ${this.networkRect.left}, ${this.networkRect.right}, ${this.networkRect.top}, ${this.networkRect.bottom}<br>`;
         html += `viewRect1: ${this.viewRect1.left}, ${this.viewRect1.right}, ${this.viewRect1.top}, ${this.viewRect1.bottom}<br>`;
+        html += `viewRect2: ${this.viewRect2.left}, ${this.viewRect2.right}, ${this.viewRect2.top}, ${this.viewRect2.bottom}<br>`;
+        html += `viewRect3: ${this.viewRect3.left}, ${this.viewRect3.right}, ${this.viewRect3.top}, ${this.viewRect3.bottom}<br>`;
+        html += `viewRect4: ${this.viewRect4.left}, ${this.viewRect4.right}, ${this.viewRect4.top}, ${this.viewRect4.bottom}<br>`;
 
         this.debugDOM.innerHTML = html;
     }
