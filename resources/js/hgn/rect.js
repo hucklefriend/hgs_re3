@@ -52,14 +52,14 @@ export class Rect
     }
 
     /**
-     * 中心座標とサイズから設定
+     * 中心座標とサイズから座標を設定
      *
      * @param x
      * @param y
      * @param w
      * @param h
      */
-    setRectByXYWH(x, y, w, h)
+    setRectByCenter(x, y, w, h)
     {
         this.left = x - w / 2;
         this.right = this.left + w;

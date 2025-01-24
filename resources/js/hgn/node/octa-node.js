@@ -82,7 +82,7 @@ export class OctaNode
      */
     setRect()
     {
-        this.rect.setRectByXYWH(this.pos.x, this.pos.y, this.w, this.h);
+        this.rect.setRect(this.pos.x, this.pos.x + this.w, this.pos.y, this.pos.y + this.h);
     }
 
     /**
@@ -575,18 +575,38 @@ export class DOMNode extends OctaNode
         DOM.style.left = `${x + screenOffset.x - DOM.offsetWidth / 2}px`;
         DOM.style.top = `${y + screenOffset.y - DOM.offsetHeight / 2}px`;
 
-        return new DOMNode(id, x, y, DOM);
+        return new this(id, x, y, DOM);
     }
 
-    static createFromDOM(containerDOM, DOM)
+    /**
+     * DOMからインスタンスを生成
+     *
+     * @param containerDOM
+     * @param DOM
+     * @param notchSize
+     * @returns {DOMNode}
+     */
+    static createFromDOM(containerDOM, DOM, notchSize = 13)
     {
-        // containerDOMの中央を(0,0)とした座標軸に変換
+        return new this(DOM.id, DOM.offsetLeft, DOM.offsetTop, DOM, notchSize);
+    }
+
+    /**
+     * DOMから配置情報を取得
+     *
+     * @param containerDOM
+     * @param DOM
+     * @returns {Vertex}
+     */
+    static getPosByDOM(containerDOM, DOM)
+    {
         let containerRect = containerDOM.getBoundingClientRect();
         let rect = DOM.getBoundingClientRect();
-        let x = (containerRect.width / 2) - rect.left - containerRect.left + rect.width / 2;
-        let y = (containerRect.height / 2) - rect.top - containerRect.top + rect.height / 2;
 
-        return new DOMNode(DOM.id, x, y, DOM);
+        return new Vertex(
+            (containerRect.width / 2) - rect.left - containerRect.left + rect.width / 2,
+            (containerRect.height / 2) - rect.top - containerRect.top + rect.height / 2
+        );
     }
 
     /**
@@ -596,10 +616,10 @@ export class DOMNode extends OctaNode
      * @param x
      * @param y
      * @param DOM
+     * @param notchSize
      */
-    constructor(id, x, y, DOM)
+    constructor(id, x, y, DOM, notchSize = 13)
     {
-        let notchSize = 13;
         if (DOM.classList.contains('small')) {
             notchSize = 8;
         }
@@ -821,8 +841,8 @@ export class DOMNode extends OctaNode
     reload()
     {
         super.reload(
-            this.pos.x,
-            this.pos.y,
+            this.DOM.offsetLeft,
+            this.DOM.offsetTop,
             this.DOM.offsetWidth,
             this.DOM.offsetHeight
         );
@@ -970,9 +990,12 @@ export class TextNode extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM)
     {
         let notchSize = 16;
         // smallクラスがDOMのクラスリストに含まれている場合はnotchSizeを小さくする
@@ -980,7 +1003,7 @@ export class TextNode extends DOMNode
             notchSize = 8;
         }
 
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
         this.alpha = 0;
 
         if (DOM.classList.contains('text-node-a')) {
@@ -996,8 +1019,10 @@ export class TextNode extends DOMNode
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
         super.setShapePath(ctx);
 

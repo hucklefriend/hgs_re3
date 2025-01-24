@@ -1,6 +1,7 @@
 import {Vertex} from '../vertex.js';
 import {Param} from '../param.js';
 import {Bg2Network} from '../network.js';
+import {DOMNode} from './octa-node.js';
 import {LinkNode} from './link-node.js';
 import {Util} from '../util.js';
 
@@ -12,11 +13,14 @@ export class EntranceNode extends LinkNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM)
     {
-        super(DOM, 50);
+        super(id, x, y, DOM, 50);
 
         this.lightCanvas = document.querySelector('#entrance-node-canvas');
         this.lightCanvas.width = 300;
@@ -80,7 +84,6 @@ export class EntranceNode extends LinkNode
         network.addOctaNode(102, null, 104, 50, -20, 35);
         network.addOctaNode(104, Param.RTT, 105, 50, -40, 35);
         network.addOctaNode(104, Param.RRB, 106, 60, 20, 35);
-
 
         network.addOctaNode(this, Param.RRB, 201, 50, -20, 35);
         network.addOctaNode(201, Param.RTT, 202, 50, -40, 25);

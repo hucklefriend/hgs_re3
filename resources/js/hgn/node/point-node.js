@@ -186,10 +186,10 @@ export class PointNode extends Vertex
      * 描画
      *
      * @param ctx
-     * @param screenOffsetX
-     * @param screenOffsetY
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx, screenOffsetX, screenOffsetY)
+    draw(ctx, offsetX, offsetY)
     {
         if (!this.forceDraw) {
             const hgn = HorrorGameNetwork.getInstance();
@@ -204,7 +204,7 @@ export class PointNode extends Vertex
         }
 
         ctx.beginPath();
-        ctx.arc(this.x + screenOffsetX, this.y + screenOffsetY, this.r, 0, Param.MATH_PI_2, false);
+        ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
     }
 }
