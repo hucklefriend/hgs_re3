@@ -102,14 +102,14 @@ export class Head1Node extends DOMNode
             new Vertex(0, 0),
         ];
         this.minVertices = [
-            new Vertex(this.x - this.notchSize, this.y - this.notchSize * 2),
-            new Vertex(this.x + this.notchSize, this.y - this.notchSize * 2),
-            new Vertex(this.x + this.notchSize * 2, this.y - this.notchSize),
-            new Vertex(this.x + this.notchSize * 2, this.y + this.notchSize),
-            new Vertex(this.x + this.notchSize, this.y + this.notchSize * 2),
-            new Vertex(this.x - this.notchSize, this.y + this.notchSize * 2),
-            new Vertex(this.x - this.notchSize * 2, this.y + this.notchSize),
-            new Vertex(this.x - this.notchSize * 2, this.y - this.notchSize),
+            new Vertex(this.center.x - this.notchSize, this.center.y - this.notchSize * 2),
+            new Vertex(this.center.x + this.notchSize, this.center.y - this.notchSize * 2),
+            new Vertex(this.center.x + this.notchSize * 2, this.center.y - this.notchSize),
+            new Vertex(this.center.x + this.notchSize * 2, this.center.y + this.notchSize),
+            new Vertex(this.center.x + this.notchSize, this.center.y + this.notchSize * 2),
+            new Vertex(this.center.x - this.notchSize, this.center.y + this.notchSize * 2),
+            new Vertex(this.center.x - this.notchSize * 2, this.center.y + this.notchSize),
+            new Vertex(this.center.x - this.notchSize * 2, this.center.y - this.notchSize),
         ];
         this.isUseAnimVertices = true;
     }
@@ -125,7 +125,6 @@ export class Head1Node extends DOMNode
             this.animVertices[vertexNo].x = Util.getMidpoint(this.minVertices[vertexNo].x, this.vertices[vertexNo].x, ratio);
             this.animVertices[vertexNo].y = Util.getMidpoint(this.minVertices[vertexNo].y, this.vertices[vertexNo].y, ratio);
         }
-        console.log(this.animVertices);
     }
 
     /**
@@ -150,7 +149,6 @@ export class Head1Node extends DOMNode
      */
     appearAnimation()
     {
-        console.log(window.hgn.animCnt);
         if (window.hgn.animCnt < 5) {
             let ratio = window.hgn.animCnt / 5;
             this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
@@ -285,9 +283,7 @@ export class Head2Node extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
 
         // 中央から外に向かってグラデーション
-        let x = this.rect.left - offsetX;
-        let y = this.rect.top - offsetY;
-        let grad = ctx.createRadialGradient(x, y, 0, x, y, this.animWidth / 2);
+        let grad = ctx.createRadialGradient(this.center.x, this.center.y, 0, this.center.x, this.center.y, this.animWidth / 2);
         grad.addColorStop(0, "rgba(0, 70, 0, " + this.animAlpha2 + ")");
         grad.addColorStop(1, "rgba(0, 50, 0, " + this.animAlpha3 + ")");
         ctx.fillStyle = grad;
