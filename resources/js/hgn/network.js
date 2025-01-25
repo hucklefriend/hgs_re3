@@ -18,7 +18,8 @@ export class Network
         this.drawParent = true;
         this.nodes = {};
 
-        this.pos = new Vertex(0, 0);
+        this.x = 0;
+        this.y = 0;
         this.screenOffset = new Vertex(0, 0);
     }
 
@@ -54,8 +55,8 @@ export class Network
      */
     setPos(x, y)
     {
-        this.pos.x = x;
-        this.pos.y = y;
+        this.x = x;
+        this.y = y;
     }
 
     /**

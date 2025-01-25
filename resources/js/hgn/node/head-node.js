@@ -125,6 +125,7 @@ export class Head1Node extends DOMNode
             this.animVertices[vertexNo].x = Util.getMidpoint(this.minVertices[vertexNo].x, this.vertices[vertexNo].x, ratio);
             this.animVertices[vertexNo].y = Util.getMidpoint(this.minVertices[vertexNo].y, this.vertices[vertexNo].y, ratio);
         }
+        console.log(this.animVertices);
     }
 
     /**
@@ -149,6 +150,7 @@ export class Head1Node extends DOMNode
      */
     appearAnimation()
     {
+        console.log(window.hgn.animCnt);
         if (window.hgn.animCnt < 5) {
             let ratio = window.hgn.animCnt / 5;
             this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);

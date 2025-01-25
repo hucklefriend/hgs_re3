@@ -173,7 +173,7 @@ export class EditNetwork extends Network
      */
     dragging(moveX, moveY, screenOffset)
     {
-        this.setPos(this.pos.x + moveX, this.pos.y + moveY, screenOffset);
+        this.setPos(this.x + moveX, this.y + moveY, screenOffset);
     }
 
     /**
@@ -270,13 +270,13 @@ export class EditNetwork extends Network
 
     getRect()
     {
-        let x = this.pos.x;
-        let y = this.pos.y;
+        let x = this.x;
+        let y = this.y;
 
-        let left = x + this.parentNode.pos.x - this.parentNode.DOM.offsetWidth / 2;
-        let right = x + this.parentNode.pos.x + this.parentNode.DOM.offsetWidth / 2;
-        let top = y + this.parentNode.pos.y - this.parentNode.DOM.offsetHeight / 2;
-        let bottom = y + this.parentNode.pos.y + this.parentNode.DOM.offsetHeight / 2;
+        let left = x + this.parentNode.x - this.parentNode.DOM.offsetWidth / 2;
+        let right = x + this.parentNode.x + this.parentNode.DOM.offsetWidth / 2;
+        let top = y + this.parentNode.y - this.parentNode.DOM.offsetHeight / 2;
+        let bottom = y + this.parentNode.y + this.parentNode.DOM.offsetHeight / 2;
 
         let l = 0;
         let r = 0;
@@ -285,10 +285,10 @@ export class EditNetwork extends Network
 
         Object.values(this.nodes).forEach(node => {
             if (node instanceof DOMNode) {
-                l = x + node.pos.x - node.DOM.offsetWidth / 2;
-                r = x + node.pos.x + node.DOM.offsetWidth / 2;
-                t = y + node.pos.y - node.DOM.offsetHeight / 2;
-                b = y + node.pos.y + node.DOM.offsetHeight / 2;
+                l = x + node.x - node.DOM.offsetWidth / 2;
+                r = x + node.x + node.DOM.offsetWidth / 2;
+                t = y + node.y - node.DOM.offsetHeight / 2;
+                b = y + node.y + node.DOM.offsetHeight / 2;
             } else if (node instanceof PointNode) {
                 l = x + node.x - node.r;
                 r = x + node.x + node.r;
@@ -322,8 +322,8 @@ export class EditNetwork extends Network
     {
         return {
             id: id,
-            x: Math.round(this.pos.x),
-            y: Math.round(this.pos.y),
+            x: Math.round(this.x),
+            y: Math.round(this.y),
         };
     }
 }

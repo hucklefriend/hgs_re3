@@ -23,7 +23,8 @@ export class OctaNode
      */
     constructor(x = 0, y = 0, w = 0, h = 0, notchSize = 0)
     {
-        this.pos = new Vertex(x, y);
+        this.x = x;
+        this.y = y;
         this.w = w;
         this.h = h;
         this.rect = new Rect();
@@ -66,8 +67,8 @@ export class OctaNode
      */
     reload(x, y, w, h)
     {
-        this.pos.x = x;
-        this.pos.y = y;
+        this.x = x;
+        this.y = y;
         this.w = w;
         this.h = h;
         this.setRect();
@@ -82,7 +83,7 @@ export class OctaNode
      */
     setRect()
     {
-        this.rect.setRect(this.pos.x, this.pos.x + this.w, this.pos.y, this.pos.y + this.h);
+        this.rect.setRect(this.x, this.x + this.w, this.y, this.y + this.h);
     }
 
     /**
@@ -153,8 +154,8 @@ export class OctaNode
      */
     move(offsetX, offsetY)
     {
-        this.pos.x += offsetX;
-        this.pos.y += offsetY;
+        this.x += offsetX;
+        this.y += offsetY;
         this.setOctagon();
     }
 
@@ -543,7 +544,6 @@ export class Bg2OctaNode extends OctaNode
     {
         // ctx.fillStyleを未設定にする
         ctx.fillStyle = "rgba(0, 0, 0, 0)";
-
         super.draw(ctx, offsetX, offsetY);
     }
 }
@@ -639,6 +639,8 @@ export class DOMNode extends OctaNode
         this.subNetwork = null;
         this.animFunc = null;
         this.skipAnim = false;
+
+        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
     }
 
     /**
@@ -846,14 +848,23 @@ export class DOMNode extends OctaNode
             this.DOM.offsetWidth,
             this.DOM.offsetHeight
         );
+
+        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
     }
 
+    /**
+     * 表示位置の設定
+     *
+     * @param x
+     * @param y
+     * @param screenOffset
+     */
     setPos(x, y, screenOffset)
     {
-        this.pos.x = x;
-        this.pos.y = y;
-        this.DOM.style.left = `${x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
-        this.DOM.style.top = `${y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
+        this.x = x;
+        this.y = y;
+        this.DOM.style.left = `${x + screenOffset.x}px`;
+        this.DOM.style.top = `${y + screenOffset.y}px`;
 
         this.reload();
     }
@@ -936,7 +947,7 @@ export class DOMNode extends OctaNode
         let rect = this.DOM.getBoundingClientRect();
 
         // 表示領域外にある場合はアニメーションをスキップ
-        if (hgn.getScrollY() - 100 > this.pos.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.pos.y) {
+        if (hgn.getScrollY() - 100 > this.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.y) {
             return true;
         } else {
             return false;

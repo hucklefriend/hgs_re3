@@ -106,13 +106,8 @@ export class MainNetwork
             let y = 0;
 
             Object.values(network.nodes).forEach(node => {
-                if (node instanceof DOMNode) {
-                    x = node.pos.x + offsetX + network.pos.x;
-                    y = node.pos.y + offsetY + network.pos.y;
-                } else {
-                    x = node.x + offsetX + network.pos.x;
-                    y = node.y + offsetY + network.pos.y;
-                }
+                x = node.x + offsetX + network.x;
+                y = node.y + offsetY + network.y;
 
                 this.debugCtx.beginPath();
                 this.debugCtx.arc(x, y, 5, 0, Param.MATH_PI_2, false);

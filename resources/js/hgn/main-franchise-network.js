@@ -105,14 +105,14 @@ export class MainFranchiseNetwork extends Network
 
     setPos(x, y, hw, hh)
     {
-        this.pos.x = x;
-        this.pos.y = y;
+        this.x = x;
+        this.y = y;
 
         this.viewRect.setRect(
-            this.pos.x - hw,
-            this.pos.x + hw,
-            this.pos.y - hh,
-            this.pos.y + hh
+            this.x - hw,
+            this.x + hw,
+            this.y - hh,
+            this.y + hh
         );
     }
 
@@ -131,8 +131,8 @@ export class MainFranchiseNetwork extends Network
         ctx.shadowColor = "lime"; // 影の色
         ctx.shadowBlur = 5; // 影のぼかし効果
 
-        let offsetX = screenOffset.x + this.pos.x;
-        let offsetY = screenOffset.y + this.pos.y;
+        let offsetX = screenOffset.x + this.x;
+        let offsetY = screenOffset.y + this.y;
 
         this.parentNode.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){

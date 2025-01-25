@@ -275,7 +275,7 @@ export class EditNode extends DOMNode
      */
     mouseMove(moveX, moveY, screenOffset)
     {
-        this.setPos(this.pos.x + moveX, this.pos.y + moveY, screenOffset);
+        this.setPos(this.x + moveX, this.y + moveY, screenOffset);
     }
 
     /**
@@ -318,8 +318,8 @@ export class EditNode extends DOMNode
     {
         return {
             id: this.id,
-            x: this.pos.x,
-            y: this.pos.y,
+            x: this.x,
+            y: this.y,
         };
     }
 
