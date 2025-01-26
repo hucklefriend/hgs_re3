@@ -519,7 +519,7 @@ export class NetworkEditor
             }
         });
 
-        node.draw(this.ctx, this.center);
+        node.draw(this.ctx, this.center.x, this.center.y);
     }
 
     /**
@@ -568,10 +568,10 @@ export class NetworkEditor
             nodes[node.id] = json;
             connects.push(...node.getConnectJsonArr());
 
-            let l = Math.abs(json.x - node.DOM.offsetWidth / 2);
-            let t = Math.abs(json.y - node.DOM.offsetHeight / 2);
-            let r = Math.abs(json.x + node.DOM.offsetWidth / 2);
-            let b = Math.abs(json.y + node.DOM.offsetHeight / 2);
+            let l = Math.abs(json.x);
+            let t = Math.abs(json.y);
+            let r = Math.abs(json.x + node.DOM.offsetWidth);
+            let b = Math.abs(json.y + node.DOM.offsetHeight);
             if (w < l) {
                 w = l;
             }

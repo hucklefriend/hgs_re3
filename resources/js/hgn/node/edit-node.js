@@ -29,8 +29,8 @@ export class EditNode extends DOMNode
             DOM.appendChild(remove);
         }
 
-        DOM.style.left = `${networkPosition.x + nodeData.x - (DOM.offsetWidth / 2)}px`;
-        DOM.style.top = `${networkPosition.y + nodeData.y - (DOM.offsetHeight / 2)}px`;
+        DOM.style.left = `${networkPosition.x + nodeData.x}px`;
+        DOM.style.top = `${networkPosition.y + nodeData.y}px`;
 
         EditNode.appendEdgeSelect(nodeData, DOM);
 
@@ -275,7 +275,26 @@ export class EditNode extends DOMNode
      */
     mouseMove(moveX, moveY, screenOffset)
     {
-        this.setPos(this.x + moveX, this.y + moveY, screenOffset);
+        this.x += moveX;
+        this.y += moveY;
+        this.DOM.style.left = `${this.x + screenOffset.x}px`;
+        this.DOM.style.top = `${this.y + screenOffset.y}px`;
+
+        this.reload();
+    }
+
+    /**
+     * 再ロード
+     */
+    reload()
+    {
+        this.w = this.DOM.offsetWidth;
+        this.h = this.DOM.offsetHeight;
+        this.setRect();
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
     }
 
     /**
@@ -292,9 +311,10 @@ export class EditNode extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param screenOffset
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx, screenOffset)
+    draw(ctx, offsetX, offsetY)
     {
         ctx.strokeStyle = this.ctxParams.strokeStyle;
         ctx.shadowColor = this.ctxParams.shadowColor;
@@ -304,7 +324,7 @@ export class EditNode extends DOMNode
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
 
-        super.setShapePath(ctx, screenOffset.x, screenOffset.y);
+        super.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
         ctx.fill();
     }
@@ -402,15 +422,6 @@ export class EditPointNode extends PointNode
     }
 
     /**
-     * リロード
-     */
-    reload()
-    {
-        this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
-        this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
-    }
-
-    /**
      * ノード配置モード開始
      */
     startNodeMode()
@@ -477,9 +488,8 @@ export class EditPointNode extends PointNode
     {
         this.x = x;
         this.y = y;
-
-        this.DOM.style.left = `${x + screenOffset.x - (this.DOM.offsetWidth / 2)}px`;
-        this.DOM.style.top = `${y + screenOffset.y - (this.DOM.offsetHeight / 2)}px`;
+        this.DOM.style.left = `${x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
+        this.DOM.style.top = `${y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
     }
 
     /**

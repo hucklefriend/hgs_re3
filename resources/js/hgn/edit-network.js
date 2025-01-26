@@ -27,7 +27,7 @@ export class EditNetwork extends Network
         containerDOM.appendChild(removeDOM);
 
         // 親ノードの生成
-        let parent = DOMNode.create(containerDOM, data.id, data.parent.name, 0, 0, {x: 0, y: 0});
+        let parent = DOMNode.create(containerDOM, data.id, data.parent.name, data.parent.x, data.parent.y, {x:0,y:0});
         parent.setForceDraw();
 
         // ネットワークのインスタンス
@@ -36,7 +36,7 @@ export class EditNetwork extends Network
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
                 let nodeData = data.nodes[id];
-                let node = DOMNode.create(containerDOM, id, nodeData.name, nodeData.x, nodeData.y, network.screenOffset)
+                let node = DOMNode.create(containerDOM, id, nodeData.name, nodeData.x, nodeData.y, network.screenOffset);
                 node.setForceDraw();
                 network.addNode(node);
             });
@@ -69,7 +69,8 @@ export class EditNetwork extends Network
             });
         }
 
-        network.parentNode.setPos(0, 0, network.screenOffset);
+        network.parentNode.DOM.style.left = (network.parentNode.x + network.screenOffset.x) + 'px';
+        network.parentNode.DOM.style.top = (network.parentNode.y + network.screenOffset.y) + 'px';
 
         network.reload();
         network.draw();
@@ -273,10 +274,10 @@ export class EditNetwork extends Network
         let x = this.x;
         let y = this.y;
 
-        let left = x + this.parentNode.x - this.parentNode.DOM.offsetWidth / 2;
-        let right = x + this.parentNode.x + this.parentNode.DOM.offsetWidth / 2;
-        let top = y + this.parentNode.y - this.parentNode.DOM.offsetHeight / 2;
-        let bottom = y + this.parentNode.y + this.parentNode.DOM.offsetHeight / 2;
+        let left = x + this.parentNode.x;
+        let right = x + this.parentNode.x + this.parentNode.DOM.offsetWidth;
+        let top = y + this.parentNode.y;
+        let bottom = y + this.parentNode.y + this.parentNode.DOM.offsetHeight;
 
         let l = 0;
         let r = 0;
@@ -285,10 +286,10 @@ export class EditNetwork extends Network
 
         Object.values(this.nodes).forEach(node => {
             if (node instanceof DOMNode) {
-                l = x + node.x - node.DOM.offsetWidth / 2;
-                r = x + node.x + node.DOM.offsetWidth / 2;
-                t = y + node.y - node.DOM.offsetHeight / 2;
-                b = y + node.y + node.DOM.offsetHeight / 2;
+                l = x + node.x;
+                r = x + node.x + node.DOM.offsetWidth;
+                t = y + node.y;
+                b = y + node.y + node.DOM.offsetHeight;
             } else if (node instanceof PointNode) {
                 l = x + node.x - node.r;
                 r = x + node.x + node.r;

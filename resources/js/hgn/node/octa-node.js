@@ -572,8 +572,8 @@ export class DOMNode extends OctaNode
 
         containerDOM.appendChild(DOM);
 
-        DOM.style.left = `${x + screenOffset.x - DOM.offsetWidth / 2}px`;
-        DOM.style.top = `${y + screenOffset.y - DOM.offsetHeight / 2}px`;
+        DOM.style.left = `${x + screenOffset.x}px`;
+        DOM.style.top = `${y + screenOffset.y}px`;
 
         return new this(id, x, y, DOM);
     }
