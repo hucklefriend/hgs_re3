@@ -8,47 +8,42 @@ import {Rect} from "./rect.js";
 
 /**
  * メインネットワークに表示する1つのフランチャイズネットワーク
+ * スクリーン座標
  */
 export class MainFranchiseNetwork extends Network
 {
-    static create(containerDOM, x, y, data, screenOffset)
+    static create(containerDOM, networkData)
     {
-        let screenOffset2 = new Vertex(data.width /2, data.height / 2);
-
         // ネットワーク用divの生成
         let div = document.createElement('div');
         div.classList.add('franchise');
-        div.style.width = data.width + 'px';
-        div.style.height = data.height + 'px';
-        div.style.left = screenOffset.x + x - (data.width / 2) + 'px';
-        div.style.top = screenOffset.y + y - (data.height / 2) + 'px';
+        // div.style.width = networkData.width + 'px';
+        // div.style.height = networkData.height + 'px';
+        // div.style.left = networkData.x + 'px';
+        // div.style.top = networkData.y + 'px';
         containerDOM.appendChild(div);
 
-        // 親ノードの生成
-        let parent = MainFranchiseNetwork.createNode(div, x, y, data.parent, screenOffset2);
-
         // ネットワークのインスタンス
-        let network = new MainFranchiseNetwork(div, x, y, data.width, data.height, parent, screenOffset2);
+        let network = new MainFranchiseNetwork(div, networkData.x, networkData.y,
+            networkData.width, networkData.height);
 
-        if (data.nodes !== undefined) {
-            Object.keys(data.nodes).forEach(id => {
-                let node = MainFranchiseNetwork.createNode(div, x, y, data.nodes[id], screenOffset2);
-                network.addNode(node);
-            });
-        }
+        // ノードの読み込み
+        if (networkData.nodes !== undefined) {
+            networkData.nodes.forEach(nodeData => {
+                let node = null;
+                if (nodeData.type === 'pt') {
+                    node = new PointNode(nodeData.x, nodeData.y, 6, nodeData.id);
+                } else {
+                    node = MainFranchiseNetwork.createNode(div, nodeData);
+                }
 
-        // ポイントノードの読み取り
-        if (data.hasOwnProperty('points')) {
-            data.points.forEach(point => {
-                let node = new PointNode(point.x, point.y, 6, point.id);
-                node.setForceDraw();
                 network.addNode(node);
             });
         }
 
         // エッジの読み込み
-        if (data.hasOwnProperty('connects')) {
-            data.connects.forEach(connect => {
+        if (networkData.hasOwnProperty('con')) {
+            networkData.con.forEach(connect => {
                 let fromNode = network.getNodeById(connect.from);
                 let toNode = network.getNodeById(connect.to);
 
@@ -67,23 +62,43 @@ export class MainFranchiseNetwork extends Network
         return network;
     }
 
-    static createNode(containerDOM, x, y, nodeData, screenOffset)
+    static createNode(containerDOM, nodeData)
     {
-        let node = null;
+        let DOM = document.createElement('div');
+        DOM.id = nodeData.id;
 
-        // if (nodeData.type === 'dom') {
-        //     node = DOMNode.create(containerDOM, screenOrigin, nodeData.id, nodeData.html, nodeData.x, nodeData.y);
-        // } else if (nodeData.type === 'link') {
-        //     node = LinkNode.create(containerDOM, screenOrigin, data.id, nodeData.html, nodeData.x, nodeData.y);
-        // } else if (nodeData.type === 'pt') {
-        //     node = PointNode.create(containerDOM, data.width, data.height, data.id, nodeData.html, nodeData.x, nodeData.y);
+        DOM.classList.add('dom-node');
+        //DOM.classList.add('fade');
+
+        // if (nodeData.hasOwnProperty('href')) {
+        //     let a = document.createElement('a');
+        //     a.href = nodeData.href;
+        //     a.innerHTML = nodeData.html;
+        //     a.appendChild(DOM);
+        // } else {
+        //     DOM.innerHTML = nodeData.html;
         // }
 
-        node = DOMNode.create(containerDOM, nodeData.id, nodeData.html, nodeData.x, nodeData.y, screenOffset);
+        DOM.innerHTML = nodeData.html;
 
-        if (node !== null) {
-            node.setForceDraw();
-        }
+        DOM.style.left = `${nodeData.x}px`;
+        DOM.style.top = `${nodeData.y}px`;
+
+        containerDOM.appendChild(DOM);
+
+        let node = null;
+        // switch (nodeData.type) {
+        //     case 'dom-node':
+        //         node = DOMNode.createFromDOM(containerDOM, DOM);
+        //         break;
+        //     case 'link-node':
+        //     case 'link-node-a':
+        //     case 'link-node-z':
+        //         node = LinkNode.createFromDOM(containerDOM, DOM);
+        //         break;
+        // }
+        node = DOMNode.createFromDOM(containerDOM, DOM);
+        node.setForceDraw();
 
         return node;
     }
@@ -91,28 +106,34 @@ export class MainFranchiseNetwork extends Network
     /**
      * コンストラクタ
      */
-    constructor(DOM, x, y, w, h, parentNode)
+    constructor(DOM, x, y, w, h)
     {
-        super(parentNode);
+        super();
 
         this.DOM = DOM;
         this.viewRect = new Rect();
-        this.screenOffset.x = w / 2;
-        this.screenOffset.y = h / 2;
+        this.w = w;
+        this.h = h;
 
-        this.setPos(x, y, w / 2, h / 2);
+        this.setPos(x, y);
     }
 
-    setPos(x, y, hw, hh)
+    /**
+     * 配置
+     *
+     * @param x
+     * @param y
+     */
+    setPos(x, y)
     {
         this.x = x;
         this.y = y;
 
         this.viewRect.setRect(
-            this.x - hw,
-            this.x + hw,
-            this.y - hh,
-            this.y + hh
+            this.x,
+            this.x + this.w,
+            this.y,
+            this.y + this.h
         );
     }
 
@@ -120,9 +141,9 @@ export class MainFranchiseNetwork extends Network
      * 描画
      *
      * @param ctx
-     * @param {Vertex}screenOffset
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, viewRect, screenOffset, cameraPos, viewOffsetX, viewOffsetY)
+    draw(ctx, viewRect, viewRectNo)
     {
         ctx.restore();
 
@@ -131,20 +152,8 @@ export class MainFranchiseNetwork extends Network
         ctx.shadowColor = "lime"; // 影の色
         ctx.shadowBlur = 5; // 影のぼかし効果
 
-        let offsetX = screenOffset.x + this.x;
-        let offsetY = screenOffset.y + this.y;
-
-        this.parentNode.connects.forEach((connect, vertexNo) => {
-            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
-                let targetVertex = connect.getVertex();
-
-                ctx.beginPath();
-
-                ctx.moveTo(this.parentNode.vertices[vertexNo].x + offsetX, this.parentNode.vertices[vertexNo].y + offsetY);
-                ctx.lineTo(targetVertex.x + offsetX, targetVertex.y + offsetY);
-                ctx.stroke();
-            }
-        });
+        let offsetX = -viewRect.left;
+        let offsetY = -viewRect.top;
 
         Object.values(this.nodes).forEach(node => {
             node.connects.forEach((connect, vertexNo) => {
@@ -168,12 +177,22 @@ export class MainFranchiseNetwork extends Network
 
         Object.values(this.nodes).forEach(node => {
             node.draw(ctx, offsetX, offsetY);
+            if (node instanceof DOMNode) {
+                node.DOM.classList.remove('view1', 'view2', 'view3', 'view4');
+                node.DOM.classList.add('view' + viewRectNo);
+            }
         });
 
-        if (this.parentNode !== null) {
-            this.parentNode.draw(ctx, offsetX, offsetY);
-        }
+        //this.DOM.style.transform = 'translate(' + (-viewRect.left) + 'px, ' + (-viewRect.top) + 'px)';
+    }
 
-        this.DOM.style.transform = 'translate(' + (-cameraPos.x + viewOffsetX) + 'px, ' + (-cameraPos.y + viewOffsetY) + 'px)';
+    show()
+    {
+        this.DOM.style.display = 'block';
+    }
+
+    hide()
+    {
+        this.DOM.style.display = 'none';
     }
 }

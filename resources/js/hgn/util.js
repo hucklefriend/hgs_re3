@@ -1,3 +1,6 @@
+import {Param} from "./param.js";
+import {PointNode} from "./node/point-node.js";
+import {OctaNode} from "./node/octa-node.js";
 
 
 export class Util
@@ -32,5 +35,37 @@ export class Util
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+
+    /**
+     * エッジ用のJSON
+     *
+     * @param id
+     * @param connects
+     * @returns {*[]}
+     */
+    static getConnectJsonArr(id, connects)
+    {
+        let arr = [];
+        connects.forEach(con => {
+            if (con !== null && con.type === Param.CONNECT_TYPE_OUTGOING) {
+                if (con.node instanceof OctaNode) {
+                    arr.push({
+                        from: id,
+                        to: con.node.id,
+                        to_vn: con.vertexNo,
+                    });
+                } else if (con.node instanceof PointNode) {
+                    arr.push({
+                        from: id,
+                        to: con.node.id,
+                    });
+                }
+            }
+        });
+
+        return arr;
     }
 }

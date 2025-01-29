@@ -1,8 +1,10 @@
 import {Network} from './network.js';
 import {Param} from './param.js';
 import {OctaNode, DOMNode} from "./node/octa-node.js";
+import {EditNetworkNode, EditNetworkPointNode} from "./node/edit-network-node.js";
 import {PointNode} from "./node/point-node.js";
 import {Vertex} from "./vertex.js";
+import {Util} from "./util.js";
 
 
 /**
@@ -10,6 +12,12 @@ import {Vertex} from "./vertex.js";
  */
 export class EditNetwork extends Network
 {
+    /**
+     * 編集用ネットワークの作成
+     *
+     * @param data
+     * @returns {EditNetwork}
+     */
     static create(data)
     {
         let containerDOM = document.createElement('div');
@@ -26,17 +34,13 @@ export class EditNetwork extends Network
         removeDOM.innerHTML = '×';
         containerDOM.appendChild(removeDOM);
 
-        // 親ノードの生成
-        let parent = DOMNode.create(containerDOM, data.id, data.parent.name, data.parent.x, data.parent.y, {x:0,y:0});
-        parent.setForceDraw();
-
         // ネットワークのインスタンス
-        let network = new EditNetwork(containerDOM, canvasDOM, removeDOM, parent);
+        let network = new EditNetwork(data.id, containerDOM, canvasDOM, removeDOM);
 
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
                 let nodeData = data.nodes[id];
-                let node = DOMNode.create(containerDOM, id, nodeData.name, nodeData.x, nodeData.y, network.screenOffset);
+                let node = EditNetworkNode.create(containerDOM, nodeData, network.screenOffset);
                 node.setForceDraw();
                 network.addNode(node);
             });
@@ -47,7 +51,7 @@ export class EditNetwork extends Network
             data.points.forEach(point => {
                 let x = point.x;
                 let y = point.y;
-                let node = new PointNode(x, y, 6, point.id);
+                let node = new EditNetworkPointNode(point.id, x, y);
                 node.setForceDraw();
                 network.addNode(node);
             });
@@ -60,7 +64,7 @@ export class EditNetwork extends Network
                 let toNode = network.getNodeById(connect.to);
 
                 if (fromNode !== null && toNode !== null) {
-                    if (fromNode instanceof DOMNode) {
+                    if (fromNode instanceof EditNetworkNode) {
                         fromNode.connect(connect.from_vn ?? null, toNode, connect.to_vn ?? null);
                     } else if (fromNode instanceof PointNode) {
                         fromNode.connect(toNode, connect.to_vn ?? null);
@@ -68,9 +72,6 @@ export class EditNetwork extends Network
                 }
             });
         }
-
-        network.parentNode.DOM.style.left = (network.parentNode.x + network.screenOffset.x) + 'px';
-        network.parentNode.DOM.style.top = (network.parentNode.y + network.screenOffset.y) + 'px';
 
         network.reload();
         network.draw();
@@ -81,15 +82,16 @@ export class EditNetwork extends Network
     /**
      * コンストラクタ
      *
+     * @param id
      * @param containerDOM
      * @param canvas
      * @param removeDOM
-     * @param parentNode
      */
-    constructor(containerDOM, canvas, removeDOM, parentNode)
+    constructor(id, containerDOM, canvas, removeDOM)
     {
-        super(parentNode);
+        super();
 
+        this.id = id;
         this.containerDOM = containerDOM;
         this.containerDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.containerDOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
@@ -196,7 +198,7 @@ export class EditNetwork extends Network
      */
     mouseClickRemoveDOM(e)
     {
-        window.mainNetworkEditor.removeNetwork(this.parentNode.id);
+        window.mainNetworkEditor.removeNetwork(this.id);
     }
 
     draw()
@@ -208,18 +210,6 @@ export class EditNetwork extends Network
         this.ctx.lineWidth = 1; // 線の太さ
         this.ctx.shadowColor = "lime"; // 影の色
         this.ctx.shadowBlur = 5; // 影のぼかし効果
-
-        this.parentNode.connects.forEach((connect, vertexNo) => {
-            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING){
-                let targetVertex = connect.getVertex();
-
-                this.ctx.beginPath();
-
-                this.ctx.moveTo(this.parentNode.vertices[vertexNo].x+this.screenOffset.x, this.parentNode.vertices[vertexNo].y+this.screenOffset.y);
-                this.ctx.lineTo(targetVertex.x+this.screenOffset.x, targetVertex.y+this.screenOffset.y);
-                this.ctx.stroke();
-            }
-        });
 
         Object.values(this.nodes).forEach(node => {
             node.connects.forEach((connect, vertexNo) => {
@@ -253,31 +243,25 @@ export class EditNetwork extends Network
 
             node.draw(this.ctx, this.screenOffset.x, this.screenOffset.y);
         });
-
-        if (this.parentNode instanceof DOMNode) {
-            this.ctx.restore();
-            this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-            this.ctx.lineWidth = 1; // 線の太さ
-            this.ctx.shadowColor = "lime"; // 影の色
-            this.ctx.shadowBlur = 5; // 影のぼかし効果
-            this.ctx.fillStyle = "black";
-        } else if (node instanceof PointNode) {
-            this.ctx.restore();
-            this.ctx.fillStyle = "rgba(0, 200, 0, 0.8)"; // 線の色と透明度
-        }
-
-        this.parentNode.draw(this.ctx, this.screenOffset.x, this.screenOffset.y);
     }
 
     getRect()
     {
+        return {
+            left: this.x - this.containerDOM.offsetWidth / 2,
+            right: this.x + this.containerDOM.offsetWidth / 2,
+            top: this.y - this.containerDOM.offsetHeight / 2,
+            bottom: this.y + this.containerDOM.offsetHeight / 2,
+        };
+
+
         let x = this.x;
         let y = this.y;
 
-        let left = x + this.parentNode.x;
-        let right = x + this.parentNode.x + this.parentNode.DOM.offsetWidth;
-        let top = y + this.parentNode.y;
-        let bottom = y + this.parentNode.y + this.parentNode.DOM.offsetHeight;
+        let left = x;
+        let right = x;
+        let top = y;
+        let bottom = y;
 
         let l = 0;
         let r = 0;
@@ -286,10 +270,10 @@ export class EditNetwork extends Network
 
         Object.values(this.nodes).forEach(node => {
             if (node instanceof DOMNode) {
-                l = x + node.x;
-                r = x + node.x + node.DOM.offsetWidth;
-                t = y + node.y;
-                b = y + node.y + node.DOM.offsetHeight;
+                l = x + node.x - node.DOM.offsetWidth / 2;
+                r = x + node.x + node.DOM.offsetWidth / 2;
+                t = y + node.y - node.DOM.offsetHeight / 2;
+                b = y + node.y + node.DOM.offsetHeight / 2;
             } else if (node instanceof PointNode) {
                 l = x + node.x - node.r;
                 r = x + node.x + node.r;
@@ -312,10 +296,10 @@ export class EditNetwork extends Network
         });
 
         return {
-            left: left - 15,
-            right: right + 15,
-            top: top - 15,
-            bottom: bottom + 15,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
         };
     }
 
@@ -325,6 +309,34 @@ export class EditNetwork extends Network
             id: id,
             x: Math.round(this.x),
             y: Math.round(this.y),
+        };
+    }
+
+    /**
+     * メインネットワーク表示用のJSONを生成
+     * スクリーン座標になっている
+     *
+     * @returns {{x, y}}
+     */
+    toJsonForMainNetwork(rect, screenOffset, screenLeft, screenTop)
+    {
+        let nodes = [];
+        let connects = [];
+
+        let x = screenOffset.x + this.x - screenLeft;
+        let y = screenOffset.y + this.y - screenTop;
+        Object.values(this.nodes).forEach(node => {
+            nodes.push(node.toJsonForMainNetwork(x, y));
+            connects.push(...Util.getConnectJsonArr(node.id, node.connects));
+        });
+
+        return {
+            x: this.x - this.containerDOM.offsetWidth / 2 - rect.left,
+            y: this.y - this.containerDOM.offsetHeight / 2 - rect.top,
+            width: this.containerDOM.offsetWidth,
+            height: this.containerDOM.offsetHeight,
+            nodes: nodes,
+            con: connects
         };
     }
 }

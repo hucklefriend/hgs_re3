@@ -11,13 +11,14 @@
     @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/css/node.css', 'resources/js/main-network.js'])
 </head>
 <body id="main-network">
-<canvas id="main-network-canvas"></canvas>
+    <canvas id="main-network-canvas"></canvas>
+    <div id="main-network-debug"></div>
+
+    <!--<canvas id="main-network-debug-canvas"></canvas>-->
 </body>
-<div id="main-network-debug"></div>
-<canvas id="main-network-debug-canvas"></canvas>
 <script>
     window.addEventListener('load', () => {
-        window.mainNetwork.start(@json($networks), {{ $rect['left'] }}, {{ $rect['right'] }}, {{ $rect['top'] }}, {{ $rect['bottom'] }}, 0, 0);
+        window.mainNetwork.start({!! $json !!}, 0, 0);
     });
 </script>
 </html>

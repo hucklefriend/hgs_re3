@@ -3,7 +3,10 @@ import {Util} from '../util.js';
 import {DOMNode} from './octa-node.js';
 import {PointNode} from './point-node.js';
 
-
+/**
+ * ネットワークエディタ用のノード
+ * x,yをノードの中心で扱う
+ */
 export class EditNode extends DOMNode
 {
     /**
@@ -29,12 +32,12 @@ export class EditNode extends DOMNode
             DOM.appendChild(remove);
         }
 
-        DOM.style.left = `${networkPosition.x + nodeData.x}px`;
-        DOM.style.top = `${networkPosition.y + nodeData.y}px`;
+        DOM.style.left = `${networkPosition.x + nodeData.x - DOM.offsetWidth / 2}px`;
+        DOM.style.top = `${networkPosition.y + nodeData.y - DOM.offsetHeight / 2}px`;
 
         EditNode.appendEdgeSelect(nodeData, DOM);
 
-        return new EditNode(nodeData.id, nodeData.x, nodeData.y, DOM);
+        return new EditNode(nodeData.id, nodeData.x, nodeData.y, DOM, isRemovable);
     }
 
     /**
@@ -109,14 +112,19 @@ export class EditNode extends DOMNode
      * @param x
      * @param y
      * @param DOM
+     * @param isRemovable
      */
-    constructor(id, x, y, DOM)
+    constructor(id, x, y, DOM, isRemovable = true)
     {
         super(id, x, y, DOM);
 
-        DOM.addEventListener('mousedown', (e) => {return this.mouseDown(e)});
-        DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
-        DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        this.reload();  // スクリーン座標配置になっているので、リロードしとく
+
+        if (isRemovable) {
+            DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+            DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
+            DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        }
 
         this.removeDOM = DOM.querySelector('.edit-node-remove');
         if (this.removeDOM !== null) {
@@ -277,8 +285,8 @@ export class EditNode extends DOMNode
     {
         this.x += moveX;
         this.y += moveY;
-        this.DOM.style.left = `${this.x + screenOffset.x}px`;
-        this.DOM.style.top = `${this.y + screenOffset.y}px`;
+        this.DOM.style.left = `${this.x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
+        this.DOM.style.top = `${this.y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
 
         this.reload();
     }
@@ -290,7 +298,7 @@ export class EditNode extends DOMNode
     {
         this.w = this.DOM.offsetWidth;
         this.h = this.DOM.offsetHeight;
-        this.setRect();
+        this.setCenterRect();
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -554,7 +562,6 @@ export class EditPointNode extends PointNode
     /**
      * JSON化
      *
-     * @param parent
      * @returns {{x: (number|number), y: (number|number)}}
      */
     toJson()

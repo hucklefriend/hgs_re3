@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Game;
 
+use App\Enums\Rating;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Models\GameFranchise;
 use App\Models\GameMainNetworkFranchise;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class MainNetworkController extends AbstractAdminController
 {
@@ -27,24 +29,40 @@ class MainNetworkController extends AbstractAdminController
     {
         $networks = GameMainNetworkFranchise::all();
         $seriesNames = GameSeries::all()->pluck('name', 'id');
-        $titleNames = GameTitle::all()->pluck('node_name', 'id');
+        $titles = GameTitle::all(['id', 'node_name', 'key', 'rating'])->pluck(null, 'id');
         $mainNetworks = [];
 
         $data = [];
         foreach ($networks as $network) {
             $json = json_decode($network->json, true);
 
-            $json['parent']['name'] = $network->franchise->name . '<br>フランチャイズ';
+            $json['parent']['html'] = $network->franchise->node_name . '<br>フランチャイズ';
+            $json['parent']['type'] = 'link-node';
+            $json['parent']['href'] = route('Game.FranchiseDetailNetwork',
+                ['franchiseKey' => $network->franchise->key], false);
 
             foreach ($json['nodes'] as $key => $node) {
                 [$prefix, $id] = explode('_', $key);
 
                 if ($prefix === 'f') {
-                    $json['nodes'][$key]['name'] = $network->franchise->name . '<br>フランチャイズ';
+                    $json['nodes'][$key]['html'] = $network->franchise->name . '<br>フランチャイズ';
+                    $json['nodes'][$key]['type'] = 'link-node';
+                    $json['nodes'][$key]['href'] = route('Game.FranchiseDetailNetwork',
+                        ['franchiseKey' => $network->franchise->key], false);
                 } else if ($prefix === 's') {
-                    $json['nodes'][$key]['name'] = $seriesNames[$id] . '<br>シリーズ';
+                    $json['nodes'][$key]['html'] = $seriesNames[$id] . '<br>シリーズ';
+                    $json['nodes'][$key]['type'] = 'dom-node';
                 } else if ($prefix === 't') {
-                    $json['nodes'][$key]['name'] = $titleNames[$id];
+                    $json['nodes'][$key]['html'] = $titles[$id]['node_name'];
+                    $json['nodes'][$key]['type'] = 'link-node';
+                    $json['nodes'][$key]['href'] = route('Game.TitleDetailNetwork',
+                        ['titleKey' => $titles[$id]['key']], false);
+
+                    $json['nodes'][$key]['type'] .= match($titles[$id]['rating']) {
+                        Rating::R18A => '-a',
+                        Rating::R18Z => '-z',
+                        default => ''
+                    };
                 }
             }
 
@@ -89,10 +107,12 @@ class MainNetworkController extends AbstractAdminController
             }
         }
 
-        GameMainNetworkParam::saveNetworkRect(
-            $json->rect->left, $json->rect->right,
-            $json->rect->top, $json->rect->bottom
-        );
+//        GameMainNetworkParam::saveNetworkRect(
+//            $json->rect->left, $json->rect->right,
+//            $json->rect->top, $json->rect->bottom
+//        );
+
+        Storage::put('public/main.json', $request->post('json2'));
 
         return redirect()->route('Admin.Game.MainNetwork');
     }

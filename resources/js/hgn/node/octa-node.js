@@ -87,6 +87,16 @@ export class OctaNode
     }
 
     /**
+     * x, yが中央座標として短径を設定
+     */
+    setCenterRect()
+    {
+        let x = this.x - this.w / 2;
+        let y = this.y - this.h / 2;
+        this.rect.setRect(x, x + this.w, y, y + this.h);
+    }
+
+    /**
      * 八角形の頂点を設定
      */
     setOctagon()
@@ -400,18 +410,27 @@ export class OctaNode
      * @param ctx
      * @param offsetX
      * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
-        if (!this.forceDraw) {
-            const hgn = HorrorGameNetwork.getInstance();
-
+        if (viewRect !== null) {
+            // 表示領域外にあったら描画しない
+            const drawLeft = this.vertices[Param.LLT].x + offsetX;
+            const drawRight = this.vertices[Param.RRB].y + offsetX;
             const drawTop = this.vertices[Param.LTT].y + offsetY;
             const drawBottom = this.vertices[Param.LBB].y + offsetY;
-            if (drawBottom < hgn.getScrollY() - 100) {
+
+            if (drawRight < viewRect.left - Param.VIEW_RECT_MARGIN) {
                 return;
             }
-            if (drawTop > hgn.getScrollY() + window.innerHeight +100) {
+            if (drawLeft > viewRect.right + Param.VIEW_RECT_MARGIN) {
+                return;
+            }
+            if (drawBottom < viewRect.top - Param.VIEW_RECT_MARGIN) {
+                return;
+            }
+            if (drawTop > viewRect.bottom + Param.VIEW_RECT_MARGIN) {
                 return;
             }
         }
@@ -539,12 +558,13 @@ export class Bg2OctaNode extends OctaNode
      * @param ctx
      * @param offsetX
      * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
         // ctx.fillStyleを未設定にする
         ctx.fillStyle = "rgba(0, 0, 0, 0)";
-        super.draw(ctx, offsetX, offsetY);
+        super.draw(ctx, offsetX, offsetY, viewRect);
     }
 }
 
@@ -1032,8 +1052,9 @@ export class TextNode extends DOMNode
      * @param ctx
      * @param offsetX
      * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
         super.setShapePath(ctx);
 

@@ -1,8 +1,7 @@
-import {Param} from './hgn/param.js';
-import {Util} from "./hgn/util.js";
 import {Vertex} from "./hgn/vertex.js";
 import {Rect} from "./hgn/rect.js";
 import {EditNetwork} from "./hgn/edit-network.js";
+import {Util} from "./hgn/util.js";
 
 /**
  * メインネットワークエディタ
@@ -232,7 +231,9 @@ export class MainNetworkEditor
      */
     writeJson()
     {
-        document.querySelector('#json').value = JSON.stringify(this.toJson());
+        let json = this.toJson();
+        document.querySelector('#json').value = JSON.stringify(json.edit);
+        document.querySelector('#json2').value = JSON.stringify(json.main);
     }
 
     /**
@@ -253,8 +254,11 @@ export class MainNetworkEditor
         this.setSizeChecker(rect);
 
         return {
-            networks: networks,
-            rect: rect.toJson()
+            edit: {
+                networks: networks,
+                rect: rect.toJson()
+            },
+            main: this.toJsonForMainNetwork(rect)
         };
     }
 
@@ -264,6 +268,34 @@ export class MainNetworkEditor
         this.sizeCheckerDOM.style.top = this.screenOffset.y + rect.top + 'px';
         this.sizeCheckerDOM.style.width = (rect.right - rect.left) + 'px';
         this.sizeCheckerDOM.style.height = (rect.bottom - rect.top) + 'px';
+    }
+
+
+
+    /**
+     * メインネットワーク表示用のJSONを生成
+     * スクリーン座標になっている
+     *
+     * @returns {{x, y}}
+     */
+    toJsonForMainNetwork(rect)
+    {
+        let networks = [];
+
+        let screenLeft = this.screenOffset.x + rect.left;
+        let screenTop = this.screenOffset.y + rect.top;
+
+        for (let id in this.networks) {
+            networks.push(this.networks[id].toJsonForMainNetwork(
+                rect, this.screenOffset, screenLeft, screenTop));
+        }
+
+        return {
+            networks: networks,
+            origin: {x: -rect.left, y: -rect.top},
+            width: rect.width,
+            height: rect.height,
+        };
     }
 }
 

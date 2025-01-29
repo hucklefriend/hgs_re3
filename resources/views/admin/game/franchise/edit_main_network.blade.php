@@ -77,7 +77,7 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            window.networkEditor.start(@json($data));
+            window.networkEditor.start('{{ $parentKey }}', @json($data));
         });
 
         document.getElementById('add_series_node').addEventListener('click', function() {

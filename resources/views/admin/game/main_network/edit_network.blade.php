@@ -34,6 +34,7 @@
                 @csrf
                 <button type="submit" class="btn btn-primary mb-3">Save</button>
                 <textarea class="form-control w-100" id="json" name="json" readonly></textarea>
+                <textarea class="form-control w-100" id="json2" name="json2" readonly></textarea>
             </form>
         </div>
     </div>

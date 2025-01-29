@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\Rating;
 use App\Models\GameFranchise;
-use App\Models\GameMainNetwork;
 use App\Models\GameMainNetworkFranchise;
 use App\Models\GameMainNetworkParam;
 use App\Models\GameMaker;
@@ -23,6 +22,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class GameController extends Controller
 {
@@ -36,6 +36,20 @@ class GameController extends Controller
      * @throws \Throwable
      */
     public function horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
+    {
+        $json = Storage::get('public/main.json');
+
+        return $this->network(view('game.horrorgame_network', compact('json')));
+    }
+
+    /**
+     * ホラーゲームネットワーク
+     *
+     * @param Request $request
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function __horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
     {
         $mainNetworks = GameMainNetworkFranchise::whereNotNull('x')
             ->whereNotNull('y')

@@ -34,5 +34,12 @@ export class Param
 
     static DRAG_FLICK_RATE = 0.9;
 
+    /**
+     * 描画するかを決める表示領域のマージン
+     *
+     * @type {number}
+     */
+    static VIEW_RECT_MARGIN = 10;
+
     static SHOW_DEBUG = true;
 }

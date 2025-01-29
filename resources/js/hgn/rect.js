@@ -85,6 +85,8 @@ export class Rect
         this.right = Math.max(this.right, rect.right);
         this.top = Math.min(this.top, rect.top);
         this.bottom = Math.max(this.bottom, rect.bottom);
+
+        this.calcSize();
     }
 
     /**

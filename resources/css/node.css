@@ -301,7 +301,23 @@
 
 body#main-network {
     .dom-node, .link-node, .text-node {
-        position: absolute;
+        position: fixed;
+    }
+
+    .view1 {
+        transform: translate(calc(var(--mn-camera-x1) * -1), calc(var(--mn-camera-y1) * -1));
+    }
+
+    .view2 {
+        transform: translate(calc(var(--mn-camera-x2) * -1), calc(var(--mn-camera-y2) * -1)) !important;
+    }
+
+    .view3 {
+        transform: translate(calc(var(--mn-camera-x3) * -1), calc(var(--mn-camera-y3) * -1)) !important;
+    }
+
+    .view4 {
+        transform: translate(calc(var(--mn-camera-x4) * -1), calc(var(--mn-camera-y4) * -1)) !important;
     }
 }
 
