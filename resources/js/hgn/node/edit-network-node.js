@@ -2,7 +2,7 @@ import {Param} from '../param.js';
 import {Util} from '../util.js';
 import {DOMNode} from './octa-node.js';
 import {PointNode} from "./point-node.js";
-import {EditNode} from "./edit-node.js";
+import {EditNetwork} from "../edit-network.js";
 
 
 export class EditNetworkNode extends DOMNode
@@ -10,12 +10,13 @@ export class EditNetworkNode extends DOMNode
     /**
      * DOMノードを生成
      *
+     * @param {EditNetwork}parentNetwork
      * @param containerDOM
      * @param data
      * @param {Vertex}screenOffset
      * @returns {DOMNode}
      */
-    static create(containerDOM, data, screenOffset)
+    static create(parentNetwork, containerDOM, data, screenOffset)
     {
         let DOM = document.createElement('div');
         DOM.innerHTML = data.html;
@@ -26,20 +27,22 @@ export class EditNetworkNode extends DOMNode
         DOM.style.left = `${data.x + screenOffset.x - DOM.offsetWidth / 2}px`;
         DOM.style.top = `${data.y + screenOffset.y - DOM.offsetHeight / 2}px`;
 
-        return new this(data, DOM);
+        return new this(parentNetwork, data, DOM);
     }
 
     /**
      * コンストラクタ
      *
+     * @param {EditNetwork}parentNetwork
      * @param data
      * @param DOM
      * @param notchSize
      */
-    constructor(data, DOM, notchSize = 13)
+    constructor(parentNetwork, data, DOM, notchSize = 13)
     {
         super(data.id, data.x, data.y, DOM, notchSize);
 
+        this.parentNetwork = parentNetwork;
         this.nodeType = data.type;
         this.href = data.href;
 
@@ -64,6 +67,8 @@ export class EditNetworkNode extends DOMNode
                 this.ctxParams.fillStyle = "rgb(40, 0, 0)";
             }
         }
+
+        this.DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
     }
 
     /**
@@ -78,6 +83,16 @@ export class EditNetworkNode extends DOMNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+    }
+
+    /**
+     * マウスダウン
+     *
+     * @param e
+     */
+    mouseDown(e)
+    {
+        this.parentNetwork.mouseDownInNode(e);
     }
 
     /**

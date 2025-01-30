@@ -40,7 +40,7 @@ export class EditNetwork extends Network
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
                 let nodeData = data.nodes[id];
-                let node = EditNetworkNode.create(containerDOM, nodeData, network.screenOffset);
+                let node = EditNetworkNode.create(network, containerDOM, nodeData, network.screenOffset);
                 node.setForceDraw();
                 network.addNode(node);
             });
@@ -93,7 +93,7 @@ export class EditNetwork extends Network
 
         this.id = id;
         this.containerDOM = containerDOM;
-        this.containerDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+        //this.containerDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.containerDOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
 
@@ -132,11 +132,11 @@ export class EditNetwork extends Network
     }
 
     /**
-     * マウスダウン
+     * 子コード上でマウスダウンされた
      *
      * @param e
      */
-    mouseDown(e)
+    mouseDownInNode(e)
     {
         this.isDragging = true;
         this.containerDOM.style.cursor = "grabbing";

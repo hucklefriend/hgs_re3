@@ -311,7 +311,7 @@ export class NetworkEditor
                     let vertex = this.edgeFromNode.vertices[this.edgeFromVertexNo];
                     this.ctx.moveTo(vertex.x + this.center.x, vertex.y + this.center.y);
                 } else if (this.edgeFromNode instanceof EditPointNode) {
-                    this.ctx.moveTo(this.edgeFromNode.x, this.edgeFromNode.y);
+                    this.ctx.moveTo(this.edgeFromNode.x + this.center.x, this.edgeFromNode.y + this.center.y);
                 }
 
                 let rect = this.containerDOM.getBoundingClientRect();
@@ -555,6 +555,7 @@ export class NetworkEditor
         Object.values(this.nodes).forEach(node => {
             let json = node.toJson();
             nodes[node.id] = json;
+            connects.push(...Util.getConnectJsonArr(node.id, node.connects));
 
             let l = Math.abs(json.x - node.DOM.offsetWidth / 2);
             let t = Math.abs(json.y - node.DOM.offsetHeight / 2);
@@ -578,7 +579,7 @@ export class NetworkEditor
         Object.values(this.points).forEach(point => {
             let json = point.toJson();
             points.push(json);
-            connects.push(...point.getConnectJsonArr());
+            connects.push(...Util.getConnectJsonArr(point.id, point.connects));
 
             let l = Math.abs(json.x - 10);
             let t = Math.abs(json.y - 10);

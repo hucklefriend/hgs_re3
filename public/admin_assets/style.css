@@ -180,6 +180,7 @@ textarea {
                 height: 33px;
                 text-align: center;
                 display: none;
+                z-index: 99999;
             }
         }
 
