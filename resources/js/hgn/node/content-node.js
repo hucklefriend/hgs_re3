@@ -16,11 +16,14 @@ export class ContentLinkNode extends LinkNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM)
     {
-        super(DOM);
+        super(id, x, y, DOM);
 
         this.state = ContentLinkNode.STATE_CLOSED;
         this.openScrollY = 0;

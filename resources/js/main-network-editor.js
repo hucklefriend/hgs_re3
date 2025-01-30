@@ -1,7 +1,7 @@
-import {Param} from './hgn/param.js';
-import {Util} from "./hgn/util.js";
 import {Vertex} from "./hgn/vertex.js";
+import {Rect} from "./hgn/rect.js";
 import {EditNetwork} from "./hgn/edit-network.js";
+import {Util} from "./hgn/util.js";
 
 /**
  * メインネットワークエディタ
@@ -22,11 +22,14 @@ export class MainNetworkEditor
             this.containerDOM = document.body;
         }
 
+        // #size-checker
+        this.sizeCheckerDOM = document.querySelector('#size-checker');
+
         // ネットワーク
         this.networks = {};
         this.draggingNetwork = null;
 
-        this.center = new Vertex();
+        this.screenOffset = new Vertex(this.editorDOM.offsetWidth / 2, this.editorDOM.offsetHeight / 2);
 
         this.data = null;
     }
@@ -41,8 +44,6 @@ export class MainNetworkEditor
         // containerDOMのスクロール位置をeditorDOMの中央に
         this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
         this.containerDOM.scrollLeft = this.editorDOM.offsetLeft - (this.containerDOM.offsetWidth - this.editorDOM.offsetWidth) / 2;
-        this.center.x = this.editorDOM.offsetWidth / 2;
-        this.center.y = this.editorDOM.offsetHeight / 2;
 
         this.editorDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.editorDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
@@ -87,21 +88,17 @@ export class MainNetworkEditor
             return;
         }
 
-        this.networks[id] = EditNetwork.create(this.data[id]);
+        this.networks[id] = EditNetwork.create(this.data[id], this.screenOffset);
 
         // x, yがnullなら現在のスクロール位置の中心に配置
         if (x === null) {
-            x = Math.round(this.containerDOM.scrollLeft + this.containerDOM.offsetWidth / 2);
-        } else {
-            x += this.center.x;
+            x = Math.round((this.containerDOM.scrollLeft - this.screenOffset.x) + this.containerDOM.offsetWidth / 2);
         }
         if (y === null) {
-            y = Math.round(this.containerDOM.scrollTop + this.containerDOM.offsetHeight / 2);
-        } else {
-            y += this.center.y;
+            y = Math.round(this.containerDOM.scrollTop - this.screenOffset.y + this.containerDOM.offsetHeight / 2);
         }
 
-        this.networks[id].setPos(x, y);
+        this.networks[id].setPos(x, y, this.screenOffset);
 
         this.writeJson();
     }
@@ -173,7 +170,7 @@ export class MainNetworkEditor
 
             if (this.draggingNetwork !== null) {
                 // ノードの移動
-                this.draggingNetwork.dragging(this.center.x, this.center.y, moveX, moveY);
+                this.draggingNetwork.dragging(moveX, moveY, this.screenOffset);
             } else {
                 // スクロール
                 this.containerDOM.scrollLeft -= moveX;
@@ -234,7 +231,9 @@ export class MainNetworkEditor
      */
     writeJson()
     {
-        document.querySelector('#json').value = JSON.stringify(this.toJson());
+        let json = this.toJson();
+        document.querySelector('#json').value = JSON.stringify(json.edit);
+        document.querySelector('#json2').value = JSON.stringify(json.main);
     }
 
     /**
@@ -242,13 +241,61 @@ export class MainNetworkEditor
      */
     toJson()
     {
-        let json = [];
+        let networks = [];
+        let rect = new Rect(0, 0, 0, 0);
 
         for (let id in this.networks) {
-            json.push(this.networks[id].toJson(id, this.center.x, this.center.y));
+            networks.push(this.networks[id].toJson(id));
+
+            let r = this.networks[id].getRect(this.screenOffset);
+            rect.merge(r);
         }
 
-        return json;
+        this.setSizeChecker(rect);
+
+        return {
+            edit: {
+                networks: networks,
+                rect: rect.toJson()
+            },
+            main: this.toJsonForMainNetwork(rect)
+        };
+    }
+
+    setSizeChecker(rect)
+    {
+        this.sizeCheckerDOM.style.left = this.screenOffset.x + rect.left + 'px';
+        this.sizeCheckerDOM.style.top = this.screenOffset.y + rect.top + 'px';
+        this.sizeCheckerDOM.style.width = (rect.right - rect.left) + 'px';
+        this.sizeCheckerDOM.style.height = (rect.bottom - rect.top) + 'px';
+    }
+
+
+
+    /**
+     * メインネットワーク表示用のJSONを生成
+     * スクリーン座標になっている
+     *
+     * @returns {{x, y}}
+     */
+    toJsonForMainNetwork(rect)
+    {
+        let networks = [];
+
+        let screenLeft = this.screenOffset.x + rect.left;
+        let screenTop = this.screenOffset.y + rect.top;
+
+        for (let id in this.networks) {
+            networks.push(this.networks[id].toJsonForMainNetwork(
+                rect, this.screenOffset, screenLeft, screenTop));
+        }
+
+        return {
+            networks: networks,
+            origin: {x: -rect.left, y: -rect.top},
+            width: rect.width,
+            height: rect.height,
+        };
     }
 }
 

@@ -337,17 +337,30 @@ class FranchiseController extends AbstractAdminController
      */
     public function editMainNetwork(GameFranchise $franchise): Application|Factory|View
     {
+        $parentKey = 'f_' . $franchise->id;
         if ($franchise->mainNetwork !== null) {
             $data = json_decode($franchise->mainNetwork->json, true);
-            $data['parent']['name'] = $franchise->node_name . '<br>フランチャイズ';
-        } else {
-            $data = [
-                'parent' => [
-                    'id' => 'f_' . $franchise->id,
+            if (isset($data['nodes'][$parentKey])) {
+                $data['nodes'][$parentKey]['name'] = $franchise->node_name . '<br>フランチャイズ';
+            } else {
+                $data['nodes'][$parentKey] = [
+                    'id' => $parentKey,
                     'name' => $franchise->node_name . '<br>フランチャイズ',
                     'x' => 0,
                     'y' => 0,
                     'con' => [],
+                ];
+            }
+        } else {
+            $data = [
+                'nodes' => [
+                    $parentKey => [
+                        'id' => $parentKey,
+                        'name' => $franchise->node_name . '<br>フランチャイズ',
+                        'x' => 0,
+                        'y' => 0,
+                        'con' => [],
+                    ]
                 ]
             ];
         }
@@ -389,6 +402,7 @@ class FranchiseController extends AbstractAdminController
         }
 
         return view('admin.game.franchise.edit_main_network', [
+            'parentKey' => $parentKey,
             'data' => $data,
             'franchise' => $franchise,
             'series' => $series,

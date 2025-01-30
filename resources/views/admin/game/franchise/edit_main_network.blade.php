@@ -14,14 +14,14 @@
                         <div class="col-1">
                             <label for="series_nodes" class="form-label mt-2">Series</label>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-5">
                             <select id="series_nodes" class="form-control default-select2">
                                 @foreach($series as $value => $label)
                                     <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-2">
                             <button id="add_series_node" class="btn btn-white">+</button>
                         </div>
                     </div>
@@ -29,14 +29,14 @@
                         <div class="col-1">
                             <label for="title_nodes" class="form-label mt-2">Title</label>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-5">
                             <select id="title_nodes" class="form-control default-select2">
                                 @foreach($titles as $value => $label)
                                     <option value="{{ $value }}" data-name="{{ $label['node_name'] }}">{{ $label['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-2">
                             <button id="add_title_node" class="btn btn-white">+</button>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            window.networkEditor.start(@json($data));
+            window.networkEditor.start('{{ $parentKey }}', @json($data));
         });
 
         document.getElementById('add_series_node').addEventListener('click', function() {

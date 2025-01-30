@@ -8,56 +8,214 @@ export class Rect
     /**
      * コンストラクタ
      *
+     * @param left
+     * @param right
+     * @param top
+     * @param bottom
+     */
+    constructor(left = 0, right = 0, top = 0, bottom = 0)
+    {
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
+        this.width = 0;
+        this.height = 0;
+
+        this.calcSize();
+    }
+
+    /**
+     * サイズ計算
+     */
+    calcSize()
+    {
+        this.width = this.right - this.left;
+        this.height = this.bottom - this.top;
+    }
+
+    /**
+     * 設定
+     *
+     * @param left
+     * @param right
+     * @param top
+     * @param bottom
+     */
+    setRect(left, right, top, bottom)
+    {
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
+        this.calcSize();
+    }
+
+    /**
+     * 中心座標とサイズから座標を設定
+     *
      * @param x
      * @param y
      * @param w
      * @param h
      */
-    constructor(x = 0, y = 0, w = 0, h = 0)
+    setRectByCenter(x, y, w, h)
     {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        this.left = x - w / 2;
+        this.right = this.left + w;
+        this.top = y - h / 2;
+        this.bottom = this.top + h;
+        this.calcSize();
     }
 
     /**
-     * 左上の座標を取得
-     *
-     * @returns {Vertex}
+     * 別のRectと重なっているか
      */
-    get leftTop()
+    isOverlap(rect)
     {
-        return new Vertex(this.x, this.y);
+        return this.left < rect.right && this.right > rect.left && this.top < rect.bottom && this.bottom > rect.top;
     }
 
     /**
-     * 右上の座標を取得
-     *
-     * @returns {Vertex}
+     * 別のRectとマージ（より大きなRectにする）
      */
-    get rightTop()
+    merge(rect)
     {
-        return new Vertex(this.x + this.w, this.y);
+        this.left = Math.min(this.left, rect.left);
+        this.right = Math.max(this.right, rect.right);
+        this.top = Math.min(this.top, rect.top);
+        this.bottom = Math.max(this.bottom, rect.bottom);
+
+        this.calcSize();
     }
 
     /**
-     * 右下の座標を取得
-     *
-     * @returns {Vertex}
+     * 移動
      */
-    get rightBottom()
+    move(x, y)
     {
-        return new Vertex(this.x + this.w, this.y + this.h);
+        this.left += x;
+        this.right += x;
+        this.top += y;
+        this.bottom += y;
     }
 
     /**
-     * 左下の座標を取得
-     *
-     * @returns {Vertex}
+     * 空のRectを設定
      */
-    get leftBottom()
+    setEmpty()
     {
-        return new Vertex(this.x, this.y + this.h);
+        this.left = 0;
+        this.right = 0;
+        this.top = 0;
+        this.bottom = 0;
+    }
+
+    /**
+     * 空かどうか
+     *
+     * @returns {boolean}
+     */
+    isEmpty()
+    {
+        return (this.left === this.right) || (this.top === this.bottom);
+    }
+
+    /**
+     * 引数で渡されたrectと重なっている部分だけにする
+     */
+    intersect(rect)
+    {
+        this.left = Math.max(this.left, rect.left);
+        this.right = Math.min(this.right, rect.right);
+        this.top = Math.max(this.top, rect.top);
+        this.bottom = Math.min(this.bottom, rect.bottom);
+    }
+
+    toJson()
+    {
+        return {
+            left: this.left,
+            right: this.right,
+            top: this.top,
+            bottom: this.bottom
+        };
+    }
+
+    /**
+     * 2つのRectが重なっている部分の新しいRectを返す
+     * 重なりがなければsetEmptyしたRectを返す
+     */
+    static getOverlapRect(rect1, rect2)
+    {
+        let overlapRect = new Rect();
+
+        if (rect1.isOverlap(rect2)) {
+            overlapRect.left = Math.max(rect1.left, rect2.left);
+            overlapRect.right = Math.min(rect1.right, rect2.right);
+            overlapRect.top = Math.max(rect1.top, rect2.top);
+            overlapRect.bottom = Math.min(rect1.bottom, rect2.bottom);
+        } else {
+            overlapRect.setEmpty();
+        }
+
+        return overlapRect;
+    }
+}
+
+export class ViewRect
+{
+    constructor(left = 0, right = 0, top = 0, bottom = 0)
+    {
+        this.view = new Rect(left, right, top, bottom);
+        this.origin = new Rect(left, right, top, bottom);
+    }
+
+    setRect(left, right, top, bottom)
+    {
+        this.view.setRect(left, right, top, bottom);
+        this.origin.setRect(left, right, top, bottom);
+    }
+
+    calcSize()
+    {
+        this.view.calcSize();
+        this.origin.calcSize();
+    }
+
+    setEmpty()
+    {
+        this.view.setEmpty();
+        this.origin.setEmpty();
+    }
+
+    trimOrigin(left, right, top, bottom)
+    {
+        this.view.setRect(
+            this.origin.left + left,
+            this.origin.right - right,
+            this.origin.top + top,
+            this.origin.bottom - bottom
+        );
+    }
+
+    trimLeft(left)
+    {
+        this.view.setRect(this.origin.left + left, 0, 0, 0);
+    }
+
+    trimRight(right)
+    {
+        this.view.setRect(0, this.origin.right - right, 0, 0);
+    }
+
+    trimTop(top)
+    {
+        this.view.setRect(0, 0, this.origin.top + top, 0);
+    }
+
+    trimBottom(bottom)
+    {
+        this.view.setRect(0, 0, 0, this.origin.bottom - bottom);
     }
 }

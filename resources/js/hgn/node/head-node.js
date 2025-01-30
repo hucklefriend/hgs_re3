@@ -8,12 +8,15 @@ export class Head1Node extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      * @param notchSize
      */
-    constructor(DOM, notchSize = 15)
+    constructor(id, x, y, DOM, notchSize = 15)
     {
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
 
         this.animOffset = 0;
         this.animWidth = notchSize * 4;
@@ -31,8 +34,10 @@ export class Head1Node extends DOMNode
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
         ctx.lineWidth = 0; // 線の太さ
         ctx.strokeStyle = "rgba(0, 180, 0, " + this.alpha1 + ")"; // 線の色と透明度
@@ -44,7 +49,6 @@ export class Head1Node extends DOMNode
 
         super.setShapePathByVertices(ctx, vertices);
         ctx.fill();
-
 
         ctx.strokeStyle = "rgba(0, 140, 0, " + this.alpha3 + ")"; // 線の色と透明度
         ctx.lineWidth = 2; // 線の太さ
@@ -246,12 +250,15 @@ export class Head2Node extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      * @param notchSize
      */
-    constructor(DOM, notchSize = 15)
+    constructor(id, x, y, DOM, notchSize = 15)
     {
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
         this.animAlpha1 = 1;
         this.animAlpha2 = 0.7;
         this.animAlpha3 = 0.5;
@@ -264,8 +271,10 @@ export class Head2Node extends DOMNode
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
         if (!this.isAppeared) {
             return;
@@ -274,8 +283,7 @@ export class Head2Node extends DOMNode
         ctx.shadowBlur = 0; // 影のぼかし効果
 
         // 中央から外に向かってグラデーション
-        let center = this.center;
-        let grad = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, this.animWidth / 2);
+        let grad = ctx.createRadialGradient(this.center.x, this.center.y, 0, this.center.x, this.center.y, this.animWidth / 2);
         grad.addColorStop(0, "rgba(0, 70, 0, " + this.animAlpha2 + ")");
         grad.addColorStop(1, "rgba(0, 50, 0, " + this.animAlpha3 + ")");
         ctx.fillStyle = grad;
@@ -402,20 +410,25 @@ export class Head3Node extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      * @param notchSize
      */
-    constructor(DOM, notchSize = 5)
+    constructor(id, x, y, DOM, notchSize = 5)
     {
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
     }
 
     /**
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
     }
 

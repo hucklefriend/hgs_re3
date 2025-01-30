@@ -10,7 +10,8 @@ export default defineConfig({
                 'resources/css/node.css',
                 'resources/js/app.js',
                 'resources/js/network-editor.js',
-                'resources/js/main-network-editor.js'
+                'resources/js/main-network-editor.js',
+                'resources/js/main-network.js',
             ],
             refresh: true,
         }),

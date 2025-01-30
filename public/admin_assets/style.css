@@ -52,6 +52,13 @@ textarea {
         width: 10000px;
         height: 10000px;
 
+        div#size-checker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: dotted 1px red;
+        }
+
         .edit-node {
             position: absolute;
             display: inline-block;
@@ -172,6 +179,8 @@ textarea {
                 width: 33px;
                 height: 33px;
                 text-align: center;
+                display: none;
+                z-index: 99999;
             }
         }
 

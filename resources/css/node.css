@@ -27,6 +27,8 @@
 .dom-node {
     padding: 13px 18px;
     display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 
     a:link, a:visited {
         color: #AAFFAA;
@@ -37,6 +39,8 @@
         color: white;
     }
 }
+
+
 
 .link-node, .content-link-node, .popup-link-node {
     padding: 13px 18px;
@@ -293,6 +297,28 @@
 .text-node.small {
     padding: 6px 10px;
     font-size: 11px;
+}
+
+body#main-network {
+    .dom-node, .link-node, .text-node {
+        position: fixed;
+    }
+
+    .view1 {
+        transform: translate(calc(var(--mn-camera-x1) * -1), calc(var(--mn-camera-y1) * -1));
+    }
+
+    .view2 {
+        transform: translate(calc(var(--mn-camera-x2) * -1), calc(var(--mn-camera-y2) * -1)) !important;
+    }
+
+    .view3 {
+        transform: translate(calc(var(--mn-camera-x3) * -1), calc(var(--mn-camera-y3) * -1)) !important;
+    }
+
+    .view4 {
+        transform: translate(calc(var(--mn-camera-x4) * -1), calc(var(--mn-camera-y4) * -1)) !important;
+    }
 }
 
 /* スマホ～ */

@@ -1,4 +1,5 @@
 import {Vertex} from '../vertex.js';
+import {Rect} from '../rect.js';
 import {Param} from '../param.js';
 import {PointNode} from './point-node.js';
 import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
@@ -26,12 +27,14 @@ export class OctaNode
         this.y = y;
         this.w = w;
         this.h = h;
+        this.rect = new Rect();
         this.notchSize = notchSize;
         this.vertices = [];
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
-        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
         this.id = null;
+
+        this.setRect();
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -55,46 +58,6 @@ export class OctaNode
     }
 
     /**
-     * 左辺
-     *
-     * @returns {number}
-     */
-    get left()
-    {
-        return this.x - this.w / 2;
-    }
-
-    /**
-     * 右辺
-     *
-     * @returns {number}
-     */
-    get right()
-    {
-        return this.x + this.w / 2;
-    }
-
-    /**
-     * 上辺
-     *
-     * @returns {number}
-     */
-    get top()
-    {
-        return this.y - this.h / 2;
-    }
-
-    /**
-     * 下辺
-     *
-     * @returns {number}
-     */
-    get bottom()
-    {
-        return this.y + this.h / 2;
-    }
-
-    /**
      * 再ロード（再配置）
      *
      * @param x
@@ -108,8 +71,7 @@ export class OctaNode
         this.y = y;
         this.w = w;
         this.h = h;
-        this.center.x = this.x + this.w / 2;
-        this.center.y = this.y + this.h / 2;
+        this.setRect();
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -117,19 +79,37 @@ export class OctaNode
     }
 
     /**
-     * 八角形の挑戦を設定
+     * 矩形を設定
+     */
+    setRect()
+    {
+        this.rect.setRect(this.x, this.x + this.w, this.y, this.y + this.h);
+    }
+
+    /**
+     * x, yが中央座標として短径を設定
+     */
+    setCenterRect()
+    {
+        let x = this.x - this.w / 2;
+        let y = this.y - this.h / 2;
+        this.rect.setRect(x, x + this.w, y, y + this.h);
+    }
+
+    /**
+     * 八角形の頂点を設定
      */
     setOctagon()
     {
         this.vertices = [
-            new Vertex(this.x + this.notchSize, this.y),
-            new Vertex(this.x + this.w - this.notchSize, this.y),
-            new Vertex(this.x + this.w, this.y + this.notchSize),
-            new Vertex(this.x + this.w, this.y + this.h - this.notchSize),
-            new Vertex(this.x + this.w - this.notchSize, this.y + this.h),
-            new Vertex(this.x + this.notchSize, this.y + this.h),
-            new Vertex(this.x, this.y + this.h - this.notchSize),
-            new Vertex(this.x, this.y +  this.notchSize),
+            new Vertex(this.rect.left + this.notchSize, this.rect.top),
+            new Vertex(this.rect.right - this.notchSize, this.rect.top),
+            new Vertex(this.rect.right, this.rect.top + this.notchSize),
+            new Vertex(this.rect.right, this.rect.bottom - this.notchSize),
+            new Vertex(this.rect.right - this.notchSize, this.rect.bottom),
+            new Vertex(this.rect.left + this.notchSize, this.rect.bottom),
+            new Vertex(this.rect.left, this.rect.bottom - this.notchSize),
+            new Vertex(this.rect.left, this.rect.top + this.notchSize),
         ];
     }
 
@@ -430,18 +410,27 @@ export class OctaNode
      * @param ctx
      * @param offsetX
      * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
-        if (!this.forceDraw) {
-            const hgn = HorrorGameNetwork.getInstance();
-
+        if (viewRect !== null) {
+            // 表示領域外にあったら描画しない
+            const drawLeft = this.vertices[Param.LLT].x + offsetX;
+            const drawRight = this.vertices[Param.RRB].y + offsetX;
             const drawTop = this.vertices[Param.LTT].y + offsetY;
             const drawBottom = this.vertices[Param.LBB].y + offsetY;
-            if (drawBottom < hgn.getScrollY() - 100) {
+
+            if (drawRight < viewRect.left - Param.VIEW_RECT_MARGIN) {
                 return;
             }
-            if (drawTop > hgn.getScrollY() + window.innerHeight +100) {
+            if (drawLeft > viewRect.right + Param.VIEW_RECT_MARGIN) {
+                return;
+            }
+            if (drawBottom < viewRect.top - Param.VIEW_RECT_MARGIN) {
+                return;
+            }
+            if (drawTop > viewRect.bottom + Param.VIEW_RECT_MARGIN) {
                 return;
             }
         }
@@ -569,13 +558,13 @@ export class Bg2OctaNode extends OctaNode
      * @param ctx
      * @param offsetX
      * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
         // ctx.fillStyleを未設定にする
         ctx.fillStyle = "rgba(0, 0, 0, 0)";
-
-        super.draw(ctx, offsetX, offsetY);
+        super.draw(ctx, offsetX, offsetY, viewRect);
     }
 }
 
@@ -588,15 +577,14 @@ export class DOMNode extends OctaNode
      * DOMノードを生成
      *
      * @param containerDOM
-     * @param containerWidth
-     * @param containerHeight
      * @param id
      * @param html
      * @param x
      * @param y
+     * @param {Vertex}screenOffset
      * @returns {DOMNode}
      */
-    static create(containerDOM, containerWidth, containerHeight, id, html, x, y)
+    static create(containerDOM, id, html, x, y, screenOffset)
     {
         let DOM = document.createElement('div');
         DOM.innerHTML = html;
@@ -604,22 +592,59 @@ export class DOMNode extends OctaNode
 
         containerDOM.appendChild(DOM);
 
-        DOM.style.left = `${(containerWidth / 2) + x - DOM.offsetWidth / 2}px`;
-        DOM.style.top = `${(containerHeight / 2) + y - DOM.offsetHeight / 2}px`;
+        DOM.style.left = `${x + screenOffset.x}px`;
+        DOM.style.top = `${y + screenOffset.y}px`;
 
-        return new DOMNode(DOM, 13, id);
+        return new this(id, x, y, DOM);
+    }
+
+    /**
+     * DOMからインスタンスを生成
+     *
+     * @param containerDOM
+     * @param DOM
+     * @param notchSize
+     * @returns {DOMNode}
+     */
+    static createFromDOM(containerDOM, DOM, notchSize = 13)
+    {
+        return new this(DOM.id, DOM.offsetLeft, DOM.offsetTop, DOM, notchSize);
+    }
+
+    /**
+     * DOMから配置情報を取得
+     *
+     * @param containerDOM
+     * @param DOM
+     * @returns {Vertex}
+     */
+    static getPosByDOM(containerDOM, DOM)
+    {
+        let containerRect = containerDOM.getBoundingClientRect();
+        let rect = DOM.getBoundingClientRect();
+
+        return new Vertex(
+            (containerRect.width / 2) - rect.left - containerRect.left + rect.width / 2,
+            (containerRect.height / 2) - rect.top - containerRect.top + rect.height / 2
+        );
     }
 
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      * @param notchSize
-     * @param id
      */
-    constructor(DOM, notchSize, id = null)
+    constructor(id, x, y, DOM, notchSize = 13)
     {
-        super(DOM.offsetLeft, DOM.offsetTop, DOM.offsetWidth, DOM.offsetHeight, notchSize);
+        if (DOM.classList.contains('small')) {
+            notchSize = 8;
+        }
+
+        super(x, y, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
         this.id = id;
         this.DOM = DOM;
@@ -634,6 +659,8 @@ export class DOMNode extends OctaNode
         this.subNetwork = null;
         this.animFunc = null;
         this.skipAnim = false;
+
+        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
     }
 
     /**
@@ -835,7 +862,31 @@ export class DOMNode extends OctaNode
      */
     reload()
     {
-        super.reload(this.DOM.offsetLeft, this.DOM.offsetTop, this.DOM.offsetWidth, this.DOM.offsetHeight);
+        super.reload(
+            this.DOM.offsetLeft,
+            this.DOM.offsetTop,
+            this.DOM.offsetWidth,
+            this.DOM.offsetHeight
+        );
+
+        this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
+    }
+
+    /**
+     * 表示位置の設定
+     *
+     * @param x
+     * @param y
+     * @param screenOffset
+     */
+    setPos(x, y, screenOffset)
+    {
+        this.x = x;
+        this.y = y;
+        this.DOM.style.left = `${x + screenOffset.x}px`;
+        this.DOM.style.top = `${y + screenOffset.y}px`;
+
+        this.reload();
     }
 
     /**
@@ -970,9 +1021,12 @@ export class TextNode extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM)
     {
         let notchSize = 16;
         // smallクラスがDOMのクラスリストに含まれている場合はnotchSizeを小さくする
@@ -980,7 +1034,7 @@ export class TextNode extends DOMNode
             notchSize = 8;
         }
 
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
         this.alpha = 0;
 
         if (DOM.classList.contains('text-node-a')) {
@@ -996,8 +1050,11 @@ export class TextNode extends DOMNode
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
+     * @param {Rect|null}viewRect
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
     {
         super.setShapePath(ctx);
 

@@ -5,7 +5,6 @@
         <div class="panel-heading">
             <h4 class="panel-title">Main Network</h4>
         </div>
-
         <div class="panel-body">
             <fieldset>
                 <legend class="col-form-label col-sm-2 pt-0">ネットワーク追加</legend>
@@ -26,13 +25,16 @@
             </fieldset>
 
             <div id="network-editor-container">
-                <div id="network-editor"></div>
+                <div id="network-editor">
+                    <div id="size-checker"></div>
+                </div>
             </div>
 
             <form id="save_form" action="{{ route('Admin.Game.MainNetwork.Save') }}" method="POST" class="mt-3">
                 @csrf
                 <button type="submit" class="btn btn-primary mb-3">Save</button>
                 <textarea class="form-control w-100" id="json" name="json" readonly></textarea>
+                <textarea class="form-control w-100" id="json2" name="json2" readonly></textarea>
             </form>
         </div>
     </div>
@@ -51,6 +53,5 @@
                 window.mainNetworkEditor.addNetwork(networkId);
             });
         });
-
     </script>
 @endsection

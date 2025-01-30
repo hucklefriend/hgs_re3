@@ -7,6 +7,7 @@ import {Head1Node, Head2Node, Head3Node} from './hgn/node/head-node.js';
 import {PopupNode, PopupLinkNode} from './hgn/node/popup-node.js';
 import {Param} from './hgn/param.js';
 import {Util} from './hgn/util.js';
+import {Vertex} from './hgn/vertex.js';
 import {Background1} from './hgn/background1.js';
 import {Background2} from './hgn/background2.js';
 import {Background3} from './hgn/background3.js';
@@ -48,6 +49,9 @@ export class HorrorGameNetwork
         this.prevScrollY = -99999;
         this.scrollModeScrollPosY = 0;
         this.scrollModeStartPosY = 0;
+
+        // スクリーン座標変換用
+        this.screenOffset = new Vertex(0, 0);
 
         this.mainDOM = document.querySelector('main');
         this.popupDOM = document.querySelector('#popups');
@@ -185,14 +189,14 @@ export class HorrorGameNetwork
         // エントランスノード
         let elem = document.querySelector('#entrance-node');
         if (elem) {
-            this.entranceNode = new EntranceNode(elem);
+            this.entranceNode = EntranceNode.createFromDOM(this.mainDOM, elem);
             this.nodesIdHash['#entrance-node'] = this.entranceNode;
         }
 
         // テキストノード
         let elems = document.querySelectorAll('.text-node');
         elems.forEach(elem => {
-            this.domNodes.push(new TextNode(elem));
+            this.domNodes.push(TextNode.createFromDOM(this.mainDOM, elem));
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
                 this.loadConnection(elem, connections);
@@ -202,7 +206,7 @@ export class HorrorGameNetwork
         // リンクノード
         elems = document.querySelectorAll('.link-node');
         elems.forEach(elem => {
-            let newNode = new LinkNode(elem);
+            let newNode = LinkNode.createFromDOM(this.mainDOM, elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = newNode;
@@ -213,7 +217,7 @@ export class HorrorGameNetwork
         // コンテンツリンクノード
         elems = document.querySelectorAll('.content-link-node');
         elems.forEach(elem =>  {
-            let newNode = new ContentLinkNode(elem);
+            let newNode = ContentLinkNode.createFromDOM(this.mainDOM, elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = newNode;
@@ -224,7 +228,7 @@ export class HorrorGameNetwork
         // ポップアップリンクノード
         elems = document.querySelectorAll('.popup-link-node');
         elems.forEach(elem =>  {
-            let newNode = new PopupLinkNode(elem);
+            let newNode = PopupLinkNode(elem).createFromDOM(this.mainDOM, elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = newNode;
@@ -244,7 +248,7 @@ export class HorrorGameNetwork
         // DOMノード
         elems = document.querySelectorAll('.dom-node');
         elems.forEach(elem =>  {
-            let newNode = new DOMNode(elem, 15);
+            let newNode = DOMNode.createFromDOM(this.mainDOM, elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
                 this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
@@ -255,19 +259,19 @@ export class HorrorGameNetwork
         // H1ノード
         elems = document.querySelectorAll('.head1');
         elems.forEach(elem =>  {
-            this.domNodes.push(new Head1Node(elem, 10));
+            this.domNodes.push(Head1Node.createFromDOM(this.mainDOM, elem));
         });
 
         // H2ノード
         elems = document.querySelectorAll('.head2');
         elems.forEach(elem =>  {
-            this.domNodes.push(new Head2Node(elem, 10));
+            this.domNodes.push(Head2Node.createFromDOM(this.mainDOM, elem));
         });
 
         // H3ノード
         elems = document.querySelectorAll('.head3');
         elems.forEach(elem =>  {
-            this.domNodes.push(new Head3Node(elem));
+            this.domNodes.push(Head3Node.createFromDOM(this.mainDOM, elem));
         });
 
         this.bg2.reload();
@@ -368,6 +372,15 @@ export class HorrorGameNetwork
     }
 
     /**
+     * スクリーン座標の計算
+     */
+    calcScreenOffset()
+    {
+        this.screenOffset.x = this.mainDOM.offsetWidth / 2;
+        this.screenOffset.y = this.mainDOM.offsetHeight / 2;
+    }
+
+    /**
      * 開始
      */
     start()
@@ -376,6 +389,8 @@ export class HorrorGameNetwork
 
         // ノードの読み取り
         this.loadNodes();
+
+        this.calcScreenOffset();
 
         if (window.contentNode !== null) {
             let linkNodeId = window.contentNode.linkNodeId;
@@ -679,6 +694,7 @@ export class HorrorGameNetwork
         this.mainCanvas.width = document.documentElement.scrollWidth;
         this.mainCanvas.height = this.mainDOM.offsetHeight + 50;
         this.reloadNodes();
+        this.calcScreenOffset();
 
         this.bg2.resize();
         this.bg1.resize();
@@ -866,6 +882,7 @@ export class HorrorGameNetwork
         window.history.pushState({type:'network', title:data.title}, null, data.url);
 
         this.loadNodes();
+        this.calcScreenOffset();
 
         if (data.ratingCheck) {
             this.showRatingCheck();
@@ -1009,7 +1026,7 @@ export class HorrorGameNetwork
 }
 
 window.onload = function() {
-    if (window.START_HGN) {
+    if (window.START_HGN !== undefined && window.START_HGN) {
         const hgn = new HorrorGameNetwork();
         hgn.start();
 

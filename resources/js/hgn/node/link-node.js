@@ -8,17 +8,20 @@ export class LinkNode extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      * @param notchSize
      */
-    constructor(DOM, notchSize = 13)
+    constructor(id, x, y, DOM, notchSize = 13)
     {
         // smallクラスがDOMのクラスリストに含まれている場合はnotchSizeを小さくする
         if (DOM.classList.contains('small')) {
             notchSize = 8;
         }
 
-        super(DOM, notchSize);
+        super(id, x, y, DOM, notchSize);
 
         this.isEnableMouse = true;
 

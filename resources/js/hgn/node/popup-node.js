@@ -13,11 +13,14 @@ export class PopupLinkNode extends LinkNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM)
     {
-        super(DOM);
+        super(id, x, y, DOM);
 
         this.state = PopupLinkNode.STATE_CLOSED;
         this.openScrollY = 0;
@@ -53,7 +56,7 @@ export class PopupNode extends DOMNode
     constructor(DOM)
     {
         // この時点では正しく作成しない
-        super(DOM, 8);
+        super(DOM.id, 0, 0, DOM, 8);
 
         this.state = PopupNode.STATE_CLOSED;
 

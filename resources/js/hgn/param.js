@@ -32,5 +32,14 @@ export class Param
 
     static CONTENT_NODE_NOTCH_SIZE = 70;
 
+    static DRAG_FLICK_RATE = 0.9;
+
+    /**
+     * 描画するかを決める表示領域のマージン
+     *
+     * @type {number}
+     */
+    static VIEW_RECT_MARGIN = 10;
+
     static SHOW_DEBUG = true;
 }

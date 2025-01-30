@@ -3,23 +3,26 @@ import {Util} from '../util.js';
 import {DOMNode} from './octa-node.js';
 import {PointNode} from './point-node.js';
 
-
+/**
+ * ネットワークエディタ用のノード
+ * x,yをノードの中心で扱う
+ */
 export class EditNode extends DOMNode
 {
     /**
      * インスタンス生成
      *
-     * @param node
+     * @param nodeData
      * @param networkPosition
      * @param isRemovable
      * @returns {EditNode}
      */
-    static create(node, networkPosition, isRemovable = true)
+    static create(nodeData, networkPosition, isRemovable = true)
     {
         let DOM = document.createElement('div');
         DOM.classList.add('edit-node');
-        DOM.innerHTML = node.name;
-        DOM.id = node.id;
+        DOM.innerHTML = nodeData.name;
+        DOM.id = nodeData.id;
         window.networkEditor.editorDOM.appendChild(DOM);
 
         if (isRemovable) {
@@ -29,12 +32,12 @@ export class EditNode extends DOMNode
             DOM.appendChild(remove);
         }
 
-        DOM.style.left = `${networkPosition.x + node.x - (DOM.offsetWidth / 2)}px`;
-        DOM.style.top = `${networkPosition.y + node.y - (DOM.offsetHeight / 2)}px`;
+        DOM.style.left = `${networkPosition.x + nodeData.x - DOM.offsetWidth / 2}px`;
+        DOM.style.top = `${networkPosition.y + nodeData.y - DOM.offsetHeight / 2}px`;
 
-        EditNode.appendEdgeSelect(node, DOM);
+        EditNode.appendEdgeSelect(nodeData, DOM);
 
-        return new EditNode(DOM);
+        return new EditNode(nodeData.id, nodeData.x, nodeData.y, DOM, isRemovable);
     }
 
     /**
@@ -105,18 +108,23 @@ export class EditNode extends DOMNode
     /**
      * コンストラクタ
      *
+     * @param id
+     * @param x
+     * @param y
      * @param DOM
+     * @param isRemovable
      */
-    constructor(DOM)
+    constructor(id, x, y, DOM, isRemovable = true)
     {
-        super(DOM, 13);
+        super(id, x, y, DOM);
 
-        DOM.addEventListener('mousedown', (e) => {return this.mouseDown(e)});
-        DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
-        DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        this.reload();  // スクリーン座標配置になっているので、リロードしとく
 
-        // DOMのidを取得
-        this.id = DOM.id;
+        if (isRemovable) {
+            DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+            DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
+            DOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        }
 
         this.removeDOM = DOM.querySelector('.edit-node-remove');
         if (this.removeDOM !== null) {
@@ -267,60 +275,34 @@ export class EditNode extends DOMNode
     }
 
     /**
-     * オフセットX取得
-     *
-     * @param e
-     * @returns {number}
-     */
-    getOffsetX(e)
-    {
-        return e.clientX - this.DOM.offsetLeft;
-    }
-
-    /**
-     * オフセットY取得
-     *
-     * @param e
-     * @returns {number}
-     */
-    getOffsetY(e)
-    {
-        return e.clientY - this.DOM.offsetTop;
-    }
-
-    /**
-     * 中心X取得
-     *
-     * @returns {number}
-     */
-    getCenterX()
-    {
-        return parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
-    }
-
-    /**
-     * 中心Y取得
-     *
-     * @returns {number}
-     */
-    getCenterY()
-    {
-        return parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
-    }
-
-    /**
      * マウス移動
      *
-     * @param e
-     * @param offsetX
-     * @param offsetY
+     * @param moveX
+     * @param moveY
+     * @param screenOffset
      */
-    mouseMove(e, offsetX, offsetY)
+    mouseMove(moveX, moveY, screenOffset)
     {
-        this.DOM.style.left = `${e.clientX - offsetX}px`;
-        this.DOM.style.top = `${e.clientY - offsetY}px`;
+        this.x += moveX;
+        this.y += moveY;
+        this.DOM.style.left = `${this.x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
+        this.DOM.style.top = `${this.y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
 
         this.reload();
+    }
+
+    /**
+     * 再ロード
+     */
+    reload()
+    {
+        this.w = this.DOM.offsetWidth;
+        this.h = this.DOM.offsetHeight;
+        this.setCenterRect();
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
     }
 
     /**
@@ -331,9 +313,6 @@ export class EditNode extends DOMNode
     mouseUp(e)
     {
         this.DOM.style.cursor = "grab";
-
-        this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
-        this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
     }
 
     /**
@@ -343,7 +322,7 @@ export class EditNode extends DOMNode
      * @param offsetX
      * @param offsetY
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, offsetX, offsetY)
     {
         ctx.strokeStyle = this.ctxParams.strokeStyle;
         ctx.shadowColor = this.ctxParams.shadowColor;
@@ -353,7 +332,7 @@ export class EditNode extends DOMNode
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
 
-        super.setShapePath(ctx);
+        super.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
         ctx.fill();
     }
@@ -361,15 +340,14 @@ export class EditNode extends DOMNode
     /**
      * JSON化
      *
-     * @param parent
-     * @returns {{x: (number|number), y: (number|number)}}
+     * @returns {{id: (string), x: (number), y: (number)}}
      */
-    toJson(parent)
+    toJson()
     {
         return {
             id: this.id,
-            x: parent === null ? 0 : this.getCenterX() - parent.getCenterX(),
-            y: parent === null ? 0 : this.getCenterY() - parent.getCenterY(),
+            x: this.x,
+            y: this.y,
         };
     }
 
@@ -412,8 +390,9 @@ export class EditPointNode extends PointNode
      * @param id
      * @param x
      * @param y
+     * @param screenOffset
      */
-    constructor(id, x, y)
+    constructor(id, x, y, screenOffset)
     {
         super(x, y, 6);
 
@@ -425,8 +404,7 @@ export class EditPointNode extends PointNode
         this.DOM.classList.add('edit-pt-node');
         window.networkEditor.editorDOM.appendChild(this.DOM);
 
-        this.DOM.style.left = `${x - (this.DOM.offsetWidth / 2)}px`;
-        this.DOM.style.top = `${y - (this.DOM.offsetHeight / 2)}px`;
+        this.setPos(x, y, screenOffset);
 
         this.DOM.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.DOM.addEventListener('mouseenter', (e) => this.mouseEnter(e));
@@ -449,37 +427,6 @@ export class EditPointNode extends PointNode
     delete()
     {
         super.delete();
-    }
-
-    /**
-     * オフセットX取得
-     *
-     * @param e
-     * @returns {number}
-     */
-    getOffsetX(e)
-    {
-        return e.clientX - this.DOM.offsetLeft;
-    }
-
-    /**
-     * オフセットY取得
-     *
-     * @param e
-     * @returns {number}
-     */
-    getOffsetY(e)
-    {
-        return e.clientY - this.DOM.offsetTop;
-    }
-
-    /**
-     * リロード
-     */
-    reload()
-    {
-        this.x = parseInt(this.DOM.style.left) + (this.DOM.offsetWidth / 2);
-        this.y = parseInt(this.DOM.style.top) + (this.DOM.offsetHeight / 2);
     }
 
     /**
@@ -536,19 +483,21 @@ export class EditPointNode extends PointNode
     /**
      * マウス移動
      *
-     * @param e
-     * @param offsetX
-     * @param offsetY
+     * @param moveX
+     * @param moveY
+     * @param screenOffset
      */
-    mouseMove(e, offsetX, offsetY)
+    mouseMove(moveX, moveY, screenOffset)
     {
-        let x = e.clientX - offsetX;
-        let y = e.clientY - offsetY;
+        this.setPos(this.x + moveX, this.y + moveY, screenOffset);
+    }
 
-        this.DOM.style.left = `${x}px`;
-        this.DOM.style.top = `${y}px`;
-
-        this.reload();
+    setPos(x, y, screenOffset)
+    {
+        this.x = x;
+        this.y = y;
+        this.DOM.style.left = `${x + screenOffset.x - this.DOM.offsetWidth / 2}px`;
+        this.DOM.style.top = `${y + screenOffset.y - this.DOM.offsetHeight / 2}px`;
     }
 
     /**
@@ -590,7 +539,6 @@ export class EditPointNode extends PointNode
     mouseUp(e)
     {
         this.DOM.style.cursor = "grab";
-        this.reload();
     }
 
     /**
@@ -614,15 +562,14 @@ export class EditPointNode extends PointNode
     /**
      * JSON化
      *
-     * @param parent
      * @returns {{x: (number|number), y: (number|number)}}
      */
-    toJson(parent)
+    toJson()
     {
         return {
             id: this.id,
-            x: parent === null ? 0 : this.x - parent.getCenterX(),
-            y: parent === null ? 0 : this.y - parent.getCenterY(),
+            x: this.x,
+            y: this.y,
         };
     }
 

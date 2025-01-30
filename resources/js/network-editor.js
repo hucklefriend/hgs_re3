@@ -1,6 +1,7 @@
 import {EditNode, EditPointNode} from './hgn/node/edit-node.js';
 import {Param} from './hgn/param.js';
 import {Util} from "./hgn/util.js";
+import {Vertex} from "./hgn/vertex.js";
 
 /**
  * ネットワークエディタ
@@ -35,7 +36,6 @@ export class NetworkEditor
         }
 
         // ノード
-        this.parent = null;
         this.nodes = {};
         this.points = [];
         this.pointsIndex = 0;
@@ -51,7 +51,7 @@ export class NetworkEditor
         this.edgeFromNode = null;
         this.edgeFromVertexNo = null;
 
-        this.center = {x: 0, y: 0};
+        this.center = new Vertex(this.canvas.width / 2, this.canvas.height / 2);
 
         this.mode = NetworkEditor.MODE_NODE;
     }
@@ -59,7 +59,7 @@ export class NetworkEditor
     /**
      * エディタ起動
      */
-    start(data)
+    start(parentKey, data)
     {
         // containerDOMのスクロール位置をeditorDOMの中央に
         this.containerDOM.scrollTop = this.editorDOM.offsetTop - (this.containerDOM.offsetHeight - this.editorDOM.offsetHeight) / 2;
@@ -74,12 +74,11 @@ export class NetworkEditor
         this.containerDOM.addEventListener('mouseleave', (e) => this.mouseUp(e));
 
         // ノードの読み込み
-        this.parent = EditNode.create(data.parent, this.center, false);
         if (data.nodes !== undefined) {
             Object.keys(data.nodes).forEach(id => {
                 let node = data.nodes[id];
                 node.id = id;
-                this.nodes[node.id] = EditNode.create(node, this.center);
+                this.nodes[node.id] = EditNode.create(node, this.center, id !== parentKey);
             });
         }
 
@@ -89,7 +88,7 @@ export class NetworkEditor
         }
         if (data.hasOwnProperty('points')) {
             data.points.forEach(point => {
-                this.points[point.id] = new EditPointNode(point.id, point.x + this.center.x, point.y + this.center.y);
+                this.points[point.id] = new EditPointNode(point.id, point.x, point.y, this.center);
             });
         }
 
@@ -122,7 +121,6 @@ export class NetworkEditor
             this.nodeModeBtn.classList.add('active');
             this.edgeModeBtn.classList.remove('active');
 
-            this.parent.startNodeMode();
             Object.values(this.nodes).forEach(node => {
                 node.startNodeMode();
             });
@@ -141,7 +139,6 @@ export class NetworkEditor
             this.edgeModeBtn.classList.add('active');
             this.nodeModeBtn.classList.remove('active');
 
-            this.parent.startEdgeMode();
             Object.values(this.nodes).forEach(node => {
                 node.startEdgeMode();
             });
@@ -275,14 +272,8 @@ export class NetworkEditor
         if (this.isNodeMode() && !this.isDragging) {
             this.isDragging = true;
 
-            if (this.draggingNode !== null) {
-                this.offsetX = this.draggingNode.getOffsetX(e);
-                this.offsetY = this.draggingNode.getOffsetY(e);
-            } else {
-                // ノードがドラッグされない場合はスクロール
-                this.offsetX = e.clientX;
-                this.offsetY = e.clientY;
-            }
+            this.offsetX = e.clientX;
+            this.offsetY = e.clientY;
         }
     }
 
@@ -295,16 +286,20 @@ export class NetworkEditor
     {
         if (this.isNodeMode()) {
             if (this.isDragging) {
+                let moveX = e.clientX - this.offsetX;
+                let moveY = e.clientY - this.offsetY;
+
                 if (this.draggingNode !== null) {
                     // ノードの移動
-                    this.draggingNode.mouseMove(e, this.offsetX, this.offsetY);
+                    this.draggingNode.mouseMove(moveX, moveY, this.center);
                 } else {
                     // スクロール
                     this.containerDOM.scrollLeft -= e.clientX - this.offsetX;
                     this.containerDOM.scrollTop -= e.clientY - this.offsetY;
-                    this.offsetX = e.clientX;
-                    this.offsetY = e.clientY;
                 }
+
+                this.offsetX = e.clientX;
+                this.offsetY = e.clientY;
 
                 this.draw();
             }
@@ -314,9 +309,9 @@ export class NetworkEditor
                 this.ctx.beginPath();
                 if (this.edgeFromNode instanceof EditNode) {
                     let vertex = this.edgeFromNode.vertices[this.edgeFromVertexNo];
-                    this.ctx.moveTo(vertex.x, vertex.y);
+                    this.ctx.moveTo(vertex.x + this.center.x, vertex.y + this.center.y);
                 } else if (this.edgeFromNode instanceof EditPointNode) {
-                    this.ctx.moveTo(this.edgeFromNode.x, this.edgeFromNode.y);
+                    this.ctx.moveTo(this.edgeFromNode.x + this.center.x, this.edgeFromNode.y + this.center.y);
                 }
 
                 let rect = this.containerDOM.getBoundingClientRect();
@@ -363,10 +358,6 @@ export class NetworkEditor
      */
     getNodeById(id)
     {
-        if (this.parent.id === id) {
-            return this.parent;
-        }
-
         if (this.nodes.hasOwnProperty(id)) {
             return this.nodes[id];
         }
@@ -410,13 +401,13 @@ export class NetworkEditor
      */
     appendPointNode()
     {
-        let x = this.containerDOM.scrollLeft + 30;
-        let y = this.containerDOM.scrollTop + 30;
+        let x = this.containerDOM.scrollLeft - this.center.x + 30;
+        let y = this.containerDOM.scrollTop - this.center.y + 30;
 
         let id = "pt" + this.pointsIndex;
         this.pointsIndex++;
 
-        this.points[id] = new EditPointNode(id, x, y);
+        this.points[id] = new EditPointNode(id, x, y, this.center);
 
         this.draw();
 
@@ -469,8 +460,6 @@ export class NetworkEditor
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.restore();
 
-        this.drawNode(this.parent);
-
         Object.values(this.nodes).forEach(node => {
             this.drawNode(node);
         });
@@ -486,13 +475,13 @@ export class NetworkEditor
 
                     this.ctx.beginPath();
 
-                    this.ctx.moveTo(point.x, point.y);
-                    this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                    this.ctx.moveTo(point.x + this.center.x, point.y + this.center.y);
+                    this.ctx.lineTo(targetVertex.x + this.center.x, targetVertex.y + this.center.y);
                     this.ctx.stroke();
                 }
             });
 
-            point.draw(this.ctx, 0, 0);
+            point.draw(this.ctx, this.center.x, this.center.y);
         });
     }
 
@@ -514,8 +503,8 @@ export class NetworkEditor
 
                 this.ctx.beginPath();
 
-                this.ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                this.ctx.lineTo(targetVertex.x, targetVertex.y);
+                this.ctx.moveTo(node.vertices[vertexNo].x + this.center.x, node.vertices[vertexNo].y + this.center.y);
+                this.ctx.lineTo(targetVertex.x + this.center.x, targetVertex.y + this.center.y);
                 this.ctx.stroke();
             }
         });
@@ -560,14 +549,13 @@ export class NetworkEditor
     {
         let nodes = {};
         let connects = [];
-        let w = this.parent.DOM.offsetWidth / 2;
-        let h = this.parent.DOM.offsetHeight / 2;
+        let w = 0;
+        let h = 0;
 
-        connects.push(...this.parent.getConnectJsonArr());
         Object.values(this.nodes).forEach(node => {
-            let json = node.toJson(this.parent);
+            let json = node.toJson();
             nodes[node.id] = json;
-            connects.push(...node.getConnectJsonArr());
+            connects.push(...Util.getConnectJsonArr(node.id, node.connects));
 
             let l = Math.abs(json.x - node.DOM.offsetWidth / 2);
             let t = Math.abs(json.y - node.DOM.offsetHeight / 2);
@@ -589,9 +577,9 @@ export class NetworkEditor
 
         let points = [];
         Object.values(this.points).forEach(point => {
-            let json = point.toJson(this.parent);
+            let json = point.toJson();
             points.push(json);
-            connects.push(...point.getConnectJsonArr());
+            connects.push(...Util.getConnectJsonArr(point.id, point.connects));
 
             let l = Math.abs(json.x - 10);
             let t = Math.abs(json.y - 10);
@@ -612,13 +600,12 @@ export class NetworkEditor
         });
 
         return {
-            parent: this.parent.toJson(null),
             nodes: nodes,
             connects: connects,
             ptIdx: this.pointsIndex,
             points: points,
-            width: w*2 + 20,
-            height: h*2 + 20,
+            width: w*2,
+            height: h*2,
         };
     }
 }

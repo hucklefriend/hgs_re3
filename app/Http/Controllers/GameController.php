@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\Rating;
 use App\Models\GameFranchise;
+use App\Models\GameMainNetworkFranchise;
+use App\Models\GameMainNetworkParam;
 use App\Models\GameMaker;
 use App\Models\GameMakerPackageLink;
 use App\Models\GameMediaMix;
@@ -19,6 +21,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class GameController extends Controller
 {
@@ -33,135 +37,67 @@ class GameController extends Controller
      */
     public function horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
     {
-        $page = $request->get('page', 1);
-        $queries = [];
-        $search = ['n' => '', 'p' => [], 'r' => []];
+        $json = Storage::get('public/main.json');
 
-        $franchisesQuery = GameFranchise::orderBy('phonetic');
+        return $this->network(view('game.horrorgame_network', compact('json')));
+    }
 
-        $name = $request->get('n', '');
-        if (strlen($name) > 0) {
-            $search['n'] = $name;
-            $franchisesQuery->where('name', 'like', '%' . $name . '%');
-        }
-
-        $platforms = $request->get('p', '');
-        $titleIds = new \Illuminate\Support\Collection();
-        if (!empty($platforms)) {
-            $queries['p'] = $platforms;
-            $platforms = explode(',', $platforms);
-            $search['p'] = $platforms;
-            $packages = GamePackage::select(['id'])->whereIn('game_platform_id', $platforms)->get()->pluck('id');
-            $titles = GameTitlePackageLink::whereIn('game_package_id', $packages)->distinct()->get()->pluck('game_title_id');
-            $series = GameTitle::whereIn('id', $titles)->distinct()->pluck('game_series_id');
-            $franchisesBySeries = GameSeries::whereIn('id', $series)->distinct()->pluck('game_franchise_id');
-            $franchisesByTitle = GameTitle::whereIn('id', $titles)->distinct()->pluck('game_franchise_id');
-            $linkedFranchiseIds = $franchisesBySeries->merge($franchisesByTitle)->unique();
-            $franchisesQuery->whereIn('id', $linkedFranchiseIds);
-
-            $titleIds = $titles;
-        }
-
-        $ratings = $request->get('r', '');
-        if (!empty($ratings)) {
-            $queries['r'] = $ratings;
-            $ratings = explode(',', $ratings);
-            $search['r'] = $ratings;
-            $packages = GamePackage::select(['id'])->whereIn('rating', $ratings)->get()->pluck('id');
-            $titles = GameTitlePackageLink::whereIn('game_package_id', $packages->toArray())->distinct()->get()->pluck('game_title_id');
-            $titleIds = $titleIds->concat($titles->toArray());
-            $franchisesByTitle = GameTitle::whereIn('id', $titleIds)->distinct()->pluck('game_franchise_id');
-            $franchisesQuery->whereIn('id', $franchisesByTitle->unique());
-        }
-
-        $franchiseNum = $franchisesQuery->count();
-        $maxPage = ceil($franchiseNum / self::ITEM_PER_PAGE);
-
-        if ($page < 1) {
-            $page = 1;
-        } else if ($page > $maxPage) {
-            $page = $maxPage;
-        }
-
-        $prevPage = $page - 1;
-        if ($prevPage < 1) {
-            $prevPage = null;
-        }
-        $nextPage = $page + 1;
-        if ($nextPage > $maxPage) {
-            $nextPage = null;
-        }
-
-        $franchises = $franchisesQuery
-            ->limit(self::ITEM_PER_PAGE)
-            ->offset(($page - 1) * self::ITEM_PER_PAGE)
+    /**
+     * ホラーゲームネットワーク
+     *
+     * @param Request $request
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function __horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
+    {
+        $mainNetworks = GameMainNetworkFranchise::whereNotNull('x')
+            ->whereNotNull('y')
             ->get();
+        $seriesNames = GameSeries::all()->pluck('name', 'id');
+        $titleNames = GameTitle::all()->pluck('node_name', 'id');
 
-        $groups = [];
-        $games = [];
-        foreach ($franchises as $franchise) {
-            $id = sprintf("g_%d_", $franchise->id);
-
-            $prevTitleNumInSeries = 0;
-            foreach ($franchise->series as $series) {
-                if ($titleIds->isEmpty()) {
-                    $titles = $series->titles;
-                } else {
-                    $titles = $series->titles->whereIn('id', $titleIds);
-                }
-
-                $titleNumInSeries = $titles->count();
-                if ($titleNumInSeries >= 2 && !empty($games)) {
-                    $groups[] = $games;
-                    $games = [];
-                }
-
-                $prevId = null;
-
-                foreach ($titles as $title) {
-                    $games[] = (object)[
-                        'title'       => $title,
-                        'dom_id'      => $id . $title->id,
-                        'node_name'   => $title->node_name,
-                        'connections' => is_null($prevId) ? [] : [$prevId],
-                    ];
-
-                    $prevId = $id . $title->id;
-                }
-
-                if ($titleNumInSeries >= 2 || $prevTitleNumInSeries >= 2) {
-                    $groups[] = $games;
-                    $games = [];
-                }
-
-                $prevTitleNumInSeries = $titleNumInSeries;
+        $networks = [];
+        foreach ($mainNetworks as $mainNetwork) {
+            if ($mainNetwork->franchise->mainNetwork === null) {
+                continue;
             }
 
-            if ($titleIds->isEmpty()) {
-                $titles = $franchise->titles;
-            } else {
-                $titles = $franchise->titles->whereIn('id', $titleIds);
+            $json = json_decode($mainNetwork->franchise->mainNetwork->json, true);
+
+            $json['parent']['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
+
+            foreach ($json['nodes'] as $key => $node) {
+                [$prefix, $id] = explode('_', $key);
+
+                if ($prefix === 'f') {
+                    $json['nodes'][$key]['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
+                } else if ($prefix === 's') {
+                    $json['nodes'][$key]['html'] = $seriesNames[$id] . '<br>シリーズ';
+                } else if ($prefix === 't') {
+                    $json['nodes'][$key]['html'] = $titleNames[$id];
+                }
             }
-            foreach ($titles as $title) {
-                $games[] = (object)[
-                    'title'       => $title,
-                    'dom_id'      => $id . $title->id,
-                    'node_name'   => $title->node_name,
-                    'connections' => [],
-                ];
-            }
-        }
-        if (count($games) > 0) {
-            $groups[] = $games;
+
+            $id = "f_" . $mainNetwork->franchise->id;
+            $json['id'] = $id;
+
+            $networks[] = [
+                'id' => $mainNetwork->id,
+                'x' => $mainNetwork->x,
+                'y' => $mainNetwork->y,
+                'data' => $json,
+            ];
         }
 
         return $this->network(view('game.horrorgame_network', [
-            'platforms' => GamePlatform::select(['id', 'name'])->orderBy('sort_order')->get(),
-            'groups'    => $groups,
-            'page'      => $page,
-            'prev'      => array_merge($queries, ['page' => $prevPage]),
-            'next'      => array_merge($queries, ['page' => $nextPage]),
-            'search'    => $search
+            'networks' => $networks,
+            'rect' => [
+                'left' => GameMainNetworkParam::getLeft(),
+                'right' => GameMainNetworkParam::getRight(),
+                'top' => GameMainNetworkParam::getTop(),
+                'bottom' => GameMainNetworkParam::getBottom(),
+            ],
         ]));
     }
 

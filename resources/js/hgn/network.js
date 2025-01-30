@@ -12,13 +12,13 @@ export class Network
     /**
      * コンストラクタ
      */
-    constructor(parentNode)
+    constructor()
     {
-        this.parentNode = parentNode;
-        this.drawParent = true;
         this.nodes = {};
 
-        this.pos = new Vertex(0, 0);
+        this.x = 0;
+        this.y = 0;
+        this.screenOffset = new Vertex(0, 0);
     }
 
     /**
@@ -27,7 +27,6 @@ export class Network
      */
     delete()
     {
-        this.parentNode = null;
         Object.values(this.nodes).forEach(node => {
             node.delete();
         });
@@ -35,64 +34,22 @@ export class Network
     }
 
     /**
-     * 親ノードを描画するか
-     *
-     * @param drawParent
-     * @returns {Network}
-     */
-    setDrawParent(drawParent)
-    {
-        this.drawParent = drawParent;
-        return this;
-    }
-
-    /**
      * 配置座標の設定
      *
      * @param x
      * @param y
-     * @returns {Network}
      */
     setPos(x, y)
     {
-        this.pos.x = x;
-        this.pos.y = y;
-        return this;
-    }
-
-    /**
-     * 配置座標xの設定
-     *
-     * @param x
-     * @returns {Network}
-     */
-    setPosX(x)
-    {
-        this.pos.x = x;
-        return this;
-    }
-
-    /**
-     * 配置座標yの設定
-     *
-     * @param y
-     * @returns {Network}
-     */
-    setPosY(y)
-    {
-        this.pos.y = y;
-        return this;
+        this.x = x;
+        this.y = y;
     }
 
     /**
      * リロード
      */
-    reload(reloadParent = false)
+    reload()
     {
-        if (reloadParent) {
-            this.parentNode.reload();
-        }
-
         Object.values(this.nodes).forEach(node => {
             if (!(node instanceof PointNode)) {
                 node.reload();
@@ -118,10 +75,6 @@ export class Network
      */
     getNodeById(id)
     {
-        if (this.parentNode.id === id) {
-            return this.parentNode;
-        }
-
         return this.nodes[id] ?? null;
     }
 
@@ -129,17 +82,11 @@ export class Network
      * 描画
      *
      * @param ctx
+     * @param offsetX
+     * @param offsetY
      */
-    draw(ctx)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
-        if (this.parentNode !== null) {
-            if (this.drawParent) {
-                this.parentNode.draw(ctx, offsetX, offsetY);
-            }
-
-            this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
-        }
-
         this.nodes.forEach((node, i) => {
             let offsetY1 = offsetY;
             if (node instanceof OctaNode || node instanceof PointNode) {
@@ -213,13 +160,25 @@ export class Bg2Network extends Network
      */
     constructor(parentNode)
     {
-        super(parentNode);
+        super();
+
+        this.parentNode = parentNode;
+        this.drawParent = true;
 
         this.minDrawDepth = 0;
         this.maxDrawDepth = 0;
         this.drawRateInDepth = 0;
         this.maxDepth = 0;
         this.nodes = [];    // こっちは配列で管理
+    }
+
+    /**
+     * 削除
+     */
+    delete()
+    {
+        super.delete();
+        this.parentNode = null;
     }
 
     /**

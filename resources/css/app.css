@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --mn-camera-x1: 0;
+    --mn-camera-y1: 0;
+    --mn-camera-x2: 0;
+    --mn-camera-y2: 0;
+    --mn-camera-x3: 0;
+    --mn-camera-y3: 0;
+    --mn-camera-x4: 0;
+    --mn-camera-y4: 0;
+}
+
+
 body {
     background-color: black;
     color: white;
@@ -424,6 +436,47 @@ hr {
     animation: fadeOut 0.2s ease-in-out forwards;
 }
 
+
+
+body#main-network {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1000;
+    }
+
+    .franchise {
+        touch-action: none;
+        user-select: none;
+    }
+}
+
+div#main-network-debug {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    touch-action: none;
+    user-select: none;
+    color: white;
+    z-index: 10000;
+}
+
+canvas#main-network-debug-canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    border: dotted 1px red;
+}
 
 /* スマホ～ */
 @media (min-width: 400px) {
