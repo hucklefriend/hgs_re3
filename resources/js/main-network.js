@@ -62,6 +62,10 @@ export class MainNetwork
         this.body.addEventListener('mouseup', (e) => this.mouseUp(e));
         this.body.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.body.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        this.body.addEventListener('touchstart', (e) => this.mouseDown(e));
+        this.body.addEventListener('touchend', (e) => this.mouseUp(e));
+        this.body.addEventListener('touchmove', (e) => this.mouseMove(e));
+
 
         this.networkRect.setRect(0, data.width, 0, data.height);
         this.moveCamera(x, y);
@@ -122,8 +126,14 @@ export class MainNetwork
     {
         this.isDragging = true;
         this.body.style.cursor = 'grabbing';
-        this.dragLastPos.x = e.clientX;
-        this.dragLastPos.y = e.clientY;
+
+        if (e.type === 'touchstart') {
+            this.dragLastPos.x = e.touches[0].clientX;
+            this.dragLastPos.y = e.touches[0].clientY;
+        } else {
+            this.dragLastPos.x = e.clientX;
+            this.dragLastPos.y = e.clientY;
+        }
 
         this.dragVelocity.x = 0;
         this.dragVelocity.y = 0;
@@ -141,10 +151,19 @@ export class MainNetwork
         if (!this.isDragging){
             return;
         }
+        let clientX, clientY;
+
+        if (e.type === 'touchmove') {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
 
         // 移動量を計算
-        const deltaX = e.clientX - this.dragLastPos.x;
-        const deltaY = e.clientY - this.dragLastPos.y;
+        const deltaX = clientX - this.dragLastPos.x;
+        const deltaY = clientY - this.dragLastPos.y;
 
         // オフセットを更新
         this.dragOffset.x += deltaX;
@@ -157,8 +176,8 @@ export class MainNetwork
         this.dragVelocity.x = deltaX;
         this.dragVelocity.y = deltaY;
 
-        this.dragLastPos.x = e.clientX;
-        this.dragLastPos.y = e.clientY;
+        this.dragLastPos.x = clientX;
+        this.dragLastPos.y = clientY;
 
         this.isDraw = true;
     }
@@ -217,8 +236,8 @@ export class MainNetwork
 
     moveCamera(x, y)
     {
-        this.cameraPos.x += x;
-        this.cameraPos.y += y;
+        this.cameraPos.x += Math.round(x);
+        this.cameraPos.y += Math.round(y);
 
         // this.debugCanvas.style.left = `${this.networkRect.left-this.cameraPos.x}px`;
         // this.debugCanvas.style.top = `${this.networkRect.top-this.cameraPos.y}px`;
