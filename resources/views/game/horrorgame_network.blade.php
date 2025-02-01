@@ -18,7 +18,7 @@
 </body>
 <script>
     window.addEventListener('load', () => {
-        window.mainNetwork.start({!! $json !!}, 0, 0);
+        window.mainNetwork.start('{!! $json !!}', 0, 0);
     });
 </script>
 </html>

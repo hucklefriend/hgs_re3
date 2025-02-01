@@ -6,7 +6,7 @@ import {Util} from "./hgn/util.js";
 import {Vertex} from "./hgn/vertex.js";
 import {Rect, ViewRect} from "./hgn/rect.js";
 import {DOMNode} from "./hgn/node/octa-node.js";
-
+import LZString from 'lz-string';
 
 /**
  * メインネットワーク
@@ -45,6 +45,9 @@ export class MainNetwork
      */
     start(data, x, y)
     {
+        data = LZString.decompressFromEncodedURIComponent(data);
+        data = JSON.parse(data);
+
         this.body = document.querySelector('body');
         this.canvas = document.querySelector('#main-network-canvas');
         this.canvas.width = this.body.offsetWidth;
