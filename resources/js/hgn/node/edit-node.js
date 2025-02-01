@@ -32,6 +32,11 @@ export class EditNode extends DOMNode
             DOM.appendChild(remove);
         }
 
+        // idがs_で始まる場合smallにする
+        if (nodeData.id.startsWith('s_')) {
+            DOM.classList.add('small');
+        }
+
         DOM.style.left = `${networkPosition.x + nodeData.x - DOM.offsetWidth / 2}px`;
         DOM.style.top = `${networkPosition.y + nodeData.y - DOM.offsetHeight / 2}px`;
 
@@ -117,6 +122,7 @@ export class EditNode extends DOMNode
     constructor(id, x, y, DOM, isRemovable = true)
     {
         super(id, x, y, DOM);
+
 
         this.reload();  // スクリーン座標配置になっているので、リロードしとく
 

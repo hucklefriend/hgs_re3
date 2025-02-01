@@ -28,7 +28,7 @@ class MainNetworkController extends AbstractAdminController
     public function edit(Request $request): Application|Factory|View
     {
         $networks = GameMainNetworkFranchise::all();
-        $seriesNames = GameSeries::all()->pluck('name', 'id');
+        $seriesNames = GameSeries::all()->pluck('node_name', 'id');
         $titles = GameTitle::all(['id', 'node_name', 'key', 'rating'])->pluck(null, 'id');
         $mainNetworks = [];
 

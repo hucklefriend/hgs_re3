@@ -57,7 +57,7 @@
     text-align: center;
 }
 
-.link-node.small, .content-link-node.small, .popup-link-node.small {
+.dom-node.small, .link-node.small, .content-link-node.small, .popup-link-node.small {
     font-size: 11px;
     padding: 8px 12px;
     display: inline-block;

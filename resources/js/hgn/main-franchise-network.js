@@ -67,6 +67,11 @@ export class MainFranchiseNetwork extends Network
         let DOM = document.createElement('div');
         DOM.id = nodeData.id;
 
+        // idがs_で始まる場合smallにする
+        if (nodeData.id.startsWith('s_')) {
+            DOM.classList.add('small');
+        }
+
         DOM.classList.add('dom-node');
         //DOM.classList.add('fade');
 

@@ -21,6 +21,10 @@ export class EditNetworkNode extends DOMNode
         let DOM = document.createElement('div');
         DOM.innerHTML = data.html;
         DOM.classList.add('dom-node');
+        // idがs_で始まる場合smallにする
+        if (data.id.startsWith('s_')) {
+            DOM.classList.add('small');
+        }
 
         containerDOM.appendChild(DOM);
 
