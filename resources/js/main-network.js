@@ -6,7 +6,7 @@ import {Util} from "./hgn/util.js";
 import {Vertex} from "./hgn/vertex.js";
 import {Rect, ViewRect} from "./hgn/rect.js";
 import {DOMNode} from "./hgn/node/octa-node.js";
-
+import LZString from 'lz-string';
 
 /**
  * メインネットワーク
@@ -45,6 +45,9 @@ export class MainNetwork
      */
     start(data, x, y)
     {
+        data = LZString.decompressFromEncodedURIComponent(data);
+        data = JSON.parse(data);
+
         this.body = document.querySelector('body');
         this.canvas = document.querySelector('#main-network-canvas');
         this.canvas.width = this.body.offsetWidth;
@@ -57,7 +60,6 @@ export class MainNetwork
         this.origin.x = data.origin.x;
         this.origin.y = data.origin.y;
 
-
         this.body.addEventListener('mousedown', (e) => this.mouseDown(e));
         this.body.addEventListener('mouseup', (e) => this.mouseUp(e));
         this.body.addEventListener('mousemove', (e) => this.mouseMove(e));
@@ -65,7 +67,7 @@ export class MainNetwork
         this.body.addEventListener('touchstart', (e) => this.mouseDown(e));
         this.body.addEventListener('touchend', (e) => this.mouseUp(e));
         this.body.addEventListener('touchmove', (e) => this.mouseMove(e));
-
+        window.addEventListener('resize', (e) => this.resize(e));
 
         this.networkRect.setRect(0, data.width, 0, data.height);
         this.moveCamera(x, y);
@@ -82,39 +84,14 @@ export class MainNetwork
 
         this.debugDOM = document.querySelector('#main-network-debug');
 
-        //this.debugCanvas = document.querySelector('#main-network-debug-canvas');
-        // this.debugCtx = this.debugCanvas.getContext('2d');
-        // this.debugCanvas.width = this.networkRect.width;
-        // this.debugCanvas.height = this.networkRect.height;
-        //this.drawDebugCanvas();
-
         this.isDraw = true;
         this.update = this.update.bind(this);
         window.requestAnimationFrame(this.update);
     }
 
-    drawDebugCanvas()
+    end()
     {
-        let offsetX = Math.abs(this.networkRect.left);
-        let offsetY = Math.abs(this.networkRect.top);
 
-        this.debugCtx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
-        this.debugCtx.fillStyle = "red";
-
-
-        this.networks.forEach(network => {
-            let x = 0;
-            let y = 0;
-
-            Object.values(network.nodes).forEach(node => {
-                x = node.x + offsetX + network.x;
-                y = node.y + offsetY + network.y;
-
-                this.debugCtx.beginPath();
-                this.debugCtx.arc(x, y, 5, 0, Param.MATH_PI_2, false);
-                this.debugCtx.fill();
-            });
-        });
     }
 
     /**
@@ -203,6 +180,22 @@ export class MainNetwork
         this.body.style.cursor = 'grab';
     }
 
+    /**
+     * ウィンドウサイズの変更
+     *
+     * @param e
+     */
+    resize(e)
+    {
+        this.canvas.width = this.body.offsetWidth;
+        this.canvas.height = this.body.offsetHeight;
+        this.moveCamera(0, 0);
+        this.isDraw = true;
+    }
+
+    /**
+     * アニメーションフレーム更新
+     */
     update()
     {
         if (this.isFlicking) {
@@ -212,9 +205,10 @@ export class MainNetwork
         if (this.isDraw) {
             this.draw();
             this.isDraw = false;
+
+            this.debug();
         }
 
-        this.debug();
 
         window.requestAnimationFrame(this.update);
     }
@@ -234,14 +228,16 @@ export class MainNetwork
         }
     }
 
+    /**
+     * カメラ位置のセット
+     *
+     * @param x
+     * @param y
+     */
     moveCamera(x, y)
     {
         this.cameraPos.x += Math.round(x);
         this.cameraPos.y += Math.round(y);
-
-        // this.debugCanvas.style.left = `${this.networkRect.left-this.cameraPos.x}px`;
-        // this.debugCanvas.style.top = `${this.networkRect.top-this.cameraPos.y}px`;
-
 
         if (this.cameraPos.x < this.networkRect.left) {
             this.cameraPos.x = this.networkRect.right - (this.networkRect.left - this.cameraPos.x);
@@ -357,15 +353,6 @@ export class MainNetwork
         document.documentElement.style.setProperty('--mn-camera-y3', this.cameraPos.y - this.viewRect3OffsetY + 'px');
         document.documentElement.style.setProperty('--mn-camera-x4', this.cameraPos.x - this.viewRect2OffsetX + 'px');
         document.documentElement.style.setProperty('--mn-camera-y4', this.cameraPos.y - this.viewRect3OffsetY + 'px');
-
-        // 描画する領域
-        let width = this.canvas.width;
-        let height = this.canvas.height;
-
-        let left = this.cameraPos.x - width / 2;
-        let right = left + width;
-        let top = this.cameraPos.y - height / 2;
-        let bottom = top + height;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 

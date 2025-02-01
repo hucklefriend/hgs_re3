@@ -2,6 +2,7 @@ import {Vertex} from "./hgn/vertex.js";
 import {Rect} from "./hgn/rect.js";
 import {EditNetwork} from "./hgn/edit-network.js";
 import {Util} from "./hgn/util.js";
+import LZString from 'lz-string';
 
 /**
  * メインネットワークエディタ
@@ -233,7 +234,7 @@ export class MainNetworkEditor
     {
         let json = this.toJson();
         document.querySelector('#json').value = JSON.stringify(json.edit);
-        document.querySelector('#json2').value = JSON.stringify(json.main);
+        document.querySelector('#json2').value = LZString.compressToEncodedURIComponent(JSON.stringify(json.main));
     }
 
     /**
@@ -262,6 +263,11 @@ export class MainNetworkEditor
         };
     }
 
+    /**
+     * サイズチェッカーの設定
+     *
+     * @param rect
+     */
     setSizeChecker(rect)
     {
         this.sizeCheckerDOM.style.left = this.screenOffset.x + rect.left + 'px';
@@ -269,8 +275,6 @@ export class MainNetworkEditor
         this.sizeCheckerDOM.style.width = (rect.right - rect.left) + 'px';
         this.sizeCheckerDOM.style.height = (rect.bottom - rect.top) + 'px';
     }
-
-
 
     /**
      * メインネットワーク表示用のJSONを生成
