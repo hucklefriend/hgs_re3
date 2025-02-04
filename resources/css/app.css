@@ -185,11 +185,11 @@ hr {
     height:100vh;
     padding:0;
     text-align: center;
-    background-image: url('../img/bg3.jpg');
+    background-image: url('../img/bg3_2.jpg');
     background-position-x: center;
     background-position-y: 0;
     background-repeat: no-repeat;
-    background-size: 1000px 1200px;
+    background-size: 2048px 2048px;
     pointer-events: none;
 }
 
