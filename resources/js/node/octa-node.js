@@ -1,11 +1,15 @@
-import {Vertex} from '../vertex.js';
-import {Rect} from '../rect.js';
-import {Param} from '../param.js';
-import {PointNode} from './point-node.js';
-import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
-import {HorrorGameNetwork} from '../../hgn.js';
-import {Util} from "../util.js";
-import {Bg2Network} from "../network.js";
+import { Vertex } from '../common/vertex.js';
+import { Rect } from '../common/rect.js';
+import { Param } from '../common/param.js';
+import { PointNode } from './point-node.js';
+import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
+import { Util } from "../common/util.js";
+import { SubNetwork } from "../network/sub-network.js";
+import { HorrorGameNetwork } from '../horror-game-network.js';
+/**
+ * @type {HorrorGameNetwork}
+ */
+window.hgn;
 
 /**
  * 八角ノード
@@ -417,7 +421,7 @@ export class OctaNode
         if (viewRect !== null) {
             // 表示領域外にあったら描画しない
             const drawLeft = this.vertices[Param.LLT].x + offsetX;
-            const drawRight = this.vertices[Param.RRB].y + offsetX;
+            const drawRight = this.vertices[Param.RRB].x + offsetX;
             const drawTop = this.vertices[Param.LTT].y + offsetY;
             const drawBottom = this.vertices[Param.LBB].y + offsetY;
 
@@ -482,12 +486,32 @@ export class OctaNode
             return 12;
         }
     }
+
+    /**
+     * verticesのオブジェクトに変換
+     */
+    toObj()
+    {
+        return {
+            type: 'octa',
+            vertices: [
+                this.vertices[0].toObj(),
+                this.vertices[1].toObj(),
+                this.vertices[2].toObj(),
+                this.vertices[3].toObj(),
+                this.vertices[4].toObj(),
+                this.vertices[5].toObj(),
+                this.vertices[6].toObj(),
+                this.vertices[7].toObj(),
+            ],
+        };
+    }
 }
 
 /**
- * 背景2用の八角形ノード
+ * サブネットワーク用の八角形ノード
  */
-export class Bg2OctaNode extends OctaNode
+export class SubOctaNode extends OctaNode
 {
     /**
      * コンストラクタ
@@ -517,12 +541,12 @@ export class Bg2OctaNode extends OctaNode
         if (nearVertexNo === null) {
             nearVertexNo = this.getNearVertexNo(parent);
         }
-        this.connection = new Bg2Connect(parent, vertexNo, nearVertexNo);
+        this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
         this.drawOffsetY = 0;
 
         if (this.connection.node.y > window.innerHeight) {
             let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
+            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
         }
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
@@ -671,7 +695,7 @@ export class DOMNode extends OctaNode
         if (this.subNetworkSize === 'n') {
             return;
         }
-        let network = new Bg2Network(this);
+        let network = new SubNetwork(this);
         let maxDepth = 1;
         let appearRate = 0;
         switch (this.subNetworkSize) {
@@ -963,15 +987,17 @@ export class DOMNode extends OctaNode
 
     isSkipAnim()
     {
-        const hgn = HorrorGameNetwork.getInstance();
-        let rect = this.DOM.getBoundingClientRect();
+        // TODO: mapにあったviewRectを使う
+        return false;
 
-        // 表示領域外にある場合はアニメーションをスキップ
-        if (hgn.getScrollY() - 100 > this.y + this.h || hgn.getScrollY() + window.innerHeight + 100 < this.y) {
-            return true;
-        } else {
-            return false;
-        }
+        // let rect = this.DOM.getBoundingClientRect();
+
+        // // 表示領域外にある場合はアニメーションをスキップ
+        // if (window.hgn.viewer.getScrollY() - 100 > this.y + this.h || window.hgn.viewer.getScrollY() + window.innerHeight + 100 < this.y) {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
     }
 
     /**

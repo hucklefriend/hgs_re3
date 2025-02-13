@@ -19,3 +19,18 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+<FilesMatch "\.(css)$">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(js)$">
+    <IfModule mod_headers.c>
+        Header set Cross-Origin-Embedder-Policy "require-corp"
+        Header set Cross-Origin-Opener-Policy "same-origin"
+        Header set Cross-Origin-Resource-Policy "cross-origin"
+        Header set Cross-Origin-Isolation "same-origin"
+    </IfModule>
+</FilesMatch>

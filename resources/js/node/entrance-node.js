@@ -1,9 +1,14 @@
-import {Vertex} from '../vertex.js';
-import {Param} from '../param.js';
-import {Bg2Network} from '../network.js';
-import {DOMNode} from './octa-node.js';
-import {LinkNode} from './link-node.js';
-import {Util} from '../util.js';
+import { Vertex } from '../common/vertex.js';
+import { Param } from '../common/param.js';
+import { SubNetwork } from '../network/sub-network.js';
+import { LinkNode } from './link-node.js';
+import { Util} from '../common/util.js';
+import { HorrorGameNetwork } from '../horror-game-network.js';
+import { Rect } from '../common/rect.js';
+/**
+ * @type {HorrorGameNetwork}
+ */
+window.hgn;
 
 /**
  * トップページの特別なリンクノード
@@ -27,8 +32,7 @@ export class EntranceNode extends LinkNode
         this.lightCanvas.height = 300;
         this.lightCtx = this.lightCanvas.getContext('2d');
 
-        this.createNetwork();
-        window.hgn.bg2.addParentNode(this);
+        this.createSubNetwork();
 
         this.animCnt2 = 0;  // エントランスノードは自前のアニメーションカウンターを持つ
         this.animVertices = [];
@@ -51,13 +55,13 @@ export class EntranceNode extends LinkNode
     }
 
     /**
-     * トップページのメインネットワーク背景を生成
+     * サブネットワーク背景を生成
      *
-     * @returns {Bg2Network}
+     * @returns {SubNetwork}
      */
-    createNetwork()
+    createSubNetwork()
     {
-        let network = new Bg2Network(this);
+        let network = new SubNetwork(this);
         network.addOctaNode(this, Param.LTT, 0, -80, -80, 40);
 
         network.addOctaNode(0, Param.LTT, 1, -50, -80, 40);
@@ -125,6 +129,26 @@ export class EntranceNode extends LinkNode
         network.addOctaNode(604, null, 608, -120, 10, 25);
 
         this.subNetwork = network;
+
+        window.hgn.addSubNetwork(network);
+    }
+
+    /**
+     * 削除
+     */
+    delete()
+    {
+        for (let i = 0; i < 8; i++) {
+            this.animVertices[i] = null;
+        }
+        this.animVertices = null;
+
+        this.lightCtx = null;
+        this.lightCanvas = null;
+
+        this.ctxParams = null;
+
+        super.delete();
     }
 
     /**
@@ -203,7 +227,7 @@ export class EntranceNode extends LinkNode
             this.ctxParams.shadowBlur = 10;
         }
 
-        window.hgn.setRedrawMain();
+        window.hgn.setDrawMain();
     }
 
     /**
@@ -232,13 +256,18 @@ export class EntranceNode extends LinkNode
      * 描画
      *
      * @param ctx
-     * @param fillStyle
+     * @param {Rect} viewRect
      */
-    draw(ctx, fillStyle = 'black')
+    draw(ctx, viewRect)
     {
         if (this.isDrawLight) {
             this.drawLight();
             this.isDrawLight = false;
+        }
+
+        if (!viewRect.intersects(this.rect)) {
+            // 描画領域内に入っていないなら描画しない
+            return;
         }
 
         ctx.strokeStyle = this.ctxParams.strokeStyle;
@@ -252,15 +281,20 @@ export class EntranceNode extends LinkNode
             if (this.animVertices === null) {
                 return;
             }
-            super.setShapePathByVertices(ctx, this.animVertices);
+            super.setShapePathByVertices(ctx, this.animVertices, -viewRect.left, -viewRect.top);
         } else {
-            super.setShapePath(ctx);
+            super.setShapePath(ctx, -viewRect.left, -viewRect.top);
         }
 
         ctx.stroke();
 
-        ctx.fillStyle = fillStyle;
+        ctx.fillStyle = "black";
         ctx.fill();
+    }
+
+    drawSub(ctx, offsetX = 0, offsetY = 0)
+    {
+        this.subNetwork.draw(ctx, offsetX, offsetY);
     }
 
     /**
@@ -269,7 +303,6 @@ export class EntranceNode extends LinkNode
     update()
     {
         if (this.animFunc !== null) {
-            this.animCnt2++;
             this.animFunc();
         }
     }
@@ -302,30 +335,38 @@ export class EntranceNode extends LinkNode
      */
     appearAnimation()
     {
-        if (this.animCnt2 < 15) {
-            if (this.ctxParams.lineWidth < 8) {
-                this.ctxParams.lineWidth++;
-            }
+        // 0.5秒で出現
+        if (window.hgn.animationEraseTime < 300) {
+            let ratio = window.hgn.animationEraseTime / 300;
+            
+            this.ctxParams.lineWidth = Util.getMidpoint(0, 8, ratio, true);
 
-            this.setAnimSize(this.animCnt2 / 15);
+            this.setAnimSize(ratio);
             this.isDrawLight = true;
-        } else if (this.animCnt2 === 15) {
+        } else {
+            this.ctxParams.lineWidth = 8;
             this.isUseAnimVertices = false;
             this.isEnableMouse = true;
             this.fadeInText();
-
+    
             this.lightRadius = 70;
             this.isDrawLight = true;
-        } else {
-            let animCnt = this.animCnt2 - 15;
-            let depth = Math.ceil(animCnt / 5);
-            this.subNetwork.maxDrawDepth = depth;
-            if (this.subNetwork.maxDepth === depth) {
-                this.animFunc = null;
-            }
-
-            window.hgn.setRedrawBg2();
+            this.animFunc = this.appearAnimation2;
         }
+
+        window.hgn.setDrawMain();
+    }
+
+    appearAnimation2()
+    {
+        let ratio = (window.hgn.animationEraseTime - 330) / 1000;
+        let depth = Util.getMidpoint(0, 5, ratio);
+        this.subNetwork.maxDrawDepth = depth;
+        if (this.subNetwork.maxDepth === depth) {
+            this.animFunc = null;
+        }
+
+        window.hgn.setDrawSub();
     }
 
     /**
@@ -364,7 +405,7 @@ export class EntranceNode extends LinkNode
         } else {
             this.subNetwork.minDrawDepth = depth;
         }
-        window.hgn.setRedrawBg2();
+        window.hgn.setDrawSub();
     }
 
     /**

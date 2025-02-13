@@ -48,4 +48,17 @@ export class Vertex
 
         return new Vertex(x, y);
     }
+
+    /**
+     * オブジェクト化
+     * 
+     * @returns {Object}
+     */
+    toObj()
+    {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
 }

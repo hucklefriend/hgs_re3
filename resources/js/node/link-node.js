@@ -1,7 +1,11 @@
-import {Param} from '../param.js';
-import {Util} from '../util.js';
-import {DOMNode} from './octa-node.js';
-
+import { Param } from '../common/param.js';
+import { Util } from '../common/util.js';
+import { DOMNode } from './octa-node.js';
+import { HorrorGameNetwork } from '../horror-game-network.js';
+/**
+ * @type {HorrorGameNetwork}
+ */
+window.hgn;
 
 export class LinkNode extends DOMNode
 {
@@ -35,14 +39,16 @@ export class LinkNode extends DOMNode
         }
 
         this.createRandomSubNetwork();
-        if (this.subNetwork !== null) {
-            window.hgn.bg2.addParentNode(this);
-        }
+        // if (this.subNetwork !== null) {
+        //     window.hgn.bg2.addParentNode(this);
+        // }
 
         this.url = null;
+        this.refType = null;
         const a = this.DOM.querySelector('a');
         if (a && !a.classList.contains('outside-link')) {
             this.url = a.getAttribute('href');
+            this.refType = a.getAttribute('data-ref-type');
             // aのクリックイベントを無効化
             a.addEventListener('click', (e) => e.preventDefault());
         }
@@ -165,7 +171,7 @@ export class LinkNode extends DOMNode
             this.ctxParams.shadowBlur = 8;
         }
 
-        window.hgn.setRedrawMain();
+        window.hgn.setDrawMain();
     }
 
     /**
@@ -186,7 +192,7 @@ export class LinkNode extends DOMNode
             this.ctxParams.shadowBlur = 8;
         }
 
-        window.hgn.setRedrawMain();
+        window.hgn.setDrawMain();
     }
 
     /**
@@ -207,7 +213,7 @@ export class LinkNode extends DOMNode
             this.ctxParams.shadowBlur = 4;
         }
 
-        window.hgn.setRedrawMain();
+        window.hgn.setDrawMain();
     }
 
     /**
@@ -230,7 +236,7 @@ export class LinkNode extends DOMNode
             this.ctxParams.shadowBlur = 4;
         }
 
-        window.hgn.setRedrawMain();
+        window.hgn.setDrawMain();
     }
 
     /**
@@ -299,7 +305,7 @@ export class LinkNode extends DOMNode
      */
     drawSubNetwork(ctx, offsetX = 0, offsetY = 0)
     {
-        this.subNetwork.draw(ctx, offsetX, offsetY, Param.BG2_MAKE_NETWORK_MODE);
+        this.subNetwork.draw(ctx, offsetX, offsetY);
     }
 
     /**
@@ -341,7 +347,7 @@ export class LinkNode extends DOMNode
                     this.animFunc = null;
                 }
 
-                window.hgn.setRedrawBg2();
+                window.hgn.setDrawSub();
             }
         }
     }
@@ -352,11 +358,10 @@ export class LinkNode extends DOMNode
         this.scale = 1;
         if (this.subNetwork !== null) {
             this.subNetwork.maxDrawDepth = 3;
-            window.hgn.setRedrawBg2();
+            window.hgn.setDrawSub();
         }
 
         super.appeared();
-
     }
 
     /**
@@ -402,7 +407,7 @@ export class LinkNode extends DOMNode
                 } else {
                     this.subNetwork.minDrawDepth = depth;
                 }
-                window.hgn.setRedrawBg2();
+                window.hgn.setDrawSub();
             }
         }
     }

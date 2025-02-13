@@ -11,6 +11,9 @@
         window.baseUrl = '{{ url('/') }}';
         window.lazyCss = @json([]);
         window.START_HGN = true;
+        window.addEventListener('load', function() {
+            window.hgn.start('{{ $viewerType ?? 'document' }}');
+        });
 
         @isset($contentNode)
             window.contentNode = @json($contentNode);
@@ -24,33 +27,49 @@
             window.ratingCheck = false;
         @endif
 
-        showBg3 = () => {
-            // 10フレームくらいかけてopacityを1にする
-            let opacity = 0;
-            let interval = setInterval(() => {
-                opacity += 0.1;
-                document.getElementById('bg3').style.opacity = opacity;
-                if (opacity >= 1) {
-                    clearInterval(interval);
-                }
-            }, 100);
+        @isset($map)
+            window.map = {!! $map !!};
+        @else
+            window.map = null;
+        @endif
+
+        showBg = () => {
+            // 背景画像のURLを取得
+            const bg = document.getElementById('bg');
+            const bgImg = window.getComputedStyle(bg).backgroundImage;
+            const imgUrl = bgImg.replace(/url\(['"]?(.*?)['"]?\)/i, '$1');
+
+            // 画像の読み込みを監視
+            const img = new Image();
+            img.onload = () => {
+                // 画像読み込み完了後にフェードイン実行
+                let opacity = 0;
+                let interval = setInterval(() => {
+                    opacity += 0.1;
+                    bg.style.opacity = opacity;
+                    if (opacity >= 1) {
+                        clearInterval(interval);
+                    }
+                }, 100);
+            };
+            img.src = imgUrl;
         };
     </script>
     @vite(['resources/css/app.css', 'resources/css/head.css', 'resources/css/node.css', 'resources/js/app.js'])
 </head>
 <body>
-<div id="bg3" style="opacity: 0;"></div>
-<script>showBg3();</script>
-<div id="scroller">
-    <div class="container">
+<div id="bg" style="opacity: 0;"></div>
+<script>showBg();</script>
+<canvas id="sub-canvas"></canvas>
+<canvas id="main-canvas"></canvas>
+<div id="document">
+    <div id="document-scroller">
         <main>
             @yield('content')
         </main>
     </div>
-    <canvas id="main-canvas"></canvas>
-    <canvas id="bg1"></canvas>
-    <canvas id="bg2"></canvas>
 </div>
+<div id="map"></div>
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
     <div id="content-node-container">
@@ -89,7 +108,6 @@
                 <a href="#" onclick="iamOver18();">18歳以上です</a>
             </div>
         </div>
-        <canvas class="popup-node-canvas"></canvas>
     </div>
 </div>
 <div id="loading"><img src="{{ asset('img/loading.gif') }}" alt="now loading..."></div>

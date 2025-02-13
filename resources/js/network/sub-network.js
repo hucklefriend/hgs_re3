@@ -1,159 +1,12 @@
-import {OctaNode, Bg2OctaNode} from './node/octa-node.js';
-import {Param} from './param.js';
-import {PointNode, Bg2PointNode} from "./node/point-node.js";
-import {HorrorGameNetwork} from "../hgn.js";
-import {Vertex} from './vertex.js';
+import { OctaNode, SubOctaNode } from '../node/octa-node.js';
+import { Param} from '../common/param.js';
+import { SubPointNode } from "../node/point-node.js";
+import { Network } from './network.js';
 
 /**
- * ネットワーク
+ * サブネットワーク
  */
-export class Network
-{
-    /**
-     * コンストラクタ
-     */
-    constructor()
-    {
-        this.nodes = {};
-
-        this.x = 0;
-        this.y = 0;
-        this.screenOffset = new Vertex(0, 0);
-    }
-
-    /**
-     * 削除
-     * ガベージコレクションに任せる
-     */
-    delete()
-    {
-        Object.values(this.nodes).forEach(node => {
-            node.delete();
-        });
-        this.nodes = null;
-    }
-
-    /**
-     * 配置座標の設定
-     *
-     * @param x
-     * @param y
-     */
-    setPos(x, y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * リロード
-     */
-    reload()
-    {
-        Object.values(this.nodes).forEach(node => {
-            if (!(node instanceof PointNode)) {
-                node.reload();
-            }
-        });
-    }
-
-    /**
-     * ノードの追加
-     *
-     * @param node
-     */
-    addNode(node)
-    {
-        this.nodes[node.id] = node;
-    }
-
-    /**
-     * ノードの取得
-     *
-     * @param id
-     * @returns {*|null}
-     */
-    getNodeById(id)
-    {
-        return this.nodes[id] ?? null;
-    }
-
-    /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     */
-    draw(ctx, offsetX = 0, offsetY = 0)
-    {
-        this.nodes.forEach((node, i) => {
-            let offsetY1 = offsetY;
-            if (node instanceof OctaNode || node instanceof PointNode) {
-                offsetY1 -= node.drawOffsetY;
-            }
-
-            this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
-
-            node.draw(ctx, offsetX, offsetY1);
-        });
-    }
-
-    /**
-     * エッジの描画
-     *
-     * @param ctx
-     * @param node
-     * @param offsetX1
-     * @param offsetY1
-     * @param offsetX2
-     * @param offsetY2
-     */
-    drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
-    {
-        const hgn = HorrorGameNetwork.getInstance();
-
-        const maxY = hgn.getScrollY() + window.innerHeight;
-        node.connects.forEach((connect, vertexNo) => {
-            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                let targetVertex = connect.getVertex();
-
-                let x = node.x;
-                let y = node.y;
-                if (node instanceof OctaNode) {
-                    x = node.vertices[vertexNo].x;
-                    y = node.vertices[vertexNo].y;
-                }
-
-                let drawOffsetY2 = 0;
-                if (connect.node instanceof Bg2OctaNode || connect.node instanceof Bg2PointNode) {
-                    drawOffsetY2 = connect.node.drawOffsetY;
-                }
-
-                const drawY1 = y + offsetY1;
-                const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
-
-                if (drawY1 < hgn.getScrollY() && drawY2 < hgn.getScrollY()) {
-                    return;
-                }
-                if (drawY1 > maxY && drawY2 > maxY) {
-                    return;
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(x + offsetX1, drawY1);
-                ctx.lineTo(targetVertex.x + offsetX2, drawY2);
-                ctx.stroke();
-            }
-        });
-    }
-}
-
-
-/**
- * 背景2用ネットワーク
- */
-export class Bg2Network extends Network
+export class SubNetwork extends Network
 {
     /**
      * コンストラクタ
@@ -177,7 +30,11 @@ export class Bg2Network extends Network
      */
     delete()
     {
-        super.delete();
+        this.nodes.forEach((node, i) => {
+            node.delete();
+            this.nodes[i] = null;
+        });
+        this.nodes = null;
         this.parentNode = null;
     }
 
@@ -193,7 +50,7 @@ export class Bg2Network extends Network
      * @param h
      * @param n
      * @param newNodeVertexNo
-     * @returns {Bg2OctaNode}
+     * @returns {SubOctaNode}
      */
     addOctaNode(baseNode, vertexNo, myNo, offsetX, offsetY, w, h = null, n = null, newNodeVertexNo = null)
     {
@@ -209,7 +66,7 @@ export class Bg2Network extends Network
         }
 
         let depth = this.getDepth(baseNode);
-        let newNode = new Bg2OctaNode(baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
+        let newNode = new SubOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
         newNode.depth = depth;
         this.nodes[myNo] = newNode;
         this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
@@ -227,7 +84,7 @@ export class Bg2Network extends Network
      * @param offsetY
      * @param r
      * @param newNodeClass
-     * @returns {Bg2PointNode}
+     * @returns {SubPointNode}
      */
     addPointNode(baseNode, vertexNo, myNo, offsetX, offsetY, r = 5, newNodeClass = null)
     {
@@ -236,7 +93,7 @@ export class Bg2Network extends Network
         }
 
         let depth = this.getDepth(baseNode);
-        let newNode = new Bg2PointNode(baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
+        let newNode = new SubPointNode(baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
         newNode.depth = depth;
         this.nodes[myNo] = newNode;
         this.addNodeConnection(baseNode, newNode, vertexNo);
@@ -327,7 +184,7 @@ export class Bg2Network extends Network
     {
         // サブノードだけリロードされる
         Object.values(this.nodes).forEach(node => {
-            if (node instanceof Bg2OctaNode || node instanceof Bg2PointNode) {
+            if (node instanceof SubOctaNode || node instanceof SubPointNode) {
                 node.reload();
             }
         });
@@ -339,9 +196,8 @@ export class Bg2Network extends Network
      * @param ctx
      * @param offsetX
      * @param offsetY
-     * @param drawIdxText
      */
-    draw(ctx, offsetX, offsetY, drawIdxText = false)
+    draw(ctx, offsetX, offsetY)
     {
         if (this.isNotDraw()) {
             return;
@@ -355,10 +211,6 @@ export class Bg2Network extends Network
                 this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
 
                 node.draw(ctx, offsetX, offsetY1);
-
-                if (drawIdxText) {
-                    ctx.fillText(i.toString(), node.x, node.y);
-                }
             }
         });
     }
@@ -375,9 +227,7 @@ export class Bg2Network extends Network
      */
     drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
     {
-        const hgn = HorrorGameNetwork.getInstance();
-
-        const maxY = hgn.getScrollY() + window.innerHeight;
+        const maxY = window.hgn.getScrollY() + window.innerHeight;
         node.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
                 if (this.minDrawDepth <= connect.node.depth && connect.node.depth <= this.maxDrawDepth) {
@@ -394,7 +244,7 @@ export class Bg2Network extends Network
                     const drawY1 = y + offsetY1;
                     const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
 
-                    if (drawY1 < hgn.getScrollY() && drawY2 < hgn.getScrollY()) {
+                    if (drawY1 < window.hgn.getScrollY() && drawY2 < window.hgn.getScrollY()) {
                         return;
                     }
                     if (drawY1 > maxY && drawY2 > maxY) {
@@ -408,5 +258,21 @@ export class Bg2Network extends Network
                 }
             }
         });
+    }
+
+    toObj()
+    {
+        let nodes = {};
+        this.nodes.forEach((node, i) => {
+            nodes[i] = node.toObj();
+        });
+
+        return {
+            id: this.parentNode.id,
+            parent: this.parentNode.toObj(),
+            minDrawDepth: this.minDrawDepth,
+            maxDrawDepth: 9,//this.maxDrawDepth,
+            nodes: nodes
+        };
     }
 }

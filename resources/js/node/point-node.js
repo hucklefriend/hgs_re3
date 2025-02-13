@@ -1,8 +1,7 @@
-import {Param} from '../param.js';
-import {Vertex} from '../vertex.js';
-import {OctaNode} from './octa-node.js';
-import {OctaNodeConnect, PointNodeConnect, Bg2Connect} from './connect.js';
-import {HorrorGameNetwork} from "../../hgn.js";
+import { Param } from '../common/param.js';
+import { Vertex } from '../common/vertex.js';
+import { OctaNode } from './octa-node.js';
+import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
 
 /**
  * 点ノード
@@ -209,9 +208,9 @@ export class PointNode extends Vertex
 }
 
 /**
- * 背景2用の点ノード
+ * サブネットワーク用の点ノード
  */
-export class Bg2PointNode extends PointNode
+export class SubPointNode extends PointNode
 {
     /**
      * コンストラクタ
@@ -232,14 +231,15 @@ export class Bg2PointNode extends PointNode
         }
 
         super(x + offsetX, y + offsetY, r);
-        this.connection = new Bg2Connect(parent, vertexNo);
+        this.connection = new SubConnect(parent, vertexNo);
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.drawOffsetY = 0;
+        this.depth = 0;
 
         if (this.connection.node.y > window.innerHeight) {
             let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.drawOffsetY = distance - (distance / Param.BG2_SCROLL_RATE);
+            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
         }
     }
 
@@ -264,7 +264,6 @@ export class Bg2PointNode extends PointNode
         this.y = v.y + this.offsetY;
     }
 
-
     /**
      * 描画
      *
@@ -278,5 +277,16 @@ export class Bg2PointNode extends PointNode
         ctx.fillStyle = "rgba(0, 200, 0, 0.8)";
 
         super.draw(ctx, offsetX, offsetY, viewRect);
+    }
+
+    toObj()
+    {
+        return {
+            type: 'pt',
+            x: this.x,
+            y: this.y,
+            r: this.r,
+            depth: this.depth,
+        };
     }
 }

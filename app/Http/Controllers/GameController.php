@@ -4,21 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Enums\Rating;
 use App\Models\GameFranchise;
-use App\Models\GameMainNetworkFranchise;
-use App\Models\GameMainNetworkParam;
 use App\Models\GameMaker;
 use App\Models\GameMakerPackageLink;
 use App\Models\GameMediaMix;
 use App\Models\GamePackage;
 use App\Models\GamePlatform;
-use App\Models\GameSeries;
 use App\Models\GameTitle;
 use App\Models\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -39,66 +34,7 @@ class GameController extends Controller
     {
         $json = Storage::get('public/main.json');
 
-        return $this->network(view('game.horrorgame_network', compact('json')));
-    }
-
-    /**
-     * ホラーゲームネットワーク
-     *
-     * @param Request $request
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    public function __horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
-    {
-        $mainNetworks = GameMainNetworkFranchise::whereNotNull('x')
-            ->whereNotNull('y')
-            ->get();
-        $seriesNames = GameSeries::all()->pluck('name', 'id');
-        $titleNames = GameTitle::all()->pluck('node_name', 'id');
-
-        $networks = [];
-        foreach ($mainNetworks as $mainNetwork) {
-            if ($mainNetwork->franchise->mainNetwork === null) {
-                continue;
-            }
-
-            $json = json_decode($mainNetwork->franchise->mainNetwork->json, true);
-
-            $json['parent']['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
-
-            foreach ($json['nodes'] as $key => $node) {
-                [$prefix, $id] = explode('_', $key);
-
-                if ($prefix === 'f') {
-                    $json['nodes'][$key]['html'] = $mainNetwork->franchise->name . '<br>フランチャイズ';
-                } else if ($prefix === 's') {
-                    $json['nodes'][$key]['html'] = $seriesNames[$id] . '<br>シリーズ';
-                } else if ($prefix === 't') {
-                    $json['nodes'][$key]['html'] = $titleNames[$id];
-                }
-            }
-
-            $id = "f_" . $mainNetwork->franchise->id;
-            $json['id'] = $id;
-
-            $networks[] = [
-                'id' => $mainNetwork->id,
-                'x' => $mainNetwork->x,
-                'y' => $mainNetwork->y,
-                'data' => $json,
-            ];
-        }
-
-        return $this->network(view('game.horrorgame_network', [
-            'networks' => $networks,
-            'rect' => [
-                'left' => GameMainNetworkParam::getLeft(),
-                'right' => GameMainNetworkParam::getRight(),
-                'top' => GameMainNetworkParam::getTop(),
-                'bottom' => GameMainNetworkParam::getBottom(),
-            ],
-        ]));
+        return $this->map(view('game.horrorgame_network'), $json);
     }
 
     /**
@@ -132,7 +68,7 @@ class GameController extends Controller
                 }
             });
 
-        return $this->network(view('game.maker_network', compact('makers')));
+        return $this->document(view('game.maker_network', compact('makers')));
     }
 
     /**
@@ -151,7 +87,7 @@ class GameController extends Controller
         $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
-        return $this->network(view('game.maker_detail_network', [
+        return $this->document(view('game.maker_detail_network', [
             'maker'  => $maker,
             'titles' => $titles,
             'footerLinks' => [
@@ -190,7 +126,7 @@ class GameController extends Controller
                 }
             });
 
-        return $this->network(view('game.platform_network', compact('platforms')));
+        return $this->document(view('game.platform_network', compact('platforms')));
     }
 
     /**
@@ -209,7 +145,7 @@ class GameController extends Controller
         $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
-        return $this->network(view('game.platform_detail_network', [
+        return $this->document(view('game.platform_detail_network', [
             'platform'    => $platform,
             'titles'      => $titles,
             'footerLinks' => [
@@ -281,7 +217,7 @@ class GameController extends Controller
         });
 
 
-        return $this->network(view('game.franchise_network', compact('franchises')));
+        return $this->document(view('game.franchise_network', compact('franchises')));
     }
 
     /**
@@ -305,7 +241,7 @@ class GameController extends Controller
             $titles[] = $title;
         }
 
-        return $this->network(view('game.franchise_detail_network', [
+        return $this->document(view('game.franchise_detail_network', [
             'franchise'   => $franchise,
             'titles'      => $titles,
             'footerLinks' => [
@@ -336,7 +272,7 @@ class GameController extends Controller
 
         $ratingCheck = $title->rating != Rating::None;
 
-        return $this->network(view('game.title_detail_network', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
+        return $this->document(view('game.title_detail_network', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
     }
 
     /**
@@ -361,7 +297,7 @@ class GameController extends Controller
             }
         }
 
-        return $this->network(view('game.media_mix_detail_network', [
+        return $this->document(view('game.media_mix_detail_network', [
             'mediaMix' => $mediaMix,
             'relatedNetworks' => $relatedNetworks,
         ]));

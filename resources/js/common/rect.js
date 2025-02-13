@@ -1,5 +1,3 @@
-import {Vertex} from './vertex.js';
-
 /**
  * 矩形
  */
@@ -71,7 +69,7 @@ export class Rect
     /**
      * 別のRectと重なっているか
      */
-    isOverlap(rect)
+    intersects(rect)
     {
         return this.left < rect.right && this.right > rect.left && this.top < rect.bottom && this.bottom > rect.top;
     }
@@ -161,61 +159,19 @@ export class Rect
 
         return overlapRect;
     }
-}
 
-export class ViewRect
-{
-    constructor(left = 0, right = 0, top = 0, bottom = 0)
+    /**
+     * ウィンドウの情報からViewRectとして設定
+     * 
+     * @returns {Rect}
+     */
+    setWindowViewRect()
     {
-        this.view = new Rect(left, right, top, bottom);
-        this.origin = new Rect(left, right, top, bottom);
-    }
+        this.left = window.scrollX;
+        this.right = window.scrollX + window.innerWidth;
+        this.top = window.scrollY;
+        this.bottom = window.scrollY + window.innerHeight;
 
-    setRect(left, right, top, bottom)
-    {
-        this.view.setRect(left, right, top, bottom);
-        this.origin.setRect(left, right, top, bottom);
-    }
-
-    calcSize()
-    {
-        this.view.calcSize();
-        this.origin.calcSize();
-    }
-
-    setEmpty()
-    {
-        this.view.setEmpty();
-        this.origin.setEmpty();
-    }
-
-    trimOrigin(left, right, top, bottom)
-    {
-        this.view.setRect(
-            this.origin.left + left,
-            this.origin.right - right,
-            this.origin.top + top,
-            this.origin.bottom - bottom
-        );
-    }
-
-    trimLeft(left)
-    {
-        this.view.setRect(this.origin.left + left, 0, 0, 0);
-    }
-
-    trimRight(right)
-    {
-        this.view.setRect(0, this.origin.right - right, 0, 0);
-    }
-
-    trimTop(top)
-    {
-        this.view.setRect(0, 0, this.origin.top + top, 0);
-    }
-
-    trimBottom(bottom)
-    {
-        this.view.setRect(0, 0, 0, this.origin.bottom - bottom);
+        return this;
     }
 }

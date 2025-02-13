@@ -1,6 +1,8 @@
+/*
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/
 
 :root {
     --mn-camera-x1: 0;
@@ -161,21 +163,21 @@ hr {
     z-index:-1000;
     backdrop-filter: blur(1px);
     pointer-events: none;
+    touch-action: none;
+    user-select: none;
 }
 
-#bg1, #bg2 {
+#sub-canvas {
     position: absolute;
     top:0;
     left:0;
     z-index:-1001;
     pointer-events: none;
+    touch-action: none;
+    user-select: none;
 }
 
-#bg2 {
-    z-index:-1002;
-}
-
-#bg3 {
+#bg {
     position:fixed;
     top:0;
     left:0;
@@ -438,7 +440,7 @@ hr {
 
 
 
-body#main-network {
+body.network-map {
     position: absolute;
     left: 0;
     top: 0;

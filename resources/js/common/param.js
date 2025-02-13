@@ -19,16 +19,12 @@ export class Param
     static CONNECT_TYPE_OUTGOING = 1;
     static CONNECT_TYPE_INCOMING = 2;
 
-    static IS_TOUCH_DEVICE = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
+    static IS_TOUCH_DEVICE = window ? ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) : false;
 
-    static BG2_SCROLL_RATE = 1.2;
-    static BG3_SCROLL_RATE = 20;
-    static BG3_SIZE_RATE = 4;
-
-    static BG2_MAKE_NETWORK_MODE = false;
-    static BG3_MAKE_NETWORK_MODE = false;
-
-    static BG3_OFFSET = 25;
+    static SUB_NETWORK_SCROLL_RATE = 1.2;
+    static BG_SCROLL_RATE = 20;
+    static BG_SIZE_RATE = 4;
+    static BG_OFFSET = 25;
 
     static CONTENT_NODE_NOTCH_SIZE = 70;
 
@@ -41,5 +37,5 @@ export class Param
      */
     static VIEW_RECT_MARGIN = 10;
 
-    static SHOW_DEBUG = true;
+    static SHOW_DEBUG = false;
 }

@@ -1,6 +1,6 @@
-import {Vertex} from '../vertex.js';
-import {OctaNode} from './octa-node.js';
-import {PointNode} from './point-node.js';
+import { Vertex } from '../common/vertex.js';
+import { OctaNode } from './octa-node.js';
+import { PointNode } from './point-node.js';
 
 export class OctaNodeConnect
 {
@@ -73,9 +73,9 @@ export class PointNodeConnect
 }
 
 /**
- * 背景2用のコネクション
+ * サブネットワーク用のコネクション
  */
-export class Bg2Connect
+export class SubConnect
 {
     /**
      * コンストラクタ

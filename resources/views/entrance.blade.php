@@ -19,7 +19,6 @@
                     Enter the horror game.
                 </p>
             </a>
-
             <canvas id="entrance-node-canvas"></canvas>
         </div>
     </div>

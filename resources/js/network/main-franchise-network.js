@@ -1,10 +1,10 @@
-import {Param} from './param.js';
-import {DOMNode, OctaNode} from './node/octa-node.js';
-import {LinkNode} from './node/link-node.js';
-import {PointNode} from "./node/point-node.js";
-import {Vertex} from './vertex.js';
-import {Network} from './network.js';
-import {Rect} from "./rect.js";
+import { Param } from '../common/param.js';
+import { DOMNode, OctaNode } from '../node/octa-node.js';
+import { LinkNode } from '../node/link-node.js';
+import { PointNode } from "../node/point-node.js";
+import { Vertex } from '../common/vertex.js';
+import { Network } from '../network/network.js';
+import { Rect } from "../common/rect.js";
 
 /**
  * メインネットワークに表示する1つのフランチャイズネットワーク

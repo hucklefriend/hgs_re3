@@ -1,6 +1,6 @@
-import {Param} from "./param.js";
-import {PointNode} from "./node/point-node.js";
-import {OctaNode} from "./node/octa-node.js";
+import { Param } from "./param.js";
+import { PointNode } from "../node/point-node.js";
+import { OctaNode } from "../node/octa-node.js";
 
 
 export class Util
@@ -11,17 +11,19 @@ export class Util
      * @param value1
      * @param value2
      * @param ratio
+     * @param isFloor
      * @returns {*}
      */
-    static getMidpoint(value1, value2, ratio)
+    static getMidpoint(value1, value2, ratio, isFloor = false)
     {
-        if (ratio < 0) {
-            ratio = 0;
-        } else if (ratio > 1) {
-            ratio = 1;
+        if (ratio <= 0) {
+            return value1;
+        } else if (ratio >= 1) {
+            return value2;
         }
 
-        return value1 + (value2 - value1) * ratio;
+        const midpoint = value1 + (value2 - value1) * ratio;
+        return isFloor ? Math.floor(midpoint) : midpoint;
     }
 
     /**
@@ -36,8 +38,6 @@ export class Util
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-
-
 
     /**
      * エッジ用のJSON
@@ -67,5 +67,18 @@ export class Util
         });
 
         return arr;
+    }
+
+    /**
+     * エッジの描画スタイルをセット
+     * 
+     * @param ctx
+     */
+    static setEdgeStyle(ctx)
+    {
+        ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        ctx.lineWidth = 1; // 線の太さ
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 5; // 影のぼかし効果
     }
 }

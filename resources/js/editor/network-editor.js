@@ -1,7 +1,7 @@
 import {EditNode, EditPointNode} from './hgn/node/edit-node.js';
-import {Param} from './hgn/param.js';
-import {Util} from "./hgn/util.js";
-import {Vertex} from "./hgn/vertex.js";
+import {Param} from '../common/param.js';
+import {Util} from "../common/util.js";
+import {Vertex} from "../common/vertex.js";
 
 /**
  * ネットワークエディタ

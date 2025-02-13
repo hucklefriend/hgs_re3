@@ -1,7 +1,7 @@
-import {Vertex} from "./hgn/vertex.js";
-import {Rect} from "./hgn/rect.js";
-import {EditNetwork} from "./hgn/edit-network.js";
-import {Util} from "./hgn/util.js";
+import {Vertex} from "../common/vertex.js";
+import {Rect} from "../common/rect.js";
+import {EditNetwork} from "../hgn/edit-network.js";
+import {Util} from "../common/util.js";
 import LZString from 'lz-string';
 
 /**

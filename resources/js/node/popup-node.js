@@ -1,6 +1,5 @@
-import {DOMNode} from './octa-node.js';
-import {LinkNode} from './link-node.js';
-import {HorrorGameNetwork} from '../../hgn.js';
+import { DOMNode } from './octa-node.js';
+import { LinkNode } from './link-node.js';
 
 /**
  * ポップアップノードへのリンクノード
@@ -60,9 +59,6 @@ export class PopupNode extends DOMNode
 
         this.state = PopupNode.STATE_CLOSED;
 
-        this.canvas = this.DOM.querySelector('.popup-node-canvas');
-        this.ctx = this.canvas.getContext('2d');
-
         this.DOM = DOM;
 
         document.querySelectorAll('.popup-node-close').forEach((close) => {
@@ -102,9 +98,6 @@ export class PopupNode extends DOMNode
     {
         const height = this.DOM.offsetHeight;//this.bodyDOM.offsetHeight + Param.CONTENT_NODE_NOTCH_SIZE * 2;
         super.reload(0, 0, this.DOM.offsetWidth, height);
-
-        this.canvas.width = this.DOM.offsetWidth;
-        this.canvas.height = height;
     }
 
     /**

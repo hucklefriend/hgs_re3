@@ -1,17 +1,15 @@
-import './bootstrap';
-import './hgn.js';
-import {MainFranchiseNetwork} from './hgn/main-franchise-network.js';
-import {Param} from './hgn/param.js';
-import {Util} from "./hgn/util.js";
-import {Vertex} from "./hgn/vertex.js";
-import {Rect, ViewRect} from "./hgn/rect.js";
-import {DOMNode} from "./hgn/node/octa-node.js";
+import { MainFranchiseNetwork } from '../network/main-franchise-network.js';
+import { Param } from '../common/param.js';
+import { Util } from "../common/util.js";
+import { Vertex } from "../common/vertex.js";
+import { Rect } from "../common/rect.js";
+import { DOMNode } from "../node/octa-node.js";
 import LZString from 'lz-string';
 
 /**
- * メインネットワーク
+ * マップビューア
  */
-export class MainNetwork
+export class MapViewer
 {
     /**
      * コンストラクタ
@@ -459,5 +457,3 @@ export class MainNetwork
         this.debugDOM.innerHTML = html;
     }
 }
-
-window.mainNetwork = new MainNetwork();

@@ -1,10 +1,10 @@
 import {Network} from './network.js';
-import {Param} from './param.js';
+import {Param} from '../common/param.js';
 import {OctaNode, DOMNode} from "./node/octa-node.js";
 import {EditNetworkNode, EditNetworkPointNode} from "./node/edit-network-node.js";
 import {PointNode} from "./node/point-node.js";
-import {Vertex} from "./vertex.js";
-import {Util} from "./util.js";
+import {Vertex} from "../common/vertex.js";
+import {Util} from "../common/util.js";
 
 
 /**

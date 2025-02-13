@@ -1,145 +1,15 @@
-import {Vertex} from '../vertex.js';
-import {Param} from '../param.js';
-import {Network} from '../network.js';
-import {DOMNode, OctaNode} from './octa-node.js';
-import {LinkNode} from './link-node.js';
-import {HorrorGameNetwork} from '../../hgn.js';
+import { HorrorGameNetwork } from '../horror-game-network.js';
+import { ContentLinkNode, ContentNode } from '../node/content-node.js';
+import { Param } from '../common/param.js';
+/**
+ * @type {HorrorGameNetwork}
+ */
+window.hgn;
 
 /**
- * コンテンツノードへのリンクノード
+ * コンテンツビューア
  */
-export class ContentLinkNode extends LinkNode
-{
-    static STATE_CLOSED = 0;
-    static STATE_OPENED = 1;
-
-    /**
-     * コンストラクタ
-     *
-     * @param id
-     * @param x
-     * @param y
-     * @param DOM
-     */
-    constructor(id, x, y, DOM)
-    {
-        super(id, x, y, DOM);
-
-        this.state = ContentLinkNode.STATE_CLOSED;
-        this.openScrollY = 0;
-
-        this.url = null;
-        const a = this.DOM.querySelector('a');
-        if (a) {
-            this.url = a.getAttribute('href');
-            // aのクリックイベントを無効化
-            a.addEventListener('click', (e) => e.preventDefault());
-        }
-
-        this.id = DOM.getAttribute('id');
-
-        this.isAnimation = false;
-        this.isHide = false;
-        this.originalVertices = [...this.vertices];
-        this.animationFrame = 0;
-    }
-
-    /**
-     * マウスクリック
-     */
-    mouseClick()
-    {
-        if (this.url) {
-            HorrorGameNetwork.getInstance()
-                .openContentNode(this.url, this.id, false);
-        }
-    }
-
-    /**
-     * アニメーション開始
-     */
-    startAnimation()
-    {
-        this.isAnimation = true;
-    }
-
-    /**
-     * アニメーション
-     *
-     * @param contentNode
-     * @param frameCnt
-     */
-    animation(contentNode, frameCnt)
-    {
-        const hgn = HorrorGameNetwork.getInstance();
-        let rect = contentNode.DOM.getBoundingClientRect();
-        let rate = frameCnt / 10;
-
-        for (let i = 0; i < 8; i++) {
-            let cx = hgn.getScrollX() + contentNode.vertices[i].x + rect.left;
-            let cy = hgn.getScrollY() + contentNode.vertices[i].y;
-
-            this.vertices[i] = new Vertex(
-                Math.ceil(this.originalVertices[i].x + ((cx - this.originalVertices[i].x) * rate)),
-                Math.ceil(this.originalVertices[i].y + ((cy - this.originalVertices[i].y) * rate))
-            );
-        }
-    }
-
-    /**
-     * アニメーション終了
-     */
-    endAnimation()
-    {
-        this.isAnimation = false;
-        this.animationFrame = 0;
-    }
-
-    /**
-     * 表示を消す
-     */
-    hide()
-    {
-        this.DOM.style.visibility = 'hidden';
-        this.isHide = true;
-    }
-
-    /**
-     * 表示する
-     */
-    show()
-    {
-        this.DOM.style.visibility = 'visible';
-        this.isHide = false;
-    }
-
-    /**
-     * 再配置
-     */
-    reload()
-    {
-        if (!this.isAnimation) {
-            super.reload();
-        }
-    }
-
-    /**
-     * 描画
-     *
-     * @param ctx
-     */
-    draw(ctx)
-    {
-        if (!this.isHide || this.isAnimation) {
-            super.draw(ctx, this.isAnimation ? 'rgba(0,0,0,0.5)' : 'black');
-        }
-    }
-}
-
-/**
- * コンテンツノード
- */
-export class ContentNode extends OctaNode
+export class ContentViewer
 {
     static STATE_CLOSED = 0;
     static STATE_OPENED = 1;
@@ -152,24 +22,29 @@ export class ContentNode extends OctaNode
 
     /**
      * コンストラクタ
-     *
-     * @param DOM
      */
-    constructor(DOM)
+    constructor()
     {
-        // この時点では正しく作成しない
-        super(0, 0, 0, 0, Param.CONTENT_NODE_NOTCH_SIZE);
+        this.node = new ContentNode();
 
-        this.state = ContentNode.STATE_CLOSED;
+        this.state = ContentViewer.STATE_CLOSED;
 
         this.canvas = document.querySelector('#content-node-canvas');
         this.ctx = this.canvas.getContext('2d');
 
-        this.DOM = DOM;
+        // あらかじめ線のスタイルを設定
+        this.ctx.lineWidth = 3; // 線の太さ
+        this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        this.ctx.lineCap = "round"; // 線の末端のスタイル
+        this.ctx.shadowBlur = 5; // 影のぼかし効果
+
+        this.DOM = document.querySelector('#content-node');
         this.containerDOM = this.DOM.querySelector('#content-node-container');
         this.titleDOM = this.DOM.querySelector('#content-node-title');
         this.bodyDOM = this.DOM.querySelector('#content-node-body');
         this.blurDOM = document.querySelector('#content-node-blur');
+
+        this.node = new ContentNode(this.DOM);
 
         document.querySelectorAll('.content-node-close').forEach((close) => {
             close.addEventListener('click', () => {
@@ -180,7 +55,7 @@ export class ContentNode extends OctaNode
         this.historyUrl = null;
         this.historyState = null;
 
-        this.mode = ContentNode.MODE_NORMAL;
+        this.mode = ContentViewer.MODE_NORMAL;
         this.linkNode = null;
         this.animationFrame = 0;
 
@@ -195,12 +70,15 @@ export class ContentNode extends OctaNode
      */
     delete()
     {
-        super.delete();
+        this.node.delete();
+        this.node = null;
         this.canvas = null;
         this.ctx = null;
         this.DOM = null;
         this.titleDOM = null;
         this.bodyDOM = null;
+        this.dataChache = null;
+        this.linkNode = null;
     }
 
     /**
@@ -208,7 +86,7 @@ export class ContentNode extends OctaNode
      */
     reload()
     {
-        super.reload(3, 3, this.containerDOM.offsetWidth - 6, this.containerDOM.offsetHeight - 6);
+        this.node.reload(3, 3, this.containerDOM.offsetWidth - 6, this.containerDOM.offsetHeight - 6);
 
         this.canvas.width = this.containerDOM.offsetWidth;
         this.canvas.height = this.containerDOM.offsetHeight;
@@ -221,7 +99,7 @@ export class ContentNode extends OctaNode
      */
     isClosed()
     {
-        return this.state === ContentNode.STATE_CLOSED;
+        return this.state === ContentViewer.STATE_CLOSED;
     }
 
     /**
@@ -231,7 +109,7 @@ export class ContentNode extends OctaNode
      */
     isOpened()
     {
-        return this.state === ContentNode.STATE_OPENED;
+        return this.state === ContentViewer.STATE_OPENED;
     }
 
     /**
@@ -244,12 +122,12 @@ export class ContentNode extends OctaNode
         this.reload();
         this.setOctagon();
         this.linkNode = linkNode;
-        this.state = ContentNode.STATE_OPENING;
+        this.state = ContentViewer.STATE_OPENING;
         this.openScrollY = window.scrollY;
-        this.mode = ContentNode.MODE_NORMAL;
+        this.mode = ContentViewer.MODE_NORMAL;
         this.prevTitle = document.title;
 
-        HorrorGameNetwork.getInstance().setContainerScrollMode(0, this.openScrollY);
+        window.hgn.setContainerScrollMode(0, this.openScrollY);
 
         this.animationFrame = 0;
         if (this.linkNode !== null) {
@@ -278,25 +156,21 @@ export class ContentNode extends OctaNode
     {
         if (this.linkNode === null) {
             // リンクノードがないなら一気にオープン
-            this.state = ContentNode.STATE_OPENED;
+            this.state = ContentViewer.STATE_OPENED;
             this.DOM.classList.remove('content-node-hide');
             this.blurDOM.style.display = 'block';
-            return true;
         } else {
             this.animationFrame++;
 
             if (this.animationFrame <= 9) {
                 this.linkNode.animation(this, this.animationFrame);
             } else {
-                this.state = ContentNode.STATE_OPENED;
+                this.state = ContentViewer.STATE_OPENED;
                 this.linkNode.endAnimation();
                 this.linkNode.hide();
                 this.DOM.classList.remove('content-node-hide');
                 this.blurDOM.style.display = 'block';
-                return true;
             }
-
-            return false;
         }
     }
 
@@ -305,14 +179,10 @@ export class ContentNode extends OctaNode
      */
     close(isPopState = false)
     {
-        this.state = ContentNode.STATE_CLOSING;
+        this.state = ContentViewer.STATE_CLOSING;
         this.blurDOM.style.display = 'none';
         this.titleDOM.innerHTML = '';
         this.bodyDOM.innerHTML = '';
-
-        // こうやっとけばメモリ節約になるかな？
-        this.canvas.width = 1;
-        this.canvas.height = 1;
 
         if (!isPopState) {
             if (this.historyUrl) {
@@ -348,21 +218,17 @@ export class ContentNode extends OctaNode
             // 縮小アニメーション
             this.linkNode.animation(this, this.animationFrame);
         } else {
-            this.state = ContentNode.STATE_CLOSED;
+            this.state = ContentViewer.STATE_CLOSED;
             if (this.linkNode !== null) {
                 this.linkNode.endAnimation();
                 this.linkNode.setOctagon();
                 this.linkNode.show();
             }
 
-            HorrorGameNetwork.getInstance().setBodyScrollMode(0, this.openScrollY);
+            window.hgn.setBodyScrollMode(0, this.openScrollY);
             this.DOM.classList.add('content-node-closed');
             this.DOM.classList.remove('content-node-opened');
-
-            return true;
         }
-
-        return false;
     }
 
     /**
@@ -370,20 +236,13 @@ export class ContentNode extends OctaNode
      */
     update()
     {
-        const hgn = HorrorGameNetwork.getInstance();
-        let isDraw = false;
-
-        if (this.state === ContentNode.STATE_OPENED) {
-            isDraw = this.changeSize();
-        }
-
-        if (this.state === ContentNode.STATE_OPENING) {
+        if (this.state === ContentViewer.STATE_OPENING) {
             isDraw = this.opening();
-            hgn.setRedraw();
-        } else if (this.state === ContentNode.STATE_CLOSING) {
+            window.hgn.setDrawMain();
+        } else if (this.state === ContentViewer.STATE_CLOSING) {
             this.closing();
-            hgn.setRedraw();
-        } else if (this.state === ContentNode.STATE_OPENED) {
+            window.hgn.setDrawMain();
+        } else if (this.state === ContentViewer.STATE_OPENED) {
             if (this.dataChache !== null) {
                 if (this.dataChache.hasOwnProperty('mode')) {
                     this.mode = this.dataChache.mode;
@@ -395,38 +254,32 @@ export class ContentNode extends OctaNode
                 this.dataChache = null;
             }
         }
-
-        if (isDraw) {
-            this.draw();
-        }
     }
 
     /**
      * ウィンドウサイズの変更
      */
-    changeSize()
+    resize()
     {
-        if (this.isClosed()) {
-            return false;
+        if (this.isOpened()) {
+            this.reload();
+            this.drawFrame();
         }
-
-        this.reload();
-
-        return true;
     }
 
     /**
-     * 描画
+     * フレームを描画
+     * フレームはアニメーションしないので、update外でも呼び出される
      */
-    draw()
+    drawFrame()
     {
         super.setShapePath(this.ctx, 0, 0);
 
         // Set line color
-        if (this.mode === ContentNode.MODE_ERROR) {
+        if (this.mode === ContentViewer.MODE_ERROR) {
             this.ctx.strokeStyle = "rgba(180, 0, 0, 0.8)"; // 線の色と透明度
             this.ctx.shadowColor = "red"; // 影の色
-        } else if (this.mode === ContentNode.MODE_WARNING) {
+        } else if (this.mode === ContentViewer.MODE_WARNING) {
             this.ctx.strokeStyle = "rgba(180, 180, 0, 0.8)";
             this.ctx.shadowColor = "yellow"; // 影の色
         } else {
@@ -434,13 +287,7 @@ export class ContentNode extends OctaNode
             this.ctx.shadowColor = "lime"; // 影の色
         }
 
-        this.ctx.lineWidth = 3; // 線の太さ
-        this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        this.ctx.lineCap = "round"; // 線の末端のスタイル
-        this.ctx.shadowBlur = 5; // 影のぼかし効果
         this.ctx.stroke();
-
-        return true;
     }
 
     /**
