@@ -301,10 +301,7 @@ export class HorrorGameNetwork
             clearTimeout(this.scrollTimer);
         }
 
-        this.scrollTimer = setTimeout(() => {
-            this.scrollTimer = null;
-            this.drawSub();
-        }, 20);
+        this.drawSub();
     }
 
     /**

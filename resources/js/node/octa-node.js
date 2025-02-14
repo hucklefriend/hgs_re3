@@ -1,7 +1,7 @@
 import { Vertex } from '../common/vertex.js';
 import { Rect } from '../common/rect.js';
 import { Param } from '../common/param.js';
-import { PointNode } from './point-node.js';
+import { PointNode, SubPointNode } from './point-node.js';
 import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
 import { Util } from "../common/util.js";
 import { SubNetwork } from "../network/sub-network.js";
@@ -505,90 +505,6 @@ export class OctaNode
                 this.vertices[7].toObj(),
             ],
         };
-    }
-}
-
-/**
- * サブネットワーク用の八角形ノード
- */
-export class SubOctaNode extends OctaNode
-{
-    /**
-     * コンストラクタ
-     *
-     * @param parent
-     * @param vertexNo
-     * @param offsetX
-     * @param offsetY
-     * @param w
-     * @param h
-     * @param notchSize
-     * @param nearVertexNo
-     */
-    constructor(parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
-    {
-        let x = parent.x;
-        let y = parent.y;
-        if (parent instanceof OctaNode) {
-            x = parent.vertices[vertexNo].x;
-            y = parent.vertices[vertexNo].y;
-        }
-
-        super(x + offsetX, y + offsetY, w, h, notchSize);
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-
-        if (nearVertexNo === null) {
-            nearVertexNo = this.getNearVertexNo(parent);
-        }
-        this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
-        this.drawOffsetY = 0;
-
-        if (this.connection.node.y > window.innerHeight) {
-            let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
-        }
-
-        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
-            this.setOctagon();
-        }
-
-        this.depth = 0;
-    }
-
-    /**
-     * 削除
-     * ガベージコレクションに任せる
-     */
-    delete()
-    {
-        super.delete();
-        this.connection.delete();
-        this.connection = null;
-    }
-
-    /**
-     * 再ロード（再配置）
-     */
-    reload()
-    {
-        super.reload(this.connection.getVertex().x + this.offsetX,
-            this.connection.getVertex().y + this.offsetY, this.w, this.h);
-    }
-
-    /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     * @param {Rect|null}viewRect
-     */
-    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
-    {
-        // ctx.fillStyleを未設定にする
-        ctx.fillStyle = "rgba(0, 0, 0, 0)";
-        super.draw(ctx, offsetX, offsetY, viewRect);
     }
 }
 
@@ -1154,5 +1070,117 @@ export class TextNode extends DOMNode
             this.alpha = 0.0;
             this.animFunc = null;
         }
+    }
+}
+
+/**
+ * サブネットワーク用の八角形ノード
+ */
+export class SubOctaNode extends OctaNode
+{
+    /**
+     * コンストラクタ
+     *
+     * @param no
+     * @param parent
+     * @param vertexNo
+     * @param offsetX
+     * @param offsetY
+     * @param w
+     * @param h
+     * @param notchSize
+     * @param nearVertexNo
+     */
+    constructor(no, parent, vertexNo, offsetX, offsetY, w, h, notchSize, nearVertexNo)
+    {
+        let x = parent.x;
+        let y = parent.y;
+        if (parent instanceof OctaNode) {
+            x = parent.vertices[vertexNo].x;
+            y = parent.vertices[vertexNo].y;
+        }
+
+        super(x + offsetX, y + offsetY, w, h, notchSize);
+
+        this.no = no;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+
+        if (nearVertexNo === null) {
+            nearVertexNo = this.getNearVertexNo(parent);
+        }
+        this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
+        this.drawOffsetY = 0;
+
+        if (this.connection.node.y > window.innerHeight) {
+            let distance = this.connection.node.y - (window.innerHeight / 2);
+            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
+        }
+
+        if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
+            this.setOctagon();
+        }
+
+        this.depth = 0;
+    }
+
+    /**
+     * 削除
+     * ガベージコレクションに任せる
+     */
+    delete()
+    {
+        super.delete();
+        this.connection.delete();
+        this.connection = null;
+    }
+
+    /**
+     * 再ロード（再配置）
+     */
+    reload()
+    {
+        super.reload(this.connection.getVertex().x + this.offsetX,
+            this.connection.getVertex().y + this.offsetY, this.w, this.h);
+    }
+
+    /**
+     * 描画
+     *
+     * @param ctx
+     * @param offsetX
+     * @param offsetY
+     * @param {Rect|null}viewRect
+     */
+    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
+    {
+        // ctx.fillStyleを未設定にする
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+        super.draw(ctx, offsetX, offsetY, viewRect);
+    }
+
+    /**
+     * verticesのオブジェクトに変換
+     */
+    toObj()
+    {
+        let obj = super.toObj();
+        obj.no = this.no;
+        let connects = [];
+
+        this.connects.forEach((connect, vertexNo) => {
+            if (connect !== null && connect.type === Param.CONNECT_TYPE_INCOMING) {
+                let no = -1;
+                if (connect.node instanceof SubOctaNode || connect.node instanceof SubPointNode) {
+                    no = connect.node.no;
+                }
+
+                connects.push([vertexNo, no, connect.vertexNo]);
+            }
+        });
+
+        obj.connects = connects;
+
+        return obj;
     }
 }

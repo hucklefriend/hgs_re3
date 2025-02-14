@@ -8,7 +8,6 @@ import { Head1Node, Head2Node, Head3Node } from '../node/head-node.js';
 import { PopupLinkNode } from '../node/popup-node.js';
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
-import { Vertex } from '../common/vertex.js';
 import { HR } from './hr.js';
 import { Rect } from '../common/rect.js';
 /**

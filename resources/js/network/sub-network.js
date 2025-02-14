@@ -1,5 +1,5 @@
 import { OctaNode, SubOctaNode } from '../node/octa-node.js';
-import { Param} from '../common/param.js';
+import { Param } from '../common/param.js';
 import { SubPointNode } from "../node/point-node.js";
 import { Network } from './network.js';
 
@@ -66,7 +66,7 @@ export class SubNetwork extends Network
         }
 
         let depth = this.getDepth(baseNode);
-        let newNode = new SubOctaNode(baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
+        let newNode = new SubOctaNode(myNo, baseNode, vertexNo, offsetX, offsetY, w, h, n, newNodeVertexNo);
         newNode.depth = depth;
         this.nodes[myNo] = newNode;
         this.addNodeConnection(baseNode, newNode, vertexNo, newNodeVertexNo);
@@ -93,7 +93,7 @@ export class SubNetwork extends Network
         }
 
         let depth = this.getDepth(baseNode);
-        let newNode = new SubPointNode(baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
+        let newNode = new SubPointNode(myNo, baseNode, vertexNo, offsetX, offsetY, r, newNodeClass);
         newNode.depth = depth;
         this.nodes[myNo] = newNode;
         this.addNodeConnection(baseNode, newNode, vertexNo);
@@ -263,6 +263,7 @@ export class SubNetwork extends Network
     toObj()
     {
         let nodes = {};
+        let connects = {};
         this.nodes.forEach((node, i) => {
             nodes[i] = node.toObj();
         });

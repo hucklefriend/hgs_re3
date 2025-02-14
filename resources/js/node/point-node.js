@@ -1,6 +1,6 @@
 import { Param } from '../common/param.js';
 import { Vertex } from '../common/vertex.js';
-import { OctaNode } from './octa-node.js';
+import { OctaNode, SubOctaNode } from './octa-node.js';
 import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
 
 /**
@@ -221,8 +221,9 @@ export class SubPointNode extends PointNode
      * @param offsetY
      * @param r
      */
-    constructor(parent, vertexNo, offsetX, offsetY, r)
+    constructor(no, parent, vertexNo, offsetX, offsetY, r)
     {
+
         let x = parent.x;
         let y = parent.y;
         if (parent instanceof OctaNode) {
@@ -231,6 +232,8 @@ export class SubPointNode extends PointNode
         }
 
         super(x + offsetX, y + offsetY, r);
+
+        this.no = no;
         this.connection = new SubConnect(parent, vertexNo);
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -281,12 +284,25 @@ export class SubPointNode extends PointNode
 
     toObj()
     {
+        let connects = [];
+        this.connects.forEach(connect => {
+            if (connect !== null && connect.type === Param.CONNECT_TYPE_INCOMING) {
+                let no = -1;
+                if (connect.node instanceof SubOctaNode || connect.node instanceof SubPointNode) {
+                    no = connect.node.no;
+                }
+
+                connects.push([no, connect.vertexNo]);
+            }
+        });
+
         return {
             type: 'pt',
             x: this.x,
             y: this.y,
             r: this.r,
             depth: this.depth,
+            connects: connects,
         };
     }
 }
