@@ -129,8 +129,7 @@ export class EntranceNode extends LinkNode
         network.addOctaNode(604, null, 608, -120, 10, 25);
 
         this.subNetwork = network;
-
-        window.hgn.addSubNetwork(network);
+        this.subNetwork.postAdd();
     }
 
     /**
@@ -251,7 +250,6 @@ export class EntranceNode extends LinkNode
         window.hgn.setRedrawMain();
     }
 
-
     /**
      * 描画
      *
@@ -290,11 +288,6 @@ export class EntranceNode extends LinkNode
 
         ctx.fillStyle = "black";
         ctx.fill();
-    }
-
-    drawSub(ctx, offsetX = 0, offsetY = 0)
-    {
-        this.subNetwork.draw(ctx, offsetX, offsetY);
     }
 
     /**
@@ -357,16 +350,22 @@ export class EntranceNode extends LinkNode
         window.hgn.setDrawMain();
     }
 
+    /**
+     * サブネットワークの出現アニメーション
+     */
     appearAnimation2()
     {
-        let ratio = (window.hgn.animationEraseTime - 330) / 1000;
-        let depth = Util.getMidpoint(0, 5, ratio);
-        this.subNetwork.maxDrawDepth = depth;
-        if (this.subNetwork.maxDepth === depth) {
-            this.animFunc = null;
+        let ratio = (window.hgn.animationEraseTime - 330) / 300;
+        let depth = Util.getMidpoint(1, 6, ratio, true);
+        
+        if (this.subNetwork.maxDrawDepth !== depth) {
+            this.subNetwork.setMaxDrawDepth(depth);
+            window.hgn.setDrawSub();
         }
 
-        window.hgn.setDrawSub();
+        if (this.subNetwork.maxDrawDepth === this.subNetwork.maxDepth) {
+            this.animFunc = null;
+        }
     }
 
     /**
@@ -399,12 +398,13 @@ export class EntranceNode extends LinkNode
         }
 
         let depth = Math.ceil(this.animCnt2 / 5);
-        if (depth > this.subNetwork.maxDepth) {
+        if (depth > this.subNetwork.maxDrawDepth) {
             this.subNetwork.setDrawDepth(0, 0);
             this.animFunc = null;
         } else {
             this.subNetwork.minDrawDepth = depth;
         }
+        
         window.hgn.setDrawSub();
     }
 

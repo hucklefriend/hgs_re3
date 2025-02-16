@@ -165,16 +165,30 @@ export class SubNetwork extends Network
         // 上限や下限を超えたかのチェックはしない
         this.minDrawDepth = min;
         this.maxDrawDepth = max;
+
+        this.postSetDrawDepth();
     }
 
     /**
-     * 秒化するかどうかを深さから判定
+     * 描画する最小深さを設定
      *
-     * @returns {boolean}
+     * @param min
      */
-    isNotDraw()
+    setMinDrawDepth(min)
     {
-        return this.minDrawDepth === 0 && this.maxDrawDepth === 0;
+        this.minDrawDepth = min;
+        this.postSetDrawDepth();
+    }
+
+    /**
+     * 描画する最大深さを設定
+     *
+     * @param max
+     */
+    setMaxDrawDepth(max)
+    {
+        this.maxDrawDepth = max;
+        this.postSetDrawDepth();
     }
 
     /**
@@ -191,89 +205,59 @@ export class SubNetwork extends Network
     }
 
     /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * サブネットワークワーカーへネットワーク登録をポスト
      */
-    draw(ctx, offsetX, offsetY)
+    postAdd()
     {
-        if (this.isNotDraw()) {
-            return;
-        }
+        let nodes = {};
+        this.nodes.forEach((node, no) => {
+            nodes[no] = node.toObj();
+        });
 
-        this.drawEdge(ctx, this.parentNode, 0, 0, offsetX, offsetY);
+        // サブネットワークワーカーへデータを転送
+        window.hgn.postMessageToSubNetworkWorker({
+            type: 'add-network',
+            subNetwork: {
+                id: this.parentNode.id,
+                parent: this.parentNode.toObj(),
+                minDrawDepth: this.minDrawDepth,
+                maxDrawDepth: this.maxDrawDepth,
+                nodes: nodes
+            }
+        });
+    }
+    
+    /**
+     * サブネットワークワーカーへノードの配置情報更新をポスト
+     */
+    postSetNodePos()
+    {
+        let nodes = {};
+        this.nodes.forEach((node, no) => {
+            nodes[no] = node.toPosObj();
+        });
 
-        this.nodes.forEach((node, i) => {
-            if (this.minDrawDepth <= node.depth && node.depth <= this.maxDrawDepth) {
-                let offsetY1 = offsetY - node.drawOffsetY;
-                this.drawEdge(ctx, node, offsetX, offsetY1, offsetX, offsetY);
-
-                node.draw(ctx, offsetX, offsetY1);
+        // サブネットワークワーカーへ更新データを転送
+        window.hgn.postMessageToSubNetworkWorker({
+            type: 'set-node-pos',
+            subNetwork: {
+                id: this.parentNode.id,
+                parent: this.parentNode.toPosObj(),
+                nodes: nodes
             }
         });
     }
 
     /**
-     * エッジの描画
-     *
-     * @param ctx
-     * @param node
-     * @param offsetX1
-     * @param offsetY1
-     * @param offsetX2
-     * @param offsetY2
+     * サブネットワークワーカーへ描画深さの更新をポスト
      */
-    drawEdge(ctx, node, offsetX1, offsetY1, offsetX2, offsetY2)
+    postSetDrawDepth()
     {
-        const maxY = window.hgn.getScrollY() + window.innerHeight;
-        node.connects.forEach((connect, vertexNo) => {
-            if (connect !== null && connect.type === Param.CONNECT_TYPE_OUTGOING) {
-                if (this.minDrawDepth <= connect.node.depth && connect.node.depth <= this.maxDrawDepth) {
-                    let targetVertex = connect.getVertex();
-
-                    let x = node.x;
-                    let y = node.y;
-                    if (node instanceof OctaNode) {
-                        x = node.vertices[vertexNo].x;
-                        y = node.vertices[vertexNo].y;
-                    }
-
-                    let drawOffsetY2 = connect.node.drawOffsetY;
-                    const drawY1 = y + offsetY1;
-                    const drawY2 = targetVertex.y + offsetY2 - drawOffsetY2;
-
-                    if (drawY1 < window.hgn.getScrollY() && drawY2 < window.hgn.getScrollY()) {
-                        return;
-                    }
-                    if (drawY1 > maxY && drawY2 > maxY) {
-                        return;
-                    }
-
-                    ctx.beginPath();
-                    ctx.moveTo(x + offsetX1, drawY1);
-                    ctx.lineTo(targetVertex.x + offsetX2, drawY2);
-                    ctx.stroke();
-                }
-            }
-        });
-    }
-
-    toObj()
-    {
-        let nodes = {};
-        let connects = {};
-        this.nodes.forEach((node, i) => {
-            nodes[i] = node.toObj();
-        });
-
-        return {
+        window.hgn.postMessageToSubNetworkWorker({
+            type: 'set-draw-depth', 
             id: this.parentNode.id,
-            parent: this.parentNode.toObj(),
-            minDrawDepth: this.minDrawDepth,
-            maxDrawDepth: 9,//this.maxDrawDepth,
-            nodes: nodes
-        };
+            min: this.minDrawDepth,
+            max: this.maxDrawDepth
+        });
     }
 }

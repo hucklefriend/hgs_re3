@@ -62,20 +62,14 @@ export class HorrorGameNetwork
         this.isDrawMain = false;    // 次の更新でメインを再描画するフラグ
         
         // サブネットワークのワーカー
-
-        //this.subNetworkWorker = new Worker(new URL('./viewer/sub-network-worker.js', import.meta.url), { type: 'module' });
         const workerUrl = import.meta.env.DEV
-            ? '/vite/resources/js/viewer/sub-network-worker.js' // Apache のリバースプロキシ経由
-            : new URL('./viewer/sub-network-worker.js', import.meta.url);              // 本番時のビルド成果物のパス（例）
+            ? '/vite/resources/js/viewer/sub-network-worker.js'             // 開発用
+            : new URL('./viewer/sub-network-worker.js', import.meta.url);   // 本番用
         const worker = new Worker(workerUrl, { type: 'module' });
         this.subNetworkWorker = worker;
-
-        this.subCanvas = document.querySelector('#sub-canvas');
-        const subCanvasOffscreen = this.subCanvas.transferControlToOffscreen();
+        const subCanvas = document.querySelector('#sub-canvas');
+        const subCanvasOffscreen = subCanvas.transferControlToOffscreen();
         this.subNetworkWorker.postMessage({ type: 'init', canvas: subCanvasOffscreen }, [subCanvasOffscreen]);
-        console.log(this.subNetworkWorker);
-
-        this.isDrawSub = false;     // 次の更新でサブを再描画するフラグ
 
         window.addEventListener('popstate', (e) => {
             this.popState(e);
@@ -182,29 +176,14 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブネットワークをサブネットワークワーカーへ転送
+     * サブネットワークワーカーにメッセージを送信
+     * 
+     * @param {Object} obj
      */
-    addSubNetwork(subNetwork)
+    postMessageToSubNetworkWorker(obj)
     {
-        this.subNetworkWorker.postMessage({ type: 'add-network', subNetwork: subNetwork.toObj() });
+        this.subNetworkWorker.postMessage(obj);
     }
-
-    // initRenderWorker()
-    // {
-    //     const worker = new Worker('./offscreen-renderer.js', { type: 'module' });
-
-    //     // OffscreenCanvasをtransfer
-    //     const offscreen = this.mainCanvas.transferControlToOffscreen();
-    //     worker.postMessage({ canvas: offscreen }, [offscreen]);
-
-    //     // Workerから描画要求があればメインスレッドで何か処理をする例
-    //     worker.onmessage = (e) => {
-    //         if (e.data === 'draw-sub') {
-    //             // サブキャンバスの描画など必要なら行う
-    //             this.viewer.drawSub(this.subCtx);
-    //         }
-    //     };
-    // }
 
     /**
      * 特定のカウントから数えなおしたカウントを取得
@@ -232,11 +211,6 @@ export class HorrorGameNetwork
         this.contentViewer.update();
 
         this.viewer.update();
-
-        if (this.isDrawSub) {
-            this.drawSub();
-            this.isDrawSub = false;
-        }
 
         if (this.isDrawMain) {
             this.draw();
@@ -287,7 +261,7 @@ export class HorrorGameNetwork
             this.offscreenCanvas.height = this.body.offsetHeight;
         }
 
-        this.subNetworkWorker.postMessage({ type: 'resize', width: this.body.offsetWidth, height: this.body.offsetHeight });
+        this.postMessageToSubNetworkWorker({ type: 'resize', width: this.body.offsetWidth, height: this.body.offsetHeight });
     }
 
     /**
@@ -301,7 +275,7 @@ export class HorrorGameNetwork
             clearTimeout(this.scrollTimer);
         }
 
-        this.drawSub();
+        this.setDrawSub();
     }
 
     /**
@@ -327,16 +301,7 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブの描画
-     */
-    drawSub()
-    {
-        //this.viewer.drawSub(this.subCtx);
-        this.subNetworkWorker.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
-    }
-
-    /**
-     * メイン・サブ両方の描画フラグの設定
+     * メイン・サブ両方の描画の設定
      */
     setDraw()
     {
@@ -353,21 +318,16 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブ描画フラグの設定
+     * サブ描画をサブネットワークワーカーへ転送
      */
     setDrawSub()
     {
-        this.isDrawSub = true;
+        this.postMessageToSubNetworkWorker({ type: 'draw', viewRect: this.viewer.viewRect });
     }
 
     clearMainCtxRect()
     {
         this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
-    }
-
-    clearSubCtxRect()
-    {
-        this.subCtx.clearRect(0, 0, this.subCanvas.width, this.subCanvas.height);
     }
 
     /**

@@ -405,25 +405,38 @@ export class DocumentViewer
      */
     update()
     {
-        switch (this.animationMode) {
-            case DocumentViewer.ANIMATION_MODE_APPEAR:
-                this.appearAnimation();
-                break;
-            case DocumentViewer.ANIMATION_MODE_DISAPPEAR:
-                this.disappearAnimation();
-                break;
-            case DocumentViewer.ANIMATION_MODE_NONE:
-                if (this.isWaitDisappear) {
-                    this.isWaitDisappear = false;
-                    this.showNewNetwork(this.dataCache);
-                } else {
-                    this.domNodes.forEach(node => {
-                        node.update();
-                    });
-                }
-
-                break;
+        if (this.entranceNode) {
+            this.entranceNode.update();
         }
+
+        this.domNodes.forEach(node => {
+            node.update();
+        });
+        this.hrList.forEach(hr => {
+            hr.update();
+        });
+
+
+
+        // switch (this.animationMode) {
+        //     case DocumentViewer.ANIMATION_MODE_APPEAR:
+        //         this.appearAnimation();
+        //         break;
+        //     case DocumentViewer.ANIMATION_MODE_DISAPPEAR:
+        //         this.disappearAnimation();
+        //         break;
+        //     case DocumentViewer.ANIMATION_MODE_NONE:
+        //         if (this.isWaitDisappear) {
+        //             this.isWaitDisappear = false;
+        //             this.showNewNetwork(this.dataCache);
+        //         } else {
+        //             this.domNodes.forEach(node => {
+        //                 node.update();
+        //             });
+        //         }
+
+        //         break;
+        // }
     }
 
     /**

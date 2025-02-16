@@ -286,17 +286,6 @@ export class LinkNode extends DOMNode
     }
 
     /**
-     * 再読み込み
-     */
-    reload()
-    {
-        super.reload();
-        if (this.subNetwork !== null) {
-            this.subNetwork.reload();
-        }
-    }
-
-    /**
      * サブネットワークの描画
      *
      * @param ctx

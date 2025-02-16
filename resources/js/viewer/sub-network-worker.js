@@ -30,14 +30,41 @@ export class SubNetworkWorker
         this.fadeCnt = 7;
     }
 
+    /**
+     * ネットワークの追加
+     * 
+     * @param {Object} data
+     * @returns {void}
+     */
     addNetwork(data)
     {
         this.networks[data.id] = new SimpleSubNetwork(data);
     }
 
-    updateParent(parentData)
+    /**
+     * 1ネットワーク内のノードの位置をセット
+     * 
+     * @param {Object} data 
+     */
+    setNodePos(data)
     {
-        this.networks[parentData.id].parentNode = parentData.parent;
+        this.networks[data.id].updateNodes(data);
+    }
+
+    /**
+     * 1ネットワークの描画深さをセット
+     * 
+     * @param {int} id
+     * @param {int} min
+     * @param {int} max
+     * @returns {void}
+     */
+    setDrawDepth(id, min, max)
+    {
+        if (this.networks[id]) {
+            this.networks[id].minDrawDepth = min;
+            this.networks[id].maxDrawDepth = max;
+        }
     }
 
     /**
@@ -111,6 +138,11 @@ export class SubNetworkWorker
 
 class SimpleSubNetwork
 {
+    /**
+     * コンストラクタ
+     * 
+     * @param {*} data 
+     */
     constructor(data)
     {
         this.id = data.id;
@@ -119,20 +151,44 @@ class SimpleSubNetwork
         this.minDrawDepth = data.minDrawDepth;
         this.maxDrawDepth = data.maxDrawDepth;
 
-        Object.keys(data.nodes).forEach((key) => {
-            const nodeData = data.nodes[key];
+        Object.keys(data.nodes).forEach((no) => {
+            const nodeData = data.nodes[no];
 
             if (nodeData.type === 'pt') {
-                this.nodes[key] = new SubNetworkPointNode(nodeData);
+                this.nodes[no] = new SubNetworkPointNode(nodeData);
             } else if (nodeData.type === 'octa') {
-                this.nodes[key] = new SubNetworkOctaNode(nodeData);
+                this.nodes[no] = new SubNetworkOctaNode(nodeData);
             }
         });
     }
 
+    /**
+     * ノードの更新
+     * 
+     * @param {*} data 
+     */
+    updateNodes(data)
+    {
+        if (data.hasOwnProperty('parent')) {
+            this.parentNode.update(data.parent);
+        }
+
+        Object.keys(data.nodes).forEach((no) => {
+            this.nodes[no].update(data.nodes[no]);
+        });
+    }
+
+    /**
+     * 描画
+     * 
+     * @param ctx 
+     * @param viewRect 
+     * @param offsetX 
+     * @param offsetY 
+     */
     draw(ctx, viewRect, offsetX, offsetY)
     {
-        this.parentNode.setIsDraw(viewRect, 0, 0, this);
+        this.parentNode.setDrawFrags(viewRect, 0, 0, this);
 
         Object.values(this.nodes).forEach(node => {
             node.draw(ctx, viewRect, offsetX, offsetY, this);
@@ -157,23 +213,59 @@ class SimpleSubNetwork
 
 class SubNetworkOctaNode
 {
+    /**
+     * コンストラクタ
+     * 
+     * @param {Object} nodeData
+     */
     constructor(nodeData)
     {
         this.depth = nodeData.depth;
         this.vertices = nodeData.vertices;
         this.connects = nodeData.connects;
-        this.isDraw = false;
+
+        this.isOutView = false;     // 表示領域の外に出ているフラグ
+        this.isOutDepth = false;    // 描画深さの範囲にいないフラグ
     }
 
-    setIsDraw(viewRect, offsetX, offsetY, network)
+    /**
+     * ノードの更新
+     * 
+     * @param {Object} nodeData 
+     */
+    update(nodeData)
     {
-        this.isDraw = true;
-
-        // 描画対象の深さではない場合はスルー
-        if (this.depth < network.minDrawDepth || this.depth > network.maxDrawDepth) {
-            this.isDraw = false;
+        if (nodeData.hasOwnProperty('depth')) {
+            this.depth = nodeData.depth;
         }
 
+        if (nodeData.hasOwnProperty('vertices')) {
+            this.vertices = nodeData.vertices;
+        }
+        
+        if (nodeData.hasOwnProperty('connects')) {
+            this.connects = nodeData.connects;
+        }
+    }
+
+    /**
+     * 描画対象かどうかを決めるフラグを設定
+     * 
+     * @param {*} viewRect 
+     * @param {*} offsetX 
+     * @param {*} offsetY 
+     * @param {*} network 
+     */
+    setDrawFrags(viewRect, offsetX, offsetY, network)
+    {
+        // 描画対象の深さではない場合はスルー
+        if (this.depth < network.minDrawDepth || this.depth > network.maxDrawDepth) {
+            this.isOutDepth = true;
+        } else {
+            this.isOutDepth = false;
+        }
+
+        this.isOutView = false;
         if (viewRect !== null) {
             // 表示領域外にあったら描画しない
             const drawLeft = this.vertices[LLT].x + offsetX;
@@ -182,15 +274,23 @@ class SubNetworkOctaNode
             const drawBottom = this.vertices[LBB].y + offsetY;
 
             if (drawRight < viewRect.left) {
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawLeft > viewRect.right) {
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawBottom < viewRect.top) {
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawTop > viewRect.bottom) {
-                this.isDraw = false;
+                this.isOutView = true;
             }
         }
+    }
+    
+    /**
+     * 描画するか
+     */
+    isDraw()
+    {
+        return !this.isOutView && !this.isOutDepth;
     }
 
     /**
@@ -204,14 +304,14 @@ class SubNetworkOctaNode
      */
     draw(ctx, viewRect, offsetX, offsetY, network)
     {
-        this.setIsDraw(viewRect, offsetX, offsetY, network);
+        this.setDrawFrags(viewRect, offsetX, offsetY, network);
 
-        // 接続先が描画されているならエッジを描画
+        // 接続先が描画されていて、自分の描画深度が描画範囲内の場合はエッジを描画
         this.connects.forEach(connect => {
             const [vertexNo, targetNo, targetVertexNo] = connect;
 
             const targetNode = network.getNode(targetNo);
-            if (targetNode && targetNode.isDraw) {
+            if (targetNode && targetNode.isDraw() && !this.isOutDepth) {
                 ctx.beginPath();
                 ctx.moveTo(this.vertices[vertexNo].x + offsetX, this.vertices[vertexNo].y + offsetY);
 
@@ -229,7 +329,7 @@ class SubNetworkOctaNode
             }
         });
 
-        if (this.isDraw) {
+        if (this.isDraw()) {
             this.setShapePath(ctx, offsetX, offsetY);
             ctx.stroke();
         }
@@ -263,8 +363,48 @@ class SubNetworkPointNode
         this.r = nodeData.r;
         this.depth = nodeData.depth;
         this.connects = nodeData.connects;
+        this.isOutView = false;     // 表示領域の外に出ているフラグ
+        this.isOutDepth = false;    // 描画深さの範囲にいないフラグ
+    }   
 
-        this.isDraw = false;
+    /**
+     * ノードの更新
+     * 
+     * @param {Object} nodeData 
+     */
+    update(nodeData)
+    {
+        if (nodeData.hasOwnProperty('x')) {
+            this.x = nodeData.x;
+        }
+
+        if (nodeData.hasOwnProperty('y')) {
+            this.y = nodeData.y;
+        }
+
+        if (nodeData.hasOwnProperty('r')) {
+            this.r = nodeData.r;
+        }
+
+        if (nodeData.hasOwnProperty('depth')) {
+            this.depth = nodeData.depth;
+        }
+
+        if (nodeData.hasOwnProperty('vertices')) {
+            this.vertices = nodeData.vertices;
+        }
+        
+        if (nodeData.hasOwnProperty('connects')) {
+            this.connects = nodeData.connects;
+        }
+    }
+
+    /**
+     * 描画するか
+     */
+    isDraw()
+    {
+        return !this.isOutView && !this.isOutDepth;
     }
 
     /**
@@ -278,30 +418,26 @@ class SubNetworkPointNode
      */
     draw(ctx, viewRect, offsetX, offsetY, network)
     {
-        this.isDraw = true;
-
         // 描画対象の深さではない場合はスルー
         if (this.depth < network.minDrawDepth || this.depth > network.maxDrawDepth) {
-            //console.log('depth', this.depth, network.minDrawDepth, network.maxDrawDepth);
-            this.isDraw = false;
+            this.isOutDepth = true;
+        } else {
+            this.isOutDepth = false;
         }
 
+        this.isOutView = false;
         if (viewRect !== null) {
             const drawX = this.x + offsetX;
             const drawY = this.y + offsetY;
 
             if (drawX < viewRect.left) {
-                //console.log('drawX out of bounds', drawX, viewRect.left);
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawX > viewRect.right) {
-                //console.log('drawX out of bounds', drawX, viewRect.right);
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawY < viewRect.top) {
-                //console.log('drawY out of bounds', drawY, viewRect.top);
-                this.isDraw = false;
+                this.isOutView = true;
             } else if (drawY > viewRect.bottom) {
-                //console.log('drawY out of bounds', drawY, viewRect.bottom);
-                this.isDraw = false;
+                this.isOutView = true;
             }
         }
 
@@ -310,7 +446,7 @@ class SubNetworkPointNode
             const [targetNo, targetVertexNo] = connect;
 
             const targetNode = network.getNode(targetNo);
-            if (targetNode && targetNode.isDraw) {
+            if (targetNode && targetNode.isDraw() && !this.isOutDepth) {
                 ctx.beginPath();
                 ctx.moveTo(this.x + offsetX, this.y + offsetY);
 
@@ -328,7 +464,7 @@ class SubNetworkPointNode
             }
         });
 
-        if (this.isDraw) {
+        if (this.isDraw()) {
             ctx.beginPath();
             ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, MATH_PI_2, false);
             ctx.fill();
@@ -346,22 +482,23 @@ self.onmessage = function(event) {
             break;
 
         case 'clear':
-            console.log('clear');
             subNetworkWorker.clear();
             break;
 
         case 'add-network':
-            console.log('add-network', event.data.subNetwork);
             subNetworkWorker.addNetwork(event.data.subNetwork);
             break;
 
-        case 'update-parent':
-            console.log('update-parent');
-            subNetworkWorker.updateParent(event.data.parentData);
+        case 'set-node-pos':
+            subNetworkWorker.setNodePos(event.data.subNetwork);
             break;
 
+        case 'set-draw-depth':
+            subNetworkWorker.setDrawDepth(event.data.id, event.data.min, event.data.max);
+            break
+
         case 'resize':
-            subNetworkWorker.resize(event.data.width, event.data.height, event.data.parentNodePositions);
+            subNetworkWorker.resize(event.data.width, event.data.height);
             break;
 
         case 'draw':

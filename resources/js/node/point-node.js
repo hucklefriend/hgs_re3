@@ -268,20 +268,8 @@ export class SubPointNode extends PointNode
     }
 
     /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     * @param {Rect|null}viewRect
+     * 初期登録用オブジェクト化
      */
-    draw(ctx, offsetX, offsetY, viewRect = null)
-    {
-        ctx.fillStyle = "rgba(0, 200, 0, 0.8)";
-
-        super.draw(ctx, offsetX, offsetY, viewRect);
-    }
-
     toObj()
     {
         let connects = [];
@@ -303,6 +291,17 @@ export class SubPointNode extends PointNode
             r: this.r,
             depth: this.depth,
             connects: connects,
+        };
+    }
+    
+    /**
+     * 表示位置更新用オブジェクト化
+     */
+    toPosObj()
+    {
+        return {
+            x: this.x,
+            y: this.y,
         };
     }
 }

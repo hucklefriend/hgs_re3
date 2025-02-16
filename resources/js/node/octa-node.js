@@ -506,6 +506,25 @@ export class OctaNode
             ],
         };
     }
+
+    /**
+     * verticesのオブジェクトに変換
+     */
+    toPosObj()
+    {
+        return {
+            vertices: [
+                this.vertices[0].toObj(),
+                this.vertices[1].toObj(),
+                this.vertices[2].toObj(),
+                this.vertices[3].toObj(),
+                this.vertices[4].toObj(),
+                this.vertices[5].toObj(),
+                this.vertices[6].toObj(),
+                this.vertices[7].toObj(),
+            ],
+        };
+    }
 }
 
 /**
@@ -810,6 +829,11 @@ export class DOMNode extends OctaNode
         );
 
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
+
+        if (this.subNetwork !== null) {
+            this.subNetwork.reload();
+            this.subNetwork.postSetNodePos();
+        }
     }
 
     /**
@@ -1110,12 +1134,6 @@ export class SubOctaNode extends OctaNode
             nearVertexNo = this.getNearVertexNo(parent);
         }
         this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
-        this.drawOffsetY = 0;
-
-        if (this.connection.node.y > window.innerHeight) {
-            let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
-        }
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
@@ -1145,21 +1163,6 @@ export class SubOctaNode extends OctaNode
     }
 
     /**
-     * 描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     * @param {Rect|null}viewRect
-     */
-    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
-    {
-        // ctx.fillStyleを未設定にする
-        ctx.fillStyle = "rgba(0, 0, 0, 0)";
-        super.draw(ctx, offsetX, offsetY, viewRect);
-    }
-
-    /**
      * verticesのオブジェクトに変換
      */
     toObj()
@@ -1180,6 +1183,7 @@ export class SubOctaNode extends OctaNode
         });
 
         obj.connects = connects;
+        obj.depth = this.depth;
 
         return obj;
     }
