@@ -625,7 +625,7 @@ export class DOMNode extends OctaNode
     /**
      * サブネットワークの生成
      */
-    createRandomSubNetwork()
+    createSubNetwork()
     {
         if (this.subNetworkSize === 'n') {
             return;
@@ -647,6 +647,7 @@ export class DOMNode extends OctaNode
         }
 
         this.subNetwork = network;
+        this.subNetwork.postAdd();
     }
 
     /**
@@ -976,6 +977,24 @@ export class DOMNode extends OctaNode
      */
     disappearAnimation()
     {
+    }
+
+    isDraw(viewRect)
+    {
+        let left = 0;
+        let top = 0;
+        let isDraw = true;
+        if (viewRect !== null) {
+            if (!viewRect.intersects(this.rect)) {
+                // 描画領域内に入っていないなら描画しない
+                isDraw = false;
+            }
+
+            left = -viewRect.left;
+            top = -viewRect.top;
+        }
+
+        return [isDraw, left, top];
     }
 }
 

@@ -29,19 +29,7 @@ export class LinkNode extends DOMNode
 
         this.isEnableMouse = true;
 
-        DOM.addEventListener('mouseenter', () => this.mouseEnter());
-        DOM.addEventListener('mouseleave', () => this.mouseLeave());
-        DOM.addEventListener('click', () => this.mouseClick());
-
-        if (Param.IS_TOUCH_DEVICE) {
-            DOM.addEventListener('touchstart', () => this.mouseEnter());
-            DOM.addEventListener('touchend', () => this.mouseLeave());
-        }
-
-        this.createRandomSubNetwork();
-        // if (this.subNetwork !== null) {
-        //     window.hgn.bg2.addParentNode(this);
-        // }
+        this.createSubNetwork();
 
         this.url = null;
         this.refType = null;
@@ -57,6 +45,8 @@ export class LinkNode extends DOMNode
         this.appearAnimCnt = Util.getRandomInt(1, 10);
         this.animMaxCnt = Util.getRandomInt(10, 15);
         this.hoverOffsetAnimCnt = 0;
+        this.hoverAnimStartTime = 0;
+        this.hoverAnimFunc = null;
 
         if (DOM.classList.contains('link-node-a')) {
             this.hoverAnimation = this.hoverAnimationAdult;
@@ -105,7 +95,7 @@ export class LinkNode extends DOMNode
         }
 
         this.hoverOffsetAnimCnt = window.hgn.animCnt;
-        this.animFunc = this.hoverAnimation;
+        this.hoverAnimFunc = this.hoverAnimation;
         this.DOM.classList.add('active');
     }
 
@@ -151,6 +141,19 @@ export class LinkNode extends DOMNode
     touchEnd()
     {
         this.mouseLeave();
+    }
+    
+
+    /**
+     * 更新
+     */
+    update()
+    {
+        super.update();
+
+        if (this.hoverAnimFunc !== null) {
+            this.hoverAnimFunc();
+        }
     }
 
     /**
@@ -286,18 +289,6 @@ export class LinkNode extends DOMNode
     }
 
     /**
-     * サブネットワークの描画
-     *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
-     */
-    drawSubNetwork(ctx, offsetX = 0, offsetY = 0)
-    {
-        this.subNetwork.draw(ctx, offsetX, offsetY);
-    }
-
-    /**
      * 出現
      */
     appear()
@@ -341,6 +332,9 @@ export class LinkNode extends DOMNode
         }
     }
 
+    /**
+     * 出現完了
+     */
     appeared()
     {
         this.showText();
@@ -351,6 +345,16 @@ export class LinkNode extends DOMNode
         }
 
         super.appeared();
+        window.hgn.setDrawMain(true);
+
+        DOM.addEventListener('mouseenter', () => this.mouseEnter());
+        DOM.addEventListener('mouseleave', () => this.mouseLeave());
+        DOM.addEventListener('click', () => this.mouseClick());
+
+        if (Param.IS_TOUCH_DEVICE) {
+            DOM.addEventListener('touchstart', () => this.mouseEnter());
+            DOM.addEventListener('touchend', () => this.mouseLeave());
+        }
     }
 
     /**

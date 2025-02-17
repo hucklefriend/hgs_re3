@@ -60,6 +60,7 @@ export class HorrorGameNetwork
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
 
         this.isDrawMain = false;    // 次の更新でメインを再描画するフラグ
+        this.isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
         
         // サブネットワークのワーカー
         const workerUrl = import.meta.env.DEV
@@ -75,19 +76,15 @@ export class HorrorGameNetwork
             this.popState(e);
         });
 
-        // スクロールイベントをscroll()に
-        window.addEventListener('scroll', () => {
-            this.scroll();
-        });
-
         this.isLoaded = false;
 
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
         this.animCnt = 0;
         this.edgeScale = 0;
 
-        this.animationStartTime = 0;
-        this.animationElapsedTime = 0;
+        this._animStartTime = 0;
+        this._animElapsedTime = 0;
+        this._time = 0;
 
         this.isWaitDisappear = false;
         this.dataCache = null;
@@ -121,6 +118,32 @@ export class HorrorGameNetwork
         }
 
         return HorrorGameNetwork.#instance;
+    }
+
+    /**
+     * 更新時間の取得
+     * 
+     * @returns {number}
+     */
+    get time()
+    {
+        return this._time;
+    }
+
+    /**
+     * アニメーション開始時間の取得
+     */
+    get animStartTime()
+    {
+        return this._animStartTime;
+    }
+
+    /**
+     * アニメーション経過時間の取得
+     */
+    get animElapsedTime()
+    {
+        return this._animElapsedTime;
     }
 
     /**
@@ -159,7 +182,7 @@ export class HorrorGameNetwork
         }
 
         window.addEventListener('resize', (e) => {this.resize(e);});
-
+        window.addEventListener('scroll', () => {this.scroll();});
     
         if (window.ratingCheck) {
             window.requestAnimationFrame(time => {
@@ -201,20 +224,18 @@ export class HorrorGameNetwork
      */
     update(time)
     {
-        this.animationEraseTime = time - this.animationStartTime;
+        this._time = time;
+        this._animElapsedTime = time - this.animStartTime;
         this.animCnt++;
-
-        //this.changeSize();
-
-        //this.scroll();
 
         this.contentViewer.update();
 
         this.viewer.update();
 
         if (this.isDrawMain) {
-            this.draw();
+            this.drawMain();
             this.isDrawMain = false;
+            this.isDrawOutsideView = false;
         }
 
         if (Param.SHOW_DEBUG) {
@@ -229,8 +250,8 @@ export class HorrorGameNetwork
      */
     appear(time)
     {
-        this.animationStartTime = time;
-        this.animationEraseTime = 0;
+        this._animStartTime = time;
+        this._animElapsedTime = 0;
 
         this.viewer.appear();
     }
@@ -245,7 +266,7 @@ export class HorrorGameNetwork
         this.viewer.resize();
         this.contentViewer.resize();
 
-        this.setDraw();
+        this.setDraw(true);
     }
 
     /**
@@ -257,8 +278,8 @@ export class HorrorGameNetwork
         this.mainCanvas.height = this.body.offsetHeight;
 
         if (this.offscreenCanvas) {
-            this.offscreenCanvas.width = this.body.offsetWidth;
-            this.offscreenCanvas.height = this.body.offsetHeight;
+            this.offscreenCanvas.width = window.innerWidth;//this.body.offsetWidth;
+            this.offscreenCanvas.height = window.innerHeight;//this.body.offsetHeight;
         }
 
         this.postMessageToSubNetworkWorker({ type: 'resize', width: this.body.offsetWidth, height: this.body.offsetHeight });
@@ -281,40 +302,58 @@ export class HorrorGameNetwork
     /**
      * メインの描画
      */
-    draw()
+    drawMain()
     {
-        this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
-        this.viewer.draw(this.offscreenCtx);
+        if (this.isDrawOutsideView) {
+            this.offscreenCanvas.width = this.mainCanvas.width;
+            this.offscreenCanvas.height = this.mainCanvas.height;
+        } else {
+            this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+        }
 
-        // オフスクリーンキャンバスの内容をメインキャンバスへ
-        this.mainCtx.clearRect(
-            this.viewer.viewRect.left, this.viewer.viewRect.top,
-            this.viewer.viewRect.width, this.viewer.viewRect.height
-        );
-        this.mainCtx.drawImage(
-            this.offscreenCanvas,
-            0, 0, // ソースの開始位置
-            this.viewer.viewRect.width, this.viewer.viewRect.height, // ソースのサイズ
-            this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
-            this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
-        );
+        this.viewer.draw(this.offscreenCtx, this.isDrawOutsideView);
+
+        if (this.isDrawOutsideView) {
+            // オフスクリーンキャンバスの内容をメインキャンバスへ
+            this.mainCtx.clearRect(0, 0,this.mainCanvas.width, this.mainCanvas.height);
+            this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
+
+            this.offscreenCanvas.width = window.innerWidth;
+            this.offscreenCanvas.height = window.innerHeight;
+        } else {
+            // オフスクリーンキャンバスの内容をメインキャンバスへ
+            this.mainCtx.clearRect(
+                this.viewer.viewRect.left, this.viewer.viewRect.top,
+                this.viewer.viewRect.width, this.viewer.viewRect.height
+            );
+            this.mainCtx.drawImage(
+                this.offscreenCanvas,
+                0, 0, // ソースの開始位置
+                this.viewer.viewRect.width, this.viewer.viewRect.height, // ソースのサイズ
+                this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
+                this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
+            );
+        }
     }
 
     /**
      * メイン・サブ両方の描画の設定
      */
-    setDraw()
+    setDraw(isDrawOutsideView = false)
     {
-        this.setDrawMain();
+        this.setDrawMain(isDrawOutsideView);
         this.setDrawSub();
     }
 
     /**
      * メイン描画フラグの設定
+     * 
+     * @param {boolean} isDrawOutsideView
      */
-    setDrawMain()
+    setDrawMain(isDrawOutsideView = false)
     {
         this.isDrawMain = true;
+        this.isDrawOutsideView = isDrawOutsideView;
     }
 
     /**

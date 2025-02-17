@@ -32,7 +32,7 @@ export class EntranceNode extends LinkNode
         this.lightCanvas.height = 300;
         this.lightCtx = this.lightCanvas.getContext('2d');
 
-        this.createSubNetwork();
+        //this.createSubNetwork();
 
         this.animCnt2 = 0;  // エントランスノードは自前のアニメーションカウンターを持つ
         this.animVertices = [];
@@ -49,6 +49,7 @@ export class EntranceNode extends LinkNode
             lineWidth: 8
         };
 
+        this.isEnableMouse = false;
         this.isHover = false;
         this.isUseAnimVertices = false;
         this.isDrawLight = true;
@@ -185,8 +186,8 @@ export class EntranceNode extends LinkNode
         this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)"; // 線の色と透明度
         this.ctxParams.shadowColor = "lime"; // 影の色
         this.ctxParams.shadowBlur = 10; // 影のぼかし効果
-        this.hoverOffsetAnimCnt = window.hgn.animCnt;
-        this.animFunc = this.hoverAnimation;
+        this.hoverAnimStartTime = window.hgn.time;
+        this.hoverAnimFunc = this.hoverAnim;
         this.DOM.classList.add('active');
     }
 
@@ -203,51 +204,51 @@ export class EntranceNode extends LinkNode
         this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
         this.ctxParams.shadowColor = "rgb(0, 150, 0)"; // 影の色
         this.ctxParams.shadowBlur = 0; // 影のぼかし効果
-        this.hoverOffsetAnimCnt = window.hgn.animCnt;
-        this.animFunc = this.leaveAnimation;
+        this.hoverAnimStartTime = window.hgn.time;
+        this.hoverAnimFunc = this.leaveAnim;
         this.DOM.classList.remove('active');
     }
 
     /**
      * ホバーアニメーション
      */
-    hoverAnimation()
+    hoverAnim()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
-        if (animCnt < 5) {
-            let ratio = animCnt / 5;
+        const animElapsedTime = window.hgn.time - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)";
             this.ctxParams.shadowColor = "rgb(90, 255, 25)";
             this.ctxParams.shadowBlur = 10;
+            window.hgn.setDrawMain(true);
         }
-
-        window.hgn.setDrawMain();
     }
 
     /**
      * りーブアニメーション
      */
-    leaveAnimation()
+    leaveAnim()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
-        if (animCnt < 5) {
-            let ratio = 1 - animCnt / 5;
+        const animElapsedTime = window.hgn.time - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = 1 - animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)";
             this.ctxParams.shadowColor = "rgb(0, 150, 0)";
             this.ctxParams.shadowBlur = 0;
+            window.hgn.setDrawMain(true);
         }
-
-        window.hgn.setRedrawMain();
     }
 
     /**
@@ -263,8 +264,8 @@ export class EntranceNode extends LinkNode
             this.isDrawLight = false;
         }
 
-        if (!viewRect.intersects(this.rect)) {
-            // 描画領域内に入っていないなら描画しない
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
             return;
         }
 
@@ -279,25 +280,15 @@ export class EntranceNode extends LinkNode
             if (this.animVertices === null) {
                 return;
             }
-            super.setShapePathByVertices(ctx, this.animVertices, -viewRect.left, -viewRect.top);
+            super.setShapePathByVertices(ctx, this.animVertices, left, top);
         } else {
-            super.setShapePath(ctx, -viewRect.left, -viewRect.top);
+            super.setShapePath(ctx, left, top);
         }
 
         ctx.stroke();
 
         ctx.fillStyle = "black";
         ctx.fill();
-    }
-
-    /**
-     * 更新
-     */
-    update()
-    {
-        if (this.animFunc !== null) {
-            this.animFunc();
-        }
     }
 
     /**
@@ -329,13 +320,14 @@ export class EntranceNode extends LinkNode
     appearAnimation()
     {
         // 0.5秒で出現
-        if (window.hgn.animationEraseTime < 300) {
-            let ratio = window.hgn.animationEraseTime / 300;
+        if (window.hgn.animElapsedTime < 300) {
+            let ratio = window.hgn.animElapsedTime / 300;
             
             this.ctxParams.lineWidth = Util.getMidpoint(0, 8, ratio, true);
 
             this.setAnimSize(ratio);
             this.isDrawLight = true;
+            window.hgn.setDrawMain();
         } else {
             this.ctxParams.lineWidth = 8;
             this.isUseAnimVertices = false;
@@ -345,9 +337,9 @@ export class EntranceNode extends LinkNode
             this.lightRadius = 70;
             this.isDrawLight = true;
             this.animFunc = this.appearAnimation2;
+            window.hgn.setDrawMain(true);
+            this.appeared();
         }
-
-        window.hgn.setDrawMain();
     }
 
     /**
@@ -355,7 +347,7 @@ export class EntranceNode extends LinkNode
      */
     appearAnimation2()
     {
-        let ratio = (window.hgn.animationEraseTime - 330) / 300;
+        let ratio = (window.hgn.animElapsedTime - 330) / 300;
         let depth = Util.getMidpoint(1, 6, ratio, true);
         
         if (this.subNetwork.maxDrawDepth !== depth) {
@@ -367,6 +359,24 @@ export class EntranceNode extends LinkNode
             this.animFunc = null;
         }
     }
+
+    /**
+     * 出現完了
+     */
+    appeared()
+    {
+        this.DOM.addEventListener('mouseenter', () => this.mouseEnter());
+        this.DOM.addEventListener('mouseleave', () => this.mouseLeave());
+        this.DOM.addEventListener('click', () => this.mouseClick());
+
+        if (Param.IS_TOUCH_DEVICE) {
+            this.DOM.addEventListener('touchstart', () => this.mouseEnter());
+            this.DOM.addEventListener('touchend', () => this.mouseLeave());
+        }
+
+        this.isEnableMouse = true;
+    }
+
 
     /**
      * 消える

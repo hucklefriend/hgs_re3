@@ -302,8 +302,8 @@ export class DocumentViewer
             this.viewRect.top = 0;
         }
         this.viewRect.bottom += 30;
-        if (this.viewRect.bottom > window.hgn.body.offsetHeight) {
-            this.viewRect.bottom = window.hgn.body.offsetHeight;
+        if (this.viewRect.bottom > this.mainDOM.offsetHeight) {
+            this.viewRect.bottom = this.mainDOM.offsetHeight;
         }
 
         this.viewRect.calcSize();
@@ -312,13 +312,15 @@ export class DocumentViewer
     /**
      * 描画
      */
-    draw(ctx)
-    {    
-        this.drawEdge(ctx, this.viewRect);
-        this.drawNodes(ctx, this.viewRect);
+    draw(ctx, isDrawOutsideView = false)
+    {
+        const viewRect = isDrawOutsideView ? null : this.viewRect;
+
+        this.drawEdge(ctx, viewRect);
+        this.drawNodes(ctx, viewRect);
 
         this.hrList.forEach(hr => {
-            hr.draw(ctx, this.viewRect);
+            hr.draw(ctx, viewRect);
         });
     }
 
@@ -378,25 +380,14 @@ export class DocumentViewer
     /**
      * ノードの描画
      */
-    drawNodes(ctx)
+    drawNodes(ctx, viewRect)
     {
         if (this.entranceNode) {
-            this.entranceNode.draw(ctx, this.viewRect);
+            this.entranceNode.draw(ctx, viewRect);
         }
 
         this.domNodes.forEach(domNode => {
-            domNode.draw(ctx, this.viewRect);
-        });
-    }
-
-    drawSub(ctx)
-    {
-        if (this.entranceNode) {
-            //this.entranceNode.drawSub(ctx);
-        }
-
-        this.domNodes.forEach(domNode => {
-            //domNode.drawSub(ctx);
+            domNode.draw(ctx, viewRect);
         });
     }
 

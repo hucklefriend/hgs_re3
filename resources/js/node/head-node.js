@@ -40,11 +40,15 @@ export class Head1Node extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * @param {Rect} viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, viewRect)
     {
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
+        }
+
         ctx.lineWidth = 0; // 線の太さ
         ctx.strokeStyle = "rgba(0, 180, 0, " + this.alpha1 + ")"; // 線の色と透明度
         ctx.shadowBlur = 0; // 影のぼかし効果
@@ -62,33 +66,33 @@ export class Head1Node extends DOMNode
         ctx.lineCap = "round"; // 線の末端のスタイル
 
         ctx.beginPath();
-        ctx.moveTo(vertices[Param.LTT].x + this.notchSize, vertices[Param.LTT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.LTT].x - this.animOffset, vertices[Param.LTT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.LLT].x - this.animOffset, vertices[Param.LLT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.LLT].x - this.animOffset, vertices[Param.LLT].y + this.notchSize);
+        ctx.moveTo(vertices[Param.LTT].x + this.notchSize + left, vertices[Param.LTT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.LTT].x - this.animOffset + left, vertices[Param.LTT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.LLT].x - this.animOffset + left, vertices[Param.LLT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.LLT].x - this.animOffset + left, vertices[Param.LLT].y + this.notchSize + top);
         ctx.stroke();
 
 
         ctx.beginPath();
-        ctx.moveTo(vertices[Param.RTT].x - this.notchSize, vertices[Param.RTT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.RTT].x + this.animOffset, vertices[Param.RTT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.RRT].x + this.animOffset, vertices[Param.RRT].y - this.animOffset);
-        ctx.lineTo(vertices[Param.RRT].x + this.animOffset, vertices[Param.RRT].y + this.notchSize);
+        ctx.moveTo(vertices[Param.RTT].x - this.notchSize + left, vertices[Param.RTT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.RTT].x + this.animOffset + left, vertices[Param.RTT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.RRT].x + this.animOffset + left, vertices[Param.RRT].y - this.animOffset + top);
+        ctx.lineTo(vertices[Param.RRT].x + this.animOffset + left, vertices[Param.RRT].y + this.notchSize + top);
         ctx.stroke();
 
 
         ctx.beginPath();
-        ctx.moveTo(vertices[Param.RRB].x + this.animOffset, vertices[Param.RRB].y - this.notchSize);
-        ctx.lineTo(vertices[Param.RRB].x + this.animOffset, vertices[Param.RRB].y + this.animOffset);
-        ctx.lineTo(vertices[Param.RBB].x + this.animOffset, vertices[Param.RBB].y + this.animOffset);
-        ctx.lineTo(vertices[Param.RBB].x - this.notchSize, vertices[Param.RBB].y + this.animOffset);
+        ctx.moveTo(vertices[Param.RRB].x + this.animOffset + left, vertices[Param.RRB].y - this.notchSize + top);
+        ctx.lineTo(vertices[Param.RRB].x + this.animOffset + left, vertices[Param.RRB].y + this.animOffset + top);
+        ctx.lineTo(vertices[Param.RBB].x + this.animOffset + left, vertices[Param.RBB].y + this.animOffset + top);
+        ctx.lineTo(vertices[Param.RBB].x - this.notchSize + left, vertices[Param.RBB].y + this.animOffset + top);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(vertices[Param.LBB].x + this.notchSize, vertices[Param.LBB].y + this.animOffset);
-        ctx.lineTo(vertices[Param.LBB].x - this.animOffset, vertices[Param.LBB].y + this.animOffset);
-        ctx.lineTo(vertices[Param.LLB].x - this.animOffset, vertices[Param.LLB].y + this.animOffset);
-        ctx.lineTo(vertices[Param.LLB].x - this.animOffset, vertices[Param.LLB].y - this.notchSize);
+        ctx.moveTo(vertices[Param.LBB].x + this.notchSize + left, vertices[Param.LBB].y + this.animOffset + top);
+        ctx.lineTo(vertices[Param.LBB].x - this.animOffset + left, vertices[Param.LBB].y + this.animOffset + top);
+        ctx.lineTo(vertices[Param.LLB].x - this.animOffset + left, vertices[Param.LLB].y + this.animOffset + top);
+        ctx.lineTo(vertices[Param.LLB].x - this.animOffset + left, vertices[Param.LLB].y - this.notchSize + top);
         ctx.stroke();
     }
 
@@ -277,24 +281,32 @@ export class Head2Node extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * @param {Rect} viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, viewRect)
     {
         if (!this.isAppeared) {
             return;
         }
+
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
+        }
+
         ctx.lineWidth = 0; // 線の太さ
         ctx.shadowBlur = 0; // 影のぼかし効果
 
         // 中央から外に向かってグラデーション
-        let grad = ctx.createRadialGradient(this.center.x, this.center.y, 0, this.center.x, this.center.y, this.animWidth / 2);
+        let grad = ctx.createRadialGradient(
+            this.center.x + left, this.center.y + top, 0,
+            this.center.x + left, this.center.y + top, this.animWidth / 2
+        );
         grad.addColorStop(0, "rgba(0, 70, 0, " + this.animAlpha2 + ")");
         grad.addColorStop(1, "rgba(0, 50, 0, " + this.animAlpha3 + ")");
         ctx.fillStyle = grad;
 
-        super.setShapePath(ctx);
+        super.setShapePath(ctx, left, top);
         ctx.fill();
 
         ctx.strokeStyle = "rgba(0, 180, 0, " + this.animAlpha1 + ")"; // 線の色と透明度
@@ -303,21 +315,21 @@ export class Head2Node extends DOMNode
         ctx.lineCap = "round"; // 線の末端のスタイル
 
         ctx.beginPath();
-        ctx.moveTo(this.vertices[Param.LTT].x + this.notchSize, this.vertices[Param.LTT].y);
-        ctx.lineTo(this.vertices[Param.LTT].x, this.vertices[Param.LTT].y);
-        ctx.lineTo(this.vertices[Param.LLT].x, this.vertices[Param.LLT].y);
-        ctx.lineTo(this.vertices[Param.LLB].x, this.vertices[Param.LLB].y);
-        ctx.lineTo(this.vertices[Param.LBB].x, this.vertices[Param.LBB].y);
-        ctx.lineTo(this.vertices[Param.LBB].x + this.notchSize, this.vertices[Param.LBB].y);
+        ctx.moveTo(this.vertices[Param.LTT].x + this.notchSize + left, this.vertices[Param.LTT].y + top);
+        ctx.lineTo(this.vertices[Param.LTT].x + left, this.vertices[Param.LTT].y + top);
+        ctx.lineTo(this.vertices[Param.LLT].x + left, this.vertices[Param.LLT].y + top);
+        ctx.lineTo(this.vertices[Param.LLB].x + left, this.vertices[Param.LLB].y + top);
+        ctx.lineTo(this.vertices[Param.LBB].x + left, this.vertices[Param.LBB].y + top);
+        ctx.lineTo(this.vertices[Param.LBB].x + this.notchSize + left, this.vertices[Param.LBB].y + top);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(this.vertices[Param.RTT].x - this.notchSize, this.vertices[Param.RTT].y);
-        ctx.lineTo(this.vertices[Param.RTT].x, this.vertices[Param.RTT].y);
-        ctx.lineTo(this.vertices[Param.RRT].x, this.vertices[Param.RRT].y);
-        ctx.lineTo(this.vertices[Param.RRB].x, this.vertices[Param.RRB].y);
-        ctx.lineTo(this.vertices[Param.RBB].x, this.vertices[Param.RBB].y);
-        ctx.lineTo(this.vertices[Param.RBB].x - this.notchSize, this.vertices[Param.RBB].y);
+        ctx.moveTo(this.vertices[Param.RTT].x - this.notchSize + left, this.vertices[Param.RTT].y + top);
+        ctx.lineTo(this.vertices[Param.RTT].x + left, this.vertices[Param.RTT].y + top);
+        ctx.lineTo(this.vertices[Param.RRT].x + left, this.vertices[Param.RRT].y + top);
+        ctx.lineTo(this.vertices[Param.RRB].x + left, this.vertices[Param.RRB].y + top);
+        ctx.lineTo(this.vertices[Param.RBB].x + left, this.vertices[Param.RBB].y + top);
+        ctx.lineTo(this.vertices[Param.RBB].x - this.notchSize + left, this.vertices[Param.RBB].y + top);
         ctx.stroke();
     }
 
@@ -431,10 +443,9 @@ export class Head3Node extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * @param {Rect} viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0)
+    draw(ctx, viewRect)
     {
     }
 

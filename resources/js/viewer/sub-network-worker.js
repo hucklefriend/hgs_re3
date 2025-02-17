@@ -88,6 +88,7 @@ export class SubNetworkWorker
     {
         let offsetX = viewRect.left - (viewRect.left / SUB_NETWORK_SCROLL_RATE);
         let offsetY = viewRect.top - (viewRect.top / SUB_NETWORK_SCROLL_RATE);
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
@@ -126,13 +127,6 @@ export class SubNetworkWorker
     {
         this.canvas.width = width;
         this.canvas.height = height;
-    }
-
-    /**
-     * スクロール
-     */
-    scroll()
-    {
     }
 }
 
@@ -311,7 +305,7 @@ class SubNetworkOctaNode
             const [vertexNo, targetNo, targetVertexNo] = connect;
 
             const targetNode = network.getNode(targetNo);
-            if (targetNode && targetNode.isDraw() && !this.isOutDepth) {
+            if ((targetNode && targetNode.isDraw()) || this.isDraw()) {
                 ctx.beginPath();
                 ctx.moveTo(this.vertices[vertexNo].x + offsetX, this.vertices[vertexNo].y + offsetY);
 
