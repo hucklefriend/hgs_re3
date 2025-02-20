@@ -130,10 +130,10 @@ export class ContentLinkNode extends LinkNode
      *
      * @param ctx
      */
-    draw(ctx)
+    draw(ctx, viewRect)
     {
         if (!this.isHide || this.isAnimation) {
-            super.draw(ctx, this.isAnimation ? 'rgba(0,0,0,0.5)' : 'black');
+            super.draw(ctx, viewRect);//this.isAnimation ? 'rgba(0,0,0,0.5)' : 'black');
         }
     }
 }

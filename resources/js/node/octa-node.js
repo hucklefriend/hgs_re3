@@ -170,6 +170,7 @@ export class OctaNode
     {
         this.x += offsetX;
         this.y += offsetY;
+        this.setRect();
         this.setOctagon();
     }
 
@@ -644,6 +645,10 @@ export class DOMNode extends OctaNode
             case 1:
                 this.addRandomNodePatter1(network, this, maxDepth, appearRate);
                 break;
+            case 99:
+                this.addRandomNodePatterTest(network, this, maxDepth, appearRate);
+                break;
+
         }
 
         this.subNetwork = network;
@@ -810,6 +815,20 @@ export class DOMNode extends OctaNode
                 }
             }
         }
+    }
+
+    /**
+     * サブネットワークのテストパターンを生成
+     *
+     * @param network
+     * @param node
+     * @param maxDepth
+     * @param appearRate
+     */
+    addRandomNodePatterTest(network, node, maxDepth, appearRate)
+    {
+        network.addOctaNode(node, Param.LLT, 101, -100, -100, 30);
+        network.addOctaNode(node, Param.RRB, 102, 100, 100, 30);
     }
 
     judge(rate)
@@ -1152,6 +1171,12 @@ export class SubOctaNode extends OctaNode
         if (nearVertexNo === null) {
             nearVertexNo = this.getNearVertexNo(parent);
         }
+
+        // 頂点によって距離が違うため、接続頂点を決めたところで親ノードとの位置を補正
+        let moveX = this.x - this.vertices[nearVertexNo].x;
+        let moveY = this.y - this.vertices[nearVertexNo].y;
+        this.move(moveX, moveY);
+
         this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
@@ -1189,10 +1214,11 @@ export class SubOctaNode extends OctaNode
         let obj = super.toObj();
         obj.no = this.no;
         let connects = [];
+        let no = -1;
 
         this.connects.forEach((connect, vertexNo) => {
             if (connect !== null && connect.type === Param.CONNECT_TYPE_INCOMING) {
-                let no = -1;
+                no = -1;
                 if (connect.node instanceof SubOctaNode || connect.node instanceof SubPointNode) {
                     no = connect.node.no;
                 }
@@ -1203,6 +1229,7 @@ export class SubOctaNode extends OctaNode
 
         obj.connects = connects;
         obj.depth = this.depth;
+        obj.parentConnect = this.connection.toObj();
 
         return obj;
     }

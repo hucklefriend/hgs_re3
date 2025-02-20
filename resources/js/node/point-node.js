@@ -291,6 +291,7 @@ export class SubPointNode extends PointNode
             r: this.r,
             depth: this.depth,
             connects: connects,
+            parentConnect: this.connection.toObj(),
         };
     }
     

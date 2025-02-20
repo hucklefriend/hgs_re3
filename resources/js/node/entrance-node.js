@@ -32,8 +32,6 @@ export class EntranceNode extends LinkNode
         this.lightCanvas.height = 300;
         this.lightCtx = this.lightCanvas.getContext('2d');
 
-        //this.createSubNetwork();
-
         this.animCnt2 = 0;  // エントランスノードは自前のアニメーションカウンターを持つ
         this.animVertices = [];
         for (let i = 0; i < 8; i++) {
@@ -63,6 +61,7 @@ export class EntranceNode extends LinkNode
     createSubNetwork()
     {
         let network = new SubNetwork(this);
+
         network.addOctaNode(this, Param.LTT, 0, -80, -80, 40);
 
         network.addOctaNode(0, Param.LTT, 1, -50, -80, 40);

@@ -158,7 +158,7 @@ export class HorrorGameNetwork
         }
 
         this.viewer.start();
-        this.setCanvasSize();
+        this.setCanvasSize();   // 
 
         if (window.contentNode !== null) {
             let linkNodeId = window.contentNode.linkNodeId;
@@ -282,7 +282,13 @@ export class HorrorGameNetwork
             this.offscreenCanvas.height = window.innerHeight;//this.body.offsetHeight;
         }
 
-        this.postMessageToSubNetworkWorker({ type: 'resize', width: this.body.offsetWidth, height: this.body.offsetHeight });
+        this.postMessageToSubNetworkWorker({
+            type: 'resize',
+            width: this.body.offsetWidth, 
+            height: this.body.offsetHeight,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
+        });
     }
 
     /**

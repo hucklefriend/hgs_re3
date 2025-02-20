@@ -1,6 +1,6 @@
 import { Vertex } from '../common/vertex.js';
-import { OctaNode } from './octa-node.js';
-import { PointNode } from './point-node.js';
+import { OctaNode, SubOctaNode } from './octa-node.js';
+import { PointNode, SubPointNode } from './point-node.js';
 
 export class OctaNodeConnect
 {
@@ -112,5 +112,26 @@ export class SubConnect
         } else if (this.node instanceof PointNode) {
             return new Vertex(this.node.x, this.node.y);
         }
+    }
+
+    /**
+     * オブジェクトに変換
+     * 
+     * @returns 
+     */
+    toObj()
+    {
+        let no = -1;
+        if (this.node instanceof SubOctaNode || this.node instanceof SubPointNode) {
+            no = this.node.no;
+        } else {
+            no = -1;
+        }
+
+        return {
+            no: no,
+            vertexNo: this.vertexNo,
+            myVertexNo: this.myVertexNo
+        };
     }
 }

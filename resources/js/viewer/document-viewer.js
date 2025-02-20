@@ -520,8 +520,6 @@ export class DocumentViewer
             hr.update();
         });
 
-        window.hgn.setDraw();
-
         if (window.hgn.animCnt === 30) {
             this.animationMode = DocumentViewer.ANIMATION_MODE_NONE;
         }

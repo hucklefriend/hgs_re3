@@ -42,8 +42,8 @@ export class LinkNode extends DOMNode
         }
 
         this.scale = 0;
-        this.appearAnimCnt = Util.getRandomInt(1, 10);
-        this.animMaxCnt = Util.getRandomInt(10, 15);
+        this.appearAnimTime = Util.getRandomInt(1, 100);
+        this.animMaxTime = Util.getRandomInt(100, 150);
         this.hoverOffsetAnimCnt = 0;
         this.hoverAnimStartTime = 0;
         this.hoverAnimFunc = null;
@@ -161,7 +161,7 @@ export class LinkNode extends DOMNode
      */
     hoverAnimationNormal()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
+        const time = window.hgn.StartTi;
         if (animCnt < 5) {
             let ratio = animCnt / 5;
             this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
@@ -246,12 +246,21 @@ export class LinkNode extends DOMNode
      * 描画
      *
      * @param ctx
+     * @param vierRect
      */
-    draw(ctx)
+    draw(ctx, vierRect)
     {
         if (this.scale === 0) {
             // 何もしない
-        } else if (this.scale === 1) {
+            return;
+        }
+
+        const [isDraw, left, top] = this.isDraw(vierRect);
+        if (!isDraw) {
+            return;
+        }
+        
+        if (this.scale === 1) {
             ctx.strokeStyle = this.ctxParams.strokeStyle;
             ctx.shadowColor = this.ctxParams.shadowColor;
             ctx.shadowBlur = this.ctxParams.shadowBlur;
@@ -260,13 +269,13 @@ export class LinkNode extends DOMNode
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
 
-            super.setShapePath(ctx);
+            super.setShapePath(ctx, left, top);
             ctx.stroke();
             ctx.fill();
         } else if (this.scale < 0.3) {
             ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.beginPath();
-            ctx.arc(this.center.x, this.center.y, 30 * this.scale, 0, Param.MATH_PI_2, false);
+            ctx.arc(this.center.x + left, this.center.y + top, 30 * this.scale, 0, Param.MATH_PI_2, false);
             ctx.fill();
         } else {
             ctx.strokeStyle = this.ctxParams.strokeStyle;
@@ -278,9 +287,9 @@ export class LinkNode extends DOMNode
             ctx.lineCap = "round"; // 線の末端のスタイル
 
             ctx.beginPath();
-            ctx.moveTo(this.center.x + (this.center.x - this.vertices[0].x) * this.scale, this.center.y + (this.center.y - this.vertices[0].y) * this.scale);
+            ctx.moveTo(this.center.x + left + (this.center.x - this.vertices[0].x) * this.scale, this.center.y + top + (this.center.y - this.vertices[0].y) * this.scale);
             for (let i = 1; i < this.vertices.length; i++) {
-                ctx.lineTo(this.center.x + (this.center.x - this.vertices[i].x) * this.scale, this.center.y + (this.center.y - this.vertices[i].y) * this.scale);
+                ctx.lineTo(this.center.x + left + (this.center.x - this.vertices[i].x) * this.scale, this.center.y + top + (this.center.y - this.vertices[i].y) * this.scale);
             }
             ctx.closePath();
             ctx.stroke();
@@ -293,40 +302,57 @@ export class LinkNode extends DOMNode
      */
     appear()
     {
-        if (this.isSkipAnim()) {
-            this.appeared();
-        } else {
-            super.appear();
-            this.isEnableMouse = false;
-            this.scale = 0;
-        }
+        super.appear();
+        this.isEnableMouse = false;
+        this.scale = 0;
     }
 
     /**
      * 出現アニメーション
+     * 出現タイミングまで待つ
      */
     appearAnimation()
     {
-        if (window.hgn.animCnt >= this.appearAnimCnt) {
-            let maxAnimCnt = this.appearAnimCnt + this.animMaxCnt;
-            if (window.hgn.animCnt < maxAnimCnt) {
-                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
-                this.scale = animCnt / this.animMaxCnt;
-            } else if (window.hgn.animCnt === maxAnimCnt) {
-                this.isEnableMouse = true;
-                this.scale = 1;
-                this.fadeInText();
-                if (this.subNetwork === null) {
-                    this.animFunc = null;
-                }
-            } else if (this.subNetwork !== null) {
-                let animCnt = window.hgn.animCnt - maxAnimCnt;
-                let depth = Math.ceil(animCnt / 5);
-                this.subNetwork.maxDrawDepth = depth;
-                if (this.subNetwork.maxDepth === depth) {
-                    this.animFunc = null;
-                }
+        if (window.hgn.animElapsedTime >= this.appearAnimTime) {
+            this.animFunc = this.appearAnimation2;
+        }
+    }
 
+    /**
+     * 出現アニメーション2
+     * 拡大
+     */
+    appearAnimation2()
+    {
+        const elapsedTime = window.hgn.animElapsedTime - this.appearAnimTime;
+        if (elapsedTime < this.animMaxTime) {
+            this.scale = elapsedTime / this.animMaxTime;
+        } else {
+            this.isEnableMouse = true;
+            this.scale = 1;
+            this.fadeInText();
+            this.animFunc = this.appearAnimation3;
+        }
+    }
+
+    /**
+     * 出現アニメーション3
+     * サブネットワークの出現
+     */
+    appearAnimation3()
+    {
+        if (this.subNetwork === null) {
+            this.animFunc = null;
+            this.appeared();
+        } else {
+            const elapsedTime = window.hgn.animElapsedTime - this.appearAnimTime - this.animMaxTime;
+            let depth = Math.ceil(elapsedTime / 200);
+            
+            if (this.subNetwork.maxDepth === depth) {
+                this.animFunc = null;
+                this.appeared();
+            } else if (this.subNetwork.maxDrawDepth !== depth) {
+                this.subNetwork.setMaxDrawDepth(depth);
                 window.hgn.setDrawSub();
             }
         }
@@ -340,20 +366,20 @@ export class LinkNode extends DOMNode
         this.showText();
         this.scale = 1;
         if (this.subNetwork !== null) {
-            this.subNetwork.maxDrawDepth = 3;
+            this.subNetwork.setMaxDrawDepth(this.subNetwork.maxDepth);
             window.hgn.setDrawSub();
         }
 
         super.appeared();
         window.hgn.setDrawMain(true);
 
-        DOM.addEventListener('mouseenter', () => this.mouseEnter());
-        DOM.addEventListener('mouseleave', () => this.mouseLeave());
-        DOM.addEventListener('click', () => this.mouseClick());
+        this.DOM.addEventListener('mouseenter', () => this.mouseEnter());
+        this.DOM.addEventListener('mouseleave', () => this.mouseLeave());
+        this.DOM.addEventListener('click', () => this.mouseClick());
 
         if (Param.IS_TOUCH_DEVICE) {
-            DOM.addEventListener('touchstart', () => this.mouseEnter());
-            DOM.addEventListener('touchend', () => this.mouseLeave());
+            this.DOM.addEventListener('touchstart', () => this.mouseEnter());
+            this.DOM.addEventListener('touchend', () => this.mouseLeave());
         }
     }
 
