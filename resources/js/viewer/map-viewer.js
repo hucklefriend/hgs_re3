@@ -36,15 +36,34 @@ export class MapViewer
         this.viewRect3OffsetY = 0;
         this.cameraPos = new Vertex(0, 0);     // 表示中心位置
         this.origin = new Vertex(0, 0);        // 原点位置
+
+        this.dataCache = null;
+        this.isWait = false;
+    }
+    
+
+    /**
+     * ビュー切り替えの準備
+     */
+    prepare(data)
+    {
+        this.dataCache = data;
+        this.isWait = true;
     }
 
     /**
      * 起動
+     * 
+     * @param {boolean} isRenderCache DocumentViewerと引数を合わせる用、こっちでは使ってない
      */
-    start(data, x, y)
+    start(isRenderCache = true)
     {
-        data = LZString.decompressFromEncodedURIComponent(data);
+        let data = LZString.decompressFromEncodedURIComponent(this.dataCache.data);
         data = JSON.parse(data);
+
+        const x = this.dataCache.x;
+        const y = this.dataCache.y;
+        this.dataCache = null;
 
         this.body = document.querySelector('body');
         this.canvas = document.querySelector('#main-network-canvas');

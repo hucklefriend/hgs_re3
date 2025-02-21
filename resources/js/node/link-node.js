@@ -36,7 +36,7 @@ export class LinkNode extends DOMNode
         const a = this.DOM.querySelector('a');
         if (a && !a.classList.contains('outside-link')) {
             this.url = a.getAttribute('href');
-            this.refType = a.getAttribute('data-ref-type');
+            this.refType = a.getAttribute('data-ref-type') ?? 'doc';
             // aのクリックイベントを無効化
             a.addEventListener('click', (e) => e.preventDefault());
         }
@@ -44,7 +44,6 @@ export class LinkNode extends DOMNode
         this.scale = 0;
         this.appearAnimTime = Util.getRandomInt(1, 100);
         this.animMaxTime = Util.getRandomInt(100, 150);
-        this.hoverOffsetAnimCnt = 0;
         this.hoverAnimStartTime = 0;
         this.hoverAnimFunc = null;
 
@@ -94,7 +93,7 @@ export class LinkNode extends DOMNode
             return;
         }
 
-        this.hoverOffsetAnimCnt = window.hgn.animCnt;
+        this.hoverAnimStartTime = window.hgn.animElapsedTime;
         this.hoverAnimFunc = this.hoverAnimation;
         this.DOM.classList.add('active');
     }
@@ -108,8 +107,8 @@ export class LinkNode extends DOMNode
             return;
         }
 
-        this.hoverOffsetAnimCnt = window.hgn.animCnt;
-        this.animFunc = this.leaveAnimation;
+        this.hoverAnimStartTime = window.hgn.animElapsedTime;
+        this.hoverAnimFunc = this.leaveAnimation;
         this.DOM.classList.remove('active');
     }
 
@@ -123,7 +122,11 @@ export class LinkNode extends DOMNode
         }
 
         if (this.url) {
-            window.hgn.changeNetwork(this.url);
+            if (this.refType === 'map') {
+                window.hgn.navigateToMap(this.url);
+            } else {
+                window.hgn.navigateToDocument(this.url);
+            }
         }
     }
 
@@ -161,20 +164,22 @@ export class LinkNode extends DOMNode
      */
     hoverAnimationNormal()
     {
-        const time = window.hgn.StartTi;
-        if (animCnt < 5) {
-            let ratio = animCnt / 5;
+        const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             this.ctxParams.strokeStyle = "rgba(0, 180, 0, 0.4)";
             this.ctxParams.shadowColor = "rgb(90, 255, 25)";
             this.ctxParams.shadowBlur = 8;
-        }
 
-        window.hgn.setDrawMain();
+            window.hgn.setDrawMain(true);
+        }
     }
 
     /**
@@ -182,20 +187,22 @@ export class LinkNode extends DOMNode
      */
     hoverAnimationAdult()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
-        if (animCnt < 5) {
-            let ratio = animCnt / 5;
+        const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             this.ctxParams.strokeStyle = "rgba(249, 193, 207, 0.4)";
             this.ctxParams.shadowColor = "rgb(249, 193, 207)";
             this.ctxParams.shadowBlur = 8;
-        }
 
-        window.hgn.setDrawMain();
+            window.hgn.setDrawMain(true);
+        }
     }
 
     /**
@@ -203,20 +210,22 @@ export class LinkNode extends DOMNode
      */
     leaveAnimationNormal()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
-        if (animCnt < 5) {
-            let ratio = 1 - animCnt / 5;
+        const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = 1 - animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             this.ctxParams.strokeStyle = "rgba(0, 100, 0, 0.8)";
             this.ctxParams.shadowColor = "rgb(0, 150, 0)";
             this.ctxParams.shadowBlur = 4;
-        }
 
-        window.hgn.setDrawMain();
+            window.hgn.setDrawMain(true);
+        }
     }
 
     /**
@@ -224,22 +233,24 @@ export class LinkNode extends DOMNode
      */
     leaveAnimationAdult()
     {
-        const animCnt = window.hgn.getOffsetAnimCnt(this.hoverOffsetAnimCnt);
-        if (animCnt < 5) {
-            let ratio = 1 - animCnt / 5;
+        const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
+        if (animElapsedTime < 100) {
+            let ratio = 1 - animElapsedTime / 100;
             this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
             this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
             this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+
+            window.hgn.setDrawMain(false);
         } else {
-            this.animFunc = null;
+            this.hoverAnimFunc = null;
             // strokeStyle: "rgba(240, 103, 166, 0.8)",
             //     shadowColor: "rgb(240, 103, 166)",
             this.ctxParams.strokeStyle = "rgba(240, 103, 166, 0.8)";
             this.ctxParams.shadowColor = "rgb(240, 103, 166)";
             this.ctxParams.shadowBlur = 4;
-        }
 
-        window.hgn.setDrawMain();
+            window.hgn.setDrawMain(true);
+        }
     }
 
     /**
@@ -394,6 +405,7 @@ export class LinkNode extends DOMNode
             super.disappear();
         } else {
             this.scale = 0;
+            this.disappeared();
         }
     }
 
@@ -402,31 +414,39 @@ export class LinkNode extends DOMNode
      */
     disappearAnimation()
     {
-        if (window.hgn.animCnt >= this.appearAnimCnt) {
-            if (window.hgn.animCnt === this.appearAnimCnt + this.animMaxCnt) {
-                this.isEnableMouse = true;
-                this.scale = 0;
-                this.fadeOutText();
-                if (this.subNetwork === null || this.subNetwork.isNotDraw()) {
-                    this.animFunc = null;
-                }
-            } else if (this.scale > 0) {
-                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
-                this.scale = 1 - animCnt / this.animMaxCnt;
-            }
+        if (window.hgn.animElapsedTime >= this.appearAnimTime) {
+            this.animFunc = this.disappearAnimation2;
+        }
+    }
 
-            if (this.subNetwork !== null) {
-                let animCnt = window.hgn.animCnt - this.appearAnimCnt;
-                let depth = Math.ceil(animCnt / 5);
+    /**
+     * 消えるアニメーション2
+     * 縮小
+     */
+    disappearAnimation2()
+    {
+        const elapsedTime = window.hgn.animElapsedTime - this.appearAnimTime;
+        if (elapsedTime < this.animMaxTime) {
+            this.scale = 1 - (elapsedTime / this.animMaxTime);
+        } else {
+            this.scale = 0;
+            this.fadeOutText();
+            if (this.subNetwork === null) {
+                this.animFunc = this.disappeared;
+            }
+        }
+
+        if (this.subNetwork !== null) {
+            if (this.subNetwork.maxDrawDepth !== 0) {
+                let depth = Math.ceil(elapsedTime / 200) + 1;
                 if (depth > this.subNetwork.maxDepth) {
                     this.subNetwork.setDrawDepth(0, 0);
-                    if (this.scale === 0) {
-                        this.animFunc = null;
-                    }
                 } else {
-                    this.subNetwork.minDrawDepth = depth;
+                    this.subNetwork.setMinDrawDepth(depth);
+                    window.hgn.setDrawSub();
                 }
-                window.hgn.setDrawSub();
+            } else if (this.scale === 0) {
+                this.animFunc = this.disappeared;
             }
         }
     }

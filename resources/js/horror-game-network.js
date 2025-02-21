@@ -33,6 +33,7 @@ export class HorrorGameNetwork
         this.documentViewer = new DocumentViewer();
         this.mapViewer = new MapViewer();
         this.viewer = null;         // 現在のメインビューア
+        this.waitViewer = null;     // 交代前の待ちビューア
 
         // コンテンツビューアとポップアップビューアはthis.viewerに入ることはないサブのビューア
         this.contentViewer = new ContentViewer();
@@ -149,15 +150,20 @@ export class HorrorGameNetwork
     /**
      * 開始
      */
-    start(type)
+    start(type, params = {})
     {
         if (type === 'document') {
+            // ドキュメントビューワ
             this.viewer = this.documentViewer;
         } else if (type === 'map') {
+            // マップビューワ
             this.viewer = this.mapViewer;
+
+            // マップビューワの初期化
+            this.viewer.prepare(params);
         }
 
-        this.viewer.start();
+        this.viewer.start(false);
         this.setCanvasSize();   // 
 
         if (window.contentNode !== null) {
@@ -192,7 +198,8 @@ export class HorrorGameNetwork
             
         } else {
             window.requestAnimationFrame(time => {
-                this.appear(time);
+                this._time = time;  // appearの中で使うが、updateより先に実行したいのでここでセットしておく
+                this.appear();
                 this.update(time);
             });
         }
@@ -238,6 +245,21 @@ export class HorrorGameNetwork
             this.isDrawOutsideView = false;
         }
 
+        // 交代？
+        if (this.waitViewer !== null) {
+            console.log(this.viewer.appearedNodeCnt);
+            // 現在のビューワでノードが全部消えて、次のビューワの準備が整っている
+            if (this.viewer.isAllNodeDisappeared() && this.waitViewer.isWait) {
+                // ビューワの交代
+                this.viewer.end();
+                this.viewer = this.waitViewer;
+                this.viewer.start(true);
+                this.waitViewer = null;
+
+                this.viewer.appear();
+            }
+        }
+
         if (Param.SHOW_DEBUG) {
             this.showDebug();
         }
@@ -248,12 +270,23 @@ export class HorrorGameNetwork
     /**
      * 出現
      */
-    appear(time)
+    appear()
     {
-        this._animStartTime = time;
+        this._animStartTime = this._time;
         this._animElapsedTime = 0;
 
         this.viewer.appear();
+    }
+
+    /**
+     * 消失
+     */
+    disappear()
+    {
+        this._animStartTime = this._time;
+        this._animElapsedTime = 0;
+
+        this.viewer.disappear();
     }
 
     /**
@@ -261,11 +294,10 @@ export class HorrorGameNetwork
      */
     resize()
     {
-        this.setCanvasSize();
-
         this.viewer.resize();
         this.contentViewer.resize();
 
+        this.setCanvasSize();
         this.setDraw(true);
     }
 
@@ -278,8 +310,8 @@ export class HorrorGameNetwork
         this.mainCanvas.height = this.body.offsetHeight;
 
         if (this.offscreenCanvas) {
-            this.offscreenCanvas.width = window.innerWidth;//this.body.offsetWidth;
-            this.offscreenCanvas.height = window.innerHeight;//this.body.offsetHeight;
+            this.offscreenCanvas.width = this.viewer.viewRect.width;
+            this.offscreenCanvas.height = this.viewer.viewRect.height;
         }
 
         this.postMessageToSubNetworkWorker({
@@ -324,8 +356,8 @@ export class HorrorGameNetwork
             this.mainCtx.clearRect(0, 0,this.mainCanvas.width, this.mainCanvas.height);
             this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
 
-            this.offscreenCanvas.width = window.innerWidth;
-            this.offscreenCanvas.height = window.innerHeight;
+            this.offscreenCanvas.width = this.viewer.viewRect.width;
+            this.offscreenCanvas.height = this.viewer.viewRect.height;
         } else {
             // オフスクリーンキャンバスの内容をメインキャンバスへ
             this.mainCtx.clearRect(
@@ -335,7 +367,8 @@ export class HorrorGameNetwork
             this.mainCtx.drawImage(
                 this.offscreenCanvas,
                 0, 0, // ソースの開始位置
-                this.viewer.viewRect.width, this.viewer.viewRect.height, // ソースのサイズ
+                this.offscreenCanvas.width, this.offscreenCanvas.height, // ソースのサイズ
+                //this.viewer.viewRect.width, this.viewer.viewRect.height, // ソースのサイズ
                 this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
                 this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
             );
@@ -368,11 +401,6 @@ export class HorrorGameNetwork
     setDrawSub()
     {
         this.postMessageToSubNetworkWorker({ type: 'draw', viewRect: this.viewer.viewRect });
-    }
-
-    clearMainCtxRect()
-    {
-        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
     }
 
     /**
@@ -442,6 +470,46 @@ export class HorrorGameNetwork
     {
         this.contentNode.setContent(data);
     }
+
+    navigateToMap(url, isBack = false)
+    {
+        this.navigateToNextViewer(this.mapViewer, url);
+    }
+
+    navigateToDocument(url, isBack = false)
+    {
+        this.navigateToNextViewer(this.documentViewer, url, isBack);
+    }
+
+    navigateToNextViewer(waitViewer, url, isBack = false)
+    {
+        this.disappear();
+
+        this.fetch(url, (data, hasError) => {
+            if (hasError) {
+                this.contentNode.open(null);
+                this.showContentNode({
+                    title: 'エラー',
+                    body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
+                    documentTitle: 'エラー|ホラーゲームネットワーク',
+                    mode: ContentNode.MODE_ERROR
+                }, null);
+        
+                if (!isBack) {
+                    // pushStateにつっこむ
+                    window.history.pushState({type:'network', title:'エラー|ホラーゲームネットワーク'}, null, url);
+                }
+
+                // 同じネットワークの再表示
+                this.appear();
+            } else {
+                data.url = url;
+                this.waitViewer = waitViewer;
+                this.waitViewer.prepare(data);
+            }
+        });
+    }
+
 
     /**
      * 表示ネットワークの切り替え
@@ -566,8 +634,8 @@ export class HorrorGameNetwork
             callback(data, false);
         }).catch((error) => {
             // エラーが発生した場合の処理
-            console.error('There was a problem with the fetch operation:');
-            console.error(error);
+            callback(error, true);
+            throw new Error('Fetch error');
         });
     }
 

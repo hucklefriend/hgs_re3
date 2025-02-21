@@ -81,4 +81,16 @@ export class Util
         ctx.shadowColor = "lime"; // 影の色
         ctx.shadowBlur = 5; // 影のぼかし効果
     }
+
+    static getURLParams()
+    {
+        const params = {};
+        const url = new URL(window.location.href);
+        const searchParams = url.searchParams;
+        searchParams.forEach((value, key) => {
+            params[key] = value;
+        });
+
+        return params;
+    }
 }

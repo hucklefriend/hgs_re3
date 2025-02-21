@@ -965,6 +965,7 @@ export class DOMNode extends OctaNode
      */
     appear()
     {
+        window.hgn.viewer.nodeCnt++;
         this.animFunc = this.appearAnimation;
     }
 
@@ -980,7 +981,8 @@ export class DOMNode extends OctaNode
      */
     appeared()
     {
-
+        this.animFunc = null;
+        window.hgn.viewer.appearedNodeCnt++;
     }
 
     /**
@@ -996,6 +998,12 @@ export class DOMNode extends OctaNode
      */
     disappearAnimation()
     {
+    }
+
+    disappeared()
+    {
+        this.animFunc = null;
+        window.hgn.viewer.appearedNodeCnt--;
     }
 
     isDraw(viewRect)
@@ -1054,13 +1062,16 @@ export class TextNode extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
-     * @param {Rect|null}viewRect
+     * @param {Rect}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
+    draw(ctx, viewRect)
     {
-        super.setShapePath(ctx);
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
+        }
+        
+        super.setShapePath(ctx, left, top);
 
         ctx.lineWidth = 1; // 線の太さ
         ctx.lineJoin = "miter"; // 線の結合部分のスタイル
@@ -1077,12 +1088,8 @@ export class TextNode extends DOMNode
      */
     appear()
     {
-        if (this.isSkipAnim()) {
-            this.appeared();
-        } else {
-            super.appear();
-            this.alpha = 0;
-        }
+        super.appear();
+        this.alpha = 0;
     }
 
     /**
@@ -1090,19 +1097,27 @@ export class TextNode extends DOMNode
      */
     appearAnimation()
     {
-        if (window.hgn.animCnt < 10) {
-        } else if (window.hgn.animCnt === 10) {
+        if (window.hgn.animElapsedTime > 250) {
+            this.animFunc = this.appearAnimation2;
             this.fadeInText();
-        } else if (window.hgn.animCnt < 25) {
-            this.alpha = Util.getMidpoint(0, 0.6, (window.hgn.animCnt - 10) / 15);
-        } else if (window.hgn.animCnt === 25) {
+        }
+    }
+
+    appearAnimation2()
+    {
+        this.fadeInText();
+
+        const elapsedTime = window.hgn.animElapsedTime - 50;
+        this.alpha = Util.getMidpoint(0, 0.6, elapsedTime / 100);
+        if (this.alpha >= 0.6) {
             this.alpha = 0.6;
-            this.animFunc = null;
+            this.appeared();
         }
     }
 
     appeared()
     {
+        super.appeared();
         this.alpha = 0.6;
         this.showText();
     }
@@ -1116,8 +1131,7 @@ export class TextNode extends DOMNode
             super.disappear();
             this.fadeOutText();
         } else {
-            this.alpha = 0;
-            this.hideText();
+            this.disappeared();
         }
     }
 
@@ -1126,12 +1140,18 @@ export class TextNode extends DOMNode
      */
     disappearAnimation()
     {
-        if (window.hgn.animCnt < 15) {
-            this.alpha = Util.getMidpoint(0, 0.6, 1 - (window.hgn.animCnt - 10) / 15);
-        } else if (window.hgn.animCnt === 15) {
-            this.alpha = 0.0;
-            this.animFunc = null;
+        const elapsedTime = window.hgn.animElapsedTime - 50;
+        this.alpha = Util.getMidpoint(0.6, 0, elapsedTime / 100);
+        if (this.alpha <= 0) {
+            this.disappeared();
         }
+    }
+
+    disappeared()
+    {
+        super.disappeared();
+        this.alpha = 0;
+        this.hideText();
     }
 }
 

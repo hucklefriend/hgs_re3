@@ -368,7 +368,7 @@ class SubNetworkOctaNode
             const [vertexNo, targetNo, targetVertexNo] = connect;
 
             const targetNode = network.getNode(targetNo);
-            if ((targetNode && targetNode.isDraw()) || this.isDraw()) {
+            if ((targetNode && targetNode.isDraw()) && !this.isOutDepth) {
                 ctx.beginPath();
                 ctx.moveTo(this.vertices[vertexNo].x + offsetX, this.vertices[vertexNo].y + myOffsetY);
 

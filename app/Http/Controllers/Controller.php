@@ -55,9 +55,9 @@ abstract class Controller
         if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
-                'title'   => $rendered['title'],
-                'network' => $rendered['content'],
-                'popup'   => $rendered['popup'] ?? '',
+                'title'    => $rendered['title'],
+                'document' => $rendered['content'],
+                'popup'    => $rendered['popup'] ?? '',
                 'ratingCheck' => $ratingCheck,
             ]);
         }

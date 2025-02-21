@@ -32,7 +32,6 @@ export class EntranceNode extends LinkNode
         this.lightCanvas.height = 300;
         this.lightCtx = this.lightCanvas.getContext('2d');
 
-        this.animCnt2 = 0;  // エントランスノードは自前のアニメーションカウンターを持つ
         this.animVertices = [];
         for (let i = 0; i < 8; i++) {
             this.animVertices.push(new Vertex(0, 0));
@@ -134,13 +133,15 @@ export class EntranceNode extends LinkNode
 
     /**
      * 削除
-     */
+     */l
     delete()
     {
-        for (let i = 0; i < 8; i++) {
-            this.animVertices[i] = null;
+        if (this.animVertices !== null) {
+            for (let i = 0; i < this.animVertices.length; i++) {
+                this.animVertices[i] = null;
+            }
+            this.animVertices = null;
         }
-        this.animVertices = null;
 
         this.lightCtx = null;
         this.lightCanvas = null;
@@ -291,12 +292,11 @@ export class EntranceNode extends LinkNode
     }
 
     /**
-     * 出現
+     * 出現開始
      */
     appear()
     {
         super.appear();
-        this.animCnt2 = 0;
         this.isUseAnimVertices = true;
         this.subNetwork.setDrawDepth(0, 0);
 
@@ -318,7 +318,6 @@ export class EntranceNode extends LinkNode
      */
     appearAnimation()
     {
-        // 0.5秒で出現
         if (window.hgn.animElapsedTime < 300) {
             let ratio = window.hgn.animElapsedTime / 300;
             
@@ -378,42 +377,61 @@ export class EntranceNode extends LinkNode
 
 
     /**
-     * 消える
+     * 消失開始
      */
     disappear()
     {
         super.disappear();
-        this.animCnt2 = 0;
-        this.isUseAnimVertices = true;
         this.fadeOutText();
+
+        this.isEnableMouse = false;
+        this.isUseAnimVertices = true;
+
+        this.animFunc = this.disappearAnimation;
     }
 
     /**
-     * 消えるアニメーション
+     * 消失アニメーション
      */
     disappearAnimation()
     {
-        if (this.animCnt2 < 15) {
+        if (window.hgn.animElapsedTime < 300) {
+            let ratio = window.hgn.animElapsedTime / 300;
+
             if (this.ctxParams.lineWidth > 0) {
                 this.ctxParams.lineWidth--;
             }
 
-            this.setAnimSize(1 - (this.animCnt2 / 15));
+            this.setAnimSize(1 - ratio);
             this.isDrawLight = true;
-        } else if (this.animCnt2 === 15) {
+            window.hgn.setDrawMain(false);
+        } else if (window.hgn.animElapsedTime >= 300) {
             this.lightRadius = 0;
             this.animVertices = null;
             this.isDrawLight = true;
+            window.hgn.setDrawMain(true);
         }
 
-        let depth = Math.ceil(this.animCnt2 / 5);
-        if (depth > this.subNetwork.maxDrawDepth) {
-            this.subNetwork.setDrawDepth(0, 0);
-            this.animFunc = null;
-        } else {
-            this.subNetwork.minDrawDepth = depth;
+        if (window.hgn.animElapsedTime >= 30) {
+            let ratio = (window.hgn.animElapsedTime - 30) / 400;
+            let depth = Util.getMidpoint(1, 6, ratio, true);
+            if (depth >= this.subNetwork.maxDrawDepth) {
+                this.animFunc = this.disappeared;
+            } else if (depth != this.subNetwork.minDrawDepth) {
+                this.subNetwork.setMinDrawDepth(depth);
+                window.hgn.setDrawSub();
+            }
         }
-        
+    }
+
+    /**
+     * 消失完了
+     */
+    disappeared()
+    {
+        super.disappeared();
+
+        this.subNetwork.setDrawDepth(0, 0);
         window.hgn.setDrawSub();
     }
 

@@ -44,8 +44,9 @@ export class DocumentViewer
 
         this.isLoaded = false;
 
-        this.animationMode = DocumentViewer.ANIMATION_MODE_NONE;
-        this.animCnt = 0;
+        this.nodeCnt = 0;
+        this.appearedNodeCnt = 0;
+
         this.edgeScale = 0;
 
         this.changeNetworkAppearTimer = null;
@@ -59,16 +60,46 @@ export class DocumentViewer
         this.scrollModeStartPosY = 0;
 
         this.viewRect = new Rect(0, 0, 0, 0);
+
+        this.isWait = false;
+        this.dataCache = null;
+    }
+
+    /**
+     * ビュー切り替えの準備
+     */
+    prepare(data)
+    {
+        this.dataCache = data;
+        this.isWait = true;
     }
 
     /**
      * 開始
      */
-    start()
+    start(isRenderCache)
     {
+        this.isWait = false;
+
+        if (isRenderCache) {
+            console.log('render');
+            this.mainDOM.innerHTML = this.dataCache.document;
+
+            // TODO: ポップアップはHorrorGameNetwork側へ渡す
+
+            // windowタイトルの変更
+            if (this.dataCache.title) {
+                document.title = this.dataCache.title;
+            }
+
+            window.history.pushState({type:'document', title:this.dataCache.title}, null, this.dataCache.url);
+
+            this.dataCache = null;
+        }
+
         // ノードの読み取り
         this.loadNodes();
-        this.setViewRect();
+        this.scroll();
     }
 
     /**
@@ -76,11 +107,8 @@ export class DocumentViewer
      */
     end()
     {
-        // 退場アニメーション
-        this.disappear();
-
-
-        //this.clearNodes();
+        this.clearNodes();
+        this.mainDOM.innerHTML = '';
     }
 
     /**
@@ -282,7 +310,6 @@ export class DocumentViewer
         window.hgn.background.scroll(this.scrollX, this.scrollY);
 
         this.setViewRect();
-        //window.hgn.setDraw();
     }
 
     /**
@@ -297,14 +324,14 @@ export class DocumentViewer
 
         // スクロール時の描画遅延を考慮し、上下は少し余裕を持たせる
         // ドキュメントビューでは左右スクロールは基本発生しない想定
-        this.viewRect.top -= 30;
-        if (this.viewRect.top < 0) {
-            this.viewRect.top = 0;
-        }
-        this.viewRect.bottom += 30;
-        if (this.viewRect.bottom > this.mainDOM.offsetHeight) {
-            this.viewRect.bottom = this.mainDOM.offsetHeight;
-        }
+        // this.viewRect.top -= 30;
+        // if (this.viewRect.top < 0) {
+        //     this.viewRect.top = 0;
+        // }
+        // this.viewRect.bottom += 30;
+        // if (this.viewRect.bottom > window.hgn.body.offsetHeight) {
+        //     this.viewRect.bottom = window.hgn.body.offsetHeight;
+        // }
 
         this.viewRect.calcSize();
     }
@@ -406,28 +433,6 @@ export class DocumentViewer
         this.hrList.forEach(hr => {
             hr.update();
         });
-
-
-
-        // switch (this.animationMode) {
-        //     case DocumentViewer.ANIMATION_MODE_APPEAR:
-        //         this.appearAnimation();
-        //         break;
-        //     case DocumentViewer.ANIMATION_MODE_DISAPPEAR:
-        //         this.disappearAnimation();
-        //         break;
-        //     case DocumentViewer.ANIMATION_MODE_NONE:
-        //         if (this.isWaitDisappear) {
-        //             this.isWaitDisappear = false;
-        //             this.showNewNetwork(this.dataCache);
-        //         } else {
-        //             this.domNodes.forEach(node => {
-        //                 node.update();
-        //             });
-        //         }
-
-        //         break;
-        // }
     }
 
     /**
@@ -435,7 +440,9 @@ export class DocumentViewer
      */
     appear()
     {
-        this.animationMode = DocumentViewer.ANIMATION_MODE_APPEAR;
+        //this.animationMode = DocumentViewer.ANIMATION_MODE_APPEAR;
+        this.nodeCnt = 0;
+        this.appearedNodeCnt = 0;
         this.edgeScale = 0;
 
         this.domNodes.forEach(node => {
@@ -456,40 +463,20 @@ export class DocumentViewer
     }
 
     /**
-     * 出現アニメーション
+     * 全てのノードが出現完了したか
+     * 
+     * @returns {boolean}
      */
-    appearAnimation()
+    isAllNodeAppeared()
     {
-        if (window.hgn.animCnt > 10 && window.hgn.animCnt < 25) {
-            this.edgeScale = Util.getMidpoint(0, 1, (window.hgn.animCnt - 10) / 15);
-        } else if (window.hgn.animCnt === 25) {
-            this.edgeScale = 1;
-        }
-
-        if (this.entranceNode) {
-            this.entranceNode.update();
-        }
-
-        this.domNodes.forEach(node => {
-            node.update();
-        });
-        this.hrList.forEach(hr => {
-            hr.update();
-        });
-
-        if (window.hgn.animCnt === 30) {
-            this.animationMode = DocumentViewer.ANIMATION_MODE_NONE;
-        }
+        return this.nodeCnt === this.appearedNodeCnt;
     }
 
     /**
-     * 消える
+     * 消失
      */
     disappear()
     {
-        this.animationMode = DocumentViewer.ANIMATION_MODE_DISAPPEAR;
-        window.hgn.animCnt = 0;
-
         this.domNodes.forEach(node => {
             node.disappear();
         });
@@ -503,26 +490,13 @@ export class DocumentViewer
     }
 
     /**
-     * 消えるアニメーション
+     * 全てのノードが消失完了したか
+     * 
+     * @returns {boolean}
      */
-    disappearAnimation()
+    isAllNodeDisappeared()
     {
-        if (window.hgn.animCnt > 10 && window.hgn.animCnt < 25) {
-            this.edgeScale = Util.getMidpoint(0, 1, 1 - (window.hgn.animCnt - 10) / 15);
-        } else if (window.hgn.animCnt === 25) {
-            this.edgeScale = 0;
-        }
-
-        this.domNodes.forEach(node => {
-            node.update();
-        });
-        this.hrList.forEach(hr => {
-            hr.update();
-        });
-
-        if (window.hgn.animCnt === 30) {
-            this.animationMode = DocumentViewer.ANIMATION_MODE_NONE;
-        }
+        return this.appearedNodeCnt === 0;
     }
 
     /**
