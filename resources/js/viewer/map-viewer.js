@@ -11,23 +11,28 @@ import LZString from 'lz-string';
  */
 export class MapViewer
 {
+    get TYPE()
+    {
+        return 'map';
+    }
+
+
     /**
      * コンストラクタ
      */
     constructor()
     {
-        this.body = null;
+        this.mapDOM = null;
 
         this.isDragging = false;
         this.isFlicking = false;
-
-        this.isDraw = false;
 
         this.dragOffset = new Vertex(0, 0);
         this.dragVelocity = new Vertex(0, 0);
         this.dragLastPos = new Vertex(0, 0);
 
         this.networkRect = new Rect();
+        this.viewRect = new Rect();
         this.viewRect1 = new Rect();
         this.viewRect2 = new Rect();
         this.viewRect3 = new Rect();
@@ -36,6 +41,16 @@ export class MapViewer
         this.viewRect3OffsetY = 0;
         this.cameraPos = new Vertex(0, 0);     // 表示中心位置
         this.origin = new Vertex(0, 0);        // 原点位置
+
+        this.mapDOM = document.querySelector('#map');
+        this.mapDOM.addEventListener('mousedown', (e) => this.mouseDown(e));
+        this.mapDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
+        this.mapDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
+        this.mapDOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
+        this.mapDOM.addEventListener('touchstart', (e) => this.mouseDown(e));
+        this.mapDOM.addEventListener('touchend', (e) => this.mouseUp(e));
+        this.mapDOM.addEventListener('touchmove', (e) => this.mouseMove(e));
+        this.mapDOM.style.display = 'none';
 
         this.dataCache = null;
         this.isWait = false;
@@ -54,46 +69,40 @@ export class MapViewer
     /**
      * 起動
      * 
-     * @param {boolean} isRenderCache DocumentViewerと引数を合わせる用、こっちでは使ってない
+     * @param {boolean} isRenderCache
      */
-    start(isRenderCache = true)
+    start(isRenderCache)
     {
-        let data = LZString.decompressFromEncodedURIComponent(this.dataCache.data);
-        data = JSON.parse(data);
+        this.mapDOM.style.display = 'block';
+        this.cameraPos.reload(0, 0);
 
-        const x = this.dataCache.x;
-        const y = this.dataCache.y;
-        this.dataCache = null;
+        let data = null;
+        let x = 0;
+        let y = 0;
+        if (isRenderCache) {
+            data = JSON.parse(LZString.decompressFromEncodedURIComponent(this.dataCache.map));
 
-        this.body = document.querySelector('body');
-        this.canvas = document.querySelector('#main-network-canvas');
-        this.canvas.width = this.body.offsetWidth;
-        this.canvas.height = this.body.offsetHeight;
-        this.ctx = null;
-        if (this.canvas.getContext) {
-            this.ctx = this.canvas.getContext('2d');
+            //x = this.dataCache.x;
+            //y = this.dataCache.y;
+            this.dataCache = null;
+        } else {
+            data = JSON.parse(LZString.decompressFromEncodedURIComponent(window.map));
+            window.map = null;
         }
 
         this.origin.x = data.origin.x;
         this.origin.y = data.origin.y;
 
-        this.body.addEventListener('mousedown', (e) => this.mouseDown(e));
-        this.body.addEventListener('mouseup', (e) => this.mouseUp(e));
-        this.body.addEventListener('mousemove', (e) => this.mouseMove(e));
-        this.body.addEventListener('mouseleave', (e) => this.mouseLeave(e));
-        this.body.addEventListener('touchstart', (e) => this.mouseDown(e));
-        this.body.addEventListener('touchend', (e) => this.mouseUp(e));
-        this.body.addEventListener('touchmove', (e) => this.mouseMove(e));
-        window.addEventListener('resize', (e) => this.resize(e));
-
         this.networkRect.setRect(0, data.width, 0, data.height);
+        this.viewRect.setRect(0, window.innerWidth, 0, window.innerHeight);
+
         this.moveCamera(x, y);
 
         // ネットワークの初期化
         this.networks = [];
         data.networks.forEach(networkData => {
             let n = MainFranchiseNetwork.create(
-                this.body,
+                this.mapDOM,
                 networkData
             );
             this.networks.push(n);
@@ -101,14 +110,16 @@ export class MapViewer
 
         this.debugDOM = document.querySelector('#main-network-debug');
 
-        this.isDraw = true;
-        this.update = this.update.bind(this);
-        window.requestAnimationFrame(this.update);
+        window.hgn.setDrawMain(false);
     }
 
+    /**
+     * 終了
+     */
     end()
     {
-
+        this.mapDOM.style.display = 'none';
+        
     }
 
     /**
@@ -119,7 +130,7 @@ export class MapViewer
     mouseDown(e)
     {
         this.isDragging = true;
-        this.body.style.cursor = 'grabbing';
+        this.mapDOM.style.cursor = 'grabbing';
 
         if (e.type === 'touchstart') {
             this.dragLastPos.x = e.touches[0].clientX;
@@ -173,7 +184,7 @@ export class MapViewer
         this.dragLastPos.x = clientX;
         this.dragLastPos.y = clientY;
 
-        this.isDraw = true;
+        window.hgn.setDrawMain(false);
     }
 
     /**
@@ -184,7 +195,7 @@ export class MapViewer
     mouseUp(e)
     {
         this.isDragging = false;
-        this.body.style.cursor = 'grab';
+        this.mapDOM.style.cursor = 'grab';
 
         if (!this.isStopFlicking()) {
             //this.isFlicking = true;
@@ -194,7 +205,7 @@ export class MapViewer
     mouseLeave(e)
     {
         this.isDragging = false;
-        this.body.style.cursor = 'grab';
+        this.mapDOM.style.cursor = 'grab';
     }
 
     /**
@@ -204,10 +215,10 @@ export class MapViewer
      */
     resize(e)
     {
-        this.canvas.width = this.body.offsetWidth;
-        this.canvas.height = this.body.offsetHeight;
+        this.viewRect.right = window.innerWidth;
+        this.viewRect.bottom = window.innerHeight;
+        this.viewRect.calcSize();
         this.moveCamera(0, 0);
-        this.isDraw = true;
     }
 
     /**
@@ -218,16 +229,6 @@ export class MapViewer
         if (this.isFlicking) {
             this.flick();
         }
-
-        if (this.isDraw) {
-            this.draw();
-            this.isDraw = false;
-
-            this.debug();
-        }
-
-
-        window.requestAnimationFrame(this.update);
     }
 
     flick()
@@ -271,9 +272,9 @@ export class MapViewer
 
         this.viewRect1.setRect(
             this.cameraPos.x,
-            this.cameraPos.x + this.canvas.width,
+            this.cameraPos.x + window.innerWidth,
             this.cameraPos.y,
-            this.cameraPos.y + this.canvas.height
+            this.cameraPos.y + window.innerHeight
         );
 
         this.viewRect2.setEmpty();
@@ -352,6 +353,8 @@ export class MapViewer
         }
 
         this.viewRect1.calcSize();
+
+        console.log(this.viewRect1);
     }
 
     isStopFlicking()
@@ -359,7 +362,27 @@ export class MapViewer
         return (Math.abs(this.dragVelocity.x) <= 0.1 || Math.abs(this.dragVelocity.y) <= 0.1);
     }
 
-    draw()
+    appear()
+    {
+        window.hgn.setDrawMain(false);
+    }
+
+    disappear()
+    {
+        window.hgn.setDrawMain(false);
+    }
+
+    isAllNodeDisappeared()
+    {
+        return true;
+    }
+
+    /**
+     * 描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx - 描画コンテキスト
+     */
+    draw(ctx)
     {
         // css変数の設定
         document.documentElement.style.setProperty('--mn-camera-x1', this.cameraPos.x + 'px');
@@ -371,21 +394,21 @@ export class MapViewer
         document.documentElement.style.setProperty('--mn-camera-x4', this.cameraPos.x - this.viewRect2OffsetX + 'px');
         document.documentElement.style.setProperty('--mn-camera-y4', this.cameraPos.y - this.viewRect3OffsetY + 'px');
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
         // 描画領域内にあるネットワークを描画
         this.networks.forEach(network => {
-            if (!this.viewRect1.isEmpty() && this.viewRect1.isOverlap(network.viewRect)) {
-                network.draw(this.ctx, this.viewRect1, '1');
+            if (!this.viewRect1.isEmpty() && this.viewRect1.overlapWith(network.viewRect)) {
+                network.draw(ctx, this.viewRect1, '1');
                 network.show();
-            } else if (!this.viewRect2.isEmpty() && this.viewRect2.isOverlap(network.viewRect)) {
-                network.draw(this.ctx, this.viewRect2, '2');
+            } else if (!this.viewRect2.isEmpty() && this.viewRect2.overlapWith(network.viewRect)) {
+                network.draw(ctx, this.viewRect2, '2');
                 network.show();
-            } else if (!this.viewRect3.isEmpty() && this.viewRect3.isOverlap(network.viewRect)) {
-                network.draw(this.ctx, this.viewRect3, '3');
+            } else if (!this.viewRect3.isEmpty() && this.viewRect3.overlapWith(network.viewRect)) {
+                network.draw(ctx, this.viewRect3, '3');
                 network.show();
-            } else if (!this.viewRect4.isEmpty() && this.viewRect4.isOverlap(network.viewRect)) {
-                network.draw(this.ctx, this.viewRect4, '4');
+            } else if (!this.viewRect4.isEmpty() && this.viewRect4.overlapWith(network.viewRect)) {
+                network.draw(ctx, this.viewRect4, '4');
                 network.show();
             } else {
                 network.hide();
@@ -395,76 +418,79 @@ export class MapViewer
         //this.drawMiniMap();
     }
 
-    drawMiniMap()
+    /**
+     * ミニマップの描画
+     */
+    drawMiniMap(ctx)
     {
         const MINIMAP_WIDTH = 200;
         let rate = MINIMAP_WIDTH / this.networkRect.width;
 
-        this.ctx.save();
+        ctx.save();
 
         // this.networkRectをcanvasの右上に、MINIMAP_WIDTH x MINIMAP_HEIGHTで描画
-        let x = this.canvas.width - MINIMAP_WIDTH - 10;
+        let x = window.innerWidth - MINIMAP_WIDTH - 10;
         let y = 10;
-        let height = this.networkRect.height * rate;
+        let height = window.innerHeight * rate;
 
-        this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-        this.ctx.strokeRect(x, y, MINIMAP_WIDTH, height);
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+        ctx.strokeRect(x, y, MINIMAP_WIDTH, height);
 
         // 中央点
-        this.ctx.fillStyle = 'white';
-        this.ctx.beginPath();
-        this.ctx.arc(x + this.origin.x * rate, y + this.origin.y * rate, 3, 0, Param.MATH_PI_2, false);
-        this.ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(x + this.origin.x * rate, y + this.origin.y * rate, 3, 0, Param.MATH_PI_2, false);
+        ctx.fill();
 
         // カメラの中央点
-        this.ctx.fillStyle = 'yellow';
-        this.ctx.beginPath();
-        this.ctx.arc(x + this.cameraPos.x * rate, y + this.cameraPos.y * rate, 3, 0, Param.MATH_PI_2, false);
-        this.ctx.fill();
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(x + this.cameraPos.x * rate, y + this.cameraPos.y * rate, 3, 0, Param.MATH_PI_2, false);
+        ctx.fill();
 
         // 表示領域の描画
-        this.ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-        this.ctx.moveTo(x + this.viewRect1.left * rate, y + this.viewRect1.top * rate);
-        this.ctx.lineTo(x + this.viewRect1.right * rate, y + this.viewRect1.top * rate);
-        this.ctx.lineTo(x + this.viewRect1.right * rate, y + this.viewRect1.bottom * rate);
-        this.ctx.lineTo(x + this.viewRect1.left * rate, y + this.viewRect1.bottom * rate);
-        this.ctx.lineTo(x + this.viewRect1.left * rate, y + this.viewRect1.top * rate);
-        this.ctx.stroke();
+        ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+        ctx.moveTo(x + this.viewRect1.left * rate, y + this.viewRect1.top * rate);
+        ctx.lineTo(x + this.viewRect1.right * rate, y + this.viewRect1.top * rate);
+        ctx.lineTo(x + this.viewRect1.right * rate, y + this.viewRect1.bottom * rate);
+        ctx.lineTo(x + this.viewRect1.left * rate, y + this.viewRect1.bottom * rate);
+        ctx.lineTo(x + this.viewRect1.left * rate, y + this.viewRect1.top * rate);
+        ctx.stroke();
 
         if (!this.viewRect2.isEmpty()) {
-            this.ctx.moveTo(x + this.viewRect2.left * rate, y + this.viewRect2.top * rate);
-            this.ctx.lineTo(x + this.viewRect2.right * rate, y + this.viewRect2.top * rate);
-            this.ctx.lineTo(x + this.viewRect2.right * rate, y + this.viewRect2.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect2.left * rate, y + this.viewRect2.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect2.left * rate, y + this.viewRect2.top * rate);
-            this.ctx.stroke();
+            ctx.moveTo(x + this.viewRect2.left * rate, y + this.viewRect2.top * rate);
+            ctx.lineTo(x + this.viewRect2.right * rate, y + this.viewRect2.top * rate);
+            ctx.lineTo(x + this.viewRect2.right * rate, y + this.viewRect2.bottom * rate);
+            ctx.lineTo(x + this.viewRect2.left * rate, y + this.viewRect2.bottom * rate);
+            ctx.lineTo(x + this.viewRect2.left * rate, y + this.viewRect2.top * rate);
+            ctx.stroke();
         }
 
         if (!this.viewRect3.isEmpty()) {
-            this.ctx.moveTo(x + this.viewRect3.left * rate, y + this.viewRect3.top * rate);
-            this.ctx.lineTo(x + this.viewRect3.right * rate, y + this.viewRect3.top * rate);
-            this.ctx.lineTo(x + this.viewRect3.right * rate, y + this.viewRect3.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect3.left * rate, y + this.viewRect3.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect3.left * rate, y + this.viewRect3.top * rate);
-            this.ctx.stroke();
+            ctx.moveTo(x + this.viewRect3.left * rate, y + this.viewRect3.top * rate);
+            ctx.lineTo(x + this.viewRect3.right * rate, y + this.viewRect3.top * rate);
+            ctx.lineTo(x + this.viewRect3.right * rate, y + this.viewRect3.bottom * rate);
+            ctx.lineTo(x + this.viewRect3.left * rate, y + this.viewRect3.bottom * rate);
+            ctx.lineTo(x + this.viewRect3.left * rate, y + this.viewRect3.top * rate);
+            ctx.stroke();
         }
 
         if (!this.viewRect4.isEmpty()) {
-            this.ctx.moveTo(x + this.viewRect4.left * rate, y + this.viewRect4.top * rate);
-            this.ctx.lineTo(x + this.viewRect4.right * rate, y + this.viewRect4.top * rate);
-            this.ctx.lineTo(x + this.viewRect4.right * rate, y + this.viewRect4.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect4.left * rate, y + this.viewRect4.bottom * rate);
-            this.ctx.lineTo(x + this.viewRect4.left * rate, y + this.viewRect4.top * rate);
-            this.ctx.stroke();
+            ctx.moveTo(x + this.viewRect4.left * rate, y + this.viewRect4.top * rate);
+            ctx.lineTo(x + this.viewRect4.right * rate, y + this.viewRect4.top * rate);
+            ctx.lineTo(x + this.viewRect4.right * rate, y + this.viewRect4.bottom * rate);
+            ctx.lineTo(x + this.viewRect4.left * rate, y + this.viewRect4.bottom * rate);
+            ctx.lineTo(x + this.viewRect4.left * rate, y + this.viewRect4.top * rate);
+            ctx.stroke();
         }
 
-        this.ctx.restore();
+        ctx.restore();
     }
 
     debug()
     {
         let html = '';
-        html += `canvas: ${this.canvas.width}, ${this.canvas.height}<br>`;
+        html += `canvas: ${window.hgn.mainCanvas.width}, ${window.hgn.mainCanvas.height}<br>`;
         html += `cameraPos: ${this.cameraPos.x}, ${this.cameraPos.y}<br>`;
         html += `origin: ${this.origin.x}, ${this.origin.y}<br>`;
         html += `networkRect: ${this.networkRect.left}, ${this.networkRect.right}, ${this.networkRect.top}, ${this.networkRect.bottom}<br>`;

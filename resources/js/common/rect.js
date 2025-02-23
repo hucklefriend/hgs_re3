@@ -69,7 +69,7 @@ export class Rect
     /**
      * 別のRectと重なっているか
      */
-    intersects(rect)
+    overlapWith(rect)
     {
         return this.left < rect.right && this.right > rect.left && this.top < rect.bottom && this.bottom > rect.top;
     }
@@ -144,20 +144,20 @@ export class Rect
      * 2つのRectが重なっている部分の新しいRectを返す
      * 重なりがなければsetEmptyしたRectを返す
      */
-    static getOverlapRect(rect1, rect2)
+    static getIntersection(rect1, rect2)
     {
-        let overlapRect = new Rect();
+        let intersectionRect = new Rect();
 
-        if (rect1.isOverlap(rect2)) {
-            overlapRect.left = Math.max(rect1.left, rect2.left);
-            overlapRect.right = Math.min(rect1.right, rect2.right);
-            overlapRect.top = Math.max(rect1.top, rect2.top);
-            overlapRect.bottom = Math.min(rect1.bottom, rect2.bottom);
+        if (rect1.overlapWith(rect2)) {
+            intersectionRect.left = Math.max(rect1.left, rect2.left);
+            intersectionRect.right = Math.min(rect1.right, rect2.right);
+            intersectionRect.top = Math.max(rect1.top, rect2.top);
+            intersectionRect.bottom = Math.min(rect1.bottom, rect2.bottom);
         } else {
-            overlapRect.setEmpty();
+            intersectionRect.setEmpty();
         }
 
-        return overlapRect;
+        return intersectionRect;
     }
 
     /**

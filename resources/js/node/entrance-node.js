@@ -413,26 +413,18 @@ export class EntranceNode extends LinkNode
         }
 
         if (window.hgn.animElapsedTime >= 30) {
-            let ratio = (window.hgn.animElapsedTime - 30) / 400;
+            let ratio = (window.hgn.animElapsedTime - 30) / 500;
             let depth = Util.getMidpoint(1, 6, ratio, true);
-            if (depth >= this.subNetwork.maxDrawDepth) {
+            if (depth >= this.subNetwork.maxDepth) {
+                this.subNetwork.setDrawDepth(0, 0);
+                window.hgn.setDrawSub();
+
                 this.animFunc = this.disappeared;
             } else if (depth != this.subNetwork.minDrawDepth) {
                 this.subNetwork.setMinDrawDepth(depth);
                 window.hgn.setDrawSub();
             }
         }
-    }
-
-    /**
-     * 消失完了
-     */
-    disappeared()
-    {
-        super.disappeared();
-
-        this.subNetwork.setDrawDepth(0, 0);
-        window.hgn.setDrawSub();
     }
 
     /**

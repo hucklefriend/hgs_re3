@@ -56,7 +56,6 @@ export class Head1Node extends DOMNode
         ctx.fillStyle = "rgba(0, 70, 0, " + this.alpha2 + ")";
 
         let vertices = this.isUseAnimVertices ? this.animVertices : this.vertices;
-
         super.setShapePathByVertices(ctx, vertices);
         ctx.fill();
 
@@ -142,16 +141,12 @@ export class Head1Node extends DOMNode
      */
     appear()
     {
-        if (this.isSkipAnim()) {
-            this.appeared();
-        } else {
-            super.appear();
-            this.initAnimation();
-            this.setAnimOctagon(0.0);
-            this.alpha1 = 0.0;
-            this.alpha2 = 0.0;
-            this.alpha3 = 0.0;
-        }
+        super.appear();
+        this.initAnimation();
+        this.setAnimOctagon(0.0);
+        this.alpha1 = 0.0;
+        this.alpha2 = 0.0;
+        this.alpha3 = 0.0;
     }
 
     /**
@@ -185,7 +180,7 @@ export class Head1Node extends DOMNode
             this.alpha3 = 0.8;
             this.animOffset = 5
             this.animFunc = null;
-            this.animVertices = null;
+            //this.animVertices = null;
             this.minVertices = null;
         }
     }

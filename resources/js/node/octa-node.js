@@ -1012,7 +1012,7 @@ export class DOMNode extends OctaNode
         let top = 0;
         let isDraw = true;
         if (viewRect !== null) {
-            if (!viewRect.intersects(this.rect)) {
+            if (!viewRect.overlapWith(this.rect)) {
                 // 描画領域内に入っていないなら描画しない
                 isDraw = false;
             }

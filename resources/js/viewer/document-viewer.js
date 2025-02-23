@@ -20,6 +20,11 @@ window.hgn;
  */
 export class DocumentViewer
 {
+    get TYPE()
+    {
+        return 'doc';
+    }
+
     static SCROLL_MODE_BODY = 1;
     static SCROLL_MODE_SCROLLER = 2;
 
@@ -82,7 +87,6 @@ export class DocumentViewer
         this.isWait = false;
 
         if (isRenderCache) {
-            console.log('render');
             this.mainDOM.innerHTML = this.dataCache.document;
 
             // TODO: ポップアップはHorrorGameNetwork側へ渡す

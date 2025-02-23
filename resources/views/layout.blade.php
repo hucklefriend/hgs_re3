@@ -28,7 +28,7 @@
         @endif
 
         @isset($map)
-            window.map = {!! $map !!};
+            window.map = "{!! $map !!}"
         @else
             window.map = null;
         @endif

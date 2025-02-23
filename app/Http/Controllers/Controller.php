@@ -31,13 +31,17 @@ abstract class Controller
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにJSONテキストを返す
         if (self::isAjax()) {
-            return response($json, 200, [
-                'Content-Type' => 'application/json'
+            $rendered = $view->renderSections();
+            return response()->json([
+                'title' => $rendered['title'],
+                'map'   => $json,
+                'popup' => $rendered['popup'] ?? '',
+                'ratingCheck' => false,
             ]);
         }
 
         // $viewに$jsonを渡してviewを返す
-        return $view->with('json', $json)
+        return $view->with('map', $json)
             ->with('viewerType', 'map');
     }
 

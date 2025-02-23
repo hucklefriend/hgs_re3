@@ -299,7 +299,7 @@
     font-size: 11px;
 }
 
-body#main-network {
+#map {
     .dom-node, .link-node, .text-node {
         position: fixed;
     }

@@ -44,6 +44,22 @@ export class SubNetworkWorker
     }
 
     /**
+     * ネットワークのクリア
+     */
+    clearNetworks()
+    {
+        // クリアされていても何回も呼ばれる場合があるのでクリア済みかは見ている
+        const keys = Object.keys(this.networks);
+        if (keys.length > 0) {
+            Object.keys(this.networks).forEach((key) => {
+                this.networks[key].delete();
+                delete this.networks[key];
+            });
+            this.networks = {};
+        }
+    }
+
+    /**
      * 1ネットワーク内のノードの位置をセット
      * 
      * @param {Object} data 
@@ -67,19 +83,6 @@ export class SubNetworkWorker
             this.networks[id].minDrawDepth = min;
             this.networks[id].maxDrawDepth = max;
         }
-    }
-
-    /**
-     * クリア
-     */
-    clear()
-    {
-        Object.keys(this.networks).forEach((key) => {
-            this.networks[key].clear();
-            delete this.networks[key];
-        });
-
-        this.networks = {};
     }
 
     /**
@@ -177,6 +180,20 @@ class SimpleSubNetwork
     }
 
     /**
+     * クリア
+     */
+    delete()
+    {
+        this.parentNode.delete();
+        this.parentNode = null;
+
+        Object.values(this.nodes).forEach(node => {
+            node.delete();
+        });
+        this.nodes = null;
+    }
+
+    /**
      * 各ノードの描画オフセットを設定
      * 
      * @param {number} windowWidth
@@ -261,6 +278,16 @@ class SubNetworkOctaNode
         this.drawOffsetY = 0;
 
         this.isDebug = isDebug;
+    }
+
+    /**
+     * クリア
+     */
+    delete()
+    {
+        this.vertices = null;
+        this.connects = null;
+        this.parentConnect = null;
     }
 
     /**
@@ -426,6 +453,15 @@ class SubNetworkPointNode
 
         this.drawOffsetY = 0;
     }
+
+    /**
+     * クリア
+     */
+    delete()
+    {
+        this.connects = null;
+        this.parentConnect = null;
+    }
     
     /**
      * 描画オフセットYの設定
@@ -566,8 +602,8 @@ self.onmessage = function(event) {
             subNetworkWorker = new SubNetworkWorker(event.data.canvas);
             break;
 
-        case 'clear':
-            subNetworkWorker.clear();
+        case 'clear-networks':
+            subNetworkWorker.clearNetworks();
             break;
 
         case 'add-network':

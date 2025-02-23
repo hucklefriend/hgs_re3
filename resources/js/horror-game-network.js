@@ -80,7 +80,6 @@ export class HorrorGameNetwork
         this.isLoaded = false;
 
         this.animationMode = HorrorGameNetwork.ANIMATION_MODE_NONE;
-        this.animCnt = 0;
         this.edgeScale = 0;
 
         this._animStartTime = 0;
@@ -150,7 +149,7 @@ export class HorrorGameNetwork
     /**
      * 開始
      */
-    start(type, params = {})
+    start(type)
     {
         if (type === 'document') {
             // ドキュメントビューワ
@@ -158,9 +157,6 @@ export class HorrorGameNetwork
         } else if (type === 'map') {
             // マップビューワ
             this.viewer = this.mapViewer;
-
-            // マップビューワの初期化
-            this.viewer.prepare(params);
         }
 
         this.viewer.start(false);
@@ -247,16 +243,14 @@ export class HorrorGameNetwork
 
         // 交代？
         if (this.waitViewer !== null) {
-            console.log(this.viewer.appearedNodeCnt);
             // 現在のビューワでノードが全部消えて、次のビューワの準備が整っている
-            if (this.viewer.isAllNodeDisappeared() && this.waitViewer.isWait) {
-                // ビューワの交代
-                this.viewer.end();
-                this.viewer = this.waitViewer;
-                this.viewer.start(true);
-                this.waitViewer = null;
+            if (this.viewer.isAllNodeDisappeared()) {
+                this.postMessageToSubNetworkWorker({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
-                this.viewer.appear();
+                // ビューワの交代
+                if (this.waitViewer.isWait) {
+                    this.showNewViewer();
+                }
             }
         }
 
@@ -306,13 +300,8 @@ export class HorrorGameNetwork
      */
     setCanvasSize()
     {
-        this.mainCanvas.width = this.body.offsetWidth;
-        this.mainCanvas.height = this.body.offsetHeight;
-
-        if (this.offscreenCanvas) {
-            this.offscreenCanvas.width = this.viewer.viewRect.width;
-            this.offscreenCanvas.height = this.viewer.viewRect.height;
-        }
+        this.mainCanvas.width = this.offscreenCanvas.width = this.body.offsetWidth;
+        this.mainCanvas.height = this.offscreenCanvas.height = this.body.offsetHeight;
 
         this.postMessageToSubNetworkWorker({
             type: 'resize',
@@ -473,7 +462,7 @@ export class HorrorGameNetwork
 
     navigateToMap(url, isBack = false)
     {
-        this.navigateToNextViewer(this.mapViewer, url);
+        this.navigateToNextViewer(this.mapViewer, url, isBack);
     }
 
     navigateToDocument(url, isBack = false)
@@ -510,85 +499,33 @@ export class HorrorGameNetwork
         });
     }
 
-
     /**
-     * 表示ネットワークの切り替え
-     * つまりページ遷移
+     * 新しいビューワの表示
      */
-    changeNetwork(url, isBack = false)
-    {
-        // 表示処理中だったら表示処理のキャンセル
-        if (this.changeNetworkAppearTimer !== null) {
-            clearTimeout(this.changeNetworkAppearTimer);
-            this.changeNetworkAppearTimer = null;
-        }
-
-        // 遷移中はスクロールさせない
-        this.setContainerScrollMode(window.scrollX, window.scrollY);
-
-        this.contentNode.historyUrl = location.href;
-        this.contentNode.historyState = window.history.state;
-        this.disappear();
-
-        this.fetch(url, (data, hasError) => {
-            if (hasError) {
-                this.contentNode.open(null);
-                this.showContentNode({
-                    title: 'エラー',
-                    body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
-                    documentTitle: 'エラー|ホラーゲームネットワーク',
-                    mode: ContentNode.MODE_ERROR
-                }, null);
-
-                if (!isBack) {
-                    // pushStateにつっこむ
-                    window.history.pushState({type:'network', title:'エラー|ホラーゲームネットワーク'}, null, url);
-                }
-
-                // 同じネットワークの再表示
-                this.appear();
-            } else {
-                data.url = url;
-                if (this.animationMode === HorrorGameNetwork.ANIMATION_MODE_DISAPPEAR) {
-                    this.dataCache = data;
-                    this.isWaitDisappear = true;
-                } else {
-                    this.showNewNetwork(data);
-                }
-            }
-        });
-    }
-
-    /**
-     * 新しいネットワークの表示
-     *
-     * @param data
-     */
-    showNewNetwork(data)
+    showNewViewer()
     {
         window.scrollTo(0, 0);
-        this.scrollModeScrollPosY = 0;
-        this.scrollModeStartPosY = 0;
         this.scroll(true);
-        this.clearNodes();
-        this.mainDOM.innerHTML = '';
-        this.bg2.clear();
-        this.mainDOM.innerHTML = data.network;
-        this.popupDOM.innerHTML = data.popup;
+        //this.popupDOM.innerHTML = data.popup;
 
-        // 遷移中はスクロールさせない
-        this.setContainerScrollMode(window.scrollX, window.scrollY);
+        const title = this.waitViewer.dataCache.title;
+        const url = this.waitViewer.dataCache.url;
+        const ratingCheck = this.waitViewer.dataCache.ratingCheck;
 
         // windowタイトルの変更
-        if (data.title) {
-            document.title = data.title;
+        if (title) {
+            document.title = title;
         }
 
-        window.history.pushState({type:'network', title:data.title}, null, data.url);
+        window.history.pushState({type:this.waitViewer.TYPE, title:title}, null, url);
 
-        this.loadNodes();
+        this.viewer.end();
+        this.viewer = this.waitViewer;
+        this.viewer.start(true);
+        this.waitViewer = null;
+        this.setCanvasSize();
 
-        if (data.ratingCheck) {
+        if (ratingCheck) {
             this.showRatingCheck();
         } else {
             this.appear();
