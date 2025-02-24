@@ -56,7 +56,7 @@ export class Head1Node extends DOMNode
         ctx.fillStyle = "rgba(0, 70, 0, " + this.alpha2 + ")";
 
         let vertices = this.isUseAnimVertices ? this.animVertices : this.vertices;
-        super.setShapePathByVertices(ctx, vertices);
+        super.setShapePathByVertices(ctx, vertices, left, top);
         ctx.fill();
 
         ctx.strokeStyle = "rgba(0, 140, 0, " + this.alpha3 + ")"; // 線の色と透明度
@@ -137,7 +137,7 @@ export class Head1Node extends DOMNode
     }
 
     /**
-     * 出現
+     * 出現アニメーション開始
      */
     appear()
     {
@@ -154,59 +154,67 @@ export class Head1Node extends DOMNode
      */
     appearAnimation()
     {
-        if (window.hgn.animCnt < 5) {
-            let ratio = window.hgn.animCnt / 5;
+        if (window.hgn.animElapsedTime < 100) {
+            let ratio = window.hgn.animCnt / 100;
             this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
             this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
             this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
-        } else if (window.hgn.animCnt === 5) {
+            window.hgn.setDrawMain(false);
+        } else if (window.hgn.animElapsedTime >= 100) {
             this.alpha1 = 0.4;
             this.alpha2 = 0.7;
             this.alpha3 = 0.8;
+            window.hgn.setDrawMain(false);
         }
 
-        if (window.hgn.animCnt < 15) {
-            this.setAnimOctagon(window.hgn.animCnt / 15);
-        } else if (window.hgn.animCnt === 15) {
+        if (window.hgn.animElapsedTime < 300) {
+            this.setAnimOctagon(window.hgn.animElapsedTime / 300);
+            window.hgn.setDrawMain(false);
+        } else if (window.hgn.animElapsedTime >= 300) {
             this.isUseAnimVertices = false;
             this.setOctagon();
             this.fadeInText();
-        } else if (window.hgn.animCnt < 25) {
-        } else if (window.hgn.animCnt < 30) {
-            this.animOffset++;
-        } else {
-            this.alpha1 = 0.4;
-            this.alpha2 = 0.7;
-            this.alpha3 = 0.8;
-            this.animOffset = 5
-            this.animFunc = null;
-            //this.animVertices = null;
-            this.minVertices = null;
+            this.animFunc = this.appearAnimation2;
+            window.hgn.setDrawMain(false);
         }
     }
 
+    appearAnimation2()
+    {
+        if (window.hgn.animElapsedTime >= 400) {
+            this.animOffset++;
+            if (this.animOffset >= 5) {
+                this.animFunc = this.appeared;
+            }
+            window.hgn.setDrawMain(false);
+        }
+    }
+
+    /**
+     * 出現アニメーション完了
+     */
     appeared()
     {
+        super.appeared();
+
         this.alpha1 = 0.4;
         this.alpha2 = 0.7;
         this.alpha3 = 0.8;
         this.animOffset = 5
         this.setOctagon();
+        this.minVertices = null;
+        window.hgn.setDrawMain(false);
     }
 
     /**
-     * 消える
+     * 消失アニメーション開始
      */
     disappear()
     {
-        if (this.isSkipAnim()) {
-            this.disappeared();
-        } else {
-            super.disappear();
-            this.initAnimation();
-            this.setAnimOctagon(1);
-            this.fadeOutText();
-        }
+        super.disappear();
+        this.initAnimation();
+        this.setAnimOctagon(1);
+        this.fadeOutText();
     }
 
     /**
@@ -214,31 +222,36 @@ export class Head1Node extends DOMNode
      */
     disappearAnimation()
     {
-        if (window.hgn.animCnt < 5) {
+        if (this.animOffset > 0) {
             this.animOffset--;
-        } else if (window.hgn.animCnt === 5) {
-            this.animOffset = 0;
-        } else if (window.hgn.animCnt < 15) {
-        } else if (window.hgn.animCnt < 30) {
-            this.setAnimOctagon(1 - ((window.hgn.animCnt - 15) / 15));
+            
+            window.hgn.setDrawMain(false);
+        }
 
-            if (window.hgn.animCnt >= 25) {
-                let ratio = 1 - (window.hgn.animCnt - 25) / 5;
+        if (window.hgn.animElapsedTime > 200) {
+            const animElapsedTime = window.hgn.animElapsedTime - 200;
+            this.setAnimOctagon(1 - (animElapsedTime / 300));
+
+            if (animElapsedTime >= 200) {
+                let ratio = 1 - (animElapsedTime - 200) / 50;
                 this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
                 this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
                 this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+                if (this.animAlpha1 === 0) {
+                    this.animFunc = this.disappeared;
+                }
             }
-        } else {
-            this.animFunc = null;
-            this.animVertices = this.minVertices;
-            this.alpha1 = 0.0;
-            this.alpha2 = 0.0;
-            this.alpha3 = 0.0;
+
+            window.hgn.setDrawMain(false);
         }
     }
 
+    /**
+     * 消失アニメーション完了
+     */
     disappeared()
     {
+        super.disappeared();
         this.hideText();
         this.animVertices = this.minVertices;
         this.alpha1 = 0.0;

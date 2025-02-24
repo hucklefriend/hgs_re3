@@ -965,7 +965,7 @@ export class DOMNode extends OctaNode
      */
     appear()
     {
-        window.hgn.viewer.nodeCnt++;
+        window.hgn.viewer.incrementNodeCnt();
         this.animFunc = this.appearAnimation;
     }
 
@@ -982,7 +982,7 @@ export class DOMNode extends OctaNode
     appeared()
     {
         this.animFunc = null;
-        window.hgn.viewer.appearedNodeCnt++;
+        window.hgn.viewer.addAppearedNode(this.id);
     }
 
     /**
@@ -1003,7 +1003,7 @@ export class DOMNode extends OctaNode
     disappeared()
     {
         this.animFunc = null;
-        window.hgn.viewer.appearedNodeCnt--;
+        window.hgn.viewer.delAppearedNode(this.id);
     }
 
     isDraw(viewRect)

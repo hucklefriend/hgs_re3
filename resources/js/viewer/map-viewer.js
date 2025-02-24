@@ -1,4 +1,5 @@
 import { MainFranchiseNetwork } from '../network/main-franchise-network.js';
+import { ViewerBase } from './viewer-base.js';
 import { Param } from '../common/param.js';
 import { Util } from "../common/util.js";
 import { Vertex } from "../common/vertex.js";
@@ -9,7 +10,7 @@ import LZString from 'lz-string';
 /**
  * マップビューア
  */
-export class MapViewer
+export class MapViewer extends ViewerBase
 {
     get TYPE()
     {
@@ -22,6 +23,8 @@ export class MapViewer
      */
     constructor()
     {
+        super();
+
         this.mapDOM = null;
 
         this.isDragging = false;
@@ -370,11 +373,6 @@ export class MapViewer
     disappear()
     {
         window.hgn.setDrawMain(false);
-    }
-
-    isAllNodeDisappeared()
-    {
-        return true;
     }
 
     /**

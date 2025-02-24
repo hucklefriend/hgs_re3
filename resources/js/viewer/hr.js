@@ -1,3 +1,4 @@
+import { Rect } from '../common/rect.js';
 import { Util } from '../common/util.js';
 
 /**
@@ -16,6 +17,8 @@ export class HR
 
         this.leftX = 0;
         this.rightX = 0;
+        this.lineVertices = [];
+        this.rect = new Rect();
         this.animFunc = null;
     }
 
@@ -26,6 +29,8 @@ export class HR
     delete()
     {
         this.dom = null;
+        this.lineVertices = null;
+        this.rect = null;
     }
 
     /**
@@ -44,61 +49,97 @@ export class HR
      *
      * @param ctx
      */
-    draw(ctx)
+    draw(ctx, viewRect)
     {
         if (this.leftX === this.rightX) {
             return;
         }
 
-        let lineVertices = this.getLineVertices();
-        if (lineVertices.length > 0) {
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
+        }
+
+        if (this.lineVertices.length > 0) {
             ctx.beginPath();
-            lineVertices.forEach((v, i) => {
+            this.lineVertices.forEach((v, i) => {
                 if (i === 0) {
-                    ctx.moveTo(v.x, v.y);
+                    ctx.moveTo(v.x + left, v.y + top);
                 } else {
-                    ctx.lineTo(v.x, v.y);
+                    ctx.lineTo(v.x + left, v.y + top);
                 }
             });
             ctx.stroke();
         }
     }
+    
+
+    isDraw(viewRect)
+    {
+        let left = 0;
+        let top = 0;
+        let isDraw = true;
+        if (viewRect !== null) {
+            if (!viewRect.overlapWith(this.rect)) {
+                // 描画領域内に入っていないなら描画しない
+                isDraw = false;
+            }
+
+            left = -viewRect.left;
+            top = -viewRect.top;
+        }
+
+        return [isDraw, left, top];
+    }
 
     /**
      * 線の座標を取得
-     *
-     * @returns {*[]}
      */
-    getLineVertices()
+    setLineVertices()
     {
         let width = this.dom.offsetWidth / 5;
-        let lineVertices = [];
+        this.lineVertices = [];
 
         let lx = this.dom.offsetLeft;
         let ly = this.dom.offsetTop;
-        this.addStraightLine(lx, ly, width, lineVertices);
-        lx += width;
-        this.addDiagonalLine(lx, ly, -5, lineVertices);
-        lx += 5;
-        ly -= 5;
-        this.addStraightLine(lx, ly, width, lineVertices);
-        lx += width;
-        this.addDiagonalLine(lx, ly, 15, lineVertices);
-        lx += 15;
-        ly += 15;
-        this.addStraightLine(lx, ly, width, lineVertices);
-        lx += width;
-        this.addDiagonalLine(lx, ly, -13, lineVertices);
-        lx += 13;
-        ly -= 13;
-        this.addStraightLine(lx, ly, width, lineVertices);
-        lx += width;
-        this.addDiagonalLine(lx, ly, 3, lineVertices);
-        lx += 3;
-        ly += 3;
-        this.addStraightLine(lx, ly, width, lineVertices);
+        this.rect.left = lx;
+        this.rect.top = ly;
+        if (this.addStraightLine(lx, ly, width)) {
+            lx += width;
+            if (this.addDiagonalLine(lx, ly, -5)) {
+                lx += 5;
+                ly -= 5;
+                if (this.addStraightLine(lx, ly, width)) {
+                    lx += width;
+                    if (this.addDiagonalLine(lx, ly, 15)) {
+                        lx += 15;
+                        ly += 15;
+                        if (this.addStraightLine(lx, ly, width)) {
+                            lx += width;
+                            if (this.addDiagonalLine(lx, ly, -13)) {
+                                lx += 13;
+                                ly -= 13;
+                                if (this.addStraightLine(lx, ly, width)) {
+                                    lx += width;
+                                    if (this.addDiagonalLine(lx, ly, 3)) {
+                                        lx += 3;
+                                        ly += 3;
+                                        if (this.addStraightLine(lx, ly, width)) {
+                                            lx = this.dom.offsetLeft + this.dom.offsetWidth;
+                                            ly = this.dom.offsetTop;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-        return lineVertices;
+        this.rect.right = lx;
+        this.rect.bottom = ly;
+        this.rect.calcSize();
     }
 
     /**
@@ -107,9 +148,8 @@ export class HR
      * @param lx
      * @param ly
      * @param width
-     * @param lineVertices
      */
-    addStraightLine(lx, ly, width, lineVertices)
+    addStraightLine(lx, ly, width)
     {
         let rx = lx + width;
         if (this.leftX < rx && lx < this.rightX) {
@@ -120,11 +160,15 @@ export class HR
                 rx = this.rightX;
             }
 
-            if (lineVertices.length === 0) {
-                lineVertices.push({x: lx, y: ly});
+            if (this.lineVertices.length === 0) {
+                this.lineVertices.push({x: lx, y: ly});
             }
-            lineVertices.push({x: rx, y: ly});
+            this.lineVertices.push({x: rx, y: ly});
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -133,9 +177,8 @@ export class HR
      * @param lx
      * @param ly
      * @param height
-     * @param lineVertices
      */
-    addDiagonalLine(lx, ly, height, lineVertices)
+    addDiagonalLine(lx, ly, height)
     {
         let absHeight = Math.abs(height);
         let rx = lx + absHeight;
@@ -150,11 +193,15 @@ export class HR
                 ry = ly + Util.getMidpoint(0, height, 1 - (rx - this.rightX) / absHeight);
             }
 
-            if (lineVertices.length === 0) {
-                lineVertices.push({x: lx, y: ly});
+            if (this.lineVertices.length === 0) {
+                this.lineVertices.push({x: lx, y: ly});
             }
-            lineVertices.push({x: rx, y: ry});
+            this.lineVertices.push({x: rx, y: ry});
+
+            return true;
         }
+        
+        return false;
     }
 
     /**
@@ -172,9 +219,9 @@ export class HR
      */
     appear()
     {
+        this.animFunc = this.appearAnimation;
         this.leftX = this.dom.offsetLeft;
         this.rightX = this.dom.offsetLeft;
-        this.animFunc = this.appearAnimation;
     }
 
     /**
@@ -182,19 +229,21 @@ export class HR
      */
     appearAnimation()
     {
-        if (window.hgn.animCnt < 20) {
+        if (window.hgn.animElapsedTime < 300) {
             this.rightX = Util.getMidpoint(this.leftX, this.dom.offsetLeft + this.dom.offsetWidth,
-                window.hgn.animCnt / 20);
+                window.hgn.animElapsedTime / 300);
+            this.setLineVertices();
+
+            window.hgn.setDrawMain(false);
         } else {
             this.leftX = this.dom.offsetLeft;
             this.rightX = this.dom.offsetLeft + this.dom.offsetWidth;
+            this.setLineVertices();
             this.animFunc = null;
+            window.hgn.setDrawMain(true);
         }
     }
 
-    /**
-     * 消える
-     */
     disappear()
     {
         this.animFunc = this.disappearAnimation;
@@ -205,13 +254,16 @@ export class HR
      */
     disappearAnimation()
     {
-        if (window.hgn.animCnt < 20) {
+        if (window.hgn.animElapsedTime < 300) {
             this.leftX = Util.getMidpoint(this.dom.offsetLeft, this.dom.offsetLeft + this.dom.offsetWidth,
-                window.hgn.animCnt / 20);
+                window.hgn.animElapsedTime / 300);
+            this.setLineVertices();
+            window.hgn.setDrawMain(false);
         } else {
             this.leftX = 0;
             this.rightX = 0;
             this.animFunc = null;
+            window.hgn.setDrawMain(true);
         }
     }
 }

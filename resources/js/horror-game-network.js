@@ -86,8 +86,7 @@ export class HorrorGameNetwork
         this._animElapsedTime = 0;
         this._time = 0;
 
-        this.isWaitDisappear = false;
-        this.dataCache = null;
+        this.isNavigating = false;
 
         this.loadingShowTimer = null;
         this.changeNetworkAppearTimer = null;
@@ -251,6 +250,8 @@ export class HorrorGameNetwork
                 if (this.waitViewer.isWait) {
                     this.showNewViewer();
                 }
+            } else {
+                this.viewer.showAppearedNodes();
             }
         }
 
@@ -300,8 +301,11 @@ export class HorrorGameNetwork
      */
     setCanvasSize()
     {
-        this.mainCanvas.width = this.offscreenCanvas.width = this.body.offsetWidth;
-        this.mainCanvas.height = this.offscreenCanvas.height = this.body.offsetHeight;
+        this.mainCanvas.width = this.body.offsetWidth;
+        this.mainCanvas.height = this.body.offsetHeight;
+
+        this.offscreenCanvas.width = window.innerWidth;
+        this.offscreenCanvas.height = window.innerHeight;
 
         this.postMessageToSubNetworkWorker({
             type: 'resize',
@@ -342,7 +346,7 @@ export class HorrorGameNetwork
 
         if (this.isDrawOutsideView) {
             // オフスクリーンキャンバスの内容をメインキャンバスへ
-            this.mainCtx.clearRect(0, 0,this.mainCanvas.width, this.mainCanvas.height);
+            this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
             this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
 
             this.offscreenCanvas.width = this.viewer.viewRect.width;
@@ -381,7 +385,7 @@ export class HorrorGameNetwork
     setDrawMain(isDrawOutsideView = false)
     {
         this.isDrawMain = true;
-        this.isDrawOutsideView = isDrawOutsideView;
+        this.isDrawOutsideView |= isDrawOutsideView;
     }
 
     /**
@@ -472,6 +476,10 @@ export class HorrorGameNetwork
 
     navigateToNextViewer(waitViewer, url, isBack = false)
     {
+        // if (!this.viewer.isAllNodeAppeared()) {
+        //     return;
+        // }
+
         this.disappear();
 
         this.fetch(url, (data, hasError) => {

@@ -1,4 +1,5 @@
 import { HorrorGameNetwork } from '../horror-game-network.js';
+import { ViewerBase } from './viewer-base.js';
 import { DOMNode, TextNode, SubOctaNode } from '../node/octa-node.js';
 import { SubPointNode } from '../node/point-node.js';
 import { LinkNode } from '../node/link-node.js';
@@ -18,7 +19,7 @@ window.hgn;
 /**
  * ドキュメントビューア
  */
-export class DocumentViewer
+export class DocumentViewer extends ViewerBase
 {
     get TYPE()
     {
@@ -37,6 +38,8 @@ export class DocumentViewer
      */
     constructor()
     {
+        super();
+
         this.mainDOM = document.querySelector('#document > div > main');
 
         // ノード
@@ -48,9 +51,6 @@ export class DocumentViewer
         this.hrList = [];
 
         this.isLoaded = false;
-
-        this.nodeCnt = 0;
-        this.appearedNodeCnt = 0;
 
         this.edgeScale = 0;
 
@@ -445,8 +445,7 @@ export class DocumentViewer
     appear()
     {
         //this.animationMode = DocumentViewer.ANIMATION_MODE_APPEAR;
-        this.nodeCnt = 0;
-        this.appearedNodeCnt = 0;
+        this.resetNodeCnt();
         this.edgeScale = 0;
 
         this.domNodes.forEach(node => {
@@ -467,16 +466,6 @@ export class DocumentViewer
     }
 
     /**
-     * 全てのノードが出現完了したか
-     * 
-     * @returns {boolean}
-     */
-    isAllNodeAppeared()
-    {
-        return this.nodeCnt === this.appearedNodeCnt;
-    }
-
-    /**
      * 消失
      */
     disappear()
@@ -491,16 +480,6 @@ export class DocumentViewer
         if (this.entranceNode) {
             this.entranceNode.disappear();
         }
-    }
-
-    /**
-     * 全てのノードが消失完了したか
-     * 
-     * @returns {boolean}
-     */
-    isAllNodeDisappeared()
-    {
-        return this.appearedNodeCnt === 0;
     }
 
     /**
