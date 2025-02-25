@@ -112,8 +112,6 @@ export class PointNode extends Vertex
         this.connects.push(new OctaNodeConnect(Param.CONNECT_TYPE_OUTGOING, targetNode, targetNodeVertexNo));
         targetNode.connects[targetNodeVertexNo] = new PointNodeConnect(Param.CONNECT_TYPE_INCOMING, this);
 
-
-
         return true;
     }
 
@@ -179,6 +177,14 @@ export class PointNode extends Vertex
         return this.connects.some(connect => {
             return connect !== null && connect.node === targetNode;
         });
+    }
+
+    /**
+     * 更新
+     */
+    update()
+    {
+
     }
 
     /**

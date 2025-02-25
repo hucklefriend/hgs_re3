@@ -1,10 +1,8 @@
 import { MainFranchiseNetwork } from '../network/main-franchise-network.js';
 import { ViewerBase } from './viewer-base.js';
 import { Param } from '../common/param.js';
-import { Util } from "../common/util.js";
 import { Vertex } from "../common/vertex.js";
 import { Rect } from "../common/rect.js";
-import { DOMNode } from "../node/octa-node.js";
 import LZString from 'lz-string';
 
 /**
@@ -16,7 +14,6 @@ export class MapViewer extends ViewerBase
     {
         return 'map';
     }
-
 
     /**
      * コンストラクタ
@@ -84,9 +81,6 @@ export class MapViewer extends ViewerBase
         let y = 0;
         if (isRenderCache) {
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(this.dataCache.map));
-
-            //x = this.dataCache.x;
-            //y = this.dataCache.y;
             this.dataCache = null;
         } else {
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(window.map));
@@ -122,7 +116,6 @@ export class MapViewer extends ViewerBase
     end()
     {
         this.mapDOM.style.display = 'none';
-        
     }
 
     /**
@@ -232,6 +225,10 @@ export class MapViewer extends ViewerBase
         if (this.isFlicking) {
             this.flick();
         }
+
+        this.networks.forEach(network => {
+            network.update();
+        });
     }
 
     flick()
@@ -356,8 +353,6 @@ export class MapViewer extends ViewerBase
         }
 
         this.viewRect1.calcSize();
-
-        console.log(this.viewRect1);
     }
 
     isStopFlicking()
@@ -367,12 +362,16 @@ export class MapViewer extends ViewerBase
 
     appear()
     {
-        window.hgn.setDrawMain(false);
+        this.networks.forEach(network => {
+            network.appear();
+        });
     }
 
     disappear()
     {
-        window.hgn.setDrawMain(false);
+        this.networks.forEach(network => {
+            network.disappear();
+        });
     }
 
     /**

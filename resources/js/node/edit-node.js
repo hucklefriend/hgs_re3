@@ -1,6 +1,6 @@
 import {Param} from '../param.js';
 import {Util} from '../util.js';
-import {DOMNode} from './octa-node.js';
+import {DOMNode} from './dom-node.js';
 import {PointNode} from './point-node.js';
 
 /**

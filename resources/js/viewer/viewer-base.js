@@ -1,15 +1,5 @@
 import { HorrorGameNetwork } from '../horror-game-network.js';
-import { DOMNode, TextNode, SubOctaNode } from '../node/octa-node.js';
-import { SubPointNode } from '../node/point-node.js';
-import { LinkNode } from '../node/link-node.js';
-import { EntranceNode } from '../node/entrance-node.js';
-import { ContentLinkNode } from '../node/content-node.js';
-import { Head1Node, Head2Node, Head3Node } from '../node/head-node.js';
-import { PopupLinkNode } from '../node/popup-node.js';
-import { Param } from '../common/param.js';
-import { Util } from '../common/util.js';
-import { HR } from './hr.js';
-import { Rect } from '../common/rect.js';
+
 /**
  * @type {HorrorGameNetwork}
  */
@@ -99,5 +89,10 @@ export class ViewerBase
     isAllNodeDisappeared()
     {
         return this.appearedNodeCnt <= 0;
+    }
+
+    scroll()
+    {
+        
     }
 }

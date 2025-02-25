@@ -1,4 +1,4 @@
-import { DOMNode } from './octa-node.js';
+import { DOMNode } from './dom-node.js';
 import { LinkNode } from './link-node.js';
 
 /**

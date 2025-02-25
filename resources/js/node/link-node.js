@@ -1,6 +1,6 @@
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
-import { DOMNode } from './octa-node.js';
+import { DOMNode } from './dom-node.js';
 import { HorrorGameNetwork } from '../horror-game-network.js';
 /**
  * @type {HorrorGameNetwork}
@@ -316,6 +316,8 @@ export class LinkNode extends DOMNode
         super.appear();
         this.isEnableMouse = false;
         this.scale = 0;
+
+        console.log('appear');
     }
 
     /**

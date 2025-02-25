@@ -82,6 +82,13 @@ export class Network
         return this.nodes[id] ?? null;
     }
 
+    update()
+    {
+        Object.values(this.nodes).forEach(node => {
+            node.update();
+        });
+    }
+
     /**
      * 描画
      *

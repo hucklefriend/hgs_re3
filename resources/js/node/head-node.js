@@ -1,4 +1,4 @@
-import { DOMNode } from './octa-node.js';
+import { DOMNode } from './dom-node.js';
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
 import { Vertex } from "../common/vertex.js";

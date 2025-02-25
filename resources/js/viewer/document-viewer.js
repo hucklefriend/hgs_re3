@@ -1,6 +1,8 @@
 import { HorrorGameNetwork } from '../horror-game-network.js';
 import { ViewerBase } from './viewer-base.js';
-import { DOMNode, TextNode, SubOctaNode } from '../node/octa-node.js';
+import { SubOctaNode } from '../node/octa-node.js';
+import { DOMNode } from '../node/dom-node.js';
+import { TextNode } from '../node/text-node.js';
 import { SubPointNode } from '../node/point-node.js';
 import { LinkNode } from '../node/link-node.js';
 import { EntranceNode } from '../node/entrance-node.js';

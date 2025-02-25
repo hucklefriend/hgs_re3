@@ -1,5 +1,6 @@
 import { Param } from '../common/param.js';
-import { DOMNode, OctaNode } from '../node/octa-node.js';
+import { OctaNode } from '../node/octa-node.js';
+import { DOMNode } from '../node/dom-node.js';
 import { LinkNode } from '../node/link-node.js';
 import { PointNode } from "../node/point-node.js";
 import { Vertex } from '../common/vertex.js';
@@ -72,19 +73,19 @@ export class MainFranchiseNetwork extends Network
             DOM.classList.add('small');
         }
 
-        DOM.classList.add('dom-node');
+        
         //DOM.classList.add('fade');
 
-        // if (nodeData.hasOwnProperty('href')) {
-        //     let a = document.createElement('a');
-        //     a.href = nodeData.href;
-        //     a.innerHTML = nodeData.html;
-        //     a.appendChild(DOM);
-        // } else {
-        //     DOM.innerHTML = nodeData.html;
-        // }
-
-        DOM.innerHTML = nodeData.html;
+        if (nodeData.hasOwnProperty('href')) {
+            DOM.classList.add('link-node');
+            let a = document.createElement('a');
+            a.href = window.baseUrl + nodeData.href;
+            a.innerHTML = nodeData.html;
+            DOM.appendChild(a);
+        } else {
+            DOM.classList.add('dom-node');
+            DOM.innerHTML = nodeData.html;
+        }
 
         DOM.style.left = `${nodeData.x}px`;
         DOM.style.top = `${nodeData.y}px`;
@@ -92,17 +93,18 @@ export class MainFranchiseNetwork extends Network
         containerDOM.appendChild(DOM);
 
         let node = null;
-        // switch (nodeData.type) {
-        //     case 'dom-node':
-        //         node = DOMNode.createFromDOM(containerDOM, DOM);
-        //         break;
-        //     case 'link-node':
-        //     case 'link-node-a':
-        //     case 'link-node-z':
-        //         node = LinkNode.createFromDOM(containerDOM, DOM);
-        //         break;
-        // }
-        node = DOMNode.createFromDOM(containerDOM, DOM);
+        switch (nodeData.type) {
+            case 'dom-node':
+                node = DOMNode.createFromDOM(containerDOM, DOM);
+                break;
+            case 'link-node':
+            case 'link-node-a':
+            case 'link-node-z':
+                node = LinkNode.createFromDOM(containerDOM, DOM);
+                break;
+            default:
+                throw new Error(`Unsupported node type: ${nodeData.type}`);
+        }
         node.setForceDraw();
 
         return node;
@@ -140,6 +142,24 @@ export class MainFranchiseNetwork extends Network
             this.y,
             this.y + this.h
         );
+    }
+
+    appear()
+    {
+        Object.values(this.nodes).forEach(node => {
+            if (!(node instanceof PointNode)) {
+                node.appear();
+            }
+        });
+    }
+
+    disappear()
+    {        
+        Object.values(this.nodes).forEach(node => {
+            if (!(node instanceof PointNode)) {
+                node.disappear();
+            }
+        });
     }
 
     /**
@@ -181,7 +201,7 @@ export class MainFranchiseNetwork extends Network
         ctx.restore();
 
         Object.values(this.nodes).forEach(node => {
-            node.draw(ctx, offsetX, offsetY);
+            node.draw(ctx, viewRect);
             if (node instanceof DOMNode) {
                 node.DOM.classList.remove('view1', 'view2', 'view3', 'view4');
                 node.DOM.classList.add('view' + viewRectNo);
