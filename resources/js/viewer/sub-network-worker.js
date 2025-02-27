@@ -66,7 +66,7 @@ export class SubNetworkWorker
      */
     setNodePos(data)
     {
-        this.networks[data.id].updateNodes(data);
+        this.networks[data.id].updateNodes(data, this.windowWidth, this.windowHeight);
     }
 
     /**
@@ -161,10 +161,7 @@ class SimpleSubNetwork
         this.nodes = {};
         this.minDrawDepth = data.minDrawDepth;
         this.maxDrawDepth = data.maxDrawDepth;
-        this.isDebug = false;
-        if (data.id === 'about-node3') {
-            this.isDebug = true;
-        }
+        this.isDebug = (data.id === 'maker-node');
 
         Object.keys(data.nodes).forEach((no) => {
             const nodeData = data.nodes[no];
@@ -211,7 +208,7 @@ class SimpleSubNetwork
      * 
      * @param {*} data 
      */
-    updateNodes(data)
+    updateNodes(data, windowWidth, windowHeight)
     {
         if (data.hasOwnProperty('parent')) {
             this.parentNode.update(data.parent);
@@ -221,7 +218,7 @@ class SimpleSubNetwork
             this.nodes[no].update(data.nodes[no]);
         });
 
-        this.updateNodesDrawOffset(this.windowWidth, this.windowHeight);
+        this.updateNodesDrawOffset(windowWidth, windowHeight);
     }
 
     /**
@@ -327,6 +324,10 @@ class SubNetworkOctaNode
             parentY = parentNode.y - parentNode.drawOffsetY;
         }
 
+
+        if (this.isDebug) {
+            //console.log("parentY: " + parentY + ", windowHeight: " + windowHeight);
+        }
         if (parentY > windowHeight) {
             let distance = parentY - (windowHeight / 2);
             this.drawOffsetY = distance - (distance * SUB_NETWORK_SCROLL_RATE);

@@ -35,6 +35,7 @@ export class Network
             node.delete();
         });
         this.nodes = null;
+        this.screenOffset = null;
     }
 
     /**

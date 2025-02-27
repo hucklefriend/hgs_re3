@@ -125,6 +125,14 @@ export class MainFranchiseNetwork extends Network
         this.setPos(x, y);
     }
 
+    delete()
+    {
+        super.delete();
+        this.DOM.remove();
+        this.DOM = null;
+        this.viewRect = null;
+    }
+
     /**
      * 配置
      *
@@ -144,6 +152,9 @@ export class MainFranchiseNetwork extends Network
         );
     }
 
+    /**
+     * 出現
+     */
     appear()
     {
         Object.values(this.nodes).forEach(node => {
@@ -153,6 +164,9 @@ export class MainFranchiseNetwork extends Network
         });
     }
 
+    /**
+     * 消失
+     */
     disappear()
     {        
         Object.values(this.nodes).forEach(node => {

@@ -317,7 +317,7 @@ export class LinkNode extends DOMNode
         this.isEnableMouse = false;
         this.scale = 0;
 
-        console.log('appear');
+       // console.log('appear');
     }
 
     /**

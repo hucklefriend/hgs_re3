@@ -251,7 +251,7 @@ export class HorrorGameNetwork
                     this.showNewViewer();
                 }
             } else {
-                this.viewer.showAppearedNodes();
+                //this.viewer.showAppearedNodes();
             }
         }
 
@@ -640,6 +640,26 @@ export class HorrorGameNetwork
         } else {
             this.appear();
         }
+    }
+
+    /**
+     * 画像の読み込み完了を待機
+     * @returns {Promise} すべての画像が読み込まれたらresolve
+     */
+    waitForImages(DOM)
+    {
+        const images = DOM.getElementsByTagName('img');
+        const promises = Array.from(images).map(img => {
+            return new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); // エラー時も続行
+                }
+            });
+        });
+        return Promise.all(promises);
     }
 }
 

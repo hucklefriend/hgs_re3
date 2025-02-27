@@ -116,6 +116,10 @@ export class MapViewer extends ViewerBase
     end()
     {
         this.mapDOM.style.display = 'none';
+
+        this.networks.forEach(network => {
+            network.delete();
+        });
     }
 
     /**

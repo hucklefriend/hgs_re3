@@ -101,6 +101,12 @@ export class DocumentViewer extends ViewerBase
             window.history.pushState({type:'document', title:this.dataCache.title}, null, this.dataCache.url);
 
             this.dataCache = null;
+
+            // すべての画像リソース読み込み完了後に再配置
+            window.hgn.waitForImages(this.mainDOM).then(() => {
+                this.resize();
+                window.hgn.setDrawMain(true);
+            });
         }
 
         // ノードの読み取り
