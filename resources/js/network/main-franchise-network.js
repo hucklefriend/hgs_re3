@@ -76,7 +76,7 @@ export class MainFranchiseNetwork extends Network
         
         //DOM.classList.add('fade');
 
-        if (nodeData.hasOwnProperty('href')) {
+        if (nodeData.hasOwnProperty('href') && nodeData.href !== null) {
             DOM.classList.add('link-node');
             let a = document.createElement('a');
             a.href = window.baseUrl + nodeData.href;
@@ -187,9 +187,9 @@ export class MainFranchiseNetwork extends Network
         ctx.restore();
 
         ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-        ctx.lineWidth = 1; // 線の太さ
+        ctx.lineWidth = 2; // 線の太さ
         ctx.shadowColor = "lime"; // 影の色
-        ctx.shadowBlur = 5; // 影のぼかし効果
+        ctx.shadowBlur = 0; // 影のぼかし効果
 
         let offsetX = -viewRect.left;
         let offsetY = -viewRect.top;

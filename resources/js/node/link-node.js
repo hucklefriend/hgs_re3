@@ -257,16 +257,16 @@ export class LinkNode extends DOMNode
      * 描画
      *
      * @param ctx
-     * @param vierRect
+     * @param viewRect
      */
-    draw(ctx, vierRect)
+    draw(ctx, viewRect)
     {
         if (this.scale === 0) {
             // 何もしない
             return;
         }
 
-        const [isDraw, left, top] = this.isDraw(vierRect);
+        const [isDraw, left, top] = this.isDraw(viewRect);
         if (!isDraw) {
             return;
         }

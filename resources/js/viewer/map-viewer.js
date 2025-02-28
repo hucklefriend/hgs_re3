@@ -209,6 +209,67 @@ export class MapViewer extends ViewerBase
     }
 
     /**
+     * TODO: ホイールイベント
+     * 
+     * @param {*} element 
+     */
+
+    initWheel(element)
+    {
+        this.element = element;
+        this.threshold = 50;      // 感度の閾値
+        this.accumulatedX = 0;    // 水平方向の累積値
+        this.accumulatedY = 0;    // 垂直方向の累積値
+
+        this.handleWheel = this.handleWheel.bind(this);
+        this.element.addEventListener('wheel', this.handleWheel, { passive: false });
+    }
+
+    handleWheel(event) {
+        event.preventDefault();
+
+        // 累積値の更新
+        this.accumulatedX += event.deltaX;
+        this.accumulatedY += event.deltaY;
+
+        // 水平方向（チルト）の処理
+        if (Math.abs(this.accumulatedX) >= this.threshold) {
+            if (this.accumulatedX < 0) {
+                this.onTiltLeft();
+            } else {
+                this.onTiltRight();
+            }
+            this.accumulatedX = 0;
+        }
+
+        // 垂直方向の処理
+        if (Math.abs(this.accumulatedY) >= this.threshold) {
+            if (this.accumulatedY < 0) {
+                this.onScrollUp();
+            } else {
+                this.onScrollDown();
+            }
+            this.accumulatedY = 0;
+        }
+    }
+
+    onTiltLeft() {
+        console.log('左チルト検出');
+    }
+
+    onTiltRight() {
+        console.log('右チルト検出');
+    }
+
+    onScrollUp() {
+        console.log('上スクロール');
+    }
+
+    onScrollDown() {
+        console.log('下スクロール');
+    }
+
+    /**
      * ウィンドウサイズの変更
      *
      * @param e

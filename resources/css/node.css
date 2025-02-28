@@ -302,6 +302,8 @@
 #map {
     .dom-node, .link-node, .text-node {
         position: fixed;
+        white-space: nowrap;
+        text-align: center;
     }
 
     .view1 {

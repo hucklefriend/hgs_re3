@@ -415,31 +415,9 @@ export class OctaNode
      * @param ctx
      * @param offsetX
      * @param offsetY
-     * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX = 0, offsetY = 0, viewRect = null)
+    draw(ctx, offsetX = 0, offsetY = 0)
     {
-        if (viewRect !== null) {
-            // 表示領域外にあったら描画しない
-            const drawLeft = this.vertices[Param.LLT].x + offsetX;
-            const drawRight = this.vertices[Param.RRB].x + offsetX;
-            const drawTop = this.vertices[Param.LTT].y + offsetY;
-            const drawBottom = this.vertices[Param.LBB].y + offsetY;
-
-            if (drawRight < viewRect.left - Param.VIEW_RECT_MARGIN) {
-                return;
-            }
-            if (drawLeft > viewRect.right + Param.VIEW_RECT_MARGIN) {
-                return;
-            }
-            if (drawBottom < viewRect.top - Param.VIEW_RECT_MARGIN) {
-                return;
-            }
-            if (drawTop > viewRect.bottom + Param.VIEW_RECT_MARGIN) {
-                return;
-            }
-        }
-
         this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
         ctx.fill();

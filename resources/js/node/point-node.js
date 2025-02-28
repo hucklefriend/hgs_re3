@@ -16,7 +16,7 @@ export class PointNode extends Vertex
      * @param r
      * @param id
      */
-    constructor(x = 0, y = 0, r = 0, id = null)
+    constructor(x = 0, y = 0, r = 5, id = null)
     {
         super(x, y);
         this.r = r;
@@ -191,25 +191,48 @@ export class PointNode extends Vertex
      * 描画
      *
      * @param ctx
-     * @param offsetX
-     * @param offsetY
      * @param {Rect|null}viewRect
      */
-    draw(ctx, offsetX, offsetY, viewRect = null)
+    draw(ctx, viewRect = null)
     {
-        if (viewRect !== null) {
-            const drawY = this.y + offsetY;
-            if (drawY < viewRect.top - 30) {
-                return;
-            }
-            if (drawY > viewRect.bottom + 30) {
-                return;
-            }
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
         }
 
+        this.setCtxParam(ctx);
+
         ctx.beginPath();
-        ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
+        ctx.arc(this.x + left, this.y + top, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
+    }
+
+    isDraw(viewRect)
+    {
+        let left = 0;
+        let top = 0;
+        let isDraw = true;
+        if (viewRect !== null) {
+            const drawY = this.y + top;
+            if (drawY < viewRect.top - 10) {
+                isDraw = false;
+            }
+            if (drawY > viewRect.bottom + 10) {
+                isDraw = false;
+            }
+
+            left = -viewRect.left;
+            top = -viewRect.top;
+        }
+
+        return [isDraw, left, top];
+    }
+
+    setCtxParam(ctx)
+    {
+        ctx.fillStyle = "rgba(0, 100, 0, 0.8)"; // 塗りつぶしの色と透明度
+        ctx.shadowColor = "lime"; // 影の色
+        ctx.shadowBlur = 3; // 影のぼかし効果
     }
 }
 

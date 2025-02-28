@@ -108,6 +108,10 @@ export class DOMNode extends OctaNode
 
         this._animFunc = null;
         this._isInsideViewRect = false;
+
+        DOM.addEventListener('mousedown', (e) => {
+            e.stopPropagation(); // イベントの伝播を停止
+        });
     }
 
     /**
@@ -521,5 +525,22 @@ export class DOMNode extends OctaNode
         }
 
         return [isDraw, left, top];
+    }
+
+    draw(ctx, viewRect)
+    {
+        const [isDraw, left, top] = this.isDraw(viewRect);
+        if (!isDraw) {
+            return;
+        }
+
+        ctx.strokeStyle = "rgba(0, 100, 0, 0.8)";
+        ctx.lineWidth = 1;
+        ctx.shadowColor = "lime";
+        ctx.shadowBlur = 5;
+
+        ctx.fillStyle = "black";
+
+        super.draw(ctx, left, top);
     }
 }
