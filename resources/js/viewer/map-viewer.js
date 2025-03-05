@@ -55,6 +55,11 @@ export class MapViewer extends ViewerBase
         this.dataCache = null;
         this.isWait = false;
     }
+
+    get height() 
+    {
+        return window.innerHeight;
+    }
     
 
     /**

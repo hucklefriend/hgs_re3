@@ -1,8 +1,8 @@
 import { Vertex } from '../common/vertex.js';
-import { Param } from '../common/param.js';
-import { OctaNode } from './octa-node.js';
+import { DOMNode } from './dom-node.js';
 import { LinkNode } from './link-node.js';
 import { HorrorGameNetwork } from '../horror-game-network.js';
+import { Util } from '../common/util.js';
 /**
  * @type {HorrorGameNetwork}
  */
@@ -53,48 +53,8 @@ export class ContentLinkNode extends LinkNode
     mouseClick()
     {
         if (this.url) {
-            window.hgn.openContentNode(this.url, this.id, false);
+            window.hgn.openContentView(this.url, this.id, false);
         }
-    }
-
-    /**
-     * アニメーション開始
-     */
-    startAnimation()
-    {
-        this.isAnimation = true;
-    }
-
-    /**
-     * アニメーション
-     *
-     * @param contentNode
-     * @param frameCnt
-     */
-    animation(contentNode, frameCnt)
-    {
-        let rect = contentNode.DOM.getBoundingClientRect();
-        let rate = frameCnt / 10;
-
-        // コンテンツノードの大きさに合わせて徐々に拡大or縮小
-        for (let i = 0; i < 8; i++) {
-            let cx = window.hgn.getScrollX() + contentNode.vertices[i].x + rect.left;
-            let cy = window.hgn.getScrollY() + contentNode.vertices[i].y;
-
-            this.vertices[i] = new Vertex(
-                Math.ceil(this.originalVertices[i].x + ((cx - this.originalVertices[i].x) * rate)),
-                Math.ceil(this.originalVertices[i].y + ((cy - this.originalVertices[i].y) * rate))
-            );
-        }
-    }
-
-    /**
-     * アニメーション終了
-     */
-    endAnimation()
-    {
-        this.isAnimation = false;
-        this.animationFrame = 0;
     }
 
     /**
@@ -116,24 +76,15 @@ export class ContentLinkNode extends LinkNode
     }
 
     /**
-     * 再配置
-     */
-    reload()
-    {
-        if (!this.isAnimation) {
-            super.reload();
-        }
-    }
-
-    /**
      * 描画
      *
      * @param ctx
+     * @param viewRect
      */
     draw(ctx, viewRect)
     {
-        if (!this.isHide || this.isAnimation) {
-            super.draw(ctx, viewRect);//this.isAnimation ? 'rgba(0,0,0,0.5)' : 'black');
+        if (!this.isHide) {
+            super.draw(ctx, viewRect);
         }
     }
 }
@@ -141,213 +92,189 @@ export class ContentLinkNode extends LinkNode
 /**
  * コンテンツノード
  */
-export class ContentNode extends OctaNode
+export class ContentNode extends DOMNode
 {
     /**
      * コンストラクタ
+     * 
+     * @param {*} id 
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} DOM 
+     * @param {*} notchSize 
      */
-    constructor()
+    constructor(id, x, y, DOM, notchSize = 13)
     {
-        // この時点では正しく作成しない
-        super(0, 0, 0, 0, Param.CONTENT_NODE_NOTCH_SIZE);
+        super(id, x, y, DOM, notchSize);
+
+        this.animStartTime = 0;
+        this.animVertices = null;
+        this.minVertices = null;
+        this._isAppeared = false;
+        this._lineWidth = 1;
+
+        this.blurDOM = document.querySelector('#content-node-blur');
     }
 
     /**
-     * 削除
-     * ガベージコレクションに任せる
+     * 出現済みか
      */
-    delete()
+    get isAppeared()
     {
-        super.delete();
+        return this._isAppeared;
+    }
+    
+    /**
+     * 八角形の設定
+     * canvasをはみ出てしまうので、OctaNodeよりちょっと小さくする
+     */
+    setOctagon()
+    {
+        const padding = 5;
+
+        this.vertices[0].x = this.rect.left + this.notchSize + padding;
+        this.vertices[0].y = this.rect.top + padding;
+        this.vertices[1].x = this.rect.right - this.notchSize - padding;
+        this.vertices[1].y = this.rect.top + padding;
+        this.vertices[2].x = this.rect.right - padding;
+        this.vertices[2].y = this.rect.top + this.notchSize + padding;
+        this.vertices[3].x = this.rect.right - padding;
+        this.vertices[3].y = this.rect.bottom - this.notchSize - padding;
+        this.vertices[4].x = this.rect.right - this.notchSize - padding;
+        this.vertices[4].y = this.rect.bottom - padding;
+        this.vertices[5].x = this.rect.left + this.notchSize + padding;
+        this.vertices[5].y = this.rect.bottom - padding;
+        this.vertices[6].x = this.rect.left + padding;
+        this.vertices[6].y = this.rect.bottom - this.notchSize - padding;
+        this.vertices[7].x = this.rect.left + padding;
+        this.vertices[7].y = this.rect.top + this.notchSize + padding;
     }
 
     /**
-     * 再配置
+     * 出現
      */
-    reload()
+    appear(linkNode)
     {
-        super.reload(3, 3, this.containerDOM.offsetWidth - 6, this.containerDOM.offsetHeight - 6);
+        this._isAppeared = false;
+        super.appear();
 
-        this.canvas.width = this.containerDOM.offsetWidth;
-        this.canvas.height = this.containerDOM.offsetHeight;
-    }
+        this.blurDOM.style.opacity = 0;
+        this.blurDOM.style.display = 'block';
 
-    /**
-     * 閉じているか
-     *
-     * @returns {boolean}
-     */
-    isClosed()
-    {
-        return this.state === ContentNode.STATE_CLOSED;
-    }
+        this.animStartTime = window.hgn.time;
 
-    /**
-     * 開いているか
-     *
-     * @returns {boolean}
-     */
-    isOpened()
-    {
-        return this.state === ContentNode.STATE_OPENED;
-    }
+        if (linkNode) {
+            // リンクノードがあるので、そこから拡大
+            this.minVertices = linkNode.vertices.map(vertex => 
+                new Vertex(vertex.x, vertex.y)
+            );
+            for (let i = 0; i < 8; i++) {
+                this.minVertices[i].x = this.minVertices[i].x - window.hgn.viewer.scrollX;
+                this.minVertices[i].y = this.minVertices[i].y - window.hgn.viewer.scrollY;
+            }
+        } else {
+            // リンクノードが見当たらない場合はビューポート上の中央から出現させる
+            const x = window.innerWidth / 2;
+            const y = window.innerHeight / 2;
+            this.minVertices = [
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y),
+                new Vertex(x, y)
+            ];
+        }
 
-    /**
-     * 開く
-     *
-     * @param linkNode
-     */
-    open(linkNode)
-    {
+        this.animVertices = this.minVertices.map(vertex => 
+            new Vertex(vertex.x, vertex.y)
+        );
         this.reload();
-        this.setOctagon();
-        this.linkNode = linkNode;
-        this.state = ContentNode.STATE_OPENING;
-        this.openScrollY = window.scrollY;
-        this.mode = ContentNode.MODE_NORMAL;
-        this.prevTitle = document.title;
-
-        window.hgn.setContainerScrollMode(0, this.openScrollY);
-
-        this.animationFrame = 0;
-        if (this.linkNode !== null) {
-            this.linkNode.startAnimation();
-        }
-
-        this.DOM.classList.add('content-node-hide', 'content-node-opened');
-        this.DOM.classList.remove('content-node-closed');
     }
 
     /**
-     * データの設定
-     *
-     * @param data
+     * 出現アニメーション
      */
-    setContent(data)
+    appearAnimation()
     {
-        this.dataChache = data;
-        this.contentLoaded = true;
-    }
-
-    /**
-     * オープンアニメーション
-     */
-    opening()
-    {
-        if (this.linkNode === null) {
-            // リンクノードがないなら一気にオープン
-            this.state = ContentNode.STATE_OPENED;
-            this.DOM.classList.remove('content-node-hide');
-            this.blurDOM.style.display = 'block';
-            return true;
-        } else {
-            this.animationFrame++;
-
-            if (this.animationFrame <= 9) {
-                this.linkNode.animation(this, this.animationFrame);
-            } else {
-                this.state = ContentNode.STATE_OPENED;
-                this.linkNode.endAnimation();
-                this.linkNode.hide();
-                this.DOM.classList.remove('content-node-hide');
-                this.blurDOM.style.display = 'block';
-                return true;
+        const animTime = window.hgn.time - this.animStartTime;
+        if (animTime < 200) {
+            const ratio = (animTime) / 200;
+            for (let i = 0; i < 8; i++) {
+                this.animVertices[i].x = Util.getMidpoint(this.minVertices[i].x, this.vertices[i].x, ratio, true);
+                this.animVertices[i].y = Util.getMidpoint(this.minVertices[i].y, this.vertices[i].y, ratio, true);
             }
 
-            return false;
+            this.lineWidth = Util.getMidpoint(1, 3, ratio, true);
+            this.blurDOM.style.opacity = Util.getMidpoint(0, 1, ratio, false);
+        } else {
+            this.appeared();
+        }
+
+        window.hgn.contentViewer.setDraw();
+    }
+
+    /**
+     * 出現済み
+     */
+    appeared()
+    {
+        super.appeared();
+
+        this.animVertices = [...this.vertices];
+        this.blurDOM.style.opacity = 1;
+        this._isAppeared = true;
+
+        window.hgn.contentViewer.opened();
+    }
+
+    /**
+     * 消失
+     */
+    disappear()
+    {
+        this._isAppeared = false;
+        super.disappear();
+
+        this.animStartTime = window.hgn.time;
+    }
+
+    /**
+     * 消失アニメーション
+     */
+    disappearAnimation()
+    {
+        const animTime = window.hgn.time - this.animStartTime;
+        if (animTime < 300) {
+            const ratio = 1 - (animTime / 300);
+            for (let i = 0; i < 8; i++) {
+                this.animVertices[i].x = Util.getMidpoint(this.minVertices[i].x, this.vertices[i].x, ratio, true);
+                this.animVertices[i].y = Util.getMidpoint(this.minVertices[i].y + window.scrollY, this.vertices[i].y, ratio, true);
+            }
+
+            this.blurDOM.style.opacity = Util.getMidpoint(0, 1, ratio, false);
+            this.lineWidth = Util.getMidpoint(1, 3, ratio, true);
+
+            window.hgn.contentViewer.restoreScrollPosition(ratio);
+            window.hgn.contentViewer.setDraw();
+        } else {
+            this.disappeared();
         }
     }
 
     /**
-     * 閉じる
+     * 消失済み
      */
-    close(isPopState = false)
+    disappeared()
     {
-        this.state = ContentNode.STATE_CLOSING;
+        super.disappeared();
         this.blurDOM.style.display = 'none';
-        this.titleDOM.innerHTML = '';
-        this.bodyDOM.innerHTML = '';
+        this.minVertices = null;
+        this.animVertices = null;
 
-        // こうやっとけばメモリ節約になるかな？
-        this.canvas.width = 1;
-        this.canvas.height = 1;
-
-        if (!isPopState) {
-            if (this.historyUrl) {
-                window.history.pushState(this.historyState, null, this.historyUrl);
-                this.historyUrl = null;
-                this.historyState = null;
-            } else {
-                window.history.pushState({type:'network', title:this.prevTitle}, null, window.baseUrl);
-            }
-        }
-
-        this.DOM.classList.add('content-node-hide');
-        if (this.linkNode === null) {
-            this.animationFrame = 0;
-        } else {
-            this.animationFrame = 10;
-            this.linkNode.startAnimation();
-        }
-
-        document.title = this.prevTitle;
-    }
-
-    /**
-     * 閉じてる最中
-     *
-     * @returns {boolean}
-     */
-    closing()
-    {
-        this.animationFrame--;
-
-        if (this.animationFrame > 0) {
-            // 縮小アニメーション
-            this.linkNode.animation(this, this.animationFrame);
-        } else {
-            this.state = ContentNode.STATE_CLOSED;
-            if (this.linkNode !== null) {
-                this.linkNode.endAnimation();
-                this.linkNode.setOctagon();
-                this.linkNode.show();
-            }
-
-            window.hgn.setBodyScrollMode(0, this.openScrollY);
-            this.DOM.classList.add('content-node-closed');
-            this.DOM.classList.remove('content-node-opened');
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 更新
-     */
-    update()
-    {
-        if (this.state === ContentNode.STATE_OPENING) {
-            isDraw = this.opening();
-            window.hgn.setDrawMain();
-        } else if (this.state === ContentNode.STATE_CLOSING) {
-            this.closing();
-            window.hgn.setDrawMain();
-        } else if (this.state === ContentNode.STATE_OPENED) {
-            if (this.dataChache !== null) {
-                if (this.dataChache.hasOwnProperty('mode')) {
-                    this.mode = this.dataChache.mode;
-                }
-
-                this.titleDOM.innerHTML = this.dataChache.title;
-                this.bodyDOM.innerHTML = this.dataChache.body;
-                document.title = this.dataChache.documentTitle;
-                this.dataChache = null;
-            }
-
-            this.changeSize();
-        }
+        window.hgn.contentViewer.closed();
     }
 
     /**
@@ -357,49 +284,18 @@ export class ContentNode extends OctaNode
     {
         if (this.isOpened()) {
             this.reload();
-            this.drawFrame();
+            window.hgn.contentViewer.setDraw();
         }
     }
 
     /**
-     * フレームを描画
-     * フレームはアニメーションしないので、update外でも呼び出される
+     * 描画
      */
-    drawFrame()
+    draw(ctx, left, top)
     {
-        super.setShapePath(this.ctx, 0, 0);
+        ctx.lineWidth = this.lineWidth; // 線の太さはアニメーションで変わるので調整
 
-        // Set line color
-        if (this.mode === ContentNode.MODE_ERROR) {
-            this.ctx.strokeStyle = "rgba(180, 0, 0, 0.8)"; // 線の色と透明度
-            this.ctx.shadowColor = "red"; // 影の色
-        } else if (this.mode === ContentNode.MODE_WARNING) {
-            this.ctx.strokeStyle = "rgba(180, 180, 0, 0.8)";
-            this.ctx.shadowColor = "yellow"; // 影の色
-        } else {
-            this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)";
-            this.ctx.shadowColor = "lime"; // 影の色
-        }
-
-        this.ctx.lineWidth = 3; // 線の太さ
-        this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        this.ctx.lineCap = "round"; // 線の末端のスタイル
-        this.ctx.shadowBlur = 5; // 影のぼかし効果
-        this.ctx.stroke();
-    }
-
-    /**
-     * スクロール
-     */
-    scroll()
-    {
-        // let rect = this.DOM.getBoundingClientRect();
-        // let y = rect.top + window.scrollY;
-        //
-        // // contentNodeDOMのy座標を現在のスクロール位置のy座標に設定
-        // if (y > window.scrollY) {
-        //     this.DOM.style.top = window.scrollY + 'px';
-        // }
-        // //this.DOM.style.top = -(this.DOM.offsetTop - window.scrollY) + 'px';
+        super.setShapePathByVertices(ctx, this.animVertices, left, top);
+        ctx.stroke();
     }
 }

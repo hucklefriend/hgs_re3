@@ -1,6 +1,7 @@
 import { HorrorGameNetwork } from '../horror-game-network.js';
 import { ContentLinkNode, ContentNode } from '../node/content-node.js';
 import { Param } from '../common/param.js';
+import { Util } from '../common/util.js';
 /**
  * @type {HorrorGameNetwork}
  */
@@ -11,6 +12,15 @@ window.hgn;
  */
 export class ContentViewer
 {
+    /**
+     * タイプ
+     */
+    get TYPE()
+    {
+        return 'content';
+    }
+    
+    
     static STATE_CLOSED = 0;
     static STATE_OPENED = 1;
     static STATE_OPENING = 10;
@@ -25,26 +35,18 @@ export class ContentViewer
      */
     constructor()
     {
-        this.node = new ContentNode();
-
         this.state = ContentViewer.STATE_CLOSED;
 
         this.canvas = document.querySelector('#content-node-canvas');
         this.ctx = this.canvas.getContext('2d');
 
-        // あらかじめ線のスタイルを設定
-        this.ctx.lineWidth = 3; // 線の太さ
-        this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
-        this.ctx.lineCap = "round"; // 線の末端のスタイル
-        this.ctx.shadowBlur = 5; // 影のぼかし効果
-
         this.DOM = document.querySelector('#content-node');
         this.containerDOM = this.DOM.querySelector('#content-node-container');
         this.titleDOM = this.DOM.querySelector('#content-node-title');
         this.bodyDOM = this.DOM.querySelector('#content-node-body');
-        this.blurDOM = document.querySelector('#content-node-blur');
-
-        this.node = new ContentNode(this.DOM);
+        this.footerDOM = this.DOM.querySelector('#content-node-footer');
+        
+        this.node = ContentNode.createFromDOM(this.DOM, 50);
 
         document.querySelectorAll('.content-node-close').forEach((close) => {
             close.addEventListener('click', () => {
@@ -59,9 +61,14 @@ export class ContentViewer
         this.linkNode = null;
         this.animationFrame = 0;
 
-        this.dataChache = null;
+        this.dataCache = null;
         this.contentLoaded = false;
         this.prevTitle = document.title;
+
+        this.offsetX = 0;
+        this.offsetY = 0;
+
+        this._isDraw = false;
     }
 
     /**
@@ -82,14 +89,26 @@ export class ContentViewer
     }
 
     /**
+     * 描画するか
+     */
+    setDraw()
+    {
+        this._isDraw = true;
+    }
+
+    /**
      * 再配置
      */
     reload()
     {
-        this.node.reload(3, 3, this.containerDOM.offsetWidth - 6, this.containerDOM.offsetHeight - 6);
+        this.node.reload();
 
-        this.canvas.width = this.containerDOM.offsetWidth;
-        this.canvas.height = this.containerDOM.offsetHeight;
+        this.canvas.width = this.DOM.offsetWidth;
+        this.canvas.height = this.DOM.offsetHeight;
+
+        const rect = this.DOM.getBoundingClientRect();
+        this.offsetX = -rect.left;
+        this.offsetY = -rect.top;
     }
 
     /**
@@ -113,65 +132,58 @@ export class ContentViewer
     }
 
     /**
-     * 開く
-     *
-     * @param linkNode
-     */
-    open(linkNode)
-    {
-        this.reload();
-        this.setOctagon();
-        this.linkNode = linkNode;
-        this.state = ContentViewer.STATE_OPENING;
-        this.openScrollY = window.scrollY;
-        this.mode = ContentViewer.MODE_NORMAL;
-        this.prevTitle = document.title;
-
-        window.hgn.setContainerScrollMode(0, this.openScrollY);
-
-        this.animationFrame = 0;
-        if (this.linkNode !== null) {
-            this.linkNode.startAnimation();
-        }
-
-        this.DOM.classList.add('content-node-hide', 'content-node-opened');
-        this.DOM.classList.remove('content-node-closed');
-    }
-
-    /**
      * データの設定
      *
      * @param data
      */
     setContent(data)
     {
-        this.dataChache = data;
+        this.titleDOM.innerHTML = data.title;
+        this.bodyDOM.innerHTML = data.body;
+        document.title = data.documentTitle;
+        this.mode = data.mode ?? ContentViewer.MODE_NORMAL;
         this.contentLoaded = true;
+
+        this.containerDOM.classList.remove('hide');
+        this.containerDOM.classList.add('show');
+
+        this.reload();
     }
 
     /**
-     * オープンアニメーション
+     * 開く
+     *
+     * @param linkNode
      */
-    opening()
+    open(linkNode)
     {
-        if (this.linkNode === null) {
-            // リンクノードがないなら一気にオープン
-            this.state = ContentViewer.STATE_OPENED;
-            this.DOM.classList.remove('content-node-hide');
-            this.blurDOM.style.display = 'block';
-        } else {
-            this.animationFrame++;
+        this.contentLoaded = false;
+        this.linkNode = linkNode;
+        this.state = ContentViewer.STATE_OPENING;
+        this.openScrollY = window.scrollY;
+        this.mode = ContentViewer.MODE_NORMAL;
+        this.prevTitle = document.title;
 
-            if (this.animationFrame <= 9) {
-                this.linkNode.animation(this, this.animationFrame);
-            } else {
-                this.state = ContentViewer.STATE_OPENED;
-                this.linkNode.endAnimation();
-                this.linkNode.hide();
-                this.DOM.classList.remove('content-node-hide');
-                this.blurDOM.style.display = 'block';
-            }
+        window.hgn.viewer.setContainerScrollMode(0, this.openScrollY);
+
+        this.titleDOM.classList.remove('content-node-hide');
+        this.bodyDOM.classList.remove('content-node-hide');
+        this.footerDOM.classList.remove('content-node-hide');
+        this.DOM.classList.remove('content-node-closed');
+
+        this.reload();
+
+        if (this.linkNode !== null) {
+            this.linkNode.hide();
         }
+
+        this.node.appear(this.linkNode);
+        window.hgn.setDrawMain(true);
+    }
+
+    opened()
+    {
+        this.state = ContentViewer.STATE_OPENED;
     }
 
     /**
@@ -179,8 +191,25 @@ export class ContentViewer
      */
     close(isPopState = false)
     {
-        this.state = ContentViewer.STATE_CLOSING;
-        this.blurDOM.style.display = 'none';
+        this.containerDOM.classList.remove('show');
+        this.containerDOM.classList.add('hide');
+
+        // 背景のスクロールを戻す
+        if (window.hgn.viewer.scrollX !== this.openScrollX
+            || window.hgn.viewer.scrollY !== this.openScrollY) {
+            
+            
+        }
+
+        this.node.disappear();
+    }
+
+    /**
+     * 閉じる
+     */
+    closed(isPopState = false)
+    {
+        this.state = ContentViewer.STATE_CLOSED;
         this.titleDOM.innerHTML = '';
         this.bodyDOM.innerHTML = '';
 
@@ -194,41 +223,27 @@ export class ContentViewer
             }
         }
 
-        this.DOM.classList.add('content-node-hide');
-        if (this.linkNode === null) {
-            this.animationFrame = 0;
-        } else {
-            this.animationFrame = 10;
-            this.linkNode.startAnimation();
-        }
+        this.titleDOM.classList.add('content-node-hide');
+        this.bodyDOM.classList.add('content-node-hide');
+        this.footerDOM.classList.add('content-node-hide');
+        this.DOM.classList.add('content-node-closed');
 
         document.title = this.prevTitle;
+
+        if (this.linkNode !== null) {
+            this.linkNode.show();
+            this.linkNode = null;
+        }
+
+        window.hgn.viewer.setBodyScrollMode(0, this.openScrollY);
+        window.hgn.setDrawMain(true);
     }
 
-    /**
-     * 閉じてる最中
-     *
-     * @returns {boolean}
-     */
-    closing()
+    restoreScrollPosition(ratio)
     {
-        this.animationFrame--;
-
-        if (this.animationFrame > 0) {
-            // 縮小アニメーション
-            this.linkNode.animation(this, this.animationFrame);
-        } else {
-            this.state = ContentViewer.STATE_CLOSED;
-            if (this.linkNode !== null) {
-                this.linkNode.endAnimation();
-                this.linkNode.setOctagon();
-                this.linkNode.show();
-            }
-
-            window.hgn.setBodyScrollMode(0, this.openScrollY);
-            this.DOM.classList.add('content-node-closed');
-            this.DOM.classList.remove('content-node-opened');
-        }
+        const y = Util.getMidpoint(this.openScrollY, window.hgn.viewer.scrollY, ratio, true);
+        
+        window.hgn.viewer.scrollTo(window.hgn.viewer.scrollX, y);
     }
 
     /**
@@ -236,24 +251,32 @@ export class ContentViewer
      */
     update()
     {
-        if (this.state === ContentViewer.STATE_OPENING) {
-            isDraw = this.opening();
-            window.hgn.setDrawMain();
-        } else if (this.state === ContentViewer.STATE_CLOSING) {
-            this.closing();
-            window.hgn.setDrawMain();
-        } else if (this.state === ContentViewer.STATE_OPENED) {
-            if (this.dataChache !== null) {
-                if (this.dataChache.hasOwnProperty('mode')) {
-                    this.mode = this.dataChache.mode;
-                }
-
-                this.titleDOM.innerHTML = this.dataChache.title;
-                this.bodyDOM.innerHTML = this.dataChache.body;
-                document.title = this.dataChache.documentTitle;
-                this.dataChache = null;
-            }
+        this.node.update();
+        
+        if (this._isDraw) {
+            // コンテンツノードはViewRectを使わない（常に全部描画）
+            this.draw();
+            this._isDraw = false;
         }
+
+        // if (this.state === ContentViewer.STATE_OPENING) {
+        //     isDraw = this.opening();
+        //     window.hgn.setDrawMain();
+        // } else if (this.state === ContentViewer.STATE_CLOSING) {
+        //     this.closing();
+        //     window.hgn.setDrawMain();
+        // } else if (this.state === ContentViewer.STATE_OPENED) {
+        //     if (this.dataChache !== null) {
+        //         if (this.dataChache.hasOwnProperty('mode')) {
+        //             this.mode = this.dataChache.mode;
+        //         }
+
+        //         this.titleDOM.innerHTML = this.dataChache.title;
+        //         this.bodyDOM.innerHTML = this.dataChache.body;
+        //         document.title = this.dataChache.documentTitle;
+        //         this.dataChache = null;
+        //     }
+        // }
     }
 
     /**
@@ -261,33 +284,39 @@ export class ContentViewer
      */
     resize()
     {
-        if (this.isOpened()) {
-            this.reload();
-            this.drawFrame();
-        }
+        this.reload();
     }
 
     /**
-     * フレームを描画
-     * フレームはアニメーションしないので、update外でも呼び出される
+     * 描画
      */
-    drawFrame()
+    draw()
     {
-        super.setShapePath(this.ctx, 0, 0);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // あらかじめ線のスタイルを設定
+        //this.ctx.lineWidth = 3; // 線の太さ
+        this.ctx.lineJoin = "round"; // 線の結合部分のスタイル
+        this.ctx.lineCap = "round"; // 線の末端のスタイル
+        this.ctx.shadowBlur = 5; // 影のぼかし効果
 
         // Set line color
-        if (this.mode === ContentViewer.MODE_ERROR) {
-            this.ctx.strokeStyle = "rgba(180, 0, 0, 0.8)"; // 線の色と透明度
-            this.ctx.shadowColor = "red"; // 影の色
-        } else if (this.mode === ContentViewer.MODE_WARNING) {
-            this.ctx.strokeStyle = "rgba(180, 180, 0, 0.8)";
-            this.ctx.shadowColor = "yellow"; // 影の色
-        } else {
-            this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)";
-            this.ctx.shadowColor = "lime"; // 影の色
+        switch (this.mode) {
+            case ContentViewer.MODE_ERROR:        // エラー表示
+                this.ctx.strokeStyle = "rgba(180, 0, 0, 0.8)"; // 線の色と透明度
+                this.ctx.shadowColor = "red"; // 影の色
+                break;
+            case ContentViewer.MODE_WARNING:      // ワーニング表示
+                this.ctx.strokeStyle = "rgba(180, 180, 0, 0.8)";
+                this.ctx.shadowColor = "yellow"; // 影の色
+                break;
+            case ContentViewer.MODE_NORMAL:       // 通常表示
+                this.ctx.strokeStyle = "rgba(0, 180, 0, 0.8)";
+                this.ctx.shadowColor = "lime"; // 影の色
+                break;
         }
 
-        this.ctx.stroke();
+        this.node.draw(this.ctx, this.offsetX, this.offsetY);
     }
 
     /**

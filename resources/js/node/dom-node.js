@@ -2,8 +2,6 @@ import { Vertex } from '../common/vertex.js';
 import { Rect } from '../common/rect.js';
 import { Param } from '../common/param.js';
 import { OctaNode } from './octa-node.js';
-import { PointNode, SubPointNode } from './point-node.js';
-import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
 import { Util } from "../common/util.js";
 import { SubNetwork } from "../network/sub-network.js";
 import { HorrorGameNetwork } from '../horror-game-network.js';
@@ -45,12 +43,11 @@ export class DOMNode extends OctaNode
     /**
      * DOMからインスタンスを生成
      *
-     * @param containerDOM
      * @param DOM
      * @param notchSize
      * @returns {DOMNode}
      */
-    static createFromDOM(containerDOM, DOM, notchSize = 13)
+    static createFromDOM(DOM, notchSize = 13)
     {
         return new this(DOM.id, DOM.offsetLeft, DOM.offsetTop, DOM, notchSize);
     }

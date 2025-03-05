@@ -15,6 +15,8 @@ export class ViewerBase
         this._nodeCnt = 0;
         this._appearedNodeCnt = 0;
         this._appearedNodes = {};
+        
+        this._nodesIdHash = {};
     }
 
     get nodeCnt()
@@ -91,6 +93,46 @@ export class ViewerBase
         return this.appearedNodeCnt <= 0;
     }
 
+    /**
+     * ノードIDハッシュに追加
+     * 
+     * @param {} id 
+     * @param {*} node 
+     * @returns 
+     */
+    addNodeIdHash(id, node)
+    {
+        if (this._nodesIdHash.hasOwnProperty(id)){
+            console.error(`Node with id "${id}" already exists.`);
+            return;
+        }
+        this._nodesIdHash[id] = node;
+    }
+
+    /**
+     * ノードIDハッシュから削除
+     * 
+     * @param {*} id 
+     */
+    delNodeIdHash(id)
+    {
+        delete this._nodesIdHash[id];
+    }
+
+    /**
+     * ノードIDからノードを取得
+     * 
+     * @param {*} id 
+     * @returns
+     */
+    getNodeById(id)
+    {
+        return this._nodesIdHash[id] ?? null;
+    }
+
+    /**
+     * スクロール
+     */
     scroll()
     {
         

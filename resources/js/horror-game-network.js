@@ -42,6 +42,7 @@ export class HorrorGameNetwork
         this.background = new Background(); // 背景
 
         this.body = document.querySelector('body');
+        this.canvasContainer = document.querySelector('#canvas-container');
 
         // メインのcanvas
         this.mainCanvas = document.querySelector('#main-canvas');
@@ -49,7 +50,7 @@ export class HorrorGameNetwork
         this.mainCtx = this.mainCanvas.getContext('2d');
 
         // オフスクリーンキャンバスの生成
-        // 未対応の場合は既存のcanvasで代用anvasで代用
+        // 未対応の場合は既存のcanvasで代用
         this.offscreenCanvas = null;
         if (typeof OffscreenCanvas !== 'undefined') {
             this.offscreenCanvas = new OffscreenCanvas(1, 1);
@@ -302,7 +303,7 @@ export class HorrorGameNetwork
     setCanvasSize()
     {
         this.mainCanvas.width = this.body.offsetWidth;
-        this.mainCanvas.height = this.body.offsetHeight;
+        this.mainCanvas.height = this.viewer.height;
 
         this.offscreenCanvas.width = window.innerWidth;
         this.offscreenCanvas.height = window.innerHeight;
@@ -310,10 +311,12 @@ export class HorrorGameNetwork
         this.postMessageToSubNetworkWorker({
             type: 'resize',
             width: this.body.offsetWidth, 
-            height: this.body.offsetHeight,
+            height: this.viewer.height,
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight
         });
+
+        document.querySelector('#canvas-container-pad').style.top = this.mainCanvas.height + 'px';
     }
 
     /**
@@ -423,57 +426,71 @@ export class HorrorGameNetwork
     }
 
     /**
-     * コンテンツノードの表示
+     * コンテンツの表示
      *
      * @param url
      * @param linkNodeId
      * @param isPopState
      */
-    openContentNode(url, linkNodeId, isPopState)
+    openContentView(url, linkNodeId, isPopState)
     {
-        let linkNode = null;
-        if (this.nodesIdHash.hasOwnProperty(linkNodeId)) {
-            linkNode = this.nodesIdHash[linkNodeId];
-        }
-        this.contentNode.open(linkNode);
+        const linkNode = this.viewer.getNodeById(linkNodeId);
+        this.contentViewer.open(linkNode, ContentViewer.MODE_NORMAL);
 
         if (!isPopState) {
             // pushStateにつっこむ
-            window.history.pushState({type: 'contentNode', linkNodeId: linkNodeId}, '', url);
+            window.history.pushState({type: this.contentViewer.TYPE, linkNodeId: linkNodeId}, '', url);
         }
         this.fetch(url, (data, hasError) => {
             if (hasError) {
-                this.showContentNode({
+                this.contentViewer.setContent({
                     title: 'Error',
                     body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
-                    mode: ContentNode.MODE_ERROR
+                    mode: ContentViewer.MODE_ERROR
                 });
             } else {
-                this.showContentNode(data);
+                this.contentViewer.setContent(data);
             }
         });
     }
 
     /**
-     * コンテンツノードを表示
-     *
-     * @param data
+     * コンテンツビューワを閉じる
      */
-    showContentNode(data)
+    closeContentView()
     {
-        this.contentNode.setContent(data);
+        this.contentViewer.close();
     }
 
+    /**
+     * マップビューワへ遷移
+     * 
+     * @param {string} url
+     * @param {boolean} isBack
+     */
     navigateToMap(url, isBack = false)
     {
         this.navigateToNextViewer(this.mapViewer, url, isBack);
     }
 
+    /**
+     * ドキュメントビューワへ遷移
+     *
+     * @param {string} url
+     * @param {boolean} isBack
+     */
     navigateToDocument(url, isBack = false)
     {
         this.navigateToNextViewer(this.documentViewer, url, isBack);
     }
 
+    /**
+     * 次のビューワへ遷移
+     *
+     * @param waitViewer
+     * @param {string} url
+     * @param {boolean} isBack
+     */
     navigateToNextViewer(waitViewer, url, isBack = false)
     {
         // if (!this.viewer.isAllNodeAppeared()) {
@@ -484,13 +501,13 @@ export class HorrorGameNetwork
 
         this.fetch(url, (data, hasError) => {
             if (hasError) {
-                this.contentNode.open(null);
-                this.showContentNode({
+                this.contentViewer.open(null);
+                this.contentViewer.setContent({
                     title: 'エラー',
                     body: 'エラーが発生しました。<br>不具合によるものと思われますので、対処されるまでお待ちください。',
                     documentTitle: 'エラー|ホラーゲームネットワーク',
-                    mode: ContentNode.MODE_ERROR
-                }, null);
+                    mode: ContentViewer.MODE_ERROR
+                });
         
                 if (!isBack) {
                     // pushStateにつっこむ
@@ -591,14 +608,14 @@ export class HorrorGameNetwork
      */
     popState(e)
     {
-        if (this.contentNode.isOpened()) {
-            this.contentNode.close(true);
+        if (this.contentViewer.isOpened()) {
+            this.contentViewer.close(true);
         } else {
             if (e.state) {
-                if (e.state.type === 'network') {
+                if (e.state.type === 'doc') {
                     this.changeNetwork(location.href, true);
-                } else if (e.state.type === 'contentNode') {
-                    this.openContentNode(location.href, e.state.linkNodeId, true);
+                } else if (e.state.type === 'content') {
+                    this.openContentView(location.href, e.state.linkNodeId, true);
                 }
             }
         }

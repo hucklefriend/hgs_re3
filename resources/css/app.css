@@ -31,8 +31,10 @@ table {
     font-size: 14px;
 }
 
-#scroller {
-    position: absolute;
+#document {
+    /*position: absolute;
+    left: 0;
+    top: 0;*/
     margin: 0;
     width: 100%;
     display: flex;
@@ -50,23 +52,31 @@ table {
 }
 
 
-#scroller.self-scroll {
+#document.self-scroll, #canvas-container.self-scroll {
     height: 100vh;
     overflow-y: hidden;
     position: fixed;
     top: 0;
-
+/*
     main {
         padding-bottom: 100vh;
     }
-
+*/
     /*scrollbar-width: none;*/
 }
 
-#scroller.self-scroll::-webkit-scrollbar {
+#canvas-container.self-scroll {
+    width: 100%;
+}
+
+#document-scroller.self-scroll::-webkit-scrollbar {
     display: none;
 }
 
+#canvas-container-pad {
+    position: absolute;
+    width: 1px;
+}
 
 p, blockquote {
     padding: 0;
@@ -87,6 +97,14 @@ main {
     section {
         margin-bottom: 150px;
     }
+}
+
+/* documentがposition:fixedになるときに、mainのpadding-bottom:50pxが無視されてしまうので、無理やり50pxの要素を付け足す */
+main::after {
+    content: '';
+    display: block;
+    height: 50px; /* 必要な余白の高さ */
+    pointer-events: none;
 }
 
 a:link, a:visited {

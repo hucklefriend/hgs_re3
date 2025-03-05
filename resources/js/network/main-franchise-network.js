@@ -95,12 +95,12 @@ export class MainFranchiseNetwork extends Network
         let node = null;
         switch (nodeData.type) {
             case 'dom-node':
-                node = DOMNode.createFromDOM(containerDOM, DOM);
+                node = DOMNode.createFromDOM(DOM);
                 break;
             case 'link-node':
             case 'link-node-a':
             case 'link-node-z':
-                node = LinkNode.createFromDOM(containerDOM, DOM);
+                node = LinkNode.createFromDOM(DOM);
                 break;
             default:
                 throw new Error(`Unsupported node type: ${nodeData.type}`);

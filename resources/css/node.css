@@ -90,7 +90,16 @@
 
     #content-node-container {
         position: relative;
-        width: calc(100% - 10px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+
+        &.show {
+            opacity: 1;
+        }
+
+        &.hide {
+            opacity: 0;
+        }
     }
 
     .content-node-close {
@@ -98,10 +107,6 @@
         right: var(--content-node-notch);
         font-size: 20px;
         cursor: pointer;
-    }
-
-    .content-node-close:hover {
-
     }
 
     #content-node-header {
@@ -275,6 +280,7 @@
     height: 100vh;
     background-color: rgba(0,0,0,0.6);
     backdrop-filter: blur(2px);
+    z-index: 99;
 }
 
 #content-node-canvas {

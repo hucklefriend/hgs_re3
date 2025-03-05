@@ -33,10 +33,20 @@ export class OctaNode
         this.h = h;
         this.rect = new Rect();
         this.notchSize = notchSize;
-        this.vertices = [];
+        this.vertices = [
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0),
+            new Vertex(0, 0)
+        ];
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
         this.id = null;
+        this._isDraw = true;
 
         this.setRect();
 
@@ -59,6 +69,7 @@ export class OctaNode
             }
         });
         this.connects = null;
+        this._isDraw = false;
     }
 
     /**
@@ -105,16 +116,22 @@ export class OctaNode
      */
     setOctagon()
     {
-        this.vertices = [
-            new Vertex(this.rect.left + this.notchSize, this.rect.top),
-            new Vertex(this.rect.right - this.notchSize, this.rect.top),
-            new Vertex(this.rect.right, this.rect.top + this.notchSize),
-            new Vertex(this.rect.right, this.rect.bottom - this.notchSize),
-            new Vertex(this.rect.right - this.notchSize, this.rect.bottom),
-            new Vertex(this.rect.left + this.notchSize, this.rect.bottom),
-            new Vertex(this.rect.left, this.rect.bottom - this.notchSize),
-            new Vertex(this.rect.left, this.rect.top + this.notchSize),
-        ];
+        this.vertices[0].x = this.rect.left + this.notchSize;
+        this.vertices[0].y = this.rect.top;
+        this.vertices[1].x = this.rect.right - this.notchSize;
+        this.vertices[1].y = this.rect.top;
+        this.vertices[2].x = this.rect.right;
+        this.vertices[2].y = this.rect.top + this.notchSize;
+        this.vertices[3].x = this.rect.right;
+        this.vertices[3].y = this.rect.bottom - this.notchSize;
+        this.vertices[4].x = this.rect.right - this.notchSize;
+        this.vertices[4].y = this.rect.bottom;
+        this.vertices[5].x = this.rect.left + this.notchSize;
+        this.vertices[5].y = this.rect.bottom;
+        this.vertices[6].x = this.rect.left;
+        this.vertices[6].y = this.rect.bottom - this.notchSize;
+        this.vertices[7].x = this.rect.left;
+        this.vertices[7].y = this.rect.top + this.notchSize;
     }
 
     /**
@@ -418,6 +435,10 @@ export class OctaNode
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {
+        if (!this._isDraw) {
+            return;
+        }
+
         this.setShapePath(ctx, offsetX, offsetY);
         ctx.stroke();
         ctx.fill();

@@ -23,6 +23,9 @@ window.hgn;
  */
 export class DocumentViewer extends ViewerBase
 {
+    /**
+     * タイプ
+     */
     get TYPE()
     {
         return 'doc';
@@ -42,12 +45,12 @@ export class DocumentViewer extends ViewerBase
     {
         super();
 
-        this.mainDOM = document.querySelector('#document > div > main');
+        this.DOM = document.querySelector('#document');
+        this.mainDOM = document.querySelector('#document > main');
 
         // ノード
         this.entranceNode = null;
         this.domNodes = [];
-        this.nodesIdHash = {};
 
         // hr
         this.hrList = [];
@@ -60,7 +63,6 @@ export class DocumentViewer extends ViewerBase
 
         // スクロール挙動
         this.scrollMode = HorrorGameNetwork.SCROLL_MODE_BODY;
-        this.scroller = document.querySelector('#document > div');
         this.scrollX = 0;
         this.scrollModeStartPosX = 0;
         this.scrollY = 0;
@@ -98,7 +100,7 @@ export class DocumentViewer extends ViewerBase
                 document.title = this.dataCache.title;
             }
 
-            window.history.pushState({type:'document', title:this.dataCache.title}, null, this.dataCache.url);
+            window.history.pushState({type: this.TYPE, title:this.dataCache.title}, null, this.dataCache.url);
 
             this.dataCache = null;
 
@@ -133,16 +135,16 @@ export class DocumentViewer extends ViewerBase
         // エントランスノード
         let elem = document.querySelector('#entrance-node');
         if (elem) {
-            this.entranceNode = EntranceNode.createFromDOM(this.mainDOM, elem);
-            this.nodesIdHash['#entrance-node'] = this.entranceNode;
+            this.entranceNode = EntranceNode.createFromDOM(elem);
+            this.addNodeIdHash('#entrance-node', this.entranceNode);
         }
 
         // テキストノード
         let elems = document.querySelectorAll('.text-node');
         elems.forEach(elem => {
-            this.domNodes.push(TextNode.createFromDOM(this.mainDOM, elem));
+            this.domNodes.push(TextNode.createFromDOM(elem));
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
+                this.addNodeIdHash(elem.id, this.domNodes[this.domNodes.length - 1]);
                 this.loadConnection(elem, connections);
             }
         });
@@ -150,10 +152,10 @@ export class DocumentViewer extends ViewerBase
         // リンクノード
         elems = document.querySelectorAll('.link-node');
         elems.forEach(elem => {
-            let newNode = LinkNode.createFromDOM(this.mainDOM, elem);
+            let newNode = LinkNode.createFromDOM(elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = newNode;
+                this.addNodeIdHash(elem.id, newNode);
                 this.loadConnection(elem, connections);
             }
         });
@@ -161,10 +163,10 @@ export class DocumentViewer extends ViewerBase
         // コンテンツリンクノード
         elems = document.querySelectorAll('.content-link-node');
         elems.forEach(elem =>  {
-            let newNode = ContentLinkNode.createFromDOM(this.mainDOM, elem);
+            let newNode = ContentLinkNode.createFromDOM(elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = newNode;
+                this.addNodeIdHash(elem.id, newNode);
                 this.loadConnection(elem, connections);
             }
         });
@@ -172,10 +174,10 @@ export class DocumentViewer extends ViewerBase
         // ポップアップリンクノード
         elems = document.querySelectorAll('.popup-link-node');
         elems.forEach(elem =>  {
-            let newNode = PopupLinkNode(elem).createFromDOM(this.mainDOM, elem);
+            let newNode = PopupLinkNode(elem).createFromDOM(elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = newNode;
+                this.addNodeIdHash(elem.id, newNode);
                 this.loadConnection(elem, connections);
             }
         });
@@ -183,10 +185,10 @@ export class DocumentViewer extends ViewerBase
         // DOMノード
         elems = document.querySelectorAll('.dom-node');
         elems.forEach(elem =>  {
-            let newNode = DOMNode.createFromDOM(this.mainDOM, elem);
+            let newNode = DOMNode.createFromDOM(elem);
             this.domNodes.push(newNode);
             if (elem.id.length > 0) {
-                this.nodesIdHash[elem.id] = this.domNodes[this.domNodes.length - 1];
+                this.addNodeIdHash(elem.id, newNode);
                 this.loadConnection(elem, connections);
             }
         });
@@ -194,19 +196,19 @@ export class DocumentViewer extends ViewerBase
         // H1ノード
         elems = document.querySelectorAll('.head1');
         elems.forEach(elem =>  {
-            this.domNodes.push(Head1Node.createFromDOM(this.mainDOM, elem));
+            this.domNodes.push(Head1Node.createFromDOM(elem));
         });
 
         // H2ノード
         elems = document.querySelectorAll('.head2');
         elems.forEach(elem =>  {
-            this.domNodes.push(Head2Node.createFromDOM(this.mainDOM, elem));
+            this.domNodes.push(Head2Node.createFromDOM(elem));
         });
 
         // H3ノード
         elems = document.querySelectorAll('.head3');
         elems.forEach(elem =>  {
-            this.domNodes.push(Head3Node.createFromDOM(this.mainDOM, elem));
+            this.domNodes.push(Head3Node.createFromDOM(elem));
         });
 
         // 接続の設定
@@ -224,6 +226,7 @@ export class DocumentViewer extends ViewerBase
             this.hrList.push(new HR(hrElem));
         });
 
+        this._height = this.DOM.clientHeight;
         this.isLoaded = true;
     }
 
@@ -272,6 +275,8 @@ export class DocumentViewer extends ViewerBase
         });
 
         this.isLoaded = true;
+
+        this._height = this.DOM.clientHeight;
     }
 
     /**
@@ -302,18 +307,14 @@ export class DocumentViewer extends ViewerBase
     /**
      * スクロール
      */
-    scroll(force = false)
+    scroll()
     {
-        // if (!force && this.prevScrollX === window.scrollX &&
-        //     this.prevScrollY === window.scrollY) {
-        //     return;
-        // }
-
         if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
             this.scrollX = this.scrollModeStartPosX + (window.scrollX / 3);
             this.scrollY = this.scrollModeStartPosY + (window.scrollY / 3);
 
-            this.scroller.scrollTo(this.scrollX, this.scrollY);
+            this.DOM.scrollTo(this.scrollX, this.scrollY);
+            window.hgn.canvasContainer.scrollTo(this.scrollX, this.scrollY);
         } else {
             this.scrollX = window.scrollX;
             this.scrollY = window.scrollY;
@@ -322,6 +323,62 @@ export class DocumentViewer extends ViewerBase
         window.hgn.background.scroll(this.scrollX, this.scrollY);
 
         this.setViewRect();
+    }
+
+    scrollTo(x, y)
+    {
+        this.scrollX = x;
+        this.scrollY = y;
+        this.DOM.scrollTo(x, y);
+        window.hgn.canvasContainer.scrollTo(x, y);
+        window.hgn.background.scroll(this.scrollX, this.scrollY);
+        this.setViewRect();
+        window.hgn.setDrawSub();
+    }
+
+    /**
+     * Bodyでスクロールさせるモード
+     *
+     * @param x
+     * @param y
+     */
+    setBodyScrollMode(x, y)
+    {
+        this.scrollMode = DocumentViewer.SCROLL_MODE_BODY;
+        this.DOM.classList.remove('self-scroll');
+        window.hgn.canvasContainer.classList.remove('self-scroll');
+        window.scrollTo(x, y);
+
+        document.querySelectorAll('.scroller-pad').forEach((pad) => {
+            pad.style.display = 'none';
+        });
+    }
+
+    /**
+     * 独自スクローラーでスクロールさせるモード
+     *
+     * @param x
+     * @param y
+     */
+    setContainerScrollMode(x, y)
+    {
+        this.scrollMode = DocumentViewer.SCROLL_MODE_SCROLLER;
+        this.DOM.classList.add('self-scroll');
+        window.hgn.canvasContainer.classList.add('self-scroll');
+
+        // スクロール位置をリセット
+        window.scrollTo(x, 0);
+        this.DOM.scrollTo(x, y);
+        window.hgn.canvasContainer.scrollTo(x, y);
+        this.scrollModeStartPosX = x;
+        this.scrollModeStartPosY = y;
+        this.scroll();
+        window.hgn.setCanvasSize(); 
+
+        document.querySelectorAll('.scroller-pad').forEach((pad) => {
+            pad.style.display = 'block';
+            pad.style.height = '100vh';
+        });
     }
 
     /**
@@ -406,9 +463,6 @@ export class DocumentViewer extends ViewerBase
                         let midY2 = Util.getMidpoint(centerY, y2, this.edgeScale);
                         ctx.lineTo(midX2, midY2);
 
-
-                        // ctx.moveTo(node.vertices[vertexNo].x, node.vertices[vertexNo].y);
-                        // ctx.lineTo(targetVertex.x, targetVertex.y);
                         ctx.stroke();
                     }
                 });
@@ -490,36 +544,8 @@ export class DocumentViewer extends ViewerBase
         }
     }
 
-    /**
-     * Bodyでスクロールさせるモード
-     *
-     * @param x
-     * @param y
-     */
-    setBodyScrollMode(x, y)
+    get height()
     {
-        this.scrollMode = DocumentViewer.SCROLL_MODE_BODY;
-        this.scroller.classList.remove('self-scroll');
-        window.scrollTo(x, y);
-    }
-
-    /**
-     * 独自スクローラーでスクロールさせるモード
-     *
-     * @param x
-     * @param y
-     */
-    setContainerScrollMode(x, y)
-    {
-        this.scrollMode = DocumentViewer.SCROLL_MODE_SCROLLER;
-        this.scroller.classList.add('self-scroll');
-
-        // スクロール位置をリセット
-        window.scrollTo(x, 0);
-        this.scroller.scrollTo(x, y);
-        this.scrollModeStartPosX = x;
-        this.scrollModeScrollPosX = x;
-        this.scrollModeStartPosY = y;
-        this.scrollModeScrollPosY = y;
+        return this._height;
     }
 }

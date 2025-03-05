@@ -164,7 +164,7 @@
         </div>
     </section>
 
-    <footer style="margin: 50px 0;">
+    <footer style="margin-top: 50px;">
         <div class="node node-center">
             <div class="text-node fade">
                 &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
