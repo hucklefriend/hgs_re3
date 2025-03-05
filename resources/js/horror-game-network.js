@@ -162,18 +162,18 @@ export class HorrorGameNetwork
         this.viewer.start(false);
         this.setCanvasSize();   // 
 
-        if (window.contentNode !== null) {
-            let linkNodeId = window.contentNode.linkNodeId;
+        if (window.content !== null) {
+            let linkNodeId = window.content.linkNodeId;
             let linkNode = this.viewer.getNodeById(linkNodeId);
 
             this.contentViewer.open(linkNode);
-            this.contentViewer.setContent(window.contentNode);
+            this.contentViewer.setContent(window.content);
 
-            window.contentNode = null;
+            window.content = null;
             window.history.pushState({type: 'content', 'linkNodeId': linkNodeId, title:document.title}, '');
 
             if (linkNode !== null) {
-                this.viewer.scrollToNode(linkNode);
+                //this.viewer.scrollToNode(linkNode);
             }
         } else {
             window.history.pushState({type: type, title:document.title}, '');

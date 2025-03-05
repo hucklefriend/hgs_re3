@@ -80,7 +80,7 @@ abstract class Controller
     protected function contentNode(Factory|View $view, $baseViewCallback): Factory|View|JsonResponse
     {
         $rendered = $view->renderSections();
-        $contentNodeData = [
+        $contentData = [
             'linkNodeId'    => $rendered['link-node-id'] ?? '',
             'title'         => $rendered['content-node-title'],
             'body'          => $rendered['content-node-body'],
@@ -88,10 +88,10 @@ abstract class Controller
             'documentTitle' => $rendered['content-node-title'] . ' | ホラーゲームネットワーク',
         ];
         if (self::isAjax()) {
-            return response()->json($contentNodeData);
+            return response()->json($contentData);
         } else {
             $view = $baseViewCallback();
-            $view->with('contentNodeData', $contentNodeData);
+            $view->with('contentData', $contentData);
             return $view;
         }
     }

@@ -15,10 +15,10 @@
             window.hgn.start('{{ $viewerType ?? 'document' }}');
         });
 
-        @isset($contentNode)
-            window.contentNode = @json($contentNode);
+        @isset($contentData)
+            window.content = @json($contentData);
         @else
-            window.contentNode = null;
+            window.content = null;
         @endif
 
         @isset($ratingCheck)
