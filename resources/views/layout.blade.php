@@ -68,7 +68,7 @@
 <div id="document">
     <main>
         @yield('content')
-        <div class="scroller-pad"></div>
+        <div class="scroller-pad" id="document-pad"></div>
     </main>
 </div>
 <div id="map"></div>

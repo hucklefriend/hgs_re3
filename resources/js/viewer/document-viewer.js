@@ -276,7 +276,11 @@ export class DocumentViewer extends ViewerBase
 
         this.isLoaded = true;
 
-        this._height = this.DOM.clientHeight;
+        if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
+            this._height = this.mainDOM.scrollHeight - window.innerHeight;
+        } else {
+            this._height = this.mainDOM.scrollHeight;
+        }
     }
 
     /**
@@ -325,6 +329,12 @@ export class DocumentViewer extends ViewerBase
         this.setViewRect();
     }
 
+    /**
+     * 指定位置へスクロール
+     * 
+     * @param {*} x 
+     * @param {*} y 
+     */
     scrollTo(x, y)
     {
         this.scrollX = x;
