@@ -238,6 +238,15 @@ export class ContentNode extends DOMNode
         this._isAppeared = false;
         super.disappear();
 
+        
+        if (window.hgn.contentViewer.linkNode) {
+            for (let i = 0; i < 8; i++) {
+                this.minVertices[i].x = window.hgn.contentViewer.linkNode.vertices[i].x - window.hgn.viewer.scrollX;
+                this.minVertices[i].y = window.hgn.contentViewer.linkNode.vertices[i].y - window.hgn.viewer.scrollY;
+            }
+        }
+
+
         this.animStartTime = window.hgn.time;
     }
 
@@ -280,12 +289,10 @@ export class ContentNode extends DOMNode
     /**
      * ウィンドウサイズの変更
      */
-    changeSize()
+    reload()
     {
-        if (this.isOpened()) {
-            this.reload();
-            window.hgn.contentViewer.setDraw();
-        }
+        super.reload();
+        window.hgn.contentViewer.setDraw();
     }
 
     /**

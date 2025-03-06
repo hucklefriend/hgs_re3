@@ -251,6 +251,10 @@ export class ContentViewer
      */
     update()
     {
+        if (this.isClosed()) {
+            return;
+        }
+
         this.node.update();
         
         if (this._isDraw) {
@@ -258,25 +262,6 @@ export class ContentViewer
             this.draw();
             this._isDraw = false;
         }
-
-        // if (this.state === ContentViewer.STATE_OPENING) {
-        //     isDraw = this.opening();
-        //     window.hgn.setDrawMain();
-        // } else if (this.state === ContentViewer.STATE_CLOSING) {
-        //     this.closing();
-        //     window.hgn.setDrawMain();
-        // } else if (this.state === ContentViewer.STATE_OPENED) {
-        //     if (this.dataChache !== null) {
-        //         if (this.dataChache.hasOwnProperty('mode')) {
-        //             this.mode = this.dataChache.mode;
-        //         }
-
-        //         this.titleDOM.innerHTML = this.dataChache.title;
-        //         this.bodyDOM.innerHTML = this.dataChache.body;
-        //         document.title = this.dataChache.documentTitle;
-        //         this.dataChache = null;
-        //     }
-        // }
     }
 
     /**
@@ -284,6 +269,10 @@ export class ContentViewer
      */
     resize()
     {
+        if (this.isClosed()) {
+            return;
+        }
+
         this.reload();
     }
 
@@ -316,7 +305,7 @@ export class ContentViewer
                 break;
         }
 
-        this.node.draw(this.ctx, this.offsetX, this.offsetY);
+        this.node.draw(this.ctx, this.offsetX, 0);
     }
 
     /**
