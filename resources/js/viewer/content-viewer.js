@@ -306,13 +306,6 @@ export class ContentViewer
      */
     scroll()
     {
-        // let rect = this.DOM.getBoundingClientRect();
-        // let y = rect.top + window.scrollY;
-        //
-        // // contentNodeDOMのy座標を現在のスクロール位置のy座標に設定
-        // if (y > window.scrollY) {
-        //     this.DOM.style.top = window.scrollY + 'px';
-        // }
-        // //this.DOM.style.top = -(this.DOM.offsetTop - window.scrollY) + 'px';
+
     }
 }

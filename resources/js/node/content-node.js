@@ -238,15 +238,6 @@ export class ContentNode extends DOMNode
         this._isAppeared = false;
         super.disappear();
 
-        
-        if (window.hgn.contentViewer.linkNode) {
-            for (let i = 0; i < 8; i++) {
-                this.minVertices[i].x = window.hgn.contentViewer.linkNode.vertices[i].x - window.hgn.viewer.scrollX;
-                this.minVertices[i].y = window.hgn.contentViewer.linkNode.vertices[i].y - window.hgn.viewer.scrollY;
-            }
-        }
-
-
         this.animStartTime = window.hgn.time;
     }
 
@@ -257,6 +248,14 @@ export class ContentNode extends DOMNode
     {
         const animTime = window.hgn.time - this.animStartTime;
         if (animTime < 300) {
+        
+            if (window.hgn.contentViewer.linkNode) {
+                // 一緒にスクロールさせる都合上、リンクノードの位置が毎回変わるので毎回取り直し
+                for (let i = 0; i < 8; i++) {
+                    this.minVertices[i].x = window.hgn.contentViewer.linkNode.vertices[i].x - window.hgn.viewer.scrollX;
+                    this.minVertices[i].y = window.hgn.contentViewer.linkNode.vertices[i].y - window.hgn.viewer.scrollY;
+                }
+            }
             const ratio = 1 - (animTime / 300);
             for (let i = 0; i < 8; i++) {
                 this.animVertices[i].x = Util.getMidpoint(this.minVertices[i].x, this.vertices[i].x, ratio, true);

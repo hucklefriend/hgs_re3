@@ -407,17 +407,6 @@ export class DocumentViewer extends ViewerBase
         this.viewRect.top = this.scrollY;
         this.viewRect.bottom = this.scrollY + window.innerHeight;
 
-        // スクロール時の描画遅延を考慮し、上下は少し余裕を持たせる
-        // ドキュメントビューでは左右スクロールは基本発生しない想定
-        // this.viewRect.top -= 30;
-        // if (this.viewRect.top < 0) {
-        //     this.viewRect.top = 0;
-        // }
-        // this.viewRect.bottom += 30;
-        // if (this.viewRect.bottom > window.hgn.body.offsetHeight) {
-        //     this.viewRect.bottom = window.hgn.body.offsetHeight;
-        // }
-
         this.viewRect.calcSize();
     }
 
@@ -522,7 +511,6 @@ export class DocumentViewer extends ViewerBase
      */
     appear()
     {
-        //this.animationMode = DocumentViewer.ANIMATION_MODE_APPEAR;
         this.resetNodeCnt();
         this.edgeScale = 0;
 
@@ -536,11 +524,6 @@ export class DocumentViewer extends ViewerBase
         if (this.entranceNode) {
             this.entranceNode.appear();
         }
-
-        // 0.2秒後に背景の描画を開始
-        // this.changeNetworkAppearTimer = setTimeout(() => {
-        //     this.setBodyScrollMode(0, 0);
-        // }, 500);
     }
 
     /**
