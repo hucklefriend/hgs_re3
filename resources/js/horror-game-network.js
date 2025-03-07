@@ -209,24 +209,12 @@ export class HorrorGameNetwork
     }
 
     /**
-     * 特定のカウントから数えなおしたカウントを取得
-     *
-     * @param offset
-     * @returns {number}
-     */
-    getOffsetAnimCnt(offset)
-    {
-        return this.animCnt - offset;
-    }
-
-    /**
      * 更新
      */
     update(time)
     {
         this._time = time;
         this._animElapsedTime = time - this.animStartTime;
-        this.animCnt++;
 
         this.contentViewer.update();
 
@@ -508,7 +496,7 @@ export class HorrorGameNetwork
         
                 if (!isBack) {
                     // pushStateにつっこむ
-                    window.history.pushState({type:'network', title:'エラー|ホラーゲームネットワーク'}, null, url);
+                    window.history.pushState({type:this.contentViewer.TYPE, title:'エラー|ホラーゲームネットワーク'}, null, url);
                 }
 
                 // 同じネットワークの再表示
@@ -607,6 +595,7 @@ export class HorrorGameNetwork
         if (this.contentViewer.isOpened()) {
             this.contentViewer.close(true);
         } else {
+            console.log(e.state);
             if (e.state) {
                 if (e.state.type === this.documentViewer.TYPE) {
                     this.navigateToDocument(location.href, true);

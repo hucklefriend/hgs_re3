@@ -194,13 +194,6 @@ export class ContentViewer
         this.containerDOM.classList.remove('show');
         this.containerDOM.classList.add('hide');
 
-        // 背景のスクロールを戻す
-        if (window.hgn.viewer.scrollX !== this.openScrollX
-            || window.hgn.viewer.scrollY !== this.openScrollY) {
-            
-            
-        }
-
         this.node.disappear();
     }
 
@@ -219,7 +212,7 @@ export class ContentViewer
                 this.historyUrl = null;
                 this.historyState = null;
             } else {
-                window.history.pushState({type:'network', title:this.prevTitle}, null, window.baseUrl);
+                window.history.pushState({type: window.hgn.viewer.TYPE, title:this.prevTitle}, null, window.baseUrl);
             }
         }
 
