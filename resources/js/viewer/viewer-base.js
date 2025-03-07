@@ -130,6 +130,12 @@ export class ViewerBase
         return this._nodesIdHash[id] ?? null;
     }
 
+    clearNodes()
+    {
+        this.resetNodeCnt();
+        this._nodesIdHash = {};
+    }
+
     /**
      * スクロール
      */

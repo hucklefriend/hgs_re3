@@ -85,6 +85,9 @@ export class DocumentViewer extends ViewerBase
 
     /**
      * 開始
+     * 
+     * @param {boolean} isRenderCache
+     * @param {boolean} isBack
      */
     start(isRenderCache)
     {
@@ -100,7 +103,10 @@ export class DocumentViewer extends ViewerBase
                 document.title = this.dataCache.title;
             }
 
-            window.history.pushState({type: this.TYPE, title:this.dataCache.title}, null, this.dataCache.url);
+            // 戻るで来てなければURLを更新
+            if (!(this.dataCache.isBack ?? false)) {
+                window.history.pushState({type: this.TYPE, title: this.dataCache.title}, null, this.dataCache.url);
+            }
 
             this.dataCache = null;
 
@@ -288,8 +294,6 @@ export class DocumentViewer extends ViewerBase
      */
     clearNodes()
     {
-        this.nodesIdHash = {};
-
         if (this.entranceNode) {
             this.entranceNode.delete();
             this.entranceNode = null;
@@ -306,6 +310,8 @@ export class DocumentViewer extends ViewerBase
             this.hrList[i] = null;
         });
         this.hrList = [];
+
+        super.clearNodes();
     }
 
     /**

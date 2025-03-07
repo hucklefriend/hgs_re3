@@ -66,7 +66,7 @@ abstract class Controller
             ]);
         }
 
-        return $view->with('viewerType', 'document');
+        return $view->with('viewerType', 'doc');
     }
 
     /**

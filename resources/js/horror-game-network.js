@@ -151,10 +151,10 @@ export class HorrorGameNetwork
      */
     start(type)
     {
-        if (type === 'document') {
+        if (type === this.documentViewer.TYPE) {
             // ドキュメントビューワ
             this.viewer = this.documentViewer;
-        } else if (type === 'map') {
+        } else if (type === this.mapViewer.TYPE) {
             // マップビューワ
             this.viewer = this.mapViewer;
         }
@@ -163,6 +163,7 @@ export class HorrorGameNetwork
         this.setCanvasSize();   // 
 
         if (window.content !== null) {
+            // コンテンツノードの表示
             let linkNodeId = window.content.linkNodeId;
             let linkNode = this.viewer.getNodeById(linkNodeId);
 
@@ -170,13 +171,9 @@ export class HorrorGameNetwork
             this.contentViewer.setContent(window.content);
 
             window.content = null;
-            window.history.pushState({type: 'content', 'linkNodeId': linkNodeId, title:document.title}, '');
-
-            if (linkNode !== null) {
-                //this.viewer.scrollToNode(linkNode);
-            }
+            window.history.pushState({type: this.contentViewer.TYPE, 'linkNodeId': linkNodeId, title: document.title}, '');
         } else {
-            window.history.pushState({type: type, title:document.title}, '');
+            window.history.pushState({type: type, title: document.title}, '');
         }
 
         if (Param.SHOW_DEBUG) {
@@ -518,6 +515,7 @@ export class HorrorGameNetwork
                 this.appear();
             } else {
                 data.url = url;
+                data.isBack = isBack;
                 this.waitViewer = waitViewer;
                 this.waitViewer.prepare(data);
             }
@@ -527,7 +525,7 @@ export class HorrorGameNetwork
     /**
      * 新しいビューワの表示
      */
-    showNewViewer()
+    showNewViewer(isBack)
     {
         window.scrollTo(0, 0);
         this.scroll(true);
@@ -542,11 +540,9 @@ export class HorrorGameNetwork
             document.title = title;
         }
 
-        window.history.pushState({type:this.waitViewer.TYPE, title:title}, null, url);
-
         this.viewer.end();
         this.viewer = this.waitViewer;
-        this.viewer.start(true);
+        this.viewer.start(true, isBack);
         this.waitViewer = null;
         this.setCanvasSize();
 
@@ -612,10 +608,12 @@ export class HorrorGameNetwork
             this.contentViewer.close(true);
         } else {
             if (e.state) {
-                if (e.state.type === 'doc') {
-                    this.changeNetwork(location.href, true);
-                } else if (e.state.type === 'content') {
+                if (e.state.type === this.documentViewer.TYPE) {
+                    this.navigateToDocument(location.href, true);
+                } else if (e.state.type === this.contentViewer.TYPE) {
                     this.openContentView(location.href, e.state.linkNodeId, true);
+                } else if (e.state.type === this.mapViewer.TYPE) {
+                    this.navigateToMap(location.href, true);
                 }
             }
         }
