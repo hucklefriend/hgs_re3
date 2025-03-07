@@ -91,7 +91,7 @@ export class SubNetworkWorker
     draw(viewRect)
     {
         const offsetX = viewRect.left - (viewRect.left * SUB_NETWORK_SCROLL_RATE);
-        let offsetY = viewRect.top - (viewRect.top * SUB_NETWORK_SCROLL_RATE);
+        const offsetY = viewRect.top - (viewRect.top * SUB_NETWORK_SCROLL_RATE);
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -396,7 +396,7 @@ class SubNetworkOctaNode
             const [vertexNo, targetNo, targetVertexNo] = connect;
 
             const targetNode = network.getNode(targetNo);
-            if ((targetNode && targetNode.isDraw()) && !this.isOutDepth) {
+            if ((targetNode && !targetNode.isOutDepth) && !this.isOutDepth) {
                 ctx.beginPath();
                 ctx.moveTo(this.vertices[vertexNo].x + offsetX, this.vertices[vertexNo].y + myOffsetY);
 
