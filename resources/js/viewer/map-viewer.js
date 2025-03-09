@@ -110,6 +110,16 @@ export class MapViewer extends ViewerBase
         let x = 0;
         let y = 0;
         if (isRenderCache) {
+            // windowタイトルの変更
+            if (this.dataCache.title) {
+                document.title = this.dataCache.title;
+            }
+
+            // 戻るで来てなければURLを更新
+            if (!(this.dataCache.isBack ?? false)) {
+                window.history.pushState({type: this.TYPE, title: this.dataCache.title}, null, this.dataCache.url);
+            }
+
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(this.dataCache.map));
             this.dataCache = null;
         } else {
