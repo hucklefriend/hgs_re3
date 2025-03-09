@@ -56,11 +56,36 @@ export class MapViewer extends ViewerBase
         this.isWait = false;
     }
 
+    /**
+     * 高さを取得
+     * マップビューワは常にウィンドウと同じ大きさ
+     */
     get height() 
     {
         return window.innerHeight;
     }
     
+    /**
+     * 番号を指定して表示領域を取得
+     * 
+     * @param {number} no
+     * @returns {Rect}
+     */
+    getViewRectByNo(no)
+    {
+        switch (no) {
+            case 1:
+                return this.viewRect1;
+            case 2:
+                return this.viewRect2;
+            case 3:
+                return this.viewRect3;
+            case 4:
+                return this.viewRect4;
+            default:
+                return null;
+        }
+    }
 
     /**
      * ビュー切り替えの準備
@@ -207,6 +232,11 @@ export class MapViewer extends ViewerBase
         }
     }
 
+    /**
+     * マウスリーブ
+     * 
+     * @param {*} e 
+     */
     mouseLeave(e)
     {
         this.isDragging = false;
@@ -297,10 +327,27 @@ export class MapViewer extends ViewerBase
         }
 
         this.networks.forEach(network => {
-            network.update();
+            if (!this.viewRect1.isEmpty() && this.viewRect1.overlapWith(network.rect)) {
+                network.update(this.viewRect1, 1);
+                network.show();
+            } else if (!this.viewRect2.isEmpty() && this.viewRect2.overlapWith(network.rect)) {
+                network.update(this.viewRect2, 2);
+                network.show();
+            } else if (!this.viewRect3.isEmpty() && this.viewRect3.overlapWith(network.rect)) {
+                network.update(this.viewRect3, 3);
+                network.show();
+            } else if (!this.viewRect4.isEmpty() && this.viewRect4.overlapWith(network.rect)) {
+                network.update(this.viewRect4, 4);
+                network.show();
+            } else {
+                network.hide();
+            }
         });
     }
 
+    /**
+     * TODO: フリック
+     */
     flick()
     {
         this.moveCamera(
@@ -319,8 +366,8 @@ export class MapViewer extends ViewerBase
     /**
      * カメラ位置のセット
      *
-     * @param x
-     * @param y
+     * @param {number} x
+     * @param {number} y
      */
     moveCamera(x, y)
     {
@@ -340,6 +387,14 @@ export class MapViewer extends ViewerBase
             this.cameraPos.y = this.networkRect.top + (this.cameraPos.y - this.networkRect.bottom);
         }
 
+        this.updateViewRect();
+    }
+
+    /**
+     * ビューレクトの更新
+     */
+    updateViewRect()
+    {
         this.viewRect1.setRect(
             this.cameraPos.x,
             this.cameraPos.x + window.innerWidth,
@@ -430,6 +485,9 @@ export class MapViewer extends ViewerBase
         return (Math.abs(this.dragVelocity.x) <= 0.1 || Math.abs(this.dragVelocity.y) <= 0.1);
     }
 
+    /**
+     * 出現開始
+     */
     appear()
     {
         this.networks.forEach(network => {
@@ -437,6 +495,9 @@ export class MapViewer extends ViewerBase
         });
     }
 
+    /**
+     * 消失開始
+     */
     disappear()
     {
         this.networks.forEach(network => {
@@ -465,24 +526,12 @@ export class MapViewer extends ViewerBase
 
         // 描画領域内にあるネットワークを描画
         this.networks.forEach(network => {
-            if (!this.viewRect1.isEmpty() && this.viewRect1.overlapWith(network.viewRect)) {
-                network.draw(ctx, this.viewRect1, '1');
-                network.show();
-            } else if (!this.viewRect2.isEmpty() && this.viewRect2.overlapWith(network.viewRect)) {
-                network.draw(ctx, this.viewRect2, '2');
-                network.show();
-            } else if (!this.viewRect3.isEmpty() && this.viewRect3.overlapWith(network.viewRect)) {
-                network.draw(ctx, this.viewRect3, '3');
-                network.show();
-            } else if (!this.viewRect4.isEmpty() && this.viewRect4.overlapWith(network.viewRect)) {
-                network.draw(ctx, this.viewRect4, '4');
-                network.show();
-            } else {
-                network.hide();
+            if (network.isShow) {
+                network.draw(ctx, this.getViewRectByNo(network.viewRectNo));
             }
         });
 
-        //this.drawMiniMap();
+        //this.drawMiniMap(ctx);
     }
 
     /**

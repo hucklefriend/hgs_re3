@@ -19,35 +19,55 @@ export class ViewerBase
         this._nodesIdHash = {};
     }
 
+    /**
+     * ノードカウントを取得
+     */
     get nodeCnt()
     {
         return this._nodeCnt;
     }
 
+    /**
+     * 出現済みノードカウントを取得
+     */
     get appearedNodeCnt()
     {
         return this._appearedNodeCnt;
     }
 
+    /**
+     * ノードカウントを増やす
+     */
     incrementNodeCnt()
     {
         this._nodeCnt++;
     }
 
+    /**
+     * 出現済みノードカウントを増やす
+     */
     incrementAppearedNodeCnt()
     {
         this._appearedNodeCnt++;
     }
 
+    /**
+     * 出現済みノードカウントを減らす
+     */
     decrementAppearedNodeCnt()
     {
         this._appearedNodeCnt--;
     }
 
+    /**
+     * 出現済みノードを追加
+     * 
+     * @param {*} id 
+     * @returns 
+     */
     addAppearedNode(id)
     {
-        if (this._appearedNodes.hasOwnProperty(id))
-        {
+        if (this._appearedNodes.hasOwnProperty(id)){
             console.error(`Node with id "${id}" already exists.`);
             return;
         }
@@ -55,12 +75,25 @@ export class ViewerBase
         this.incrementAppearedNodeCnt();
     }
 
+    /**
+     * 出現済みノードを削除
+     * 
+     * @param {*} id 
+     */
     delAppearedNode(id)
-    {
+    {        
+        if (!this._appearedNodes.hasOwnProperty(id)) {
+            console.error(`Node with id "${id}" does not exist.`);
+            return;
+        }
+
         delete this._appearedNodes[id];
         this.decrementAppearedNodeCnt();
     }
 
+    /**
+     * ノードカウントをリセット
+     */
     resetNodeCnt()
     {
         this._nodeCnt = 0;
@@ -68,6 +101,9 @@ export class ViewerBase
         this._appearedNodes = {};
     }
 
+    /**
+     * 出現したノードを表示
+     */
     showAppearedNodes()
     {
         console.log(this._nodeCnt, this._appearedNodeCnt, this._appearedNodes);
@@ -130,6 +166,9 @@ export class ViewerBase
         return this._nodesIdHash[id] ?? null;
     }
 
+    /**
+     * ノードを全て削除
+     */
     clearNodes()
     {
         this.resetNodeCnt();
@@ -140,6 +179,14 @@ export class ViewerBase
      * スクロール
      */
     scroll()
+    {
+        
+    }
+
+    /**
+     * ウィンドウの大きさ変更
+     */
+    resize()
     {
         
     }

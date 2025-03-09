@@ -86,4 +86,19 @@ class HgnController extends Controller
             return $this->entrance();
         });
     }
+
+    /**
+     * 描画チェック
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function drawCheck(): JsonResponse|Application|Factory|View
+    {
+        if (App::environment('production')) {
+            return view('suspend');
+        }
+
+        return $this->document(view('draw_check'));
+    }
 }

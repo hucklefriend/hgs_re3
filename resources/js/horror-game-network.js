@@ -61,8 +61,8 @@ export class HorrorGameNetwork
         }
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
 
-        this.isDrawMain = false;    // 次の更新でメインを再描画するフラグ
-        this.isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
+        this._isDrawMain = false;    // 次の更新でメインを再描画するフラグ
+        this._isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
         
         // サブネットワークのワーカー
         const workerUrl = import.meta.env.DEV
@@ -220,21 +220,21 @@ export class HorrorGameNetwork
 
         this.viewer.update();
 
-        if (this.isDrawMain) {
+        if (this._isDrawMain) {
+            // メインキャンバスの描画
             this.drawMain();
-            this.isDrawMain = false;
-            this.isDrawOutsideView = false;
+            this._isDrawMain = false;
+            this._isDrawOutsideView = false;
         }
 
-        // 交代？
+        // 次のビューワが交代を待っている？
         if (this.waitViewer !== null) {
-            // 現在のビューワでノードが全部消えて、次のビューワの準備が整っている
+            // 現在のビューワでノードが全部消えて、次のビューワの準備が整っているなら交代する
             if (this.viewer.isAllNodeDisappeared()) {
                 this.postMessageToSubNetworkWorker({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
-                // ビューワの交代
                 if (this.waitViewer.isWait) {
-                    this.showNewViewer();
+                    this.showNewViewer();   // ビューワの交代
                 }
             } else {
                 //this.viewer.showAppearedNodes();
@@ -323,16 +323,16 @@ export class HorrorGameNetwork
      */
     drawMain()
     {
-        if (this.isDrawOutsideView) {
+        if (this._isDrawOutsideView) {
             this.offscreenCanvas.width = this.mainCanvas.width;
             this.offscreenCanvas.height = this.mainCanvas.height;
         } else {
             this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
         }
 
-        this.viewer.draw(this.offscreenCtx, this.isDrawOutsideView);
+        this.viewer.draw(this.offscreenCtx, this._isDrawOutsideView);
 
-        if (this.isDrawOutsideView) {
+        if (this._isDrawOutsideView) {
             // オフスクリーンキャンバスの内容をメインキャンバスへ
             this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
             this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
@@ -366,18 +366,18 @@ export class HorrorGameNetwork
     }
 
     /**
-     * メイン描画フラグの設定
+     * メイン描画フラグを立てる
      * 
      * @param {boolean} isDrawOutsideView
      */
     setDrawMain(isDrawOutsideView = false)
     {
-        this.isDrawMain = true;
-        this.isDrawOutsideView |= isDrawOutsideView;
+        this._isDrawMain = true;
+        this._isDrawOutsideView |= isDrawOutsideView;
     }
 
     /**
-     * サブ描画をサブネットワークワーカーへ転送
+     * サブ描画をサブネットワークワーカーへ指示
      */
     setDrawSub()
     {

@@ -112,39 +112,61 @@ export class MainFranchiseNetwork extends Network
 
     /**
      * コンストラクタ
+     * 
+     * @param {HTMLElement} DOM
+     * @param {number} x
+     * @param {number} y
+     * @param {number} w
+     * @param {number} h
      */
     constructor(DOM, x, y, w, h)
     {
         super();
 
         this.DOM = DOM;
-        this.viewRect = new Rect();
+        this.rect = new Rect();
         this.w = w;
         this.h = h;
 
         this.setPos(x, y);
+
+        this._viewRectNo = 0;
+        this._isShow = false;
     }
 
+    /**
+     * 表示領域番号取得
+     *
+     * @returns {number}
+     */
+    get viewRectNo()
+    {
+        return this._viewRectNo;
+    }
+
+    /**
+     * 削除
+     */
     delete()
     {
         super.delete();
         this.DOM.remove();
         this.DOM = null;
-        this.viewRect = null;
+        this.rect = null;
     }
 
     /**
      * 配置
      *
-     * @param x
-     * @param y
+     * @param {number} x
+     * @param {number} y
      */
     setPos(x, y)
     {
         this.x = x;
         this.y = y;
 
-        this.viewRect.setRect(
+        this.rect.setRect(
             this.x,
             this.x + this.w,
             this.y,
@@ -153,7 +175,25 @@ export class MainFranchiseNetwork extends Network
     }
 
     /**
-     * 出現
+     * 更新
+     */
+    update(viewRect, viewRectNo)
+    {
+        super.update(viewRect);
+
+        this._viewRectNo = viewRectNo;
+
+        // CSSを使ってノードのDOM表示座標を変更
+        Object.values(this.nodes).forEach(node => {
+            if (node instanceof DOMNode) {
+                node.DOM.classList.remove('view1', 'view2', 'view3', 'view4');
+                node.DOM.classList.add('view' + viewRectNo);
+            }
+        });
+    }
+
+    /**
+     * 出現開始
      */
     appear()
     {
@@ -165,7 +205,7 @@ export class MainFranchiseNetwork extends Network
     }
 
     /**
-     * 消失
+     * 消失開始
      */
     disappear()
     {        
@@ -182,7 +222,7 @@ export class MainFranchiseNetwork extends Network
      * @param ctx
      * @param {Rect|null}viewRect
      */
-    draw(ctx, viewRect, viewRectNo)
+    draw(ctx, viewRect)
     {
         ctx.restore();
 
@@ -215,23 +255,37 @@ export class MainFranchiseNetwork extends Network
         ctx.restore();
 
         Object.values(this.nodes).forEach(node => {
-            node.draw(ctx, viewRect);
-            if (node instanceof DOMNode) {
-                node.DOM.classList.remove('view1', 'view2', 'view3', 'view4');
-                node.DOM.classList.add('view' + viewRectNo);
-            }
+            node.draw(ctx, offsetX, offsetY, false);
         });
 
         //this.DOM.style.transform = 'translate(' + (-viewRect.left) + 'px, ' + (-viewRect.top) + 'px)';
     }
 
+    /**
+     * 表示
+     */
     show()
     {
         this.DOM.style.display = 'block';
+        this._isShow = true;
     }
 
+    /**
+     * 非表示
+     */
     hide()
     {
         this.DOM.style.display = 'none';
+        this._isShow = false;
+    }
+
+    /**
+     * 表示状態取得
+     * 
+     * @returns {boolean}
+     */
+    get isShow()
+    {
+        return this._isShow;
     }
 }

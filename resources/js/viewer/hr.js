@@ -19,7 +19,8 @@ export class HR
         this.rightX = 0;
         this.lineVertices = [];
         this.rect = new Rect();
-        this.animFunc = null;
+        this._animFunc = null;
+        this._isInViewRect = false;
     }
 
     /**
@@ -38,7 +39,7 @@ export class HR
      */
     reload()
     {
-        if (this.animFunc === null) {
+        if (this._animFunc === null) {
             this.leftX = this.dom.offsetLeft;
             this.rightX = this.dom.offsetLeft + this.dom.offsetWidth;
         }
@@ -47,16 +48,18 @@ export class HR
     /**
      * 描画
      *
-     * @param ctx
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
      */
-    draw(ctx, viewRect)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         if (this.leftX === this.rightX) {
             return;
         }
 
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
             return;
         }
 
@@ -64,32 +67,24 @@ export class HR
             ctx.beginPath();
             this.lineVertices.forEach((v, i) => {
                 if (i === 0) {
-                    ctx.moveTo(v.x + left, v.y + top);
+                    ctx.moveTo(v.x + offsetX, v.y + offsetY);
                 } else {
-                    ctx.lineTo(v.x + left, v.y + top);
+                    ctx.lineTo(v.x + offsetX, v.y + offsetY);
                 }
             });
             ctx.stroke();
         }
     }
     
-
-    isDraw(viewRect)
+    /**
+     * 描画するかどうか
+     * 
+     * @param {boolean} isDrawOutsideView 
+     * @returns {boolean}
+     */
+    isDraw(isDrawOutsideView)
     {
-        let left = 0;
-        let top = 0;
-        let isDraw = true;
-        if (viewRect !== null) {
-            if (!viewRect.overlapWith(this.rect)) {
-                // 描画領域内に入っていないなら描画しない
-                isDraw = false;
-            }
-
-            left = -viewRect.left;
-            top = -viewRect.top;
-        }
-
-        return [isDraw, left, top];
+        return this._isInViewRect || isDrawOutsideView;
     }
 
     /**
@@ -206,11 +201,18 @@ export class HR
 
     /**
      * 更新
+     * 
+     * @param {Rect} viewRect
      */
-    update()
+    update(viewRect)
     {
-        if (this.animFunc !== null) {
-            this.animFunc();
+        this._isInViewRect = true;
+        if (viewRect !== null && !viewRect.overlapWith(this.rect)) {
+            this._isInViewRect = false;
+        }
+
+        if (this._animFunc !== null) {
+            this._animFunc();
         }
     }
 
@@ -219,7 +221,7 @@ export class HR
      */
     appear()
     {
-        this.animFunc = this.appearAnimation;
+        this._animFunc = this.appearAnimation;
         this.leftX = this.dom.offsetLeft;
         this.rightX = this.dom.offsetLeft;
     }
@@ -230,39 +232,46 @@ export class HR
     appearAnimation()
     {
         if (window.hgn.animElapsedTime < 300) {
-            this.rightX = Util.getMidpoint(this.leftX, this.dom.offsetLeft + this.dom.offsetWidth,
-                window.hgn.animElapsedTime / 300);
-            this.setLineVertices();
-
-            window.hgn.setDrawMain(false);
+            if (this._isInViewRect) {
+                this.rightX = Util.getMidpoint(this.leftX, this.dom.offsetLeft + this.dom.offsetWidth,
+                    window.hgn.animElapsedTime / 300);
+                this.setLineVertices();
+    
+                window.hgn.setDrawMain(false);
+            }
         } else {
             this.leftX = this.dom.offsetLeft;
             this.rightX = this.dom.offsetLeft + this.dom.offsetWidth;
             this.setLineVertices();
-            this.animFunc = null;
+            this._animFunc = null;
             window.hgn.setDrawMain(true);
         }
     }
 
+    /**
+     * 消失開始
+     */
     disappear()
     {
-        this.animFunc = this.disappearAnimation;
+        this._animFunc = this.disappearAnimation;
     }
 
     /**
-     * 消えるアニメーション
+     * 消失アニメーション
      */
     disappearAnimation()
     {
         if (window.hgn.animElapsedTime < 300) {
-            this.leftX = Util.getMidpoint(this.dom.offsetLeft, this.dom.offsetLeft + this.dom.offsetWidth,
-                window.hgn.animElapsedTime / 300);
-            this.setLineVertices();
-            window.hgn.setDrawMain(false);
+            if (this._isInViewRect) {
+                this.leftX = Util.getMidpoint(this.dom.offsetLeft, this.dom.offsetLeft + this.dom.offsetWidth,
+                    window.hgn.animElapsedTime / 300);
+                this.setLineVertices();
+                window.hgn.setDrawMain(false);
+            }
         } else {
             this.leftX = 0;
             this.rightX = 0;
-            this.animFunc = null;
+            this._animFunc = null;
             window.hgn.setDrawMain(true);
         }
     }

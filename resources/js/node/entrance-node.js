@@ -255,17 +255,15 @@ export class EntranceNode extends LinkNode
      * 描画
      *
      * @param ctx
-     * @param {Rect} viewRect
      */
-    draw(ctx, viewRect)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         if (this.isDrawLight) {
             this.drawLight();
             this.isDrawLight = false;
         }
 
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
             return;
         }
 
@@ -280,9 +278,9 @@ export class EntranceNode extends LinkNode
             if (this.animVertices === null) {
                 return;
             }
-            super.setShapePathByVertices(ctx, this.animVertices, left, top);
+            super.setShapePathByVertices(ctx, this.animVertices, offsetX, offsetY);
         } else {
-            super.setShapePath(ctx, left, top);
+            super.setShapePath(ctx, offsetX, offsetY);
         }
 
         ctx.stroke();
@@ -334,7 +332,7 @@ export class EntranceNode extends LinkNode
     
             this.lightRadius = 70;
             this.isDrawLight = true;
-            this.animFunc = this.appearAnimation2;
+            this._animFunc = this.appearAnimation2;
             window.hgn.setDrawMain(true);
             this.appeared();
         }
@@ -354,7 +352,7 @@ export class EntranceNode extends LinkNode
         }
 
         if (this.subNetwork.maxDrawDepth === this.subNetwork.maxDepth) {
-            this.animFunc = null;
+            this._animFunc = null;
         }
     }
 
@@ -387,7 +385,7 @@ export class EntranceNode extends LinkNode
         this.isEnableMouse = false;
         this.isUseAnimVertices = true;
 
-        this.animFunc = this.disappearAnimation;
+        this._animFunc = this.disappearAnimation;
     }
 
     /**
@@ -419,7 +417,7 @@ export class EntranceNode extends LinkNode
                 this.subNetwork.setDrawDepth(0, 0);
                 window.hgn.setDrawSub();
 
-                this.animFunc = this.disappeared;
+                this._animFunc = this.disappeared;
             } else if (depth != this.subNetwork.minDrawDepth) {
                 this.subNetwork.setMinDrawDepth(depth);
                 window.hgn.setDrawSub();

@@ -87,7 +87,7 @@ export class DOMNode extends OctaNode
 
         super(x, y, DOM.offsetWidth, DOM.offsetHeight, notchSize);
 
-        this.id = id;
+        this._id = id;
         this.DOM = DOM;
 
         // DOMからdata-subを取得
@@ -98,13 +98,11 @@ export class DOMNode extends OctaNode
         }
 
         this.subNetwork = null;
-        this.animFunc = null;
-        this.skipAnim = false;
 
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
 
         this._animFunc = null;
-        this._isInsideViewRect = false;
+        this._isInViewRect = false;
 
         DOM.addEventListener('mousedown', (e) => {
             e.stopPropagation(); // イベントの伝播を停止
@@ -319,6 +317,11 @@ export class DOMNode extends OctaNode
         network.addOctaNode(node, Param.RRB, 102, 100, 100, 30);
     }
 
+    /**
+     * 確率に合わせて、trueかfalseかを返す
+     * 
+     * @return {boolean}
+     */
     judge(rate)
     {
         return Math.random() * 100 <= rate;
@@ -433,28 +436,13 @@ export class DOMNode extends OctaNode
         }
     }
 
-    isSkipAnim()
-    {
-        // TODO: mapにあったviewRectを使う
-        return false;
-
-        // let rect = this.DOM.getBoundingClientRect();
-
-        // // 表示領域外にある場合はアニメーションをスキップ
-        // if (window.hgn.viewer.getScrollY() - 100 > this.y + this.h || window.hgn.viewer.getScrollY() + window.innerHeight + 100 < this.y) {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
-    }
-
     /**
      * 出現
      */
     appear()
     {
         window.hgn.viewer.incrementNodeCnt();
-        this.animFunc = this.appearAnimation;
+        this._animFunc = this.appearAnimation;
     }
 
     /**
@@ -469,7 +457,7 @@ export class DOMNode extends OctaNode
      */
     appeared()
     {
-        this.animFunc = null;
+        this._animFunc = null;
         window.hgn.viewer.addAppearedNode(this.id);
     }
 
@@ -478,7 +466,7 @@ export class DOMNode extends OctaNode
      */
     disappear()
     {
-        this.animFunc = this.disappearAnimation;
+        this._animFunc = this.disappearAnimation;
     }
 
     /**
@@ -488,46 +476,55 @@ export class DOMNode extends OctaNode
     {
     }
 
+    /**
+     * 消えた
+     */
     disappeared()
     {
-        this.animFunc = null;
+        this._animFunc = null;
         window.hgn.viewer.delAppearedNode(this.id);
     }
 
-    update()
+    /**
+     * 更新
+     * 
+     * @param {Rect} viewRect
+     */
+    update(viewRect)
     {
-        if (this.animFunc !== null) {
-            this.animFunc();
+        this._isInViewRect = true;
+        if (viewRect !== null && !viewRect.overlapWith(this.rect)) {
+            this._isInViewRect = false;
+        }
+
+        if (this._animFunc !== null) {
+            this._animFunc();
         }
     }
 
-    isInsideViewRect(viewRect, ...viewRects)
+    /**
+     * 描画するか
+     * 
+     * @param {boolean} isDrawOutsideView
+     * @return {boolean}
+     */
+    isDraw(isDrawOutsideView)
     {
-
+        return this._isInViewRect || isDrawOutsideView;
     }
 
-    isDraw(viewRect)
+    /**
+     * 描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
+     */
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
-        let left = 0;
-        let top = 0;
-        let isDraw = true;
-        if (viewRect !== null) {
-            if (!viewRect.overlapWith(this.rect)) {
-                // 描画領域内に入っていないなら描画しない
-                isDraw = false;
-            }
-
-            left = -viewRect.left;
-            top = -viewRect.top;
-        }
-
-        return [isDraw, left, top];
-    }
-
-    draw(ctx, viewRect)
-    {
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
+            console.log(this.id, 'not draw');
             return;
         }
 
@@ -538,6 +535,6 @@ export class DOMNode extends OctaNode
 
         ctx.fillStyle = "black";
 
-        super.draw(ctx, left, top);
+        super.draw(ctx, offsetX, offsetY);
     }
 }

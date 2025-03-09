@@ -12,11 +12,11 @@ export class LinkNode extends DOMNode
     /**
      * コンストラクタ
      *
-     * @param id
-     * @param x
-     * @param y
-     * @param DOM
-     * @param notchSize
+     * @param {string} id
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLElement} DOM
+     * @param {number} [notchSize=13]
      */
     constructor(id, x, y, DOM, notchSize = 13)
     {
@@ -149,10 +149,12 @@ export class LinkNode extends DOMNode
 
     /**
      * 更新
+     * 
+     * @param {Rect} viewRect
      */
-    update()
+    update(viewRect)
     {
-        super.update();
+        super.update(viewRect);
 
         if (this.hoverAnimFunc !== null) {
             this.hoverAnimFunc();
@@ -256,18 +258,18 @@ export class LinkNode extends DOMNode
     /**
      * 描画
      *
-     * @param ctx
-     * @param viewRect
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
      */
-    draw(ctx, viewRect)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         if (this.scale === 0) {
             // 何もしない
             return;
         }
-
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
             return;
         }
         
@@ -280,13 +282,13 @@ export class LinkNode extends DOMNode
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
 
-            super.setShapePath(ctx, left, top);
+            super.setShapePath(ctx, offsetX, offsetY);
             ctx.stroke();
             ctx.fill();
         } else if (this.scale < 0.3) {
             ctx.fillStyle = this.ctxParams.fillStyle;
             ctx.beginPath();
-            ctx.arc(this.center.x + left, this.center.y + top, 30 * this.scale, 0, Param.MATH_PI_2, false);
+            ctx.arc(this.center.x + offsetX, this.center.y + offsetY, 30 * this.scale, 0, Param.MATH_PI_2, false);
             ctx.fill();
         } else {
             ctx.strokeStyle = this.ctxParams.strokeStyle;
@@ -298,9 +300,14 @@ export class LinkNode extends DOMNode
             ctx.lineCap = "round"; // 線の末端のスタイル
 
             ctx.beginPath();
-            ctx.moveTo(this.center.x + left + (this.center.x - this.vertices[0].x) * this.scale, this.center.y + top + (this.center.y - this.vertices[0].y) * this.scale);
+            ctx.moveTo(
+                this.center.x + offsetX + (this.center.x - this.vertices[0].x) * this.scale, 
+                this.center.y + offsetY + (this.center.y - this.vertices[0].y) * this.scale);
             for (let i = 1; i < this.vertices.length; i++) {
-                ctx.lineTo(this.center.x + left + (this.center.x - this.vertices[i].x) * this.scale, this.center.y + top + (this.center.y - this.vertices[i].y) * this.scale);
+                ctx.lineTo(
+                    this.center.x + offsetX + (this.center.x - this.vertices[i].x) * this.scale, 
+                    this.center.y + offsetY + (this.center.y - this.vertices[i].y) * this.scale
+                );
             }
             ctx.closePath();
             ctx.stroke();
@@ -316,8 +323,6 @@ export class LinkNode extends DOMNode
         super.appear();
         this.isEnableMouse = false;
         this.scale = 0;
-
-       // console.log('appear');
     }
 
     /**
@@ -327,7 +332,7 @@ export class LinkNode extends DOMNode
     appearAnimation()
     {
         if (window.hgn.animElapsedTime >= this.appearAnimTime) {
-            this.animFunc = this.appearAnimation2;
+            this._animFunc = this.appearAnimation2;
         }
     }
 
@@ -344,7 +349,7 @@ export class LinkNode extends DOMNode
             this.isEnableMouse = true;
             this.scale = 1;
             this.fadeInText();
-            this.animFunc = this.appearAnimation3;
+            this._animFunc = this.appearAnimation3;
         }
     }
 
@@ -355,14 +360,14 @@ export class LinkNode extends DOMNode
     appearAnimation3()
     {
         if (this.subNetwork === null) {
-            this.animFunc = null;
+            this._animFunc = null;
             this.appeared();
         } else {
             const elapsedTime = window.hgn.animElapsedTime - this.appearAnimTime - this.animMaxTime;
             let depth = Math.ceil(elapsedTime / 200);
             
             if (this.subNetwork.maxDepth === depth) {
-                this.animFunc = null;
+                this._animFunc = null;
                 this.appeared();
             } else if (this.subNetwork.maxDrawDepth !== depth) {
                 this.subNetwork.setMaxDrawDepth(depth);
@@ -402,13 +407,8 @@ export class LinkNode extends DOMNode
     disappear()
     {
         this.isEnableMouse = false;
-        if (!this.isSkipAnim()) {
-            this.fadeOutText();
-            super.disappear();
-        } else {
-            this.scale = 0;
-            this.disappeared();
-        }
+        this.fadeOutText();
+        super.disappear();
     }
 
     /**
@@ -417,7 +417,7 @@ export class LinkNode extends DOMNode
     disappearAnimation()
     {
         if (window.hgn.animElapsedTime >= this.appearAnimTime) {
-            this.animFunc = this.disappearAnimation2;
+            this._animFunc = this.disappearAnimation2;
         }
     }
 
@@ -434,7 +434,7 @@ export class LinkNode extends DOMNode
             this.scale = 0;
             this.fadeOutText();
             if (this.subNetwork === null) {
-                this.animFunc = this.disappeared;
+                this._animFunc = this.disappeared;
             }
         }
 
@@ -448,7 +448,7 @@ export class LinkNode extends DOMNode
                     window.hgn.setDrawSub();
                 }
             } else if (this.scale === 0) {
-                this.animFunc = this.disappeared;
+                this._animFunc = this.disappeared;
             }
         }
     }

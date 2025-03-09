@@ -45,7 +45,7 @@ export class OctaNode
         ];
         this.connects = new Array(8).fill(null);
         this.forceDraw = false;
-        this.id = null;
+        this._id = null;
         this._isDraw = true;
 
         this.setRect();
@@ -53,6 +53,14 @@ export class OctaNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+    }
+
+    /**
+     * IDを取得
+     */
+    get id()
+    {
+        return this._id;
     }
 
     /**

@@ -41,8 +41,8 @@ export class Network
     /**
      * 配置座標の設定
      *
-     * @param x
-     * @param y
+     * @param {number} x
+     * @param {number} y
      */
     setPos(x, y)
     {
@@ -83,10 +83,15 @@ export class Network
         return this.nodes[id] ?? null;
     }
 
-    update()
+    /**
+     * 更新
+     * 
+     * @param {Rect} viewRect
+     */
+    update(viewRect)
     {
         Object.values(this.nodes).forEach(node => {
-            node.update();
+            node.update(viewRect);
         });
     }
 

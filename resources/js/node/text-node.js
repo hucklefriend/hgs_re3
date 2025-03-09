@@ -44,17 +44,18 @@ export class TextNode extends DOMNode
     /**
      * 描画
      *
-     * @param ctx
-     * @param {Rect}viewRect
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
      */
-    draw(ctx, viewRect)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
             return;
         }
         
-        super.setShapePath(ctx, left, top);
+        super.setShapePath(ctx, offsetX, offsetY);
 
         ctx.lineWidth = 1; // 線の太さ
         ctx.lineJoin = "miter"; // 線の結合部分のスタイル
@@ -81,11 +82,14 @@ export class TextNode extends DOMNode
     appearAnimation()
     {
         if (window.hgn.animElapsedTime > 250) {
-            this.animFunc = this.appearAnimation2;
+            this._animFunc = this.appearAnimation2;
             this.fadeInText();
         }
     }
 
+    /**
+     * 出現アニメーション2: テキストをフェードイン
+     */
     appearAnimation2()
     {
         this.fadeInText();
@@ -98,6 +102,9 @@ export class TextNode extends DOMNode
         }
     }
 
+    /**
+     * 出現完了
+     */
     appeared()
     {
         super.appeared();
@@ -106,20 +113,15 @@ export class TextNode extends DOMNode
     }
 
     /**
-     * 消える
+     * 消失開始
      */
     disappear()
     {
-        if (!this.isSkipAnim()) {
-            super.disappear();
-            this.fadeOutText();
-        } else {
-            this.disappeared();
-        }
+        this.disappeared();
     }
 
     /**
-     * 消えるアニメーション
+     * 消失アニメーション
      */
     disappearAnimation()
     {
@@ -130,6 +132,9 @@ export class TextNode extends DOMNode
         }
     }
 
+    /**
+     * 消失完了
+     */
     disappeared()
     {
         super.disappeared();

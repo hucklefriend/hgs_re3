@@ -39,7 +39,7 @@ export class ContentLinkNode extends LinkNode
             a.addEventListener('click', (e) => e.preventDefault());
         }
 
-        this.id = DOM.getAttribute('id');
+        this._id = DOM.getAttribute('id');
 
         this.isAnimation = false;
         this.isHide = false;
@@ -78,13 +78,15 @@ export class ContentLinkNode extends LinkNode
     /**
      * 描画
      *
-     * @param ctx
-     * @param viewRect
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
      */
-    draw(ctx, viewRect)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         if (!this.isHide) {
-            super.draw(ctx, viewRect);
+            super.draw(ctx, offsetX, offsetY, isDrawOutsideView);
         }
     }
 }
@@ -296,12 +298,17 @@ export class ContentNode extends DOMNode
 
     /**
      * 描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutside
      */
-    draw(ctx, left, top)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         ctx.lineWidth = this.lineWidth; // 線の太さはアニメーションで変わるので調整
 
-        super.setShapePathByVertices(ctx, this.animVertices, left, top);
+        super.setShapePathByVertices(ctx, this.animVertices, offsetX, offsetY);
         ctx.stroke();
     }
 }
