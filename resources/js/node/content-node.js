@@ -19,10 +19,10 @@ export class ContentLinkNode extends LinkNode
     /**
      * コンストラクタ
      *
-     * @param id
-     * @param x
-     * @param y
-     * @param DOM
+     * @param {string} id
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLElement} DOM
      */
     constructor(id, x, y, DOM)
     {
@@ -99,11 +99,11 @@ export class ContentNode extends DOMNode
     /**
      * コンストラクタ
      * 
-     * @param {*} id 
-     * @param {*} x 
-     * @param {*} y 
-     * @param {*} DOM 
-     * @param {*} notchSize 
+     * @param {string} id
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLElement} DOM
+     * @param {number} notchSize
      */
     constructor(id, x, y, DOM, notchSize = 13)
     {
@@ -154,6 +154,8 @@ export class ContentNode extends DOMNode
 
     /**
      * 出現
+     * 
+     * @param {ContentLinkNode} linkNode
      */
     appear(linkNode)
     {

@@ -217,6 +217,9 @@ export class MapViewer extends ViewerBase
         // 中央位置を移動
         this.moveCamera(-deltaX, -deltaY);
 
+        // 背景のスクロール（ドラッグと逆方向に移動）
+        window.hgn.background.scrollBy(-deltaX, -deltaY);
+
         // 速度を計算（フリックのために保持）
         this.dragVelocity.x = deltaX;
         this.dragVelocity.y = deltaY;
@@ -238,7 +241,12 @@ export class MapViewer extends ViewerBase
         this.mapDOM.style.cursor = 'grab';
 
         if (!this.isStopFlicking()) {
-            //this.isFlicking = true;
+            this.isFlicking = true;
+            // フリック開始時の速度を背景スクロールにも適用
+            window.hgn.background.scrollBy(
+                -this.dragVelocity.x,
+                -this.dragVelocity.y
+            );
         }
     }
 

@@ -524,7 +524,6 @@ export class DOMNode extends OctaNode
     draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
         if (!this.isDraw(isDrawOutsideView)) {
-            console.log(this.id, 'not draw');
             return;
         }
 

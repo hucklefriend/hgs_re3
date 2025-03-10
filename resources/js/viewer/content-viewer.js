@@ -134,7 +134,7 @@ export class ContentViewer
     /**
      * データの設定
      *
-     * @param data
+     * @param {Object} data
      */
     setContent(data)
     {
@@ -153,7 +153,7 @@ export class ContentViewer
     /**
      * 開く
      *
-     * @param linkNode
+     * @param {ContentLinkNode} linkNode
      */
     open(linkNode)
     {
@@ -188,6 +188,8 @@ export class ContentViewer
 
     /**
      * 閉じる
+     * 
+     * @param {boolean} isPopState
      */
     close(isPopState = false)
     {
@@ -199,6 +201,8 @@ export class ContentViewer
 
     /**
      * 閉じる
+     * 
+     * @param {boolean} isPopState
      */
     closed(isPopState = false)
     {
@@ -232,6 +236,11 @@ export class ContentViewer
         window.hgn.setDrawMain(true);
     }
 
+    /**
+     * スクロール位置の復元
+     * 
+     * @param {number} ratio
+     */
     restoreScrollPosition(ratio)
     {
         const y = Util.getMidpoint(this.openScrollY, window.hgn.viewer.scrollY, ratio, true);
@@ -248,7 +257,7 @@ export class ContentViewer
             return;
         }
 
-        this.node.update();
+        this.node.update(null);
         
         if (this._isDraw) {
             // コンテンツノードはViewRectを使わない（常に全部描画）

@@ -62,6 +62,8 @@ export class DocumentViewer extends ViewerBase
         this.scrollModeStartPosX = 0;
         this.scrollY = 0;
         this.scrollModeStartPosY = 0;
+        this.lastScrollX = 0;  // 前回のスクロール位置X
+        this.lastScrollY = 0;  // 前回のスクロール位置Y
 
         this.viewRect = new Rect(0, 0, 0, 0);
 
@@ -111,6 +113,14 @@ export class DocumentViewer extends ViewerBase
                 window.hgn.setDrawMain(true);
             });
         }
+
+        this.scrollMode = HorrorGameNetwork.SCROLL_MODE_BODY;
+        this.scrollX = 0;
+        this.scrollModeStartPosX = 0;
+        this.scrollY = 0;
+        this.scrollModeStartPosY = 0;
+        this.lastScrollX = 0;  // 前回のスクロール位置X
+        this.lastScrollY = 0;  // 前回のスクロール位置Y
 
         // ノードの読み取り
         this.loadNodes();
@@ -308,21 +318,39 @@ export class DocumentViewer extends ViewerBase
 
     /**
      * スクロール
+     * 
+     * @param {boolean} isNewViewer
      */
-    scroll()
+    scroll(isNewViewer = false)
     {
-        if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
-            this.scrollX = this.scrollModeStartPosX + (window.scrollX / 3);
-            this.scrollY = this.scrollModeStartPosY + (window.scrollY / 3);
+        let newScrollX, newScrollY;
 
-            this.DOM.scrollTo(this.scrollX, this.scrollY);
-            window.hgn.canvasContainer.scrollTo(this.scrollX, this.scrollY);
+        if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
+            newScrollX = this.scrollModeStartPosX + (window.scrollX / 3);
+            newScrollY = this.scrollModeStartPosY + (window.scrollY / 3);
+
+            this.DOM.scrollTo(newScrollX, newScrollY);
+            window.hgn.canvasContainer.scrollTo(newScrollX, newScrollY);
         } else {
-            this.scrollX = window.scrollX;
-            this.scrollY = window.scrollY;
+            newScrollX = window.scrollX;
+            newScrollY = window.scrollY;
         }
 
-        window.hgn.background.scroll(this.scrollX, this.scrollY);
+        if (!isNewViewer) {
+            // 前回位置からの差分を計算して相対スクロール
+            const deltaX = newScrollX - this.lastScrollX;
+            const deltaY = newScrollY - this.lastScrollY;
+            
+            if (deltaX !== 0 || deltaY !== 0) {
+                window.hgn.background.scrollBy(deltaX, deltaY);
+            }
+        }
+
+        // 現在位置を更新
+        this.scrollX = newScrollX;
+        this.scrollY = newScrollY;
+        this.lastScrollX = newScrollX;
+        this.lastScrollY = newScrollY;
 
         this.updateViewRect();
     }
@@ -330,16 +358,23 @@ export class DocumentViewer extends ViewerBase
     /**
      * 指定位置へスクロール
      * 
-     * @param {*} x 
-     * @param {*} y 
+     * @param {number} x 
+     * @param {number} y 
      */
     scrollTo(x, y)
     {
+        // 前回位置からの差分を計算
+        const deltaX = x - this.lastScrollX;
+        const deltaY = y - this.lastScrollY;
+
         this.scrollX = x;
         this.scrollY = y;
+        this.lastScrollX = x;
+        this.lastScrollY = y;
+
         this.DOM.scrollTo(x, y);
         window.hgn.canvasContainer.scrollTo(x, y);
-        window.hgn.background.scroll(this.scrollX, this.scrollY);
+        window.hgn.background.scrollBy(deltaX, deltaY);
         this.updateViewRect();
         window.hgn.setDrawSub();
     }

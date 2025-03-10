@@ -156,11 +156,13 @@ export class Head1Node extends DOMNode
     appearAnimation()
     {
         if (window.hgn.animElapsedTime < 100) {
-            let ratio = window.hgn.animElapsedTime / 100;
-            this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
-            this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
-            this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
-            window.hgn.setDrawMain(false);
+            if (this._isInViewRect) {
+                let ratio = window.hgn.animElapsedTime / 100;
+                this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
+                this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
+                this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+                window.hgn.setDrawMain(false);
+            }
         } else if (window.hgn.animElapsedTime >= 100) {
             this.alpha1 = 0.4;
             this.alpha2 = 0.7;

@@ -132,6 +132,8 @@ export class HorrorGameNetwork
 
     /**
      * アニメーション開始時間の取得
+     * 
+     * @returns {number}
      */
     get animStartTime()
     {
@@ -140,6 +142,8 @@ export class HorrorGameNetwork
 
     /**
      * アニメーション経過時間の取得
+     * 
+     * @returns {number}
      */
     get animElapsedTime()
     {
@@ -160,8 +164,8 @@ export class HorrorGameNetwork
         }
 
         this.viewer.start(false);
-        this.setCanvasSize();   // 
-
+        this.setCanvasSize();
+        
         if (window.content !== null) {
             // コンテンツノードの表示
             let linkNodeId = window.content.linkNodeId;
@@ -209,7 +213,9 @@ export class HorrorGameNetwork
     }
 
     /**
-     * 更新
+     * 更新 
+     * 
+     * @param {number} time
      */
     update(time)
     {
@@ -306,10 +312,12 @@ export class HorrorGameNetwork
 
     /**
      * スクロール
+     * 
+     * @param {boolean} isNewViewer
      */
-    scroll()
+    scroll(isNewViewer = false)
     {
-        this.viewer.scroll();
+        this.viewer.scroll(isNewViewer);
 
         if (this.scrollTimer !== null) {
             clearTimeout(this.scrollTimer);
@@ -349,7 +357,6 @@ export class HorrorGameNetwork
                 this.offscreenCanvas,
                 0, 0, // ソースの開始位置
                 this.offscreenCanvas.width, this.offscreenCanvas.height, // ソースのサイズ
-                //this.viewer.viewRect.width, this.viewer.viewRect.height, // ソースのサイズ
                 this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
                 this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
             );
@@ -358,6 +365,8 @@ export class HorrorGameNetwork
 
     /**
      * メイン・サブ両方の描画の設定
+     * 
+     * @param {boolean} isDrawOutsideView
      */
     setDraw(isDrawOutsideView = false)
     {
@@ -413,9 +422,9 @@ export class HorrorGameNetwork
     /**
      * コンテンツの表示
      *
-     * @param url
-     * @param linkNodeId
-     * @param isPopState
+     * @param {string} url
+     * @param {string} linkNodeId
+     * @param {boolean} isPopState
      */
     openContentView(url, linkNodeId, isPopState)
     {
@@ -472,16 +481,12 @@ export class HorrorGameNetwork
     /**
      * 次のビューワへ遷移
      *
-     * @param waitViewer
+     * @param {DocumentViewer|MapViewer} waitViewer
      * @param {string} url
      * @param {boolean} isBack
      */
     navigateToNextViewer(waitViewer, url, isBack = false)
     {
-        // if (!this.viewer.isAllNodeAppeared()) {
-        //     return;
-        // }
-
         this.disappear();
 
         this.fetch(url, (data, hasError) => {
@@ -512,6 +517,8 @@ export class HorrorGameNetwork
 
     /**
      * 新しいビューワの表示
+     * 
+     * @param {boolean} isBack
      */
     showNewViewer(isBack)
     {
@@ -544,8 +551,8 @@ export class HorrorGameNetwork
     /**
      * データの取得
      *
-     * @param url
-     * @param callback
+     * @param {string} url
+     * @param {Function} callback
      */
     fetch(url, callback)
     {
@@ -595,7 +602,6 @@ export class HorrorGameNetwork
         if (this.contentViewer.isOpened()) {
             this.contentViewer.close(true);
         } else {
-            console.log(e.state);
             if (e.state) {
                 if (e.state.type === this.documentViewer.TYPE) {
                     this.navigateToDocument(location.href, true);
@@ -611,7 +617,7 @@ export class HorrorGameNetwork
     /**
      * ポップアップノードの表示
      *
-     * @param id
+     * @param {string} id
      */
     openPopupNode(id)
     {
@@ -624,7 +630,7 @@ export class HorrorGameNetwork
     /**
      * ポップアップノードの非表示
      *
-     * @param id
+     * @param {string} id
      */
     closePopupNode(id)
     {
