@@ -87,11 +87,12 @@ export class Network
      * 更新
      * 
      * @param {Rect} viewRect
+     * @param {boolean} isInViewRectDefault
      */
-    update(viewRect)
+    update(viewRect, isInViewRectDefault = true)
     {
         Object.values(this.nodes).forEach(node => {
-            node.update(viewRect);
+            node.update(viewRect, isInViewRectDefault);
         });
     }
 

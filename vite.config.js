@@ -15,29 +15,11 @@ export default defineConfig({
             ],
             refresh: true,
         }),
-    
-      {
-        name: 'add-custom-headers',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-            res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-            res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-            next();
-          });
-        }
-      }
     ], 
     server: {
         host: true,
         hmr: {
             host: 'localhost'
-        },
-        headers: {
-            'Cross-Origin-Embedder-Policy': 'require-corp',
-            'Cross-Origin-Opener-Policy': 'same-origin',
-            'Cross-Origin-Resource-Policy': 'cross-origin',
-            'Cross-Origin-Isolation': 'same-origin'
         },
         origin: 'http://localhost:5173' // ここを追加
     },

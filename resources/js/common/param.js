@@ -28,7 +28,13 @@ export class Param
 
     static CONTENT_NODE_NOTCH_SIZE = 70;
 
-    static DRAG_FLICK_RATE = 0.9;
+    // フリック関連のパラメータ
+    static DRAG_FLICK_RATE = 0.9;    // 減速率（大きいほどゆっくり減速）
+    static DRAG_FLICK_SPEED_SCALE = 3; // フリックの初速スケール（大きいほど速く動く）
+
+    // ホイール操作のスクロール量
+    static WHEEL_SCROLL_AMOUNT = 50;    // 上下スクロール量
+    static WHEEL_TILT_AMOUNT = 50;      // 左右チルトスクロール量
 
     /**
      * 描画するかを決める表示領域のマージン

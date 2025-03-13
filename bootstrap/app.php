@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\AdminSearchBreadcrumb::class,
         ]);
 
-        $middleware->append(CrossOriginHeaders::class);
+        //$middleware->append(CrossOriginHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

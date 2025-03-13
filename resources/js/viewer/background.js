@@ -11,8 +11,8 @@ export class Background
         
         // 現在の背景位置を数値として取得（pxを除去して数値化）
         const style = window.getComputedStyle(this.dom);
-        this.currentX = parseInt(style.backgroundPositionX) || 0;
-        this.currentY = parseInt(style.backgroundPositionY) || 0;
+        this.currentX = 0;//parseInt(style.backgroundPositionX) || 0;
+        this.currentY = 0;//parseInt(style.backgroundPositionY) || 0;
     }
 
     /**

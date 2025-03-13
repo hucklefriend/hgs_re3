@@ -207,9 +207,9 @@ hr {
     padding:0;
     text-align: center;
     background-image: url('../img/bg3_2.jpg');
-    background-position-x: center;
+    background-position-x: 0;
     background-position-y: 0;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-size: 2048px 2048px;
     pointer-events: none;
 }
@@ -353,10 +353,6 @@ hr {
             width: 100px;
             text-align: center;
         }
-
-        span:last-child {
-
-        }
     }
 }
 
@@ -491,6 +487,8 @@ canvas#main-network-debug-canvas {
     z-index: 9999;
     border: dotted 1px red;
 }
+
+
 
 /* スマホ～ */
 @media (min-width: 400px) {

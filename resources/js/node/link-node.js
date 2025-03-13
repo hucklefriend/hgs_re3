@@ -245,8 +245,6 @@ export class LinkNode extends DOMNode
             window.hgn.setDrawMain(false);
         } else {
             this.hoverAnimFunc = null;
-            // strokeStyle: "rgba(240, 103, 166, 0.8)",
-            //     shadowColor: "rgb(240, 103, 166)",
             this.ctxParams.strokeStyle = "rgba(240, 103, 166, 0.8)";
             this.ctxParams.shadowColor = "rgb(240, 103, 166)";
             this.ctxParams.shadowBlur = 4;
@@ -383,6 +381,7 @@ export class LinkNode extends DOMNode
     {
         this.showText();
         this.scale = 1;
+        this.isEnableMouse = true;
         if (this.subNetwork !== null) {
             this.subNetwork.setMaxDrawDepth(this.subNetwork.maxDepth);
             window.hgn.setDrawSub();

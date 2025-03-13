@@ -176,10 +176,14 @@ export class MainFranchiseNetwork extends Network
 
     /**
      * 更新
+     * 
+     * @param {Rect} viewRect
+     * @param {number} viewRectNo
+     * @param {boolean} isInViewRectDefault
      */
-    update(viewRect, viewRectNo)
+    update(viewRect, viewRectNo, isInViewRectDefault = true)
     {
-        super.update(viewRect);
+        super.update(viewRect, isInViewRectDefault);
 
         this._viewRectNo = viewRectNo;
 
@@ -257,8 +261,6 @@ export class MainFranchiseNetwork extends Network
         Object.values(this.nodes).forEach(node => {
             node.draw(ctx, offsetX, offsetY, false);
         });
-
-        //this.DOM.style.transform = 'translate(' + (-viewRect.left) + 'px, ' + (-viewRect.top) + 'px)';
     }
 
     /**

@@ -29,7 +29,9 @@ export class MapViewer extends ViewerBase
 
         this.dragOffset = new Vertex(0, 0);
         this.dragVelocity = new Vertex(0, 0);
+        this.flickVelocity = new Vertex(0, 0);  // フリック用の速度を別に保持
         this.dragLastPos = new Vertex(0, 0);
+        this.dragLastTime = 0;  // 前回の移動時刻を保持
 
         this.networkRect = new Rect();
         this.viewRect = new Rect();
@@ -50,6 +52,7 @@ export class MapViewer extends ViewerBase
         this.mapDOM.addEventListener('touchstart', (e) => this.mouseDown(e));
         this.mapDOM.addEventListener('touchend', (e) => this.mouseUp(e));
         this.mapDOM.addEventListener('touchmove', (e) => this.mouseMove(e));
+        this.initWheel(this.mapDOM);
         this.mapDOM.style.display = 'none';
 
         this.dataCache = null;
@@ -165,7 +168,7 @@ export class MapViewer extends ViewerBase
     /**
      * マウスダウン
      *
-     * @param e
+     * @param {MouseEvent} e
      */
     mouseDown(e)
     {
@@ -189,7 +192,7 @@ export class MapViewer extends ViewerBase
     /**
      * ドラッグ中
      *
-     * @param e
+     * @param {MouseEvent} e
      */
     mouseMove(e)
     {
@@ -220,12 +223,23 @@ export class MapViewer extends ViewerBase
         // 背景のスクロール（ドラッグと逆方向に移動）
         window.hgn.background.scrollBy(-deltaX, -deltaY);
 
-        // 速度を計算（フリックのために保持）
-        this.dragVelocity.x = deltaX;
-        this.dragVelocity.y = deltaY;
+        // 現在時刻を取得
+        const currentTime = performance.now();
+        const timeDelta = currentTime - this.dragLastTime;
+
+        if (timeDelta > 0.1) {
+            // 速度を計算（フリックのために保持）
+            // 単位時間あたりの移動量として計算し、スケールを適用
+            this.dragVelocity.x = (deltaX / timeDelta * 16.67) * Param.DRAG_FLICK_SPEED_SCALE;
+            this.dragVelocity.y = (deltaY / timeDelta * 16.67) * Param.DRAG_FLICK_SPEED_SCALE;
+        } else {
+            this.dragVelocity.x = 0;
+            this.dragVelocity.y = 0;
+        }
 
         this.dragLastPos.x = clientX;
         this.dragLastPos.y = clientY;
+        this.dragLastTime = currentTime;
 
         window.hgn.setDrawMain(false);
     }
@@ -233,27 +247,38 @@ export class MapViewer extends ViewerBase
     /**
      * ドラッグ終了
      *
-     * @param e
+     * @param {MouseEvent} e
      */
     mouseUp(e)
     {
+        if (this.isDragging) {
+            // 最後のマウス移動からの経過時間を計算
+            const currentTime = performance.now();
+            const timeSinceLastMove = currentTime - this.dragLastTime;
+
+            // 100ms以上経過している場合は止まっているとみなす
+            if (timeSinceLastMove < 100) {
+                const speed = Math.sqrt(
+                    this.dragVelocity.x * this.dragVelocity.x +
+                    this.dragVelocity.y * this.dragVelocity.y
+                );
+
+                if (speed >= 1.0) {
+                    this.isFlicking = true;
+                    this.flickVelocity.x = this.dragVelocity.x;
+                    this.flickVelocity.y = this.dragVelocity.y;
+                }
+            }
+        }
+
         this.isDragging = false;
         this.mapDOM.style.cursor = 'grab';
-
-        if (!this.isStopFlicking()) {
-            this.isFlicking = true;
-            // フリック開始時の速度を背景スクロールにも適用
-            window.hgn.background.scrollBy(
-                -this.dragVelocity.x,
-                -this.dragVelocity.y
-            );
-        }
     }
 
     /**
      * マウスリーブ
      * 
-     * @param {*} e 
+     * @param {MouseEvent} e 
      */
     mouseLeave(e)
     {
@@ -262,11 +287,10 @@ export class MapViewer extends ViewerBase
     }
 
     /**
-     * TODO: ホイールイベント
+     * ホイールイベントを設定
      * 
-     * @param {*} element 
+     * @param {Element} element 
      */
-
     initWheel(element)
     {
         this.element = element;
@@ -278,7 +302,13 @@ export class MapViewer extends ViewerBase
         this.element.addEventListener('wheel', this.handleWheel, { passive: false });
     }
 
-    handleWheel(event) {
+    /**
+     * ホイールイベント
+     * 
+     * @param {WheelEvent} event 
+     */
+    handleWheel(event)
+    {
         event.preventDefault();
 
         // 累積値の更新
@@ -306,26 +336,56 @@ export class MapViewer extends ViewerBase
         }
     }
 
-    onTiltLeft() {
-        console.log('左チルト検出');
+    /**
+     * 左チルト
+     */
+    onTiltLeft()
+    {
+        // 左チルト（マップを右に移動）
+        this.moveCamera(-Param.WHEEL_TILT_AMOUNT, 0);
+        // 背景も連動してスクロール
+        window.hgn.background.scrollBy(-Param.WHEEL_TILT_AMOUNT, 0);
+        window.hgn.setDrawMain(false);
     }
 
-    onTiltRight() {
-        console.log('右チルト検出');
+    /**
+     * 右チルト
+     */
+    onTiltRight()
+    {
+        // 右チルト（マップを左に移動）
+        this.moveCamera(Param.WHEEL_TILT_AMOUNT, 0);
+        // 背景も連動してスクロール
+        window.hgn.background.scrollBy(Param.WHEEL_TILT_AMOUNT, 0);
+        window.hgn.setDrawMain(false);
     }
 
-    onScrollUp() {
-        console.log('上スクロール');
+    /**
+     * 上スクロール
+     */
+    onScrollUp()
+    {
+        this.moveCamera(0, -Param.WHEEL_SCROLL_AMOUNT);
+        // 背景も連動してスクロール
+        window.hgn.background.scrollBy(0, -Param.WHEEL_SCROLL_AMOUNT);
+        window.hgn.setDrawMain(false);
     }
 
-    onScrollDown() {
-        console.log('下スクロール');
+    /**
+     * 下スクロール
+     */
+    onScrollDown()
+    {
+        this.moveCamera(0, Param.WHEEL_SCROLL_AMOUNT);
+        // 背景も連動してスクロール
+        window.hgn.background.scrollBy(0, Param.WHEEL_SCROLL_AMOUNT);
+        window.hgn.setDrawMain(false);
     }
 
     /**
      * ウィンドウサイズの変更
      *
-     * @param e
+     * @param {Event} e
      */
     resize(e)
     {
@@ -346,39 +406,66 @@ export class MapViewer extends ViewerBase
 
         this.networks.forEach(network => {
             if (!this.viewRect1.isEmpty() && this.viewRect1.overlapWith(network.rect)) {
-                network.update(this.viewRect1, 1);
+                network.update(this.viewRect1, 1, true);
                 network.show();
             } else if (!this.viewRect2.isEmpty() && this.viewRect2.overlapWith(network.rect)) {
-                network.update(this.viewRect2, 2);
+                network.update(this.viewRect2, 2, true);
                 network.show();
             } else if (!this.viewRect3.isEmpty() && this.viewRect3.overlapWith(network.rect)) {
-                network.update(this.viewRect3, 3);
+                network.update(this.viewRect3, 3, true);
                 network.show();
             } else if (!this.viewRect4.isEmpty() && this.viewRect4.overlapWith(network.rect)) {
-                network.update(this.viewRect4, 4);
+                network.update(this.viewRect4, 4, true);
                 network.show();
             } else {
+                network.update(null, 0, false);
                 network.hide();
             }
         });
     }
 
     /**
-     * TODO: フリック
+     * フリック
      */
     flick()
     {
-        this.moveCamera(
-            Math.round(this.dragVelocity.x),
-            Math.round(this.dragVelocity.y)
-        );
+        // 速度が十分にある場合のみ移動
+        if (!this.isStopFlicking()) {
+            this.moveCamera(
+                Math.round(-this.flickVelocity.x),
+                Math.round(-this.flickVelocity.y)
+            );
 
-        this.dragVelocity.x = this.dragVelocity.x * Param.DRAG_FLICK_RATE;
-        this.dragVelocity.y = this.dragVelocity.y * Param.DRAG_FLICK_RATE;
+            // 背景も連動してスクロール
+            window.hgn.background.scrollBy(
+                -this.flickVelocity.x,
+                -this.flickVelocity.y
+            );
 
-        if (this.isStopFlicking()) {
+            // 減速（両軸で同じ割合で減速）
+            const rate = Param.DRAG_FLICK_RATE;
+            this.flickVelocity.x *= rate;
+            this.flickVelocity.y *= rate;
+        } else {
             this.isFlicking = false;
+            this.flickVelocity.x = 0;
+            this.flickVelocity.y = 0;
         }
+
+        window.hgn.setDrawMain(false);
+    }
+
+    /**
+     * フリック停止判定
+     * ベクトルの長さで判定
+     */
+    isStopFlicking()
+    {
+        const speed = Math.sqrt(
+            this.flickVelocity.x * this.flickVelocity.x +
+            this.flickVelocity.y * this.flickVelocity.y
+        );
+        return speed <= 1;
     }
 
     /**
@@ -496,11 +583,6 @@ export class MapViewer extends ViewerBase
         }
 
         this.viewRect1.calcSize();
-    }
-
-    isStopFlicking()
-    {
-        return (Math.abs(this.dragVelocity.x) <= 0.1 || Math.abs(this.dragVelocity.y) <= 0.1);
     }
 
     /**

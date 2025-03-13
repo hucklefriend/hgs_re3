@@ -86,32 +86,38 @@
         </div>
     </div>
 </div>
-<div id="popups">
-    @yield('popup')
-</div>
-<div>
-    <script>
-        function iamOver18() {
-            document.cookie = "over18=true; path=/"; // Cookieを設定
-            window.hgn.closePopupNode('rating-check-popup');
-            window.hgn.appear();
-        }
-    </script>
-    <div class="popup-node" id="rating-check-popup">
-        <div class="popup-container">
-            <h1>年齢確認</h1>
-            <p>
-                この先、18歳未満の方が購入できないゲームタイトルの情報が含まれます。<br>
-                18歳未満の方は閲覧をご遠慮ください。
-            </p>
-
+<div class="popup-wrapper">
+    <div class="popup">
+        <div class="popup-content">
+            <div id="popups">
+                @yield('popup')
+            </div>
             <div>
-                <a href="{{ route('Entrance') }}">エントランスに戻る</a>
-                <a href="#" onclick="iamOver18();">18歳以上です</a>
+                <div class="popup-node" id="rating-check-popup">
+                    <div class="popup-container">
+                        <h1>年齢確認</h1>
+                        <p>
+                            この先、18歳未満の方が購入できないゲームタイトルの情報が含まれます。<br>
+                            18歳未満の方は閲覧をご遠慮ください。
+                        </p>
+
+                        <div style="margin-top: 40px;margin-bottom: 20px;">
+                            <a href="{{ route('Entrance') }}">エントランスに戻る</a>
+                            <a href="#" onclick="iamOver18();">18歳以上です</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function iamOver18() {
+        //document.cookie = "over18=true; path=/"; // Cookieを設定
+        window.hgn.closePopupViewer();
+        window.hgn.appear();
+    }
+</script>
 <div id="loading"><img src="{{ asset('img/loading.gif') }}" alt="now loading..."></div>
 <div id="debug" style="visibility: hidden;"></div>
 </body>

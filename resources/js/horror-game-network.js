@@ -2,7 +2,7 @@
 import { MapViewer } from './viewer/map-viewer.js';
 import { DocumentViewer } from './viewer/document-viewer.js';
 import { ContentViewer } from './viewer/content-viewer.js';
-import { PopupNode } from './node/popup-node.js';
+import { PopupViewer } from './viewer/popup-viewer.js';
 import { Param } from './common/param.js';
 import { Util } from './common/util.js';
 import { Background } from './viewer/background.js';
@@ -37,7 +37,7 @@ export class HorrorGameNetwork
 
         // コンテンツビューアとポップアップビューアはthis.viewerに入ることはないサブのビューア
         this.contentViewer = new ContentViewer();
-        //this.popupViewer = new PopupViewer();
+        this.popupViewer = new PopupViewer();
 
         this.background = new Background(); // 背景
 
@@ -91,8 +91,6 @@ export class HorrorGameNetwork
 
         this.loadingShowTimer = null;
         this.changeNetworkAppearTimer = null;
-
-        this.scrollTimer = null;
 
         this.lastFrameTime = 0;
         this.fps = 30;
@@ -152,9 +150,13 @@ export class HorrorGameNetwork
 
     /**
      * 開始
+     * 
+     * @param {string} type
      */
     start(type)
     {
+        this.popupViewer.loadNodes();
+
         if (type === this.documentViewer.TYPE) {
             // ドキュメントビューワ
             this.viewer = this.documentViewer;
@@ -196,8 +198,8 @@ export class HorrorGameNetwork
         } else {
             window.requestAnimationFrame(time => {
                 this._time = time;  // appearの中で使うが、updateより先に実行したいのでここでセットしておく
-                this.appear();
                 this.update(time);
+                this.appear();
             });
         }
     }
@@ -223,7 +225,7 @@ export class HorrorGameNetwork
         this._animElapsedTime = time - this.animStartTime;
 
         this.contentViewer.update();
-
+        this.popupViewer.update();
         this.viewer.update();
 
         if (this._isDrawMain) {
@@ -243,7 +245,7 @@ export class HorrorGameNetwork
                     this.showNewViewer();   // ビューワの交代
                 }
             } else {
-                //this.viewer.showAppearedNodes();
+                this.viewer.showAppearedNodes();
             }
         }
 
@@ -318,10 +320,6 @@ export class HorrorGameNetwork
     scroll(isNewViewer = false)
     {
         this.viewer.scroll(isNewViewer);
-
-        if (this.scrollTimer !== null) {
-            clearTimeout(this.scrollTimer);
-        }
 
         this.setDrawSub();
     }
@@ -524,11 +522,12 @@ export class HorrorGameNetwork
     {
         window.scrollTo(0, 0);
         this.scroll(true);
-        //this.popupDOM.innerHTML = data.popup;
 
         const title = this.waitViewer.dataCache.title;
-        const url = this.waitViewer.dataCache.url;
         const ratingCheck = this.waitViewer.dataCache.ratingCheck;
+        this.popupViewer.clearNodes();
+        this.popupViewer.render(this.waitViewer.dataCache.popup);
+        this.popupViewer.loadNodes();
 
         // windowタイトルの変更
         if (title) {
@@ -615,29 +614,23 @@ export class HorrorGameNetwork
     }
 
     /**
-     * ポップアップノードの表示
+     * ポップアップビューアの表示
      *
      * @param {string} id
      */
-    openPopupNode(id)
+    openPopupViewer(id)
     {
-        let node = this.nodesIdHash[id];
-        if (node) {
-            node.open();
-        }
+        this.popupViewer.open(id);
     }
 
     /**
-     * ポップアップノードの非表示
+     * ポップアップビューアの非表示
      *
      * @param {string} id
      */
-    closePopupNode(id)
+    closePopupViewer()
     {
-        let node = this.nodesIdHash[id];
-        if (node) {
-            node.close();
-        }
+        this.popupViewer.close();
     }
 
     /**
@@ -646,7 +639,7 @@ export class HorrorGameNetwork
     showRatingCheck()
     {
         if (!document.cookie.includes("over18=true")) {
-            this.openPopupNode('rating-check-popup');
+            this.openPopupViewer('rating-check-popup');
         } else {
             this.appear();
         }
@@ -654,6 +647,8 @@ export class HorrorGameNetwork
 
     /**
      * 画像の読み込み完了を待機
+     * 
+     * @param {Element} DOM
      * @returns {Promise} すべての画像が読み込まれたらresolve
      */
     waitForImages(DOM)

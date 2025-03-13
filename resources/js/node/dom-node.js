@@ -4,6 +4,7 @@ import { Param } from '../common/param.js';
 import { OctaNode } from './octa-node.js';
 import { Util } from "../common/util.js";
 import { SubNetwork } from "../network/sub-network.js";
+import { MapViewer } from '../viewer/map-viewer.js';
 import { HorrorGameNetwork } from '../horror-game-network.js';
 /**
  * @type {HorrorGameNetwork}
@@ -442,7 +443,13 @@ export class DOMNode extends OctaNode
     appear()
     {
         window.hgn.viewer.incrementNodeCnt();
+
+        this.fadeInText();
+
         this._animFunc = this.appearAnimation;
+        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
+            this._animFunc = this.appeared;
+        }
     }
 
     /**
@@ -467,6 +474,9 @@ export class DOMNode extends OctaNode
     disappear()
     {
         this._animFunc = this.disappearAnimation;
+        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
+            this._animFunc = this.disappeared;
+        }
     }
 
     /**
@@ -489,10 +499,11 @@ export class DOMNode extends OctaNode
      * 更新
      * 
      * @param {Rect} viewRect
+     * @param {boolean} isInViewRectDefault
      */
-    update(viewRect)
+    update(viewRect, isInViewRectDefault = true)
     {
-        this._isInViewRect = true;
+        this._isInViewRect = isInViewRectDefault;
         if (viewRect !== null && !viewRect.overlapWith(this.rect)) {
             this._isInViewRect = false;
         }

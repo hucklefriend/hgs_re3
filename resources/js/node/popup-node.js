@@ -12,10 +12,10 @@ export class PopupLinkNode extends LinkNode
     /**
      * コンストラクタ
      *
-     * @param id
-     * @param x
-     * @param y
-     * @param DOM
+     * @param {string} id
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLElement} DOM
      */
     constructor(id, x, y, DOM)
     {
@@ -50,7 +50,7 @@ export class PopupNode extends DOMNode
     /**
      * コンストラクタ
      *
-     * @param DOM
+     * @param {HTMLElement} DOM
      */
     constructor(DOM)
     {
@@ -61,17 +61,14 @@ export class PopupNode extends DOMNode
 
         this.DOM = DOM;
 
-        document.querySelectorAll('.popup-node-close').forEach((close) => {
-            close.addEventListener('click', () => {
+        this.DOM.querySelectorAll('.popup-node-close').forEach((closer) => {
+            closer.addEventListener('click', () => {
                 this.close();
             });
         });
 
-        this.DOM.addEventListener('click', () => {
-            //this.close();
-        });
-
-        this.timer = null;
+        this.width = 0;
+        this.height = 0;
     }
 
     /**
@@ -80,15 +77,9 @@ export class PopupNode extends DOMNode
      */
     delete()
     {
-        this.close();
+        window.hgn.popupViewer.close(this.id);
         super.delete();
-        this.canvas = null;
-        this.ctx = null;
         this.DOM = null;
-        if (this.timer !== null) {
-            clearTimeout(this.timer);
-            this.timer = null;
-        }
     }
 
     /**
@@ -96,8 +87,7 @@ export class PopupNode extends DOMNode
      */
     reload()
     {
-        const height = this.DOM.offsetHeight;//this.bodyDOM.offsetHeight + Param.CONTENT_NODE_NOTCH_SIZE * 2;
-        super.reload(0, 0, this.DOM.offsetWidth, height);
+        super.reload(0, 0, this.DOM.offsetWidth, this.DOM.offsetHeight);
     }
 
     /**
@@ -125,14 +115,20 @@ export class PopupNode extends DOMNode
      */
     open()
     {
-        this.state = PopupNode.STATE_OPENED;
-        this.openScrollY = window.scrollY;
+        // 一瞬bodyのスクロールを表示させなくする
+        //window.hgn.body.style.overflow = 'hidden';
 
-        this.DOM.classList.remove('popup-node-closed', 'fade-out-text');
-        this.DOM.classList.add('popup-node-opened', 'fade-in-text');
+        // visibility: hiddenで表示することで、幅と高さを取れる
+        this.DOM.style.display = 'block';
+        this.DOM.style.visibility = 'visible';
+        this.DOM.style.opacity = 1;
 
-        window.hgn.setContainerScrollMode(0, this.openScrollY);
-        this.draw();
+        
+        //window.hgn.body.style.overflow = 'auto';
+
+        // 幅と高さを取る
+        this.width = this.DOM.offsetWidth;
+        this.height = this.DOM.offsetHeight;
     }
 
     /**
@@ -143,11 +139,6 @@ export class PopupNode extends DOMNode
         this.state = PopupNode.STATE_CLOSED;
         this.DOM.classList.remove('fade-in-text');
         this.DOM.classList.add('fade-out-text');
-        this.timer = setTimeout(() => {
-            this.DOM.classList.add('popup-node-closed');
-        }, 200);
-
-        window.hgn.setBodyScrollMode(0, this.openScrollY);
     }
 
     /**
