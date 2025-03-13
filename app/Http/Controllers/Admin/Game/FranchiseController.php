@@ -371,10 +371,10 @@ class FranchiseController extends AbstractAdminController
             $key = 's_' . $s->id;
             $series[$key] = [
                 'name' => $s->name,
-                'node_name' => $s->name . '<br>シリーズ'
+                'node_name' => $s->node_name . '<br>シリーズ'
             ];
             if (isset($data['nodes'][$key])) {
-                $data['nodes'][$key]['name'] = $s->name . '<br>シリーズ';
+                $data['nodes'][$key]['name'] = $s->node_name . '<br>シリーズ';
             }
 
             foreach ($s->titles as $t) {

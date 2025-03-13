@@ -95,6 +95,11 @@ textarea {
             }
         }
 
+        .edit-node.small {
+            font-size: 11px;
+            padding: 8px 12px;
+        }
+
         .edit-node:active {
             cursor: grabbing;
         }
@@ -161,6 +166,11 @@ textarea {
             top: 0;
             touch-action: none;
             user-select: none;
+        }
+
+        .dom-node.small {
+            font-size: 11px;
+            padding: 8px 12px;
         }
 
         .edit-network {

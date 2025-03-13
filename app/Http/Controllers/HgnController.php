@@ -29,7 +29,7 @@ class HgnController extends Controller
             ->orderBy('open_at', 'desc')
             ->get();
 
-        return $this->network(view('entrance', compact('infoList')));
+        return $this->document(view('entrance', compact('infoList')));
     }
 
     /**
@@ -44,7 +44,7 @@ class HgnController extends Controller
             ->orderBy('open_at', 'desc')
             ->paginate(30);
 
-        return $this->network(view('info_network', compact('infoList')));
+        return $this->document(view('info_network', compact('infoList')));
     }
 
     /**
@@ -56,7 +56,9 @@ class HgnController extends Controller
      */
     public function info(Information $info): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('info', ['info' => $info]));
+        return $this->contentNode(view('info', ['info' => $info]), function() {
+            return $this->infoNetwork();
+        });
     }
 
     /**
@@ -67,7 +69,9 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('about'));
+        return $this->contentNode(view('about'), function() {
+            return $this->entrance();
+        });
     }
 
     /**
@@ -78,6 +82,23 @@ class HgnController extends Controller
      */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('privacy_policy'));
+        return $this->contentNode(view('privacy_policy'), function() {
+            return $this->entrance();
+        });
+    }
+
+    /**
+     * 描画チェック
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function drawCheck(): JsonResponse|Application|Factory|View
+    {
+        if (App::environment('production')) {
+            return view('suspend');
+        }
+
+        return $this->document(view('draw_check'));
     }
 }

@@ -1,6 +1,6 @@
 @section('content-node-title', 'Privacy Policy')
 
-@section('link-node-name', 'privacy-policy-node')
+@section('link-node-id', 'privacy-policy-node')
 
 @section('content-node-body')
     <section>

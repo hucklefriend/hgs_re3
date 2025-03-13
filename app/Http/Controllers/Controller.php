@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 
 abstract class Controller
 {
-
     /**
      * Ajaxリクエストかどうかを判定する
      *
@@ -22,6 +21,31 @@ abstract class Controller
     }
 
     /**
+     * マップ表示
+     *
+     * @param Factory|View $view
+     * @param string $json
+     * @return JsonResponse|Application|Factory|View
+     */
+    protected function map(Factory|View $view, string $json): JsonResponse|Application|Factory|View
+    {
+        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにJSONテキストを返す
+        if (self::isAjax()) {
+            $rendered = $view->renderSections();
+            return response()->json([
+                'title' => $rendered['title'],
+                'map'   => $json,
+                'popup' => $rendered['popup'] ?? '',
+                'ratingCheck' => false,
+            ]);
+        }
+
+        // $viewに$jsonを渡してviewを返す
+        return $view->with('map', $json)
+            ->with('viewerType', 'map');
+    }
+
+    /**
      * ネットワークの生成
      *
      * @param Factory|View $view
@@ -29,33 +53,34 @@ abstract class Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    protected function network(Factory|View $view, bool $ratingCheck = false): JsonResponse|Application|Factory|View
+    protected function document(Factory|View $view, bool $ratingCheck = false): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
-                'title'   => $rendered['title'],
-                'network' => $rendered['content'],
-                'popup'   => $rendered['popup'] ?? '',
+                'title'    => $rendered['title'],
+                'document' => $rendered['content'],
+                'popup'    => $rendered['popup'] ?? '',
                 'ratingCheck' => $ratingCheck,
             ]);
         }
 
-        return $view;
+        return $view->with('viewerType', 'doc');
     }
 
     /**
      * コンテンツノードの表示
      *
      * @param Factory|View $view
+     * @param callable $baseViewCallback
      * @return Factory|View|JsonResponse
      * @throws \Throwable
      */
-    protected function contentNode(Factory|View $view): Factory|View|JsonResponse
+    protected function contentNode(Factory|View $view, $baseViewCallback): Factory|View|JsonResponse
     {
         $rendered = $view->renderSections();
-        $contentNodeData = [
+        $contentData = [
             'linkNodeId'    => $rendered['link-node-id'] ?? '',
             'title'         => $rendered['content-node-title'],
             'body'          => $rendered['content-node-body'],
@@ -63,17 +88,11 @@ abstract class Controller
             'documentTitle' => $rendered['content-node-title'] . ' | ホラーゲームネットワーク',
         ];
         if (self::isAjax()) {
-            return response()->json($contentNodeData);
+            return response()->json($contentData);
         } else {
-            $infoList = Information::where('open_at', '<', now())
-                ->where('close_at', '>=', now())
-                ->orderBy('priority', 'desc')
-                ->orderBy('open_at', 'desc')
-                ->get();
-            return view('entrance', [
-                'contentNode' => $contentNodeData,
-                'infoList'    => $infoList,
-            ]);
+            $view = $baseViewCallback();
+            $view->with('contentData', $contentData);
+            return $view;
         }
     }
 }

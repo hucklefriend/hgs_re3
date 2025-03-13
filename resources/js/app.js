@@ -1,4 +1,2 @@
 import './bootstrap';
-import './hgn.js';
-
-
+import './horror-game-network.js';

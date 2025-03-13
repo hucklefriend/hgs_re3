@@ -20,8 +20,6 @@ if (App::environment('production')) {
     return;
 }
 
-
-
 use App\Http\Controllers\Admin;
 // 管理用
 Route::group(['prefix' => 'admin'], function () {
@@ -300,6 +298,7 @@ $class = HgnController::class;
 Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
+Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
 Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
 Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 

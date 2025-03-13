@@ -57,7 +57,7 @@
     text-align: center;
 }
 
-.link-node.small, .content-link-node.small, .popup-link-node.small {
+.dom-node.small, .link-node.small, .content-link-node.small, .popup-link-node.small {
     font-size: 11px;
     padding: 8px 12px;
     display: inline-block;
@@ -90,7 +90,16 @@
 
     #content-node-container {
         position: relative;
-        width: calc(100% - 10px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+
+        &.show {
+            opacity: 1;
+        }
+
+        &.hide {
+            opacity: 0;
+        }
     }
 
     .content-node-close {
@@ -98,10 +107,6 @@
         right: var(--content-node-notch);
         font-size: 20px;
         cursor: pointer;
-    }
-
-    .content-node-close:hover {
-
     }
 
     #content-node-header {
@@ -163,32 +168,72 @@
 }
 
 
+
+.popup-wrapper {
+    /* ポップアップの背景オーバーレイ */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 上下中央に配置 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+}
+
+.popup {
+    /* ポップアップのコンテナ */
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    border: solid 1px lime;
+    transform-origin: center;
+    transform: scaleY(0);
+    transition: transform 0.3s ease-out;
+    min-width: 300px;
+}
+
+.popup-content {
+    /* コンテンツを包むコンテナ */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease-out 0.1s;
+    width: 100%;
+}
+
 .popup-node {
     display: none;
-    position: absolute;
+    position: relative;
     width: 100%;
     min-height: 100%;
-    left: 0;
-    top: 0;
     opacity: 0;
     backdrop-filter: blur(3px);
     background-color: rgba(0, 0, 0, 0.6);
+}
 
-    .popup-container {
-        width: calc(100% - 10px);
-        padding: 20px;
-        margin: 30px 0;
-        border: solid 1px lime;
-        border-radius: 10px;
-    }
+.popup-container {
+    width: 100%;
+    text-align: center;
+    color: white;
+}
 
-    .popup-node-canvas {
-        position: absolute;
-        top:0;
-        left:0;
-        z-index:-1000;
-        pointer-events: none;
-    }
+/* オープン時のスタイル */
+.popup-wrapper.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-wrapper.open .popup {
+    transform: scaleY(1);
+}
+
+.popup-wrapper.open .popup-content {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .content-node-opened, .popup-node-opened {
@@ -236,7 +281,7 @@
 
 #entrance-node {
     width: 300px;
-    height: 300px;
+    height: 200px;
     padding: 50px 0;
     position: relative;
     text-align: center;
@@ -275,6 +320,7 @@
     height: 100vh;
     background-color: rgba(0,0,0,0.6);
     backdrop-filter: blur(2px);
+    z-index: 99;
 }
 
 #content-node-canvas {
@@ -299,9 +345,11 @@
     font-size: 11px;
 }
 
-body#main-network {
+#map {
     .dom-node, .link-node, .text-node {
         position: fixed;
+        white-space: nowrap;
+        text-align: center;
     }
 
     .view1 {
@@ -367,12 +415,6 @@ body#main-network {
 
         #content-node-body {
             padding: 0 15px;
-        }
-    }
-
-    .popup-node {
-        .popup-container {
-            width: 680px;
         }
     }
 }

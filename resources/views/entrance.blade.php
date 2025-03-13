@@ -12,14 +12,13 @@
     --}}
     <div class="node" style="margin-top: 10rem;margin-bottom: 10rem;">
         <div id="entrance-node">
-            <a href="{{ route('Game.HorrorGameNetwork') }}" class="fade">
+            <a href="{{ route('Game.HorrorGameNetwork') }}" class="fade" data-ref-type="map">
                 <h1>HorrorGame Network</h1>
 
                 <p>
                     Enter the horror game.
                 </p>
             </a>
-
             <canvas id="entrance-node-canvas"></canvas>
         </div>
     </div>
@@ -73,12 +72,12 @@
 --}}
     <section class="info">
         <div class="node">
-            <h2 class="head2 fade">Information</h2>
+            <h2 class="head2 fade" id="h2-info">Information</h2>
         </div>
 
         @if ($infoList->isEmpty())
             <div class="node">
-                <div class="text-node fade">
+                <div class="text-node fade" id="no-info">
                     現在、お知らせはありません。
                 </div>
             </div>
@@ -93,7 +92,7 @@
         @endempty
 
         <div class="node" style="margin-top: 50px;">
-            <div class="link-node small fade">
+            <div class="link-node small fade" id="old-info">
                 <a href="{{ route('InfoNetwork') }}">過去のお知らせ</a>
             </div>
         </div>
@@ -101,7 +100,7 @@
 
     <section>
         <div class="node">
-            <h2 class="head2 fade">Network Map</h2>
+            <h2 class="head2 fade" id="h2-nm">Network Map</h2>
         </div>
 
         <div class="node-map">
@@ -165,7 +164,7 @@
         </div>
     </section>
 
-    <footer style="margin: 50px 0;">
+    <footer style="margin-top: 50px;">
         <div class="node node-center">
             <div class="text-node fade">
                 &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
