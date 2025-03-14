@@ -68,6 +68,9 @@ export class Rect
 
     /**
      * 別のRectと重なっているか
+     * 
+     * @param {Rect} rect
+     * @returns {boolean}
      */
     overlapWith(rect)
     {
@@ -76,6 +79,8 @@ export class Rect
 
     /**
      * 別のRectとマージ（より大きなRectにする）
+     * 
+     * @param {Rect} rect
      */
     merge(rect)
     {
@@ -89,6 +94,9 @@ export class Rect
 
     /**
      * 移動
+     * 
+     * @param {number} x
+     * @param {number} y
      */
     move(x, y)
     {
@@ -121,6 +129,8 @@ export class Rect
 
     /**
      * 引数で渡されたrectと重なっている部分だけにする
+     * 
+     * @param {Rect} rect
      */
     intersect(rect)
     {
@@ -130,6 +140,25 @@ export class Rect
         this.bottom = Math.min(this.bottom, rect.bottom);
     }
 
+    /**
+     * 点が矩形の中に含まれているかを判定
+     * 
+     * @param {Vertex} vertex - 判定する点
+     * @returns {boolean} - 点が矩形の中に含まれている場合はtrue
+     */
+    containsVertex(vertex)
+    {
+        return vertex.x >= this.left && 
+               vertex.x <= this.right && 
+               vertex.y >= this.top && 
+               vertex.y <= this.bottom;
+    }
+
+    /**
+     * JSONに変換
+     * 
+     * @returns {Object}
+     */
     toJson()
     {
         return {
