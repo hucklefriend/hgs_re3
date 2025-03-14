@@ -10,7 +10,7 @@
     @if (!empty($title->issue))
     <section>
         <div class="node">
-            <div class="text-node fade">
+            <div class="text-node fade" id="issue">
                 <p style="color: #FFFF55;text-align:center;margin-bottom:1rem;">
                     ⚠️ このタイトルをホラーゲームと扱うことに疑義があります
                 </p>
@@ -117,22 +117,22 @@
     @if ($title->packageGroups()->exists() || $title->packages()->exists())
         <section>
             <div class="node">
-                <h2 class="head2 fade">パッケージ</h2>
+                <h2 class="head2 fade" id="h2_package">パッケージ</h2>
             </div>
             @if ($title->packageGroups()->exists())
                 @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
                     @empty($pkgGroup->description)
                         <div class="node h3">
-                            <h3 class="head3 fade">{{ $pkgGroup->node_name }}</h3>
+                            <h3 class="head3 fade" id="h3_pg_{{ $pkgGroup->id }}">{{ $pkgGroup->node_name }}</h3>
                         </div>
                     @else
                         <div class="node h3">
-                            <h3 class="head3 fade" style="margin-bottom: 5px;">
+                            <h3 class="head3 fade" style="margin-bottom: 5px;" id="h3_pg_{{ $pkgGroup->id }}">
                                 {{ $pkgGroup->node_name }}
                             </h3>
                         </div>
                         <div class="node">
-                            <div class="text-node small fade">
+                            <div class="text-node small fade" id="description_pg_{{ $pkgGroup->id }}">
                                 {!! nl2br($pkgGroup->description) !!}
                             </div>
                         </div>
@@ -165,12 +165,12 @@
     @if ($title->mediaMixes()->exists())
         <section>
             <div class="node">
-                <h2 class="head2 fade">メディアミックス</h2>
+                <h2 class="head2 fade" id="h2_media_mix">メディアミックス</h2>
             </div>
             <div class="node-map">
                 @foreach ($title->mediaMixes as $mm)
                     <div>
-                        <div class="link-node link-node-center fade">
+                        <div class="link-node link-node-center fade" id="link_media_mix_{{ $mm->id }}">
                             <a href="{{ route('Game.MediaMixDetailNetwork', ['mediaMixKey' => $mm->key]) }}">
                                 {!! $mm->node_name !!}
                             </a>
@@ -186,7 +186,7 @@
     @if ($title->series)
         <section>
             <div class="node">
-                <h2 class="head2 fade">シリーズ作品</h2>
+                <h2 class="head2 fade" id="h2_series_titles">シリーズ作品</h2>
             </div>
             <div class="node-map">
                 @foreach ($title->series->titles as $sameSeriesTitle)
@@ -194,7 +194,7 @@
                         @continue
                     @endif
                     <div>
-                        <div class="link-node link-node-center fade">
+                        <div class="link-node link-node-center fade" id="link_series_title_{{ $sameSeriesTitle->id }}">
                             <a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $sameSeriesTitle->key]) }}">
                                 {!! $sameSeriesTitle->node_name !!}
                             </a>
@@ -215,7 +215,7 @@
         <div class="node-map">
             @if ($title->getFranchise()->getTitleNum() > 1)
                 <div>
-                    <div class="link-node link-node-center fade">
+                    <div class="link-node link-node-center fade" id="link_franchise_{{ $title->getFranchise()->id }}">
                         <a href="{{ route('Game.FranchiseDetailNetwork', ['franchiseKey' => $title->getFranchise()->key]) }}">
                             {!! $title->getFranchise()->node_name !!}<br>
                             フランチャイズ
@@ -226,7 +226,7 @@
 
             @foreach ($makers as $maker)
                 <div>
-                    <div class="link-node link-node-center fade">
+                    <div class="link-node link-node-center fade" id="link_maker_{{ $maker->id }}">
                         <a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $maker->key]) }}">
                             {!! $maker->node_name !!}
                         </a>
