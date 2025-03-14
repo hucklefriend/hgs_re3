@@ -28,9 +28,19 @@ export class Param
 
     static CONTENT_NODE_NOTCH_SIZE = 70;
 
-    // フリック関連のパラメータ
-    static DRAG_FLICK_RATE = 0.9;    // 減速率（大きいほどゆっくり減速）
-    static DRAG_FLICK_SPEED_SCALE = 3; // フリックの初速スケール（大きいほど速く動く）
+    // フリック関連のパラメータ（マウス操作用）
+    static MOUSE_DRAG_FLICK_RATE = 0.9;    // 減速率（大きいほどゆっくり減速）
+    static MOUSE_DRAG_FLICK_SPEED_SCALE = 3; // フリックの初速スケール（大きいほど速く動く）
+    static MOUSE_MIN_FLICK_SPEED = 1.0;     // マウス操作での最小フリック速度
+
+    // フリック関連のパラメータ（タッチ操作用）
+    static TOUCH_DRAG_FLICK_RATE = 0.85;    // タッチ操作用の減速率（マウスより早く減速）
+    static TOUCH_DRAG_FLICK_SPEED_SCALE = 4; // タッチ操作用の初速スケール（マウスより速く）
+    static TOUCH_MIN_FLICK_SPEED = 0.5;     // タッチ操作での最小フリック速度（マウスより小さい値）
+
+    // 後方互換性のため残す（非推奨）
+    static DRAG_FLICK_RATE = 0.9;
+    static DRAG_FLICK_SPEED_SCALE = 3;
 
     // ホイール操作のスクロール量
     static WHEEL_SCROLL_AMOUNT = 50;    // 上下スクロール量

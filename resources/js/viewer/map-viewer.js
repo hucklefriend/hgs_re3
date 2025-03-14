@@ -26,6 +26,7 @@ export class MapViewer extends ViewerBase
 
         this.isDragging = false;
         this.isFlicking = false;
+        this.isTouchOperation = false;  // タッチ操作かどうかのフラグを追加
 
         this.dragOffset = new Vertex(0, 0);
         this.dragVelocity = new Vertex(0, 0);
@@ -177,6 +178,7 @@ export class MapViewer extends ViewerBase
     mouseDown(e)
     {
         this.isDragging = true;
+        this.isTouchOperation = false;  // マウス操作フラグを設定
         this.mapDOM.style.cursor = 'grabbing';
 
         if (e.type === 'touchstart') {
@@ -234,8 +236,8 @@ export class MapViewer extends ViewerBase
         if (timeDelta > 0.1) {
             // 速度を計算（フリックのために保持）
             // 単位時間あたりの移動量として計算し、スケールを適用
-            this.dragVelocity.x = (deltaX / timeDelta * 16.67) * Param.DRAG_FLICK_SPEED_SCALE;
-            this.dragVelocity.y = (deltaY / timeDelta * 16.67) * Param.DRAG_FLICK_SPEED_SCALE;
+            this.dragVelocity.x = (deltaX / timeDelta * 16.67) * Param.MOUSE_DRAG_FLICK_SPEED_SCALE;
+            this.dragVelocity.y = (deltaY / timeDelta * 16.67) * Param.MOUSE_DRAG_FLICK_SPEED_SCALE;
         } else {
             this.dragVelocity.x = 0;
             this.dragVelocity.y = 0;
@@ -267,7 +269,7 @@ export class MapViewer extends ViewerBase
                     this.dragVelocity.y * this.dragVelocity.y
                 );
 
-                if (speed >= 1.0) {
+                if (speed >= Param.MOUSE_MIN_FLICK_SPEED) {
                     this.isFlicking = true;
                     this.flickVelocity.x = this.dragVelocity.x;
                     this.flickVelocity.y = this.dragVelocity.y;
@@ -447,7 +449,7 @@ export class MapViewer extends ViewerBase
             );
 
             // 減速（両軸で同じ割合で減速）
-            const rate = Param.DRAG_FLICK_RATE;
+            const rate = this.isTouchOperation ? Param.TOUCH_DRAG_FLICK_RATE : Param.MOUSE_DRAG_FLICK_RATE;
             this.flickVelocity.x *= rate;
             this.flickVelocity.y *= rate;
         } else {
@@ -726,6 +728,7 @@ export class MapViewer extends ViewerBase
         e.preventDefault(); // デフォルトのスクロール動作を防止
         this.isDragging = true;
         this.isFlicking = false;
+        this.isTouchOperation = true;  // タッチ操作フラグを設定
         this.touchStartTime = performance.now();
         
         const touch = e.touches[0];
@@ -758,10 +761,10 @@ export class MapViewer extends ViewerBase
         const timeDelta = currentTime - this.touchStartTime;
 
         if (timeDelta > 0) {
-            // タッチ操作用の速度計算（感度調整が必要かもしれません）
+            // タッチ操作用の速度計算
             this.dragVelocity = {
-                x: (deltaX / timeDelta) * 16.67 * Param.DRAG_FLICK_SPEED_SCALE,
-                y: (deltaY / timeDelta) * 16.67 * Param.DRAG_FLICK_SPEED_SCALE
+                x: (deltaX / timeDelta) * 16.67 * Param.TOUCH_DRAG_FLICK_SPEED_SCALE,
+                y: (deltaY / timeDelta) * 16.67 * Param.TOUCH_DRAG_FLICK_SPEED_SCALE
             };
         }
 
@@ -784,7 +787,7 @@ export class MapViewer extends ViewerBase
             this.dragVelocity.y * this.dragVelocity.y
         );
 
-        if (speed >= Param.MIN_FLICK_SPEED) {
+        if (speed >= Param.TOUCH_MIN_FLICK_SPEED) {
             this.isFlicking = true;
             this.flickVelocity = { ...this.dragVelocity };
         }
