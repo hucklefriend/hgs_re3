@@ -49,14 +49,18 @@ export class MapViewer extends ViewerBase
         this.mapDOM.addEventListener('mouseup', (e) => this.mouseUp(e));
         this.mapDOM.addEventListener('mousemove', (e) => this.mouseMove(e));
         this.mapDOM.addEventListener('mouseleave', (e) => this.mouseLeave(e));
-        this.mapDOM.addEventListener('touchstart', (e) => this.mouseDown(e));
-        this.mapDOM.addEventListener('touchend', (e) => this.mouseUp(e));
-        this.mapDOM.addEventListener('touchmove', (e) => this.mouseMove(e));
+        this.mapDOM.addEventListener('touchstart', (e) => this.touchStart(e));
+        this.mapDOM.addEventListener('touchend', (e) => this.touchEnd(e));
+        this.mapDOM.addEventListener('touchmove', (e) => this.touchMove(e));
         this.initWheel(this.mapDOM);
+        this.mapDOM.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
         this.mapDOM.style.display = 'none';
 
         this.dataCache = null;
         this.isWait = false;
+
+        this.touchStartTime = 0;
+        this.lastTouchPos = { x: 0, y: 0 };
     }
 
     /**
@@ -716,5 +720,75 @@ export class MapViewer extends ViewerBase
         html += `viewRect4: ${this.viewRect4.left}, ${this.viewRect4.right}, ${this.viewRect4.top}, ${this.viewRect4.bottom}<br>`;
 
         this.debugDOM.innerHTML = html;
+    }
+
+    touchStart(e) {
+        e.preventDefault(); // デフォルトのスクロール動作を防止
+        this.isDragging = true;
+        this.isFlicking = false;
+        this.touchStartTime = performance.now();
+        
+        const touch = e.touches[0];
+        this.dragStartPos = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+        this.lastTouchPos = { ...this.dragStartPos };
+        
+        // ドラッグ開始時の速度をリセット
+        this.dragVelocity = { x: 0, y: 0 };
+    }
+
+    touchMove(e) {
+        if (!this.isDragging) return;
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const currentPos = {
+            x: touch.clientX,
+            y: touch.clientY
+        };
+
+        // 移動距離を計算
+        const deltaX = currentPos.x - this.lastTouchPos.x;
+        const deltaY = currentPos.y - this.lastTouchPos.y;
+
+        // 現在時刻を取得
+        const currentTime = performance.now();
+        const timeDelta = currentTime - this.touchStartTime;
+
+        if (timeDelta > 0) {
+            // タッチ操作用の速度計算（感度調整が必要かもしれません）
+            this.dragVelocity = {
+                x: (deltaX / timeDelta) * 16.67 * Param.DRAG_FLICK_SPEED_SCALE,
+                y: (deltaY / timeDelta) * 16.67 * Param.DRAG_FLICK_SPEED_SCALE
+            };
+        }
+
+        // カメラ位置を更新
+        this.moveCamera(-deltaX, -deltaY);
+
+        // 現在位置を保存
+        this.lastTouchPos = currentPos;
+        this.touchStartTime = currentTime;
+
+        window.hgn.setDrawMain(false);
+    }
+
+    touchEnd(e) {
+        if (!this.isDragging) return;
+        
+        // 十分な速度がある場合のみフリックを開始
+        const speed = Math.sqrt(
+            this.dragVelocity.x * this.dragVelocity.x +
+            this.dragVelocity.y * this.dragVelocity.y
+        );
+
+        if (speed >= Param.MIN_FLICK_SPEED) {
+            this.isFlicking = true;
+            this.flickVelocity = { ...this.dragVelocity };
+        }
+
+        this.isDragging = false;
     }
 }
