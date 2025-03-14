@@ -457,6 +457,7 @@ export class DOMNode extends OctaNode
      */
     appearAnimation()
     {
+        this._animFunc = this.appeared;
     }
 
     /**
@@ -484,6 +485,7 @@ export class DOMNode extends OctaNode
      */
     disappearAnimation()
     {
+        this._animFunc = this.disappeared;
     }
 
     /**

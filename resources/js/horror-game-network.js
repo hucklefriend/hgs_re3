@@ -489,6 +489,7 @@ export class HorrorGameNetwork
 
         this.fetch(url, (data, hasError) => {
             if (hasError) {
+                console.error(data);
                 this.contentViewer.open(null);
                 this.contentViewer.setContent({
                     title: 'エラー',
