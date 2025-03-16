@@ -217,9 +217,9 @@ export class EntranceNode extends LinkNode
         const animElapsedTime = window.hgn.time - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.lerp(100, 180, ratio) + ", 0," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(0, 90, ratio) + ", " + Util.lerp(150, 255, ratio) + ", " + Util.lerp(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(0, 10, ratio);
             window.hgn.setDrawMain(false);
         } else {
             this.hoverAnimFunc = null;
@@ -238,9 +238,9 @@ export class EntranceNode extends LinkNode
         const animElapsedTime = window.hgn.time - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = 1 - animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(0, 10, ratio);
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.lerp(100, 180, ratio) + ", 0," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(0, 90, ratio) + ", " + Util.lerp(150, 255, ratio) + ", " + Util.lerp(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(0, 10, ratio);
             window.hgn.setDrawMain(false);
         } else {
             this.hoverAnimFunc = null;
@@ -319,7 +319,7 @@ export class EntranceNode extends LinkNode
         if (window.hgn.animElapsedTime < 300) {
             let ratio = window.hgn.animElapsedTime / 300;
             
-            this.ctxParams.lineWidth = Util.getMidpoint(0, 8, ratio, true);
+            this.ctxParams.lineWidth = Util.lerp(0, 8, ratio, true);
 
             this.setAnimSize(ratio);
             this.isDrawLight = true;
@@ -344,7 +344,7 @@ export class EntranceNode extends LinkNode
     appearAnimation2()
     {
         let ratio = (window.hgn.animElapsedTime - 330) / 300;
-        let depth = Util.getMidpoint(1, 6, ratio, true);
+        let depth = Util.lerp(1, 6, ratio, true);
         
         if (this.subNetwork.maxDrawDepth !== depth) {
             this.subNetwork.setMaxDrawDepth(depth);
@@ -412,7 +412,7 @@ export class EntranceNode extends LinkNode
 
         if (window.hgn.animElapsedTime >= 30) {
             let ratio = (window.hgn.animElapsedTime - 30) / 500;
-            let depth = Util.getMidpoint(1, 6, ratio, true);
+            let depth = Util.lerp(1, 6, ratio, true);
             if (depth >= this.subNetwork.maxDepth) {
                 this.subNetwork.setDrawDepth(0, 0);
                 window.hgn.setDrawSub();
@@ -432,10 +432,10 @@ export class EntranceNode extends LinkNode
      */
     setAnimSize(ratio)
     {
-        this.lightRadius = Util.getMidpoint(1, 70, ratio);
+        this.lightRadius = Util.lerp(1, 70, ratio);
         for (let i = 0; i < this.animVertices.length; i++) {
-            this.animVertices[i].x = Util.getMidpoint(this.center.x, this.vertices[i].x, ratio);
-            this.animVertices[i].y = Util.getMidpoint(this.center.y, this.vertices[i].y, ratio);
+            this.animVertices[i].x = Util.lerp(this.center.x, this.vertices[i].x, ratio);
+            this.animVertices[i].y = Util.lerp(this.center.y, this.vertices[i].y, ratio);
         }
     }
 }

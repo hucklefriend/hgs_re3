@@ -1,13 +1,13 @@
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
-import { DOMNode } from './dom-node.js';
+import { SimpleNode } from './simple-node.js';
 import { HorrorGameNetwork } from '../horror-game-network.js';
 /**
  * @type {HorrorGameNetwork}
  */
 window.hgn;
 
-export class LinkNode extends DOMNode
+export class LinkNode extends SimpleNode
 {
     /**
      * コンストラクタ
@@ -169,9 +169,9 @@ export class LinkNode extends DOMNode
         const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.lerp(100, 180, ratio) + ", 0," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(0, 90, ratio) + ", " + Util.lerp(150, 255, ratio) + ", " + Util.lerp(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(4, 8, ratio);
 
             window.hgn.setDrawMain(false);
         } else {
@@ -192,9 +192,9 @@ export class LinkNode extends DOMNode
         const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+            this.ctxParams.strokeStyle = "rgba(" + Util.lerp(240, 249, ratio) + ", " + Util.lerp(103, 193, ratio) + ", " + Util.lerp(166, 207, ratio) + "," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(240, 249, ratio) + ", " + Util.lerp(103, 193, ratio) + ", " + Util.lerp(166, 207, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(4, 8, ratio);
 
             window.hgn.setDrawMain(false);
         } else {
@@ -215,9 +215,9 @@ export class LinkNode extends DOMNode
         const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = 1 - animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(0, " + Util.getMidpoint(100, 180, ratio) + ", 0," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(0, 90, ratio) + ", " + Util.getMidpoint(150, 255, ratio) + ", " + Util.getMidpoint(0, 25, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+            this.ctxParams.strokeStyle = "rgba(0, " + Util.lerp(100, 180, ratio) + ", 0," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(0, 90, ratio) + ", " + Util.lerp(150, 255, ratio) + ", " + Util.lerp(0, 25, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(4, 8, ratio);
 
             window.hgn.setDrawMain(false);
         } else {
@@ -238,9 +238,9 @@ export class LinkNode extends DOMNode
         const animElapsedTime = window.hgn.animElapsedTime - this.hoverAnimStartTime;
         if (animElapsedTime < 100) {
             let ratio = 1 - animElapsedTime / 100;
-            this.ctxParams.strokeStyle = "rgba(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + "," + Util.getMidpoint(0.4, 0.8, ratio) + ")";
-            this.ctxParams.shadowColor = "rgb(" + Util.getMidpoint(240, 249, ratio) + ", " + Util.getMidpoint(103, 193, ratio) + ", " + Util.getMidpoint(166, 207, ratio) + ")";
-            this.ctxParams.shadowBlur = Util.getMidpoint(4, 8, ratio);
+            this.ctxParams.strokeStyle = "rgba(" + Util.lerp(240, 249, ratio) + ", " + Util.lerp(103, 193, ratio) + ", " + Util.lerp(166, 207, ratio) + "," + Util.lerp(0.4, 0.8, ratio) + ")";
+            this.ctxParams.shadowColor = "rgb(" + Util.lerp(240, 249, ratio) + ", " + Util.lerp(103, 193, ratio) + ", " + Util.lerp(166, 207, ratio) + ")";
+            this.ctxParams.shadowBlur = Util.lerp(4, 8, ratio);
 
             window.hgn.setDrawMain(false);
         } else {

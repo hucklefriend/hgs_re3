@@ -132,8 +132,8 @@ export class Head1Node extends DOMNode
     setAnimOctagon(ratio)
     {
         for (let vertexNo = 0; vertexNo < this.vertices.length; vertexNo++) {
-            this.animVertices[vertexNo].x = Util.getMidpoint(this.minVertices[vertexNo].x, this.vertices[vertexNo].x, ratio);
-            this.animVertices[vertexNo].y = Util.getMidpoint(this.minVertices[vertexNo].y, this.vertices[vertexNo].y, ratio);
+            this.animVertices[vertexNo].x = Util.lerp(this.minVertices[vertexNo].x, this.vertices[vertexNo].x, ratio);
+            this.animVertices[vertexNo].y = Util.lerp(this.minVertices[vertexNo].y, this.vertices[vertexNo].y, ratio);
         }
     }
 
@@ -158,9 +158,9 @@ export class Head1Node extends DOMNode
         if (window.hgn.animElapsedTime < 100) {
             if (this._isInViewRect) {
                 let ratio = window.hgn.animElapsedTime / 100;
-                this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
-                this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
-                this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+                this.animAlpha1 = Util.lerp(0, 0.4, ratio);
+                this.animAlpha2 = Util.lerp(0, 0.7, ratio);
+                this.animAlpha3 = Util.lerp(0, 0.8, ratio);
                 window.hgn.setDrawMain(false);
             }
         } else if (window.hgn.animElapsedTime >= 100) {
@@ -240,9 +240,9 @@ export class Head1Node extends DOMNode
 
             if (animElapsedTime >= 200) {
                 let ratio = 1 - (animElapsedTime - 200) / 50;
-                this.animAlpha1 = Util.getMidpoint(0, 0.4, ratio);
-                this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
-                this.animAlpha3 = Util.getMidpoint(0, 0.8, ratio);
+                this.animAlpha1 = Util.lerp(0, 0.4, ratio);
+                this.animAlpha2 = Util.lerp(0, 0.7, ratio);
+                this.animAlpha3 = Util.lerp(0, 0.8, ratio);
                 if (this.animAlpha1 === 0) {
                     this._animFunc = this.disappeared;
                 }
@@ -379,7 +379,7 @@ export class Head2Node extends DOMNode
      */
     setAnimOctagon(ratio)
     {
-        this.animWidth = Util.getMidpoint(this.notchSize * 4, this.w, ratio);
+        this.animWidth = Util.lerp(this.notchSize * 4, this.w, ratio);
         let offsetX = this.w / 2;
         let moveX = this.animWidth / 2;
         this.vertices[Param.LTT].x = this.x + this.notchSize + offsetX - moveX;
@@ -434,9 +434,9 @@ export class Head2Node extends DOMNode
     {
         if (window.hgn.animElapsedTime < 500) {
             let ratio = 1 - (window.hgn.animElapsedTime / (500 - 200));
-            this.animAlpha1 = Util.getMidpoint(0, 1, ratio);
-            this.animAlpha2 = Util.getMidpoint(0, 0.7, ratio);
-            this.animAlpha3 = Util.getMidpoint(0, 0.5, ratio);
+            this.animAlpha1 = Util.lerp(0, 1, ratio);
+            this.animAlpha2 = Util.lerp(0, 0.7, ratio);
+            this.animAlpha3 = Util.lerp(0, 0.5, ratio);
         } else {
             // アニメーション終了
             this._animFunc = this.disappeared;

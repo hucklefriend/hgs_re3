@@ -99,6 +99,7 @@ export class DOMNode extends OctaNode
         }
 
         this.subNetwork = null;
+        this._animVertices = null;
 
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
 
@@ -428,16 +429,6 @@ export class DOMNode extends OctaNode
     }
 
     /**
-     * 更新
-     */
-    update()
-    {
-        if (this._animFunc !== null) {
-            this._animFunc();
-        }
-    }
-
-    /**
      * 出現
      */
     appear()
@@ -445,11 +436,7 @@ export class DOMNode extends OctaNode
         window.hgn.viewer.incrementNodeCnt();
 
         this.fadeInText();
-
         this._animFunc = this.appearAnimation;
-        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
-            this._animFunc = this.appeared;
-        }
     }
 
     /**
@@ -475,9 +462,6 @@ export class DOMNode extends OctaNode
     disappear()
     {
         this._animFunc = this.disappearAnimation;
-        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
-            this._animFunc = this.disappeared;
-        }
     }
 
     /**
@@ -540,13 +524,22 @@ export class DOMNode extends OctaNode
             return;
         }
 
+        this.setDefaultNodeStyle(ctx);
+
+        super.draw(ctx, offsetX, offsetY);
+    }
+
+    /**
+     * デフォルトのノードスタイルを設定
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    setDefaultNodeStyle(ctx)
+    {
         ctx.strokeStyle = "rgba(0, 100, 0, 0.8)";
         ctx.lineWidth = 1;
         ctx.shadowColor = "lime";
-        ctx.shadowBlur = 5;
-
+        ctx.shadowBlur = 2;
         ctx.fillStyle = "black";
-
-        super.draw(ctx, offsetX, offsetY);
     }
 }

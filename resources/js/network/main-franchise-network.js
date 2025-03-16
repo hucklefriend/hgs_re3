@@ -1,5 +1,6 @@
 import { Param } from '../common/param.js';
 import { OctaNode } from '../node/octa-node.js';
+import { SimpleNode } from '../node/simple-node.js';
 import { DOMNode } from '../node/dom-node.js';
 import { LinkNode } from '../node/link-node.js';
 import { PointNode } from "../node/point-node.js";
@@ -94,8 +95,9 @@ export class MainFranchiseNetwork extends Network
 
         let node = null;
         switch (nodeData.type) {
-            case 'dom-node':
-                node = DOMNode.createFromDOM(DOM);
+            case 'dom-node':    // TODO 廃止予定
+            case 'simple-node':
+                node = SimpleNode.createFromDOM(DOM);
                 break;
             case 'link-node':
             case 'link-node-a':

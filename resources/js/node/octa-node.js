@@ -437,9 +437,9 @@ export class OctaNode
     /**
      * 描画
      *
-     * @param ctx
-     * @param offsetX
-     * @param offsetY
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
      */
     draw(ctx, offsetX = 0, offsetY = 0)
     {

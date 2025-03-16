@@ -1,20 +1,20 @@
 import { Param } from "./param.js";
 import { PointNode } from "../node/point-node.js";
 import { OctaNode } from "../node/octa-node.js";
-
+import { Vertex } from "./vertex.js";
 
 export class Util
 {
     /**
-     * 2つの値の中間値を取得
+     * 2つの値の間を線形補間
      *
-     * @param value1
-     * @param value2
-     * @param ratio
-     * @param isFloor
+     * @param value1 開始値
+     * @param value2 終了値
+     * @param ratio 補間比率（0.0 から 1.0）
+     * @param isFloor 結果を切り下げるかどうか
      * @returns {*}
      */
-    static getMidpoint(value1, value2, ratio, isFloor = false)
+    static lerp(value1, value2, ratio, isFloor = false)
     {
         if (ratio <= 0) {
             return value1;
@@ -92,5 +92,21 @@ export class Util
         });
 
         return params;
+    }
+
+    /**
+     * Vertexクラス配列をコピー
+     * 
+     * @param {Vertex[]} vertices 
+     * @returns {Vertex[]}
+     */
+    static cloneVertices(vertices)
+    {
+        // Vertexクラス配列のコピーを作成
+        const clonedVertices = [];
+        for (let i = 0; i < vertices.length; i++) {
+            clonedVertices.push(new Vertex(vertices[i].x, vertices[i].y));
+        }
+        return clonedVertices;
     }
 }
