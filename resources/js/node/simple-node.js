@@ -31,11 +31,8 @@ export class SimpleNode extends DOMNode
      */
     appear()
     {
-        window.hgn.viewer.incrementNodeCnt();
+        super.appear();
 
-        this.fadeInText();
-
-        this._animFunc = this.appearAnimation;
         if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
             this._animVertices = this.vertices;
             this._animFunc = this.appeared;
@@ -51,7 +48,7 @@ export class SimpleNode extends DOMNode
     appearAnimation()
     {
         if (window.hgn.animElapsedTime < 300) {
-            const ratio = 1 - (window.hgn.animElapsedTime / 300);
+            const ratio = (window.hgn.animElapsedTime / 300);
             for (let i = 0; i < this.vertices.length; i++) {
                 this._animVertices[i].x = Util.lerp(this.center.x, this.vertices[i].x, ratio);
                 this._animVertices[i].y = Util.lerp(this.center.y, this.vertices[i].y, ratio);
@@ -78,6 +75,8 @@ export class SimpleNode extends DOMNode
      */
     disappear()
     {
+        super.disappear();
+
         if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
             this._animVertices = this.vertices;
             this._animFunc = this.disappeared;
@@ -92,7 +91,18 @@ export class SimpleNode extends DOMNode
      */
     disappearAnimation()
     {
-        this._animFunc = this.disappeared;
+        if (window.hgn.animElapsedTime < 300) {
+            const ratio = 1 - (window.hgn.animElapsedTime / 300);
+            for (let i = 0; i < this.vertices.length; i++) {
+                this._animVertices[i].x = Util.lerp(this.center.x, this.vertices[i].x, ratio);
+                this._animVertices[i].y = Util.lerp(this.center.y, this.vertices[i].y, ratio);
+            }
+
+            window.hgn.setDrawMain(false);
+        } else {
+            this._animVertices = this.vertices;
+            this._animFunc = this.disappeared;
+        }
     }
 
     /**
@@ -100,8 +110,7 @@ export class SimpleNode extends DOMNode
      */
     disappeared()
     {
-        this._animFunc = null;
-        window.hgn.viewer.delAppearedNode(this.id);
+        super.disappeared();
     }
 
     /**
