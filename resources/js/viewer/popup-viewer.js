@@ -171,7 +171,7 @@ export class PopupViewer
      */
     restoreScrollPosition(ratio)
     {
-        const y = Util.getMidpoint(this.openScrollY, window.hgn.viewer.scrollY, ratio, true);
+        const y = Util.lerp(this.openScrollY, window.hgn.viewer.scrollY, ratio, true);
         
         window.hgn.viewer.scrollTo(window.hgn.viewer.scrollX, y);
     }

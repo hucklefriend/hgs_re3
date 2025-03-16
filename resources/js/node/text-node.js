@@ -95,7 +95,7 @@ export class TextNode extends DOMNode
         this.fadeInText();
 
         const elapsedTime = window.hgn.animElapsedTime - 50;
-        this.alpha = Util.getMidpoint(0, 0.6, elapsedTime / 100);
+        this.alpha = Util.lerp(0, 0.6, elapsedTime / 100);
         if (this.alpha >= 0.6) {
             this.alpha = 0.6;
             this.appeared();
@@ -126,7 +126,7 @@ export class TextNode extends DOMNode
     disappearAnimation()
     {
         const elapsedTime = window.hgn.animElapsedTime - 50;
-        this.alpha = Util.getMidpoint(0.6, 0, elapsedTime / 100);
+        this.alpha = Util.lerp(0.6, 0, elapsedTime / 100);
         if (this.alpha <= 0) {
             this.disappeared();
         }

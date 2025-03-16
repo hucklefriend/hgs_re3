@@ -207,12 +207,12 @@ export class ContentNode extends DOMNode
         if (animTime < 200) {
             const ratio = (animTime) / 200;
             for (let i = 0; i < 8; i++) {
-                this.animVertices[i].x = Util.getMidpoint(this.minVertices[i].x, this.vertices[i].x, ratio, true);
-                this.animVertices[i].y = Util.getMidpoint(this.minVertices[i].y, this.vertices[i].y, ratio, true);
+                this.animVertices[i].x = Util.lerp(this.minVertices[i].x, this.vertices[i].x, ratio, true);
+                this.animVertices[i].y = Util.lerp(this.minVertices[i].y, this.vertices[i].y, ratio, true);
             }
 
-            this.lineWidth = Util.getMidpoint(1, 3, ratio, true);
-            this.blurDOM.style.opacity = Util.getMidpoint(0, 1, ratio, false);
+            this.lineWidth = Util.lerp(1, 3, ratio, true);
+            this.blurDOM.style.opacity = Util.lerp(0, 1, ratio, false);
         } else {
             this.appeared();
         }
@@ -262,12 +262,12 @@ export class ContentNode extends DOMNode
             }
             const ratio = 1 - (animTime / 300);
             for (let i = 0; i < 8; i++) {
-                this.animVertices[i].x = Util.getMidpoint(this.minVertices[i].x, this.vertices[i].x, ratio, true);
-                this.animVertices[i].y = Util.getMidpoint(this.minVertices[i].y + window.scrollY, this.vertices[i].y, ratio, true);
+                this.animVertices[i].x = Util.lerp(this.minVertices[i].x, this.vertices[i].x, ratio, true);
+                this.animVertices[i].y = Util.lerp(this.minVertices[i].y + window.scrollY, this.vertices[i].y, ratio, true);
             }
 
-            this.blurDOM.style.opacity = Util.getMidpoint(0, 1, ratio, false);
-            this.lineWidth = Util.getMidpoint(1, 3, ratio, true);
+            this.blurDOM.style.opacity = Util.lerp(0, 1, ratio, false);
+            this.lineWidth = Util.lerp(1, 3, ratio, true);
 
             window.hgn.contentViewer.restoreScrollPosition(ratio);
             window.hgn.contentViewer.setDraw();

@@ -181,11 +181,11 @@ export class HR
         if (this.leftX < rx && lx < this.rightX) {
             if (lx < this.leftX) {
                 lx = this.leftX;
-                ly = ly + Util.getMidpoint(0, height, (this.leftX - lx) / absHeight);
+                ly = ly + Util.lerp(0, height, (this.leftX - lx) / absHeight);
             }
             if (rx > this.rightX) {
                 rx = this.rightX;
-                ry = ly + Util.getMidpoint(0, height, 1 - (rx - this.rightX) / absHeight);
+                ry = ly + Util.lerp(0, height, 1 - (rx - this.rightX) / absHeight);
             }
 
             if (this.lineVertices.length === 0) {
@@ -233,7 +233,7 @@ export class HR
     {
         if (window.hgn.animElapsedTime < 300) {
             if (this._isInViewRect) {
-                this.rightX = Util.getMidpoint(this.leftX, this.dom.offsetLeft + this.dom.offsetWidth,
+                this.rightX = Util.lerp(this.leftX, this.dom.offsetLeft + this.dom.offsetWidth,
                     window.hgn.animElapsedTime / 300);
                 this.setLineVertices();
     
@@ -263,7 +263,7 @@ export class HR
     {
         if (window.hgn.animElapsedTime < 300) {
             if (this._isInViewRect) {
-                this.leftX = Util.getMidpoint(this.dom.offsetLeft, this.dom.offsetLeft + this.dom.offsetWidth,
+                this.leftX = Util.lerp(this.dom.offsetLeft, this.dom.offsetLeft + this.dom.offsetWidth,
                     window.hgn.animElapsedTime / 300);
                 this.setLineVertices();
                 window.hgn.setDrawMain(false);

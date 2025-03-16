@@ -642,6 +642,8 @@ export class MapViewer extends ViewerBase
 
     /**
      * ミニマップの描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx - 描画コンテキスト
      */
     drawMiniMap(ctx)
     {
@@ -724,7 +726,13 @@ export class MapViewer extends ViewerBase
         this.debugDOM.innerHTML = html;
     }
 
-    touchStart(e) {
+    /**
+     * タッチ開始
+     * 
+     * @param {TouchEvent} e
+     */
+    touchStart(e)
+    {
         e.preventDefault(); // デフォルトのスクロール動作を防止
         this.isDragging = true;
         this.isFlicking = false;
@@ -742,7 +750,13 @@ export class MapViewer extends ViewerBase
         this.dragVelocity = { x: 0, y: 0 };
     }
 
-    touchMove(e) {
+    /**
+     * タッチ移動
+     * 
+     * @param {TouchEvent} e
+     */
+    touchMove(e)
+    {
         if (!this.isDragging) return;
         e.preventDefault();
 
@@ -778,7 +792,13 @@ export class MapViewer extends ViewerBase
         window.hgn.setDrawMain(false);
     }
 
-    touchEnd(e) {
+    /**
+     * タッチ終了
+     * 
+     * @param {TouchEvent} e
+     */
+    touchEnd(e)
+    {
         if (!this.isDragging) return;
         
         // 十分な速度がある場合のみフリックを開始

@@ -25,6 +25,8 @@ export class PointNode extends Vertex
         this.forceDraw = false;
 
         this.depth = 0;
+        this._animFunc = null;
+        this._isInViewRect = true;
     }
 
     /**
@@ -181,58 +183,64 @@ export class PointNode extends Vertex
 
     /**
      * 更新
+     * 
+     * @param {Rect} viewRect
+     * @param {boolean} isInViewRectDefault
      */
-    update()
+    update(viewRect, isInViewRectDefault = true)
     {
+        this._isInViewRect = isInViewRectDefault;
+        if (viewRect !== null && !viewRect.containsVertex(this)) {
+            this._isInViewRect = false;
+        }
 
+        if (this._animFunc !== null) {
+            this._animFunc();
+        }
+    }
+
+    /**
+     * 描画するか
+     * 
+     * @param {boolean} isDrawOutsideView
+     * @return {boolean}
+     */
+    isDraw(isDrawOutsideView)
+    {
+        return this._isInViewRect || isDrawOutsideView;
     }
 
     /**
      * 描画
-     *
-     * @param ctx
-     * @param {Rect|null}viewRect
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
      */
-    draw(ctx, viewRect = null)
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
     {
-        const [isDraw, left, top] = this.isDraw(viewRect);
-        if (!isDraw) {
+        if (!this.isDraw(isDrawOutsideView)) {
             return;
         }
 
         this.setCtxParam(ctx);
 
         ctx.beginPath();
-        ctx.arc(this.x + left, this.y + top, this.r, 0, Param.MATH_PI_2, false);
+        ctx.arc(this.x + offsetX, this.y + offsetY, this.r, 0, Param.MATH_PI_2, false);
         ctx.fill();
     }
 
-    isDraw(viewRect)
-    {
-        let left = 0;
-        let top = 0;
-        let isDraw = true;
-        if (viewRect !== null) {
-            const drawY = this.y + top;
-            if (drawY < viewRect.top - 10) {
-                isDraw = false;
-            }
-            if (drawY > viewRect.bottom + 10) {
-                isDraw = false;
-            }
-
-            left = -viewRect.left;
-            top = -viewRect.top;
-        }
-
-        return [isDraw, left, top];
-    }
-
+    /**
+     * コンテキストのパラメータを設定
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     */
     setCtxParam(ctx)
     {
         ctx.fillStyle = "rgba(0, 100, 0, 0.8)"; // 塗りつぶしの色と透明度
         ctx.shadowColor = "lime"; // 影の色
-        ctx.shadowBlur = 3; // 影のぼかし効果
+        ctx.shadowBlur = 5; // 影のぼかし効果
     }
 }
 
