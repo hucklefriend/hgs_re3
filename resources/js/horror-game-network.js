@@ -1,4 +1,3 @@
-
 import { MapViewer } from './viewer/map-viewer.js';
 import { DocumentViewer } from './viewer/document-viewer.js';
 import { ContentViewer } from './viewer/content-viewer.js';
@@ -7,6 +6,7 @@ import { Param } from './common/param.js';
 import { Util } from './common/util.js';
 import { Background } from './viewer/background.js';
 import SubNetworkWorker from './viewer/sub-network-worker.js';
+import { loadComponents } from './components/index.js';
 
 /**
  * ホラーゲームネットワーク
@@ -28,6 +28,9 @@ export class HorrorGameNetwork
         if (HorrorGameNetwork.#instance) {
             throw new Error('HorrorGameNetworkのインスタンスは既に存在します。getInstance()を使用してください。');
         }
+
+        this.components = loadComponents();;
+        this.createdComponents = {};
 
         // 各種ビューアの用意
         this.documentViewer = new DocumentViewer();
@@ -87,10 +90,7 @@ export class HorrorGameNetwork
         this._animElapsedTime = 0;
         this._time = 0;
 
-        this.isNavigating = false;
-
         this.loadingShowTimer = null;
-        this.changeNetworkAppearTimer = null;
 
         this.lastFrameTime = 0;
         this.fps = 30;
@@ -114,7 +114,6 @@ export class HorrorGameNetwork
         if (!HorrorGameNetwork.#instance) {
             HorrorGameNetwork.#instance = new HorrorGameNetwork();
         }
-
         return HorrorGameNetwork.#instance;
     }
 
@@ -242,6 +241,7 @@ export class HorrorGameNetwork
                 this.postMessageToSubNetworkWorker({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
                 if (this.waitViewer.isWait) {
+                    this.clearComponents(); // 作成済みコンポーネントの削除
                     this.showNewViewer();   // ビューワの交代
                 }
             } else {
@@ -666,6 +666,43 @@ export class HorrorGameNetwork
             });
         });
         return Promise.all(promises);
+    }
+
+    /**
+     * コンポーネントの作成
+     * 
+     * @param {string} componentName
+     * @param {string} id
+     * @returns {Object}
+     */
+    createComponent(componentName, id)
+    {
+        let component = new this.components[componentName]();
+        this.createdComponents[id] = component;
+        
+        return component;
+    }
+
+    /**
+     * コンポーネントの削除
+     * 
+     * @param {string} id
+     */
+    deleteComponent(id)
+    {
+        this.createdComponents[id].destroy();
+        delete this.createdComponents[id];
+    }
+
+    /**
+     * 作成済みコンポーネントの削除
+     */
+    clearComponents()
+    {
+        Object.keys(this.createdComponents).forEach(id => {
+            this.deleteComponent(id);
+        });
+        this.createdComponents = {};
     }
 }
 

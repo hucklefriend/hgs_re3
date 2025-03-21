@@ -453,7 +453,15 @@ hr {
     animation: fadeOut 0.2s ease-in-out forwards;
 }
 
-
+.map-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+}
 
 #map {
     position: absolute;
@@ -572,6 +580,89 @@ canvas#main-network-debug-canvas {
             }
         }
     }
+}
+
+/* 検索サジェストのスタイル */
+.search-container {
+    position: relative;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+}
+
+#search-input {
+    width: 100%;
+    padding: 8px 12px 8px 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+}
+
+#search-input::placeholder {
+    color: #666;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
+}
+
+#search-input:focus::placeholder {
+    color: #999;
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #000;
+}
+
+.suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.suggestion-icon {
+    font-size: 0.8em;
+    color: #666;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.suggestion-name {
+    flex: 1;
+}
+
+#search-form {
+    position: relative;
 }
 
 

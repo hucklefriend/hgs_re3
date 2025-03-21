@@ -18,6 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -35,6 +36,31 @@ class GameController extends Controller
         $json = Storage::get('public/main.json');
 
         return $this->map(view('game.horrorgame_network'), $json);
+    }
+
+    /**
+     * ホラーゲームの検索
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function searchHorrorGame(Request $request): JsonResponse
+    {
+        $text = $request->input('text');
+
+        $franchises = GameFranchise::select(['id', 'key', 'name'])
+            ->where('name', 'like', '%' . $text . '%')
+            ->get()
+            ->toArray();
+        $titles = GameTitle::select(['id', 'key', 'name'])
+            ->where('name', 'like', '%' . $text . '%')
+            ->get()
+            ->toArray();
+
+        return response()->json([
+            'franchises' => $franchises,
+            'titles' => $titles,
+        ]);
     }
 
     /**
