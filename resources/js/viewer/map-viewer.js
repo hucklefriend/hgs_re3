@@ -57,6 +57,9 @@ export class MapViewer extends ViewerBase
         this.mapDOM.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
         this.mapDOM.style.display = 'none';
 
+        this.mapSubDOM = document.querySelector('#map-sub');
+        this.mapSubDOM.style.display = 'none';
+
         this.dataCache = null;
         this.isWait = false;
 
@@ -97,6 +100,8 @@ export class MapViewer extends ViewerBase
 
     /**
      * ビュー切り替えの準備
+     * 
+     * @param {Object} data
      */
     prepare(data)
     {
@@ -111,7 +116,9 @@ export class MapViewer extends ViewerBase
      */
     start(isRenderCache)
     {
+        window.hgn.body.style.overflow = 'hidden';
         this.mapDOM.style.display = 'block';
+        this.mapSubDOM.style.display = 'block';
         this.cameraPos.reload(0, 0);
 
         let data = null;
@@ -123,10 +130,19 @@ export class MapViewer extends ViewerBase
                 document.title = this.dataCache.title;
             }
 
+            if (this.dataCache.sub) {
+                this.mapSubDOM.innerHTML = this.dataCache.sub;
+            }
+
             // 戻るで来てなければURLを更新
             if (!(this.dataCache.isBack ?? false)) {
                 window.history.pushState({type: this.TYPE, title: this.dataCache.title}, null, this.dataCache.url);
             }
+
+            // コンポーネントの作成
+            Object.keys(this.dataCache.components).forEach(key => {
+                window.hgn.createComponent(key, this.dataCache.components[key]);
+            });
 
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(this.dataCache.map));
             this.dataCache = null;
@@ -164,10 +180,15 @@ export class MapViewer extends ViewerBase
     end()
     {
         this.mapDOM.style.display = 'none';
+        this.mapSubDOM.style.display = 'none';
 
         this.networks.forEach(network => {
             network.delete();
         });
+
+        this.mapSubDOM.innerHTML = '';
+
+        window.hgn.body.style.overflow = 'auto';
     }
 
     /**
@@ -599,6 +620,12 @@ export class MapViewer extends ViewerBase
         this.networks.forEach(network => {
             network.appear();
         });
+
+        setTimeout(() => {
+            this.mapSubDOM.classList.add('fade-in');
+        }, 100);
+
+        window.hgn.body.style.overflow = 'hidden';
     }
 
     /**
@@ -609,6 +636,8 @@ export class MapViewer extends ViewerBase
         this.networks.forEach(network => {
             network.disappear();
         });
+
+        this.mapSubDOM.classList.add('fade-out');
     }
 
     /**

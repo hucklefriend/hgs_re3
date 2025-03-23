@@ -16,6 +16,23 @@ export default class HorrorGameSearch extends ComponentBase
         this._suggestionsContainer.className = 'search-suggestions';
         this._form.appendChild(this._suggestionsContainer);
 
+        // メニュー
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuOverlay = document.getElementById('menu-overlay');
+
+        menuToggle.addEventListener('click', function() {
+            menuOverlay.classList.toggle('active');
+            window.hgn.body.style.overflow = menuOverlay.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // メニュー外をクリックしたら閉じる
+        menuOverlay.addEventListener('click', function(e) {
+            if (e.target === menuOverlay) {
+                menuOverlay.classList.remove('active');
+                window.hgn.body.style.overflow = 'hidden';
+            }
+        });
+
         // クリックイベントの委譲
         this._suggestionsContainer.addEventListener('click', (e) => {
             const item = e.target.closest('.suggestion-item');

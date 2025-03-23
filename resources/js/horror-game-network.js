@@ -671,11 +671,11 @@ export class HorrorGameNetwork
     /**
      * コンポーネントの作成
      * 
-     * @param {string} componentName
      * @param {string} id
+     * @param {string} componentName
      * @returns {Object}
      */
-    createComponent(componentName, id)
+    createComponent(id, componentName)
     {
         let component = new this.components[componentName]();
         this.createdComponents[id] = component;

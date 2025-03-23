@@ -35,7 +35,7 @@ class GameController extends Controller
     {
         $json = Storage::get('public/main.json');
 
-        return $this->map(view('game.horrorgame_network'), $json);
+        return $this->map(view('game.horrorgame_network'), $json, ['hgs' => 'horror-game-search']);
     }
 
     /**

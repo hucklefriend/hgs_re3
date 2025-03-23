@@ -13,6 +13,10 @@
         window.START_HGN = true;
         window.addEventListener('load', function() {
             window.hgn.start('{{ $viewerType ?? 'document' }}');
+
+            @foreach($components ?? [] as $key => $component)
+                window.hgn.createComponent('{{ $key }}', '{{ $component }}');
+            @endforeach
         });
 
         @isset($contentData)

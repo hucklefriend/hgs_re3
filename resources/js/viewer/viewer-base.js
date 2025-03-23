@@ -106,7 +106,7 @@ export class ViewerBase
      */
     showAppearedNodes()
     {
-        console.log(this._nodeCnt, this._appearedNodeCnt, this._appearedNodes);
+        //console.log(this._nodeCnt, this._appearedNodeCnt, this._appearedNodes);
     }
 
     /**
