@@ -435,7 +435,6 @@ export class DOMNode extends OctaNode
     {
         window.hgn.viewer.incrementNodeCnt();
 
-        this.fadeInText();
         this._animFunc = this.appearAnimation;
     }
 

@@ -14,15 +14,18 @@ import { Rect } from "../common/rect.js";
  */
 export class MainFranchiseNetwork extends Network
 {
+    /**
+     * ネットワークの作成
+     * 
+     * @param {HTMLElement} containerDOM
+     * @param {Object} networkData
+     * @returns {MainFranchiseNetwork}
+     */
     static create(containerDOM, networkData)
     {
         // ネットワーク用divの生成
         let div = document.createElement('div');
         div.classList.add('franchise');
-        // div.style.width = networkData.width + 'px';
-        // div.style.height = networkData.height + 'px';
-        // div.style.left = networkData.x + 'px';
-        // div.style.top = networkData.y + 'px';
         containerDOM.appendChild(div);
 
         // ネットワークのインスタンス
@@ -64,6 +67,13 @@ export class MainFranchiseNetwork extends Network
         return network;
     }
 
+    /**
+     * ノードの作成
+     * 
+     * @param {HTMLElement} containerDOM
+     * @param {Object} nodeData
+     * @returns {Node}
+     */
     static createNode(containerDOM, nodeData)
     {
         let DOM = document.createElement('div');
@@ -74,8 +84,7 @@ export class MainFranchiseNetwork extends Network
             DOM.classList.add('small');
         }
 
-        
-        //DOM.classList.add('fade');
+        DOM.classList.add('fade');
 
         if (nodeData.hasOwnProperty('href') && nodeData.href !== null) {
             DOM.classList.add('link-node');

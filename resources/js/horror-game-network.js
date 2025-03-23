@@ -544,6 +544,7 @@ export class HorrorGameNetwork
         if (ratingCheck) {
             this.showRatingCheck();
         } else {
+            this.update(this._time);
             this.appear();
         }
     }
