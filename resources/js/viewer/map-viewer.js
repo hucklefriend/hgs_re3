@@ -187,6 +187,7 @@ export class MapViewer extends ViewerBase
         });
 
         this.mapSubDOM.innerHTML = '';
+        this.mapSubDOM.classList.remove('fade-out', 'fade-in');
 
         window.hgn.body.style.overflow = 'auto';
     }
