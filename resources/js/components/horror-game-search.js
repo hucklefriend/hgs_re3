@@ -39,7 +39,8 @@ export default class HorrorGameSearch extends ComponentBase
             if (item) {
                 const name = item.dataset.name;
                 const type = item.dataset.type;
-                this.selectItem(name, type);
+                const id = item.dataset.id;
+                this.selectItem(name, type, id);
             }
         });
 
@@ -58,6 +59,9 @@ export default class HorrorGameSearch extends ComponentBase
         });
     }
 
+    /**
+     * 検索
+     */
     search()
     {
         clearTimeout(this._inputWaitTimer);
@@ -98,11 +102,13 @@ export default class HorrorGameSearch extends ComponentBase
         // data.franchisesにtypeを追加
         data.franchises.forEach(franchise => {
             franchise.type = 'franchise';
+            franchise.id = 'f_' + franchise.id;
         });
 
         // data.titlesにtypeを追加
         data.titles.forEach(title => {
             title.type = 'title';
+            title.id = 't_' + title.id;
         });
         
         // data.franchisesとdata.titlesを結合
@@ -126,6 +132,7 @@ export default class HorrorGameSearch extends ComponentBase
             div.className = 'suggestion-item';
             div.dataset.name = item.name;
             div.dataset.type = item.type;
+            div.dataset.id = item.id;
             
             const icon = document.createElement('span');
             icon.className = 'suggestion-icon';
@@ -143,14 +150,11 @@ export default class HorrorGameSearch extends ComponentBase
         this._suggestionsContainer.style.display = 'block';
     }
 
-    selectItem(name, type)
+    selectItem(name, type, id)
     {
         this._input.value = name;
         this._suggestionsContainer.style.display = 'none';
         
-        // 選択された項目の情報を親コンポーネントに通知
-        this.dispatchEvent(new CustomEvent('itemSelected', {
-            detail: { name, type }
-        }));
+        window.hgn.viewer.moveToNode(id);
     }
 }
