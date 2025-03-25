@@ -13,6 +13,10 @@
         window.START_HGN = true;
         window.addEventListener('load', function() {
             window.hgn.start('{{ $viewerType ?? 'document' }}');
+
+            @foreach($components ?? [] as $key => $component)
+                window.hgn.createComponent('{{ $key }}', '{{ $component }}');
+            @endforeach
         });
 
         @isset($contentData)
@@ -72,6 +76,7 @@
     </main>
 </div>
 <div id="map"></div>
+<div id="map-sub">@yield('map-sub')</div>
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
     <canvas id="content-node-canvas"></canvas>
@@ -113,7 +118,7 @@
 </div>
 <script>
     function iamOver18() {
-        //document.cookie = "over18=true; path=/"; // Cookieを設定
+        document.cookie = "over18=true; path=/"; // Cookieを設定
         window.hgn.closePopupViewer();
         window.hgn.appear();
     }

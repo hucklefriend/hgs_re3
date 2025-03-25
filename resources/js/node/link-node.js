@@ -1,11 +1,6 @@
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
 import { SimpleNode } from './simple-node.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 export class LinkNode extends SimpleNode
 {

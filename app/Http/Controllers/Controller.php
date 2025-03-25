@@ -25,9 +25,10 @@ abstract class Controller
      *
      * @param Factory|View $view
      * @param string $json
+     * @param array $components
      * @return JsonResponse|Application|Factory|View
      */
-    protected function map(Factory|View $view, string $json): JsonResponse|Application|Factory|View
+    protected function map(Factory|View $view, string $json, array $components = []): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにJSONテキストを返す
         if (self::isAjax()) {
@@ -35,14 +36,17 @@ abstract class Controller
             return response()->json([
                 'title' => $rendered['title'],
                 'map'   => $json,
+                'sub'   => $rendered['map-sub'] ?? '',
                 'popup' => $rendered['popup'] ?? '',
                 'ratingCheck' => false,
+                'components' => $components,
             ]);
         }
 
         // $viewに$jsonを渡してviewを返す
         return $view->with('map', $json)
-            ->with('viewerType', 'map');
+            ->with('viewerType', 'map')
+            ->with('components', $components);
     }
 
     /**
@@ -50,10 +54,11 @@ abstract class Controller
      *
      * @param Factory|View $view
      * @param bool $ratingCheck
+     * @param array $components
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    protected function document(Factory|View $view, bool $ratingCheck = false): JsonResponse|Application|Factory|View
+    protected function document(Factory|View $view, bool $ratingCheck = false, array $components = []): JsonResponse|Application|Factory|View
     {
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
@@ -63,10 +68,12 @@ abstract class Controller
                 'document' => $rendered['content'],
                 'popup'    => $rendered['popup'] ?? '',
                 'ratingCheck' => $ratingCheck,
+                'components' => $components,
             ]);
         }
 
-        return $view->with('viewerType', 'doc');
+        return $view->with('viewerType', 'doc')
+            ->with('components', $components);
     }
 
     /**

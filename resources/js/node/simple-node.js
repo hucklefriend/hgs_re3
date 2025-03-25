@@ -1,12 +1,5 @@
-import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
 import { DOMNode } from './dom-node.js';
-import { MapViewer } from '../viewer/map-viewer.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 export class SimpleNode extends DOMNode
 {
@@ -33,7 +26,7 @@ export class SimpleNode extends DOMNode
     {
         super.appear();
 
-        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
+        if (!this._isInViewRect && window.hgn.viewer.TYPE === 'map') {
             this._animVertices = this.vertices;
             this._animFunc = this.appeared;
         } else {
@@ -47,8 +40,17 @@ export class SimpleNode extends DOMNode
      */
     appearAnimation()
     {
-        if (window.hgn.animElapsedTime < 300) {
-            const ratio = (window.hgn.animElapsedTime / 300);
+        this.fadeInText();
+        this._animFunc = this.appearAnimation2;
+    }
+
+    /**
+     * 出現アニメーション
+     */
+    appearAnimation2()
+    {
+        if (window.hgn.animElapsedTime < 350) {
+            const ratio = (window.hgn.animElapsedTime / 350);
             for (let i = 0; i < this.vertices.length; i++) {
                 this._animVertices[i].x = Util.lerp(this.center.x, this.vertices[i].x, ratio);
                 this._animVertices[i].y = Util.lerp(this.center.y, this.vertices[i].y, ratio);
@@ -67,6 +69,7 @@ export class SimpleNode extends DOMNode
     appeared()
     {
         this._animFunc = null;
+        this.showText();
         window.hgn.viewer.addAppearedNode(this.id);
     }
 
@@ -77,7 +80,7 @@ export class SimpleNode extends DOMNode
     {
         super.disappear();
 
-        if (!this._isInViewRect && window.hgn.viewer instanceof MapViewer) {
+        if (!this._isInViewRect && window.hgn.viewer.TYPE === 'map') {
             this._animVertices = this.vertices;
             this._animFunc = this.disappeared;
         } else {

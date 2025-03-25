@@ -2,11 +2,6 @@ import { OctaNode, SubOctaNode } from '../node/octa-node.js';
 import { Param} from '../common/param.js';
 import { PointNode, SubPointNode } from "../node/point-node.js";
 import { Vertex } from '../common/vertex.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 /**
  * ネットワーク

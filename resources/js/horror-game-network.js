@@ -1,4 +1,3 @@
-
 import { MapViewer } from './viewer/map-viewer.js';
 import { DocumentViewer } from './viewer/document-viewer.js';
 import { ContentViewer } from './viewer/content-viewer.js';
@@ -7,6 +6,8 @@ import { Param } from './common/param.js';
 import { Util } from './common/util.js';
 import { Background } from './viewer/background.js';
 import SubNetworkWorker from './viewer/sub-network-worker.js';
+import { loadComponents } from './components/index.js';
+import { NormalLink } from './common/normal-link.js';
 
 /**
  * ホラーゲームネットワーク
@@ -28,6 +29,9 @@ export class HorrorGameNetwork
         if (HorrorGameNetwork.#instance) {
             throw new Error('HorrorGameNetworkのインスタンスは既に存在します。getInstance()を使用してください。');
         }
+
+        this.components = loadComponents();;
+        this.createdComponents = {};
 
         // 各種ビューアの用意
         this.documentViewer = new DocumentViewer();
@@ -87,14 +91,13 @@ export class HorrorGameNetwork
         this._animElapsedTime = 0;
         this._time = 0;
 
-        this.isNavigating = false;
-
         this.loadingShowTimer = null;
-        this.changeNetworkAppearTimer = null;
 
         this.lastFrameTime = 0;
         this.fps = 30;
         this.frameInterval = 1000 / this.fps;
+
+        this._normalLinks = [];
         
         if (Param.SHOW_DEBUG) {
             this.debug = document.querySelector('#debug');
@@ -114,7 +117,6 @@ export class HorrorGameNetwork
         if (!HorrorGameNetwork.#instance) {
             HorrorGameNetwork.#instance = new HorrorGameNetwork();
         }
-
         return HorrorGameNetwork.#instance;
     }
 
@@ -188,6 +190,8 @@ export class HorrorGameNetwork
 
         window.addEventListener('resize', (e) => {this.resize(e);});
         window.addEventListener('scroll', () => {this.scroll();});
+
+        this.setupNormalLink();
     
         if (window.ratingCheck) {
             window.requestAnimationFrame(time => {
@@ -242,6 +246,7 @@ export class HorrorGameNetwork
                 this.postMessageToSubNetworkWorker({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
                 if (this.waitViewer.isWait) {
+                    this.clearComponents(); // 作成済みコンポーネントの削除
                     this.showNewViewer();   // ビューワの交代
                 }
             } else {
@@ -521,6 +526,8 @@ export class HorrorGameNetwork
      */
     showNewViewer(isBack)
     {
+        this.clearNomalLink();
+
         window.scrollTo(0, 0);
         this.scroll(true);
 
@@ -541,9 +548,12 @@ export class HorrorGameNetwork
         this.waitViewer = null;
         this.setCanvasSize();
 
+        this.setupNormalLink();
+
         if (ratingCheck) {
             this.showRatingCheck();
         } else {
+            this.update(this._time);
             this.appear();
         }
     }
@@ -666,6 +676,66 @@ export class HorrorGameNetwork
             });
         });
         return Promise.all(promises);
+    }
+
+    /**
+     * コンポーネントの作成
+     * 
+     * @param {string} id
+     * @param {string} componentName
+     * @returns {Object}
+     */
+    createComponent(id, componentName)
+    {
+        let component = new this.components[componentName]();
+        this.createdComponents[id] = component;
+        
+        return component;
+    }
+
+    /**
+     * コンポーネントの削除
+     * 
+     * @param {string} id
+     */
+    deleteComponent(id)
+    {
+        this.createdComponents[id].destroy();
+        delete this.createdComponents[id];
+    }
+
+    /**
+     * 作成済みコンポーネントの削除
+     */
+    clearComponents()
+    {
+        Object.keys(this.createdComponents).forEach(id => {
+            this.deleteComponent(id);
+        });
+        this.createdComponents = {};
+    }
+
+    /**
+     * 通常リンクの設定
+     */
+    setupNormalLink()
+    {
+        const normalLinks = document.querySelectorAll('.normal-link');
+        normalLinks.forEach(link => {
+            this._normalLinks.push(new NormalLink(link));
+        });
+    }
+
+    /**
+     * 通常リンクの削除
+     */
+    clearNomalLink()
+    {
+        Object.keys(this._normalLinks).forEach(i => {
+            this._normalLinks[i].delete();
+            delete this._normalLinks[i];
+        });
+        this._normalLinks = [];
     }
 }
 

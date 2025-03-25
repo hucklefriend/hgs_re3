@@ -3,6 +3,7 @@ import { ViewerBase } from './viewer-base.js';
 import { Param } from '../common/param.js';
 import { Vertex } from "../common/vertex.js";
 import { Rect } from "../common/rect.js";
+import { Util } from '../common/util.js';
 import LZString from 'lz-string';
 
 /**
@@ -23,6 +24,11 @@ export class MapViewer extends ViewerBase
         super();
 
         this.mapDOM = null;
+
+        this.isMoving = false;
+        this.moveStartPos = new Vertex(0, 0);
+        this.moveEndPos = new Vertex(0, 0);
+        this.moveStartTime = 0;
 
         this.isDragging = false;
         this.isFlicking = false;
@@ -56,6 +62,9 @@ export class MapViewer extends ViewerBase
         this.initWheel(this.mapDOM);
         this.mapDOM.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
         this.mapDOM.style.display = 'none';
+
+        this.mapSubDOM = document.querySelector('#map-sub');
+        this.mapSubDOM.style.display = 'none';
 
         this.dataCache = null;
         this.isWait = false;
@@ -97,6 +106,8 @@ export class MapViewer extends ViewerBase
 
     /**
      * ビュー切り替えの準備
+     * 
+     * @param {Object} data
      */
     prepare(data)
     {
@@ -111,7 +122,9 @@ export class MapViewer extends ViewerBase
      */
     start(isRenderCache)
     {
+        window.hgn.body.style.overflow = 'hidden';
         this.mapDOM.style.display = 'block';
+        this.mapSubDOM.style.display = 'block';
         this.cameraPos.reload(0, 0);
 
         let data = null;
@@ -123,10 +136,19 @@ export class MapViewer extends ViewerBase
                 document.title = this.dataCache.title;
             }
 
+            if (this.dataCache.sub) {
+                this.mapSubDOM.innerHTML = this.dataCache.sub;
+            }
+
             // 戻るで来てなければURLを更新
             if (!(this.dataCache.isBack ?? false)) {
                 window.history.pushState({type: this.TYPE, title: this.dataCache.title}, null, this.dataCache.url);
             }
+
+            // コンポーネントの作成
+            Object.keys(this.dataCache.components).forEach(key => {
+                window.hgn.createComponent(key, this.dataCache.components[key]);
+            });
 
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(this.dataCache.map));
             this.dataCache = null;
@@ -164,10 +186,16 @@ export class MapViewer extends ViewerBase
     end()
     {
         this.mapDOM.style.display = 'none';
+        this.mapSubDOM.style.display = 'none';
 
         this.networks.forEach(network => {
             network.delete();
         });
+
+        this.mapSubDOM.innerHTML = '';
+        this.mapSubDOM.classList.remove('fade-out', 'fade-in');
+
+        window.hgn.body.style.overflow = 'auto';
     }
 
     /**
@@ -177,6 +205,10 @@ export class MapViewer extends ViewerBase
      */
     mouseDown(e)
     {
+        if (this.isMoving) {
+            return;
+        }
+
         this.isDragging = true;
         this.isTouchOperation = false;  // マウス操作フラグを設定
         this.mapDOM.style.cursor = 'grabbing';
@@ -202,6 +234,10 @@ export class MapViewer extends ViewerBase
      */
     mouseMove(e)
     {
+        if (this.isMoving) {
+            return;
+        }
+
         if (!this.isDragging){
             return;
         }
@@ -257,6 +293,10 @@ export class MapViewer extends ViewerBase
      */
     mouseUp(e)
     {
+        if (this.isMoving) {
+            return;
+        }
+
         if (this.isDragging) {
             // 最後のマウス移動からの経過時間を計算
             const currentTime = performance.now();
@@ -315,6 +355,10 @@ export class MapViewer extends ViewerBase
      */
     handleWheel(event)
     {
+        if (this.isMoving) {
+            return;
+        }
+
         event.preventDefault();
 
         // 累積値の更新
@@ -347,6 +391,10 @@ export class MapViewer extends ViewerBase
      */
     onTiltLeft()
     {
+        if (this.isMoving) {
+            return;
+        }
+
         // 左チルト（マップを右に移動）
         this.moveCamera(-Param.WHEEL_TILT_AMOUNT, 0);
         // 背景も連動してスクロール
@@ -371,6 +419,10 @@ export class MapViewer extends ViewerBase
      */
     onScrollUp()
     {
+        if (this.isMoving) {
+            return;
+        }
+
         this.moveCamera(0, -Param.WHEEL_SCROLL_AMOUNT);
         // 背景も連動してスクロール
         window.hgn.background.scrollBy(0, -Param.WHEEL_SCROLL_AMOUNT);
@@ -382,6 +434,10 @@ export class MapViewer extends ViewerBase
      */
     onScrollDown()
     {
+        if (this.isMoving) {
+            return;
+        }
+
         this.moveCamera(0, Param.WHEEL_SCROLL_AMOUNT);
         // 背景も連動してスクロール
         window.hgn.background.scrollBy(0, Param.WHEEL_SCROLL_AMOUNT);
@@ -402,11 +458,79 @@ export class MapViewer extends ViewerBase
     }
 
     /**
+     * カメラを移動開始
+     * 
+     * @param {number} x
+     * @param {number} y
+     */
+    moveToPos(x, y)
+    {
+        this.moveStartPos.x = this.cameraPos.x;
+        this.moveStartPos.y = this.cameraPos.y;
+        this.moveEndPos.x = x;
+        this.moveEndPos.y = y;
+        this.moveStartTime = window.hgn.time;
+        this.isMoving = true;
+    }
+
+    /**
+     * ノードに移動
+     * 
+     * @param {string} nodeId
+     */
+    moveToNode(nodeId)
+    {
+        let node = null;
+        this.networks.every(network => {
+            node = network.getNodeById(nodeId);
+            if (node) {
+                return false;
+            }
+            return true;
+        });
+
+        if (node) {
+            let x = node.center.x - window.innerWidth / 2;
+            let y = node.center.y - window.innerHeight / 2;
+
+            this.moveToPos(x, y);
+        }
+    }
+
+    /**
+     * イージング関数 (easeInOutQuad)
+     * @param {number} t - 進行度 (0-1)
+     * @returns {number} イージングされた進行度 (0-1)
+     */
+    easeInOutQuad(t) {
+        // 加速から減速へのスムーズな遷移
+        return t < 0.5 
+            ? 2 * t * t 
+            : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    /**
      * アニメーションフレーム更新
      */
     update()
     {
-        if (this.isFlicking) {
+        if (this.isMoving) {
+            const elapsedTime = window.hgn.time - this.moveStartTime;
+            const duration = 800; // アニメーション時間を800msに延長してよりスムーズに
+
+            if (elapsedTime >= duration) {
+                this.setCameraPos(this.moveEndPos.x, this.moveEndPos.y);
+                this.isMoving = false;
+            } else {
+                const ratio = elapsedTime / duration;
+                const easedRatio = this.easeInOutQuad(ratio);
+                this.setCameraPos(
+                    Util.lerp(this.moveStartPos.x, this.moveEndPos.x, easedRatio),
+                    Util.lerp(this.moveStartPos.y, this.moveEndPos.y, easedRatio)
+                );
+            }
+            window.hgn.setDrawMain(true);
+        } else if (this.isFlicking) {
             this.flick();
         }
 
@@ -475,7 +599,7 @@ export class MapViewer extends ViewerBase
     }
 
     /**
-     * カメラ位置のセット
+     * カメラ位置の差分移動
      *
      * @param {number} x
      * @param {number} y
@@ -499,6 +623,21 @@ export class MapViewer extends ViewerBase
         }
 
         this.updateViewRect();
+    }
+
+    /**
+     * カメラ位置をセット
+     *
+     * @param {number} x
+     * @param {number} y
+     */
+    setCameraPos(x, y)
+    {
+        const deltaX = x - this.cameraPos.x;
+        const deltaY = y - this.cameraPos.y;
+
+        this.moveCamera(deltaX, deltaY);
+        window.hgn.background.scrollBy(deltaX, deltaY);
     }
 
     /**
@@ -599,6 +738,12 @@ export class MapViewer extends ViewerBase
         this.networks.forEach(network => {
             network.appear();
         });
+
+        setTimeout(() => {
+            this.mapSubDOM.classList.add('fade-in');
+        }, 100);
+
+        window.hgn.body.style.overflow = 'hidden';
     }
 
     /**
@@ -609,6 +754,8 @@ export class MapViewer extends ViewerBase
         this.networks.forEach(network => {
             network.disappear();
         });
+
+        this.mapSubDOM.classList.add('fade-out');
     }
 
     /**

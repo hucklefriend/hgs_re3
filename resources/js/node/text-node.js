@@ -1,12 +1,5 @@
-import { Rect } from '../common/rect.js';
 import { Util } from "../common/util.js";
 import { DOMNode } from "./dom-node.js";
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
-
 
 /**
  * テキストノード

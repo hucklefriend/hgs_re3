@@ -93,8 +93,6 @@ export class DocumentViewer extends ViewerBase
         if (isRenderCache) {
             this.mainDOM.innerHTML = this.dataCache.document;
 
-            // TODO: ポップアップはHorrorGameNetwork側へ渡す
-
             // windowタイトルの変更
             if (this.dataCache.title) {
                 document.title = this.dataCache.title;
@@ -104,6 +102,11 @@ export class DocumentViewer extends ViewerBase
             if (!(this.dataCache.isBack ?? false)) {
                 window.history.pushState({type: this.TYPE, title: this.dataCache.title}, null, this.dataCache.url);
             }
+
+            // コンポーネントの作成
+            Object.keys(this.dataCache.components).forEach(key => {
+                window.hgn.createComponent(key, this.dataCache.components[key]);
+            });
 
             this.dataCache = null;
 
