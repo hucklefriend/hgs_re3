@@ -1,5 +1,4 @@
 import { OctaNode, SubOctaNode } from '../node/octa-node.js';
-import { Param } from '../common/param.js';
 import { SubPointNode } from "../node/point-node.js";
 import { Network } from './network.js';
 

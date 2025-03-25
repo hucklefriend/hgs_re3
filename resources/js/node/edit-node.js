@@ -1,7 +1,6 @@
-import {Param} from '../param.js';
-import {Util} from '../util.js';
-import {DOMNode} from './dom-node.js';
-import {PointNode} from './point-node.js';
+import { Param } from '../common/param.js';
+import { DOMNode } from './dom-node.js';
+import { PointNode } from './point-node.js';
 
 /**
  * ネットワークエディタ用のノード

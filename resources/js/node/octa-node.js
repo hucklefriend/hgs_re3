@@ -3,13 +3,6 @@ import { Rect } from '../common/rect.js';
 import { Param } from '../common/param.js';
 import { PointNode, SubPointNode } from './point-node.js';
 import { OctaNodeConnect, PointNodeConnect, SubConnect } from './connect.js';
-import { Util } from "../common/util.js";
-import { SubNetwork } from "../network/sub-network.js";
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 /**
  * 八角ノード

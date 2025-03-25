@@ -4,7 +4,6 @@ import { SimpleNode } from '../node/simple-node.js';
 import { DOMNode } from '../node/dom-node.js';
 import { LinkNode } from '../node/link-node.js';
 import { PointNode } from "../node/point-node.js";
-import { Vertex } from '../common/vertex.js';
 import { Network } from '../network/network.js';
 import { Rect } from "../common/rect.js";
 

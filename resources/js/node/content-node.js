@@ -1,12 +1,7 @@
 import { Vertex } from '../common/vertex.js';
 import { DOMNode } from './dom-node.js';
 import { LinkNode } from './link-node.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
 import { Util } from '../common/util.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 /**
  * コンテンツノードへのリンクノード

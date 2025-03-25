@@ -2,12 +2,6 @@ import { DOMNode } from './dom-node.js';
 import { Param } from '../common/param.js';
 import { Util } from '../common/util.js';
 import { Vertex } from "../common/vertex.js";
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
-
 
 export class Head1Node extends DOMNode
 {

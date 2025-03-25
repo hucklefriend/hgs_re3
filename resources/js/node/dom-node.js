@@ -4,12 +4,6 @@ import { Param } from '../common/param.js';
 import { OctaNode } from './octa-node.js';
 import { Util } from "../common/util.js";
 import { SubNetwork } from "../network/sub-network.js";
-import { MapViewer } from '../viewer/map-viewer.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 /**
  * DOMの要素サイズに合わせて配置するノード

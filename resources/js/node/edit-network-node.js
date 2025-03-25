@@ -1,9 +1,6 @@
-import {Param} from '../param.js';
-import {Util} from '../util.js';
-import {DOMNode} from './dom-node.js';
-import {PointNode} from "./point-node.js";
-import {EditNetwork} from "../edit-network.js";
-
+import { DOMNode } from './dom-node.js';
+import { PointNode } from "./point-node.js";
+import { EditNetwork } from "../network/edit-network.js";
 
 export class EditNetworkNode extends DOMNode
 {

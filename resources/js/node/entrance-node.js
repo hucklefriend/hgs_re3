@@ -3,12 +3,6 @@ import { Param } from '../common/param.js';
 import { SubNetwork } from '../network/sub-network.js';
 import { LinkNode } from './link-node.js';
 import { Util} from '../common/util.js';
-import { HorrorGameNetwork } from '../horror-game-network.js';
-import { Rect } from '../common/rect.js';
-/**
- * @type {HorrorGameNetwork}
- */
-window.hgn;
 
 /**
  * トップページの特別なリンクノード
