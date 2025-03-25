@@ -7,6 +7,7 @@ import { Util } from './common/util.js';
 import { Background } from './viewer/background.js';
 import SubNetworkWorker from './viewer/sub-network-worker.js';
 import { loadComponents } from './components/index.js';
+import { NormalLink } from './common/normal-link.js';
 
 /**
  * ホラーゲームネットワーク
@@ -95,6 +96,8 @@ export class HorrorGameNetwork
         this.lastFrameTime = 0;
         this.fps = 30;
         this.frameInterval = 1000 / this.fps;
+
+        this._normalLinks = [];
         
         if (Param.SHOW_DEBUG) {
             this.debug = document.querySelector('#debug');
@@ -187,6 +190,8 @@ export class HorrorGameNetwork
 
         window.addEventListener('resize', (e) => {this.resize(e);});
         window.addEventListener('scroll', () => {this.scroll();});
+
+        this.setupNormalLink();
     
         if (window.ratingCheck) {
             window.requestAnimationFrame(time => {
@@ -521,6 +526,8 @@ export class HorrorGameNetwork
      */
     showNewViewer(isBack)
     {
+        this.clearNomalLink();
+
         window.scrollTo(0, 0);
         this.scroll(true);
 
@@ -540,6 +547,8 @@ export class HorrorGameNetwork
         this.viewer.start(true, isBack);
         this.waitViewer = null;
         this.setCanvasSize();
+
+        this.setupNormalLink();
 
         if (ratingCheck) {
             this.showRatingCheck();
@@ -704,6 +713,29 @@ export class HorrorGameNetwork
             this.deleteComponent(id);
         });
         this.createdComponents = {};
+    }
+
+    /**
+     * 通常リンクの設定
+     */
+    setupNormalLink()
+    {
+        const normalLinks = document.querySelectorAll('.normal-link');
+        normalLinks.forEach(link => {
+            this._normalLinks.push(new NormalLink(link));
+        });
+    }
+
+    /**
+     * 通常リンクの削除
+     */
+    clearNomalLink()
+    {
+        Object.keys(this._normalLinks).forEach(i => {
+            this._normalLinks[i].delete();
+            delete this._normalLinks[i];
+        });
+        this._normalLinks = [];
     }
 }
 
