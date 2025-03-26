@@ -32,9 +32,6 @@ table {
 }
 
 #document {
-    /*position: absolute;
-    left: 0;
-    top: 0;*/
     margin: 0;
     width: 100%;
     display: flex;
@@ -725,7 +722,7 @@ canvas#main-network-debug-canvas {
         display: grid;
         justify-content: center;
     }
-    .container {
+    #document {
         width: 700px;
     }
 

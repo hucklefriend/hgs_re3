@@ -488,5 +488,18 @@ export class Head3Node extends DOMNode
     {
         this.disappeared();
     }
+
+    /**
+     * 描画
+     *
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} offsetX
+     * @param {number} offsetY
+     * @param {boolean} isDrawOutsideView
+     */
+    draw(ctx, offsetX, offsetY, isDrawOutsideView)
+    {
+        // 何も描画しない
+    }
 }
 
