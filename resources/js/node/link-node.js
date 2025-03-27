@@ -112,6 +112,7 @@ export class LinkNode extends SimpleNode
      */
     mouseClick()
     {
+        console.log('click');
         if (!this.isEnableMouse) {
             return;
         }
@@ -128,7 +129,7 @@ export class LinkNode extends SimpleNode
     /**
      * タッチ開始時の処理
      */
-    touchStart()
+    touchStart(e)
     {
         this.mouseEnter();
     }
@@ -390,8 +391,8 @@ export class LinkNode extends SimpleNode
         this.DOM.addEventListener('click', () => this.mouseClick());
 
         if (Param.IS_TOUCH_DEVICE) {
-            this.DOM.addEventListener('touchstart', () => this.mouseEnter());
-            this.DOM.addEventListener('touchend', () => this.mouseLeave());
+            this.DOM.addEventListener('touchstart', (e) => this.touchStart(e));
+            this.DOM.addEventListener('touchend', () => this.touchEnd());
         }
     }
 

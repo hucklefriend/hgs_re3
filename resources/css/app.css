@@ -459,8 +459,7 @@ hr {
     height: 100%;
 
     .franchise {
-        touch-action: none;
-        user-select: none;
+        z-index: 1000;
     }
 }
 

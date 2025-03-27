@@ -302,8 +302,8 @@ export class MapViewer extends ViewerBase
             const currentTime = performance.now();
             const timeSinceLastMove = currentTime - this.dragLastTime;
 
-            // 100ms以上経過している場合は止まっているとみなす
-            if (timeSinceLastMove < 100) {
+            // 50ms以上経過している場合は止まっているとみなす
+            if (timeSinceLastMove < 50) {
                 const speed = Math.sqrt(
                     this.dragVelocity.x * this.dragVelocity.x +
                     this.dragVelocity.y * this.dragVelocity.y
@@ -880,6 +880,12 @@ export class MapViewer extends ViewerBase
      */
     touchStart(e)
     {
+        // タッチされた要素がLinkNodeの場合はイベントを伝播させる
+        if (e.target.closest('.link-node')) {
+            console.log('link-node');
+            return;  // イベントを伝播させる
+        }
+
         e.preventDefault(); // デフォルトのスクロール動作を防止
         this.isDragging = true;
         this.isFlicking = false;
