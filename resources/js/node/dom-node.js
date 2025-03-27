@@ -325,12 +325,15 @@ export class DOMNode extends OctaNode
 
     /**
      * 再配置
+     * 
+     * @param offsetLeft
+     * @param offsetTop
      */
-    reload()
+    reload(offsetLeft = 0, offsetTop = 0)
     {
         super.reload(
-            this.DOM.offsetLeft,
-            this.DOM.offsetTop,
+            this.DOM.offsetLeft + offsetLeft,
+            this.DOM.offsetTop + offsetTop,
             this.DOM.offsetWidth,
             this.DOM.offsetHeight
         );

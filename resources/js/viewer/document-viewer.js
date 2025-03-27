@@ -266,25 +266,34 @@ export class DocumentViewer extends ViewerBase
      */
     resize()
     {
-        this.reloadNodes();
+        let left = 0;
+        if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
+            left = this.DOM.getBoundingClientRect().left;
+        }
+
+
+        this.reloadNodes(left, 0);
         this.updateViewRect();
     }
 
     /**
      * Windowサイズ変更などによるNodeの再読取り
+     * 
+     * @param {number} left
+     * @param {number} top
      */
-    reloadNodes()
+    reloadNodes(left = 0, top = 0)
     {
         if (this._entranceNode) {
-            this._entranceNode.reload();
+            this._entranceNode.reload(left, top);
         }
 
         this._domNodes.forEach(node => {
-            node.reload();
+            node.reload(left, top);
         });
 
         this._hrList.forEach(hr => {
-            hr.reload();
+            hr.reload(left, top);
         });
 
         if (this.scrollMode === DocumentViewer.SCROLL_MODE_SCROLLER) {
