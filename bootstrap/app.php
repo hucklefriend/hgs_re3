@@ -28,6 +28,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\AdminSearchBreadcrumb::class,
         ]);
 
+        $middleware->alias([
+            'gpts.api_key' => \App\Http\Middleware\GptsApiKeyMiddleware::class,
+        ]);
+
         //$middleware->append(CrossOriginHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'gpts_api_key' => env('GPTS_API_KEY', 'your-default-api-key'), // デフォルトのAPIキーを設定
 ];
