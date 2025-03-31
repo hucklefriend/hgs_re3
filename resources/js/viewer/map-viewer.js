@@ -898,6 +898,7 @@ export class MapViewer extends ViewerBase
             y: touch.clientY
         };
         this.lastTouchPos = { ...this.dragStartPos };
+        this.lastTouchTime = this.touchStartTime;
         
         // ドラッグ開始時の速度をリセット
         this.dragVelocity = { x: 0, y: 0 };
@@ -925,10 +926,10 @@ export class MapViewer extends ViewerBase
 
         // 現在時刻を取得
         const currentTime = performance.now();
-        const timeDelta = currentTime - this.touchStartTime;
+        const timeDelta = currentTime - this.lastTouchTime;
 
         if (timeDelta > 0) {
-            // タッチ操作用の速度計算
+            // タッチ操作用の速度計算（直近の移動のみを考慮）
             this.dragVelocity = {
                 x: (deltaX / timeDelta) * 16.67 * Param.TOUCH_DRAG_FLICK_SPEED_SCALE,
                 y: (deltaY / timeDelta) * 16.67 * Param.TOUCH_DRAG_FLICK_SPEED_SCALE
@@ -938,9 +939,9 @@ export class MapViewer extends ViewerBase
         // カメラ位置を更新
         this.moveCamera(-deltaX, -deltaY);
 
-        // 現在位置を保存
+        // 現在位置と時刻を保存
         this.lastTouchPos = currentPos;
-        this.touchStartTime = currentTime;
+        this.lastTouchTime = currentTime;
 
         window.hgn.setDrawMain(false);
     }
@@ -954,15 +955,20 @@ export class MapViewer extends ViewerBase
     {
         if (!this.isDragging) return;
         
-        // 十分な速度がある場合のみフリックを開始
-        const speed = Math.sqrt(
-            this.dragVelocity.x * this.dragVelocity.x +
-            this.dragVelocity.y * this.dragVelocity.y
-        );
+        const currentTime = performance.now();
+        const timeSinceLastMove = currentTime - this.lastTouchTime;
 
-        if (speed >= Param.TOUCH_MIN_FLICK_SPEED) {
-            this.isFlicking = true;
-            this.flickVelocity = { ...this.dragVelocity };
+        // 最後の移動から50ms以上経過している場合は止まっているとみなす
+        if (timeSinceLastMove < 50) {
+            const speed = Math.sqrt(
+                this.dragVelocity.x * this.dragVelocity.x +
+                this.dragVelocity.y * this.dragVelocity.y
+            );
+
+            if (speed >= Param.TOUCH_MIN_FLICK_SPEED) {
+                this.isFlicking = true;
+                this.flickVelocity = { ...this.dragVelocity };
+            }
         }
 
         this.isDragging = false;
