@@ -34,9 +34,9 @@ export class Param
     static MOUSE_MIN_FLICK_SPEED = 1.0;     // マウス操作での最小フリック速度
 
     // フリック関連のパラメータ（タッチ操作用）
-    static TOUCH_DRAG_FLICK_RATE = 0.85;    // タッチ操作用の減速率（マウスより早く減速）
-    static TOUCH_DRAG_FLICK_SPEED_SCALE = 4; // タッチ操作用の初速スケール（マウスより速く）
-    static TOUCH_MIN_FLICK_SPEED = 0.5;     // タッチ操作での最小フリック速度（マウスより小さい値）
+    static TOUCH_DRAG_FLICK_RATE = 0.95;    // タッチ操作用の減速率（より滑らかな減速）
+    static TOUCH_DRAG_FLICK_SPEED_SCALE = 2.5; // タッチ操作用の初速スケール（より自然な初速）
+    static TOUCH_MIN_FLICK_SPEED = 0.3;     // タッチ操作での最小フリック速度（より小さな動きでも反応）
 
     // 後方互換性のため残す（非推奨）
     static DRAG_FLICK_RATE = 0.9;
