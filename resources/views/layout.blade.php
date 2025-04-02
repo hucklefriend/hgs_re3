@@ -76,7 +76,7 @@
     </main>
 </div>
 <div id="map"></div>
-<div id="map-sub">@yield('map-sub')</div>
+@yield('map-sub')
 <div id="content-node-blur"></div>
 <div id="content-node" class="content-node-closed">
     <canvas id="content-node-canvas"></canvas>

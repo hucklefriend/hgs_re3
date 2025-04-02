@@ -655,16 +655,17 @@ canvas#main-network-debug-canvas {
 }
 
 
-#map-sub {
+.map-sub {
     opacity: 0;
     animation: none;
+    z-index: 1000;
 }
 
-#map-sub.fade-in {
+.map-sub.fade-in {
     animation: mapSubFadeIn 0.5s ease-in-out forwards;
 }
 
-#map-sub.fade-out {
+.map-sub.fade-out {
     animation: mapSubFadeOut 0.5s ease-in-out forwards;
 }
 
