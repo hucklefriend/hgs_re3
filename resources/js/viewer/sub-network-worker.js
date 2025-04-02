@@ -596,6 +596,7 @@ class SubNetworkPointNode
 
 let subNetworkWorker = null;
 let animId = null;
+let isDrawing = false;
 
 self.onmessage = function(event) {
     switch (event.data.type) {
@@ -624,14 +625,17 @@ self.onmessage = function(event) {
             break;
 
         case 'draw':
-            if (animId !== null) {
-                cancelAnimationFrame(animId);
-                animId = null;
+            if (!isDrawing) {
+                isDrawing = true;
+                if (animId !== null) {
+                    cancelAnimationFrame(animId);
+                }
+                animId = requestAnimationFrame(() => {
+                    animId = null;
+                    isDrawing = false;
+                    subNetworkWorker.draw(event.data.viewRect);
+                });
             }
-            animId = requestAnimationFrame(() => {
-                animId = null;
-                subNetworkWorker.draw(event.data.viewRect);
-            });
             break;
     }
 };
