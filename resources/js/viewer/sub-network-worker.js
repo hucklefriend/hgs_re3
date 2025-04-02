@@ -37,11 +37,40 @@ export class SubNetworkWorker
         this.nextBuffer = this.backBuffer2;
         this.nextCtx = this.backCtx2;
 
+        // 描画状態のキャッシュ
+        this._strokeStyle = "rgba(0, 100, 0, 0.8)";
+        this._lineWidth = 1;
+        this._shadowColor = "lime";
+        this._shadowBlur = 3;
+        this._fillStyle = "rgba(0, 150, 0, 0.8)";
+
         this.windowWidth = 0;
         this.windowHeight = 0;
         this.networks = {};
 
         this.fadeCnt = 7;
+    }
+
+    /**
+     * 描画状態の設定
+     */
+    _setDrawingState(ctx)
+    {
+        if (ctx.strokeStyle !== this._strokeStyle) {
+            ctx.strokeStyle = this._strokeStyle;
+        }
+        if (ctx.lineWidth !== this._lineWidth) {
+            ctx.lineWidth = this._lineWidth;
+        }
+        if (ctx.shadowColor !== this._shadowColor) {
+            ctx.shadowColor = this._shadowColor;
+        }
+        if (ctx.shadowBlur !== this._shadowBlur) {
+            ctx.shadowBlur = this._shadowBlur;
+        }
+        if (ctx.fillStyle !== this._fillStyle) {
+            ctx.fillStyle = this._fillStyle;
+        }
     }
 
     /**
@@ -112,11 +141,8 @@ export class SubNetworkWorker
         // 次のバッファをクリア
         this.nextCtx.clearRect(0, 0, this.nextBuffer.width, this.nextBuffer.height);
         
-        this.nextCtx.strokeStyle = "rgba(0, 100, 0, 0.8)";
-        this.nextCtx.lineWidth = 1;
-        this.nextCtx.shadowColor = "lime";
-        this.nextCtx.shadowBlur = 3;
-        this.nextCtx.fillStyle = "rgba(0, 150, 0, 0.8)";
+        // 描画状態を設定
+        this._setDrawingState(this.nextCtx);
 
         // 次のバッファに描画
         Object.keys(this.networks).forEach((key) => {
@@ -151,7 +177,8 @@ export class SubNetworkWorker
     setStrokeStyle()
     {
         let alpha = this.fadeCnt / 10;
-        this.currentCtx.strokeStyle = "rgba(0, 70, 0, " + alpha + ")"; // 線の色と透明度
+        this._strokeStyle = "rgba(0, 70, 0, " + alpha + ")";
+        this._setDrawingState(this.currentCtx);
     }
 
     /**
@@ -489,6 +516,7 @@ class SubNetworkPointNode
         this.parentConnect = nodeData.parentConnect;
 
         this.drawOffsetY = 0;
+        this._path = null;
     }
 
     /**
@@ -558,6 +586,18 @@ class SubNetworkPointNode
     }
 
     /**
+     * パスの更新
+     */
+    _updatePath(ctx, x, y, r)
+    {
+        if (!this._path) {
+            this._path = new Path2D();
+        }
+        this._path = new Path2D();
+        this._path.arc(x, y, r, 0, MATH_PI_2, false);
+    }
+
+    /**
      * 描画するか
      */
     isDraw()
@@ -588,44 +628,39 @@ class SubNetworkPointNode
 
         this.isOutView = false;
         if (viewRect !== null) {
-            if (drawX < viewRect.left) {
-                this.isOutView = true;
-            } else if (drawX > viewRect.right) {
-                this.isOutView = true;
-            } else if (drawY < viewRect.top) {
-                this.isOutView = true;
-            } else if (drawY > viewRect.bottom) {
+            if (drawX < viewRect.left || drawX > viewRect.right ||
+                drawY < viewRect.top || drawY > viewRect.bottom) {
                 this.isOutView = true;
             }
         }
 
         // 接続先が描画されているならエッジを描画
-        this.connects.forEach(connect => {
-            const [targetNo, targetVertexNo] = connect;
+        if (!this.isOutDepth) {
+            this.connects.forEach(connect => {
+                const [targetNo, targetVertexNo] = connect;
+                const targetNode = network.getNode(targetNo);
+                if (targetNode && targetNode.isDraw()) {
+                    ctx.beginPath();
+                    ctx.moveTo(drawX, drawY);
 
-            const targetNode = network.getNode(targetNo);
-            if (targetNode && targetNode.isDraw() && !this.isOutDepth) {
-                ctx.beginPath();
-                ctx.moveTo(drawX, drawY);
-
-                if (targetNode instanceof SubNetworkPointNode) {
-                    ctx.lineTo(targetNode.x + offsetX, targetNode.y + offsetY - targetNode.drawOffsetY);
-                } else if (targetNo == -1) {
-                    ctx.lineTo(targetNode.vertices[targetVertexNo].x,
-                        targetNode.vertices[targetVertexNo].y);
-                } else {
-                    ctx.lineTo(targetNode.vertices[targetVertexNo].x + offsetX,
-                        targetNode.vertices[targetVertexNo].y + offsetY - targetNode.drawOffsetY);
+                    if (targetNode instanceof SubNetworkPointNode) {
+                        ctx.lineTo(targetNode.x + offsetX, targetNode.y + offsetY - targetNode.drawOffsetY);
+                    } else if (targetNo == -1) {
+                        ctx.lineTo(targetNode.vertices[targetVertexNo].x,
+                            targetNode.vertices[targetVertexNo].y);
+                    } else {
+                        ctx.lineTo(targetNode.vertices[targetVertexNo].x + offsetX,
+                            targetNode.vertices[targetVertexNo].y + offsetY - targetNode.drawOffsetY);
+                    }
+                    
+                    ctx.stroke();
                 }
-                
-                ctx.stroke();
-            }
-        });
+            });
+        }
 
         if (this.isDraw()) {
-            ctx.beginPath();
-            ctx.arc(this.x + offsetX, drawY, this.r, 0, MATH_PI_2, false);
-            ctx.fill();
+            this._updatePath(ctx, drawX, drawY, this.r);
+            ctx.fill(this._path);
         }
     }
 }
