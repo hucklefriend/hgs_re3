@@ -632,8 +632,8 @@ self.onmessage = function(event) {
                 }
                 animId = requestAnimationFrame(() => {
                     animId = null;
-                    isDrawing = false;
                     subNetworkWorker.draw(event.data.viewRect);
+                    isDrawing = false;
                 });
             }
             break;
