@@ -25,10 +25,6 @@ export class SubNetworkWorker
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
 
-        // バックバッファの作成
-        this.backBuffer = new OffscreenCanvas(1, 1);
-        this.backCtx = this.backBuffer.getContext('2d');
-
         this.windowWidth = 0;
         this.windowHeight = 0;
         this.networks = {};
@@ -97,27 +93,17 @@ export class SubNetworkWorker
         const offsetX = viewRect.left - (viewRect.left * SUB_NETWORK_SCROLL_RATE);
         const offsetY = viewRect.top - (viewRect.top * SUB_NETWORK_SCROLL_RATE);
 
-        // バックバッファのサイズを設定
-        this.backBuffer.width = this.canvas.width;
-        this.backBuffer.height = this.canvas.height;
-
-        // バックバッファをクリア
-        this.backCtx.clearRect(0, 0, this.backBuffer.width, this.backBuffer.height);
-        
-        this.backCtx.strokeStyle = "rgba(0, 100, 0, 0.8)";
-        this.backCtx.lineWidth = 1;
-        this.backCtx.shadowColor = "lime";
-        this.backCtx.shadowBlur = 3;
-        this.backCtx.fillStyle = "rgba(0, 150, 0, 0.8)";
-
-        // バックバッファに描画
-        Object.keys(this.networks).forEach((key) => {
-            this.networks[key].draw(this.backCtx, viewRect, offsetX, offsetY);
-        });
-
-        // バックバッファの内容をメインキャンバスにコピー
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.drawImage(this.backBuffer, 0, 0);
+        
+        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
+        this.ctx.lineWidth = 1; // 線の太さ
+        this.ctx.shadowColor = "lime"; // 影の色
+        this.ctx.shadowBlur = 3; // 影のぼかし効果
+        this.ctx.fillStyle = "rgba(0, 150, 0, 0.8)";
+
+        Object.keys(this.networks).forEach((key) => {
+            this.networks[key].draw(this.ctx, viewRect, offsetX, offsetY);
+        });
     }
 
     addFadeCnt(addCnt)
@@ -152,10 +138,6 @@ export class SubNetworkWorker
         this.canvas.height = canvasHeight;
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-
-        // バックバッファのサイズも更新
-        this.backBuffer.width = canvasWidth;
-        this.backBuffer.height = canvasHeight;
 
         Object.values(this.networks).forEach(network => {
             network.updateNodesDrawOffset(this.windowWidth, this.windowHeight);
