@@ -194,6 +194,9 @@ hr {
     touch-action: none;
     user-select: none;
     width: 100%;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 #bg {
