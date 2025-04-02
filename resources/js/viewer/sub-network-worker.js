@@ -22,8 +22,20 @@ export class SubNetworkWorker
      */
     constructor(canvas)
     {
-        this.canvas = canvas;
-        this.ctx = this.canvas.getContext('2d');
+        this.displayCanvas = canvas;
+        this.displayCtx = this.displayCanvas.getContext('2d');
+
+        // 2つのオフスクリーンキャンバスを作成
+        this.backBuffer1 = new OffscreenCanvas(1, 1);
+        this.backBuffer2 = new OffscreenCanvas(1, 1);
+        this.backCtx1 = this.backBuffer1.getContext('2d');
+        this.backCtx2 = this.backBuffer2.getContext('2d');
+
+        // 現在使用中のバッファを追跡
+        this.currentBuffer = this.backBuffer1;
+        this.currentCtx = this.backCtx1;
+        this.nextBuffer = this.backBuffer2;
+        this.nextCtx = this.backCtx2;
 
         this.windowWidth = 0;
         this.windowHeight = 0;
@@ -93,17 +105,35 @@ export class SubNetworkWorker
         const offsetX = viewRect.left - (viewRect.left * SUB_NETWORK_SCROLL_RATE);
         const offsetY = viewRect.top - (viewRect.top * SUB_NETWORK_SCROLL_RATE);
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        this.ctx.strokeStyle = "rgba(0, 100, 0, 0.8)"; // 線の色と透明度
-        this.ctx.lineWidth = 1; // 線の太さ
-        this.ctx.shadowColor = "lime"; // 影の色
-        this.ctx.shadowBlur = 3; // 影のぼかし効果
-        this.ctx.fillStyle = "rgba(0, 150, 0, 0.8)";
+        // 次のバッファのサイズを設定
+        this.nextBuffer.width = this.displayCanvas.width;
+        this.nextBuffer.height = this.displayCanvas.height;
 
+        // 次のバッファをクリア
+        this.nextCtx.clearRect(0, 0, this.nextBuffer.width, this.nextBuffer.height);
+        
+        this.nextCtx.strokeStyle = "rgba(0, 100, 0, 0.8)";
+        this.nextCtx.lineWidth = 1;
+        this.nextCtx.shadowColor = "lime";
+        this.nextCtx.shadowBlur = 3;
+        this.nextCtx.fillStyle = "rgba(0, 150, 0, 0.8)";
+
+        // 次のバッファに描画
         Object.keys(this.networks).forEach((key) => {
-            this.networks[key].draw(this.ctx, viewRect, offsetX, offsetY);
+            this.networks[key].draw(this.nextCtx, viewRect, offsetX, offsetY);
         });
+
+        // 描画完了後、バッファをスワップ
+        this.displayCtx.clearRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
+        this.displayCtx.drawImage(this.nextBuffer, 0, 0);
+
+        // バッファの参照をスワップ
+        const tempBuffer = this.currentBuffer;
+        const tempCtx = this.currentCtx;
+        this.currentBuffer = this.nextBuffer;
+        this.currentCtx = this.nextCtx;
+        this.nextBuffer = tempBuffer;
+        this.nextCtx = tempCtx;
     }
 
     addFadeCnt(addCnt)
@@ -121,7 +151,7 @@ export class SubNetworkWorker
     setStrokeStyle()
     {
         let alpha = this.fadeCnt / 10;
-        this.ctx.strokeStyle = "rgba(0, 70, 0, " + alpha + ")"; // 線の色と透明度
+        this.currentCtx.strokeStyle = "rgba(0, 70, 0, " + alpha + ")"; // 線の色と透明度
     }
 
     /**
@@ -134,10 +164,16 @@ export class SubNetworkWorker
      */
     resize(canvasWidth, canvasHeight, windowWidth, windowHeight)
     {
-        this.canvas.width = canvasWidth;
-        this.canvas.height = canvasHeight;
+        this.displayCanvas.width = canvasWidth;
+        this.displayCanvas.height = canvasHeight;
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
+
+        // 両方のバッファのサイズを更新
+        this.backBuffer1.width = canvasWidth;
+        this.backBuffer1.height = canvasHeight;
+        this.backBuffer2.width = canvasWidth;
+        this.backBuffer2.height = canvasHeight;
 
         Object.values(this.networks).forEach(network => {
             network.updateNodesDrawOffset(this.windowWidth, this.windowHeight);
