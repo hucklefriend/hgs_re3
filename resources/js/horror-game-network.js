@@ -105,6 +105,8 @@ export class HorrorGameNetwork
             this.frameCount = 0;
             this.fps = 0;
         }
+
+        this._scrollTimeout = null;
     }
 
     /**
@@ -326,7 +328,14 @@ export class HorrorGameNetwork
     {
         this.viewer.scroll(isNewViewer);
 
-        this.setDrawSub();
+        // スクロール処理を遅延実行
+        if (this._scrollTimeout !== null) {
+            clearTimeout(this._scrollTimeout);
+        }
+        this._scrollTimeout = setTimeout(() => {
+            this.setDrawSub();
+            this._scrollTimeout = null;
+        }, 16); // 約60fps
     }
 
     /**
