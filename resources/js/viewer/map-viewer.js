@@ -895,7 +895,6 @@ export class MapViewer extends ViewerBase
     {
         // タッチされた要素がLinkNodeの場合はイベントを伝播させる
         if (e.target.closest('.link-node')) {
-            console.log('link-node');
             return;  // イベントを伝播させる
         }
 

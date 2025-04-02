@@ -280,6 +280,10 @@ export class MainFranchiseNetwork extends Network
     {
         this.DOM.style.display = 'block';
         this._isShow = true;
+
+        Object.values(this.nodes).forEach(node => {
+            node.setIsInViewRect(true);
+        });
     }
 
     /**
@@ -289,6 +293,10 @@ export class MainFranchiseNetwork extends Network
     {
         this.DOM.style.display = 'none';
         this._isShow = false;
+
+        Object.values(this.nodes).forEach(node => {
+            node.setIsInViewRect(false);
+        });
     }
 
     /**
