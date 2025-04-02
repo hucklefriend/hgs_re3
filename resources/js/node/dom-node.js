@@ -106,6 +106,16 @@ export class DOMNode extends OctaNode
     }
 
     /**
+     * 表示するかどうか設定
+     *
+     * @param isInViewRect
+     */
+    setIsInViewRect(isInViewRect)
+    {
+        this._isInViewRect = isInViewRect;
+    }
+
+    /**
      * サブネットワークの生成
      */
     createSubNetwork()

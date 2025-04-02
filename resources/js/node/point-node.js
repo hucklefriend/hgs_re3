@@ -30,6 +30,16 @@ export class PointNode extends Vertex
     }
 
     /**
+     * 表示するかどうか設定
+     *
+     * @param isInViewRect
+     */
+    setIsInViewRect(isInViewRect)
+    {
+        this._isInViewRect = isInViewRect;
+    }
+
+    /**
      * 削除
      * ガベージコレクションに任せる
      */

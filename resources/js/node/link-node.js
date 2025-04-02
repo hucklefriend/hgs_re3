@@ -112,7 +112,6 @@ export class LinkNode extends SimpleNode
      */
     mouseClick()
     {
-        console.log('click');
         if (!this.isEnableMouse) {
             return;
         }

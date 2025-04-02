@@ -3,7 +3,7 @@
 @section('title', 'ホラーゲームネットワーク')
 
 @section('map-sub')
-<div class="map-header" id="horror-game-search-header">
+<div class="map-sub map-header" id="horror-game-search-header">
     <div class="header-content">
         <form id="search-form" method="GET" action="{{ route('Api.Game.SearchHorrorGame') }}" onsubmit="return false;">
             <div class="search-container">

@@ -63,8 +63,7 @@ export class MapViewer extends ViewerBase
         this.mapDOM.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
         this.mapDOM.style.display = 'none';
 
-        this.mapSubDOM = document.querySelector('#map-sub');
-        this.mapSubDOM.style.display = 'none';
+        this.mapSubDOMs = null;
 
         this.dataCache = null;
         this.isWait = false;
@@ -124,7 +123,6 @@ export class MapViewer extends ViewerBase
     {
         window.hgn.body.style.overflow = 'hidden';
         this.mapDOM.style.display = 'block';
-        this.mapSubDOM.style.display = 'block';
         this.cameraPos.reload(0, 0);
 
         let data = null;
@@ -137,7 +135,8 @@ export class MapViewer extends ViewerBase
             }
 
             if (this.dataCache.sub) {
-                this.mapSubDOM.innerHTML = this.dataCache.sub;
+                // #mapの兄弟要素として追加
+                this.mapDOM.insertAdjacentHTML('afterend', this.dataCache.sub);
             }
 
             // 戻るで来てなければURLを更新
@@ -156,6 +155,9 @@ export class MapViewer extends ViewerBase
             data = JSON.parse(LZString.decompressFromEncodedURIComponent(window.map));
             window.map = null;
         }
+
+        // マップサブの初期化
+        this.mapSubDOMs = document.querySelectorAll('.map-sub');
 
         this.origin.x = data.origin.x;
         this.origin.y = data.origin.y;
@@ -186,14 +188,15 @@ export class MapViewer extends ViewerBase
     end()
     {
         this.mapDOM.style.display = 'none';
-        this.mapSubDOM.style.display = 'none';
 
         this.networks.forEach(network => {
             network.delete();
         });
 
-        this.mapSubDOM.innerHTML = '';
-        this.mapSubDOM.classList.remove('fade-out', 'fade-in');
+        this.mapSubDOMs.forEach(dom => {
+            dom.remove();
+        });
+        this.mapSubDOMs = null;
 
         window.hgn.body.style.overflow = 'auto';
     }
@@ -209,8 +212,11 @@ export class MapViewer extends ViewerBase
             return;
         }
 
+        // イベントの伝播を停止
+        e.stopPropagation();
+
         this.isDragging = true;
-        this.isTouchOperation = false;  // マウス操作フラグを設定
+        this.isTouchOperation = false;
         this.mapDOM.style.cursor = 'grabbing';
 
         if (e.type === 'touchstart') {
@@ -238,9 +244,13 @@ export class MapViewer extends ViewerBase
             return;
         }
 
-        if (!this.isDragging){
+        if (!this.isDragging) {
             return;
         }
+
+        // イベントの伝播を停止
+        e.stopPropagation();
+
         let clientX, clientY;
 
         if (e.type === 'touchmove') {
@@ -271,7 +281,6 @@ export class MapViewer extends ViewerBase
 
         if (timeDelta > 0.1) {
             // 速度を計算（フリックのために保持）
-            // 単位時間あたりの移動量として計算し、スケールを適用
             this.dragVelocity.x = (deltaX / timeDelta * 16.67) * Param.MOUSE_DRAG_FLICK_SPEED_SCALE;
             this.dragVelocity.y = (deltaY / timeDelta * 16.67) * Param.MOUSE_DRAG_FLICK_SPEED_SCALE;
         } else {
@@ -740,7 +749,9 @@ export class MapViewer extends ViewerBase
         });
 
         setTimeout(() => {
-            this.mapSubDOM.classList.add('fade-in');
+            this.mapSubDOMs.forEach(dom => {
+                dom.classList.add('fade-in');
+            });
         }, 100);
 
         window.hgn.body.style.overflow = 'hidden';
@@ -755,7 +766,9 @@ export class MapViewer extends ViewerBase
             network.disappear();
         });
 
-        this.mapSubDOM.classList.add('fade-out');
+        this.mapSubDOMs.forEach(dom => {
+            dom.classList.add('fade-out');
+        });
     }
 
     /**
@@ -882,7 +895,6 @@ export class MapViewer extends ViewerBase
     {
         // タッチされた要素がLinkNodeの場合はイベントを伝播させる
         if (e.target.closest('.link-node')) {
-            console.log('link-node');
             return;  // イベントを伝播させる
         }
 
