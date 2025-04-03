@@ -160,6 +160,8 @@ export class SubNetworkWorker
         this.currentCtx = this.nextCtx;
         this.nextBuffer = tempBuffer;
         this.nextCtx = tempCtx;
+
+        return this.currentBuffer.transferToImageBitmap();
     }
 
     addFadeCnt(addCnt)
@@ -703,8 +705,10 @@ self.onmessage = function(event) {
                 }
                 animId = requestAnimationFrame(() => {
                     animId = null;
-                    subNetworkWorker.draw(event.data.viewRect);
+                    const bitmap = subNetworkWorker.draw(event.data.viewRect);
                     isDrawing = false;
+
+                    self.postMessage({ type: 'draw-complete', bitmap: bitmap }, [bitmap]);
                 });
             }
             break;
