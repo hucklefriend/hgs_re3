@@ -150,7 +150,7 @@ export class SubNetworkWorker
         });
 
         // 描画完了後、バッファをスワップ
-        this.displayCtx.clearRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
+        //:this.displayCtx.clearRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
         this.displayCtx.drawImage(this.nextBuffer, 0, 0);
 
         // バッファの参照をスワップ
