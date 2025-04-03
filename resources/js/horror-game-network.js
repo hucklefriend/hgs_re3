@@ -50,7 +50,6 @@ export class HorrorGameNetwork
 
         // メインのcanvas
         this.mainCanvas = document.querySelector('#main-canvas');
-        this.mainCtx = null;
         this.mainCtx = this.mainCanvas.getContext('2d');
 
         // オフスクリーンキャンバスの生成
@@ -74,9 +73,21 @@ export class HorrorGameNetwork
             : new URL('./viewer/sub-network-worker.js', import.meta.url);   // 本番用
         const worker = new Worker(workerUrl, { type: 'module' });
         this.subNetworkWorker = worker;
-        const subCanvas = document.querySelector('#sub-canvas');
-        const subCanvasOffscreen = subCanvas.transferControlToOffscreen();
-        this.subNetworkWorker.postMessage({ type: 'init', canvas: subCanvasOffscreen }, [subCanvasOffscreen]);
+        this.subCanvas = document.querySelector('#sub-canvas');
+        this.subCanvasOffscreen = new OffscreenCanvas(this.subCanvas.width, this.subCanvas.height);
+        this.subNetworkWorker.postMessage({ type: 'init', canvas: this.subCanvasOffscreen }, [this.subCanvasOffscreen]);
+        this.subCtx = this.subCanvas.getContext('2d');
+
+        // ワーカーメッセージのハンドラを設定
+        this.subNetworkWorker.onmessage = (e) => {
+            if (e.data.type === 'draw-complete') {
+                // ワーカーでの描画が完了したら、subCanvasに描画
+                this.subCtx.clearRect(0, 0, this.subCanvas.width, this.subCanvas.height);
+                this.subCtx.drawImage(e.data.bitmap, 0, 0);
+                // ImageBitmapを使用後に解放
+                e.data.bitmap.close();
+            }
+        };
 
         window.addEventListener('popstate', (e) => {
             this.popState(e);
