@@ -214,7 +214,7 @@ export class SubNetwork extends Network
         });
 
         // サブネットワークワーカーへデータを転送
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'add-network',
             subNetwork: {
                 id: this.parentNode.id,
@@ -237,7 +237,7 @@ export class SubNetwork extends Network
         });
 
         // サブネットワークワーカーへ更新データを転送
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'set-node-pos',
             subNetwork: {
                 id: this.parentNode.id,
@@ -252,7 +252,7 @@ export class SubNetwork extends Network
      */
     postSetDrawDepth()
     {
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'set-draw-depth', 
             id: this.parentNode.id,
             min: this.minDrawDepth,
