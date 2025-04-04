@@ -25,18 +25,6 @@ export class SubNetworkWorker
         this.displayCanvas = canvas;
         this.displayCtx = this.displayCanvas.getContext('2d');
 
-        // 2つのオフスクリーンキャンバスを作成
-        this.backBuffer1 = new OffscreenCanvas(1, 1);
-        this.backBuffer2 = new OffscreenCanvas(1, 1);
-        this.backCtx1 = this.backBuffer1.getContext('2d');
-        this.backCtx2 = this.backBuffer2.getContext('2d');
-
-        // 現在使用中のバッファを追跡
-        this.currentBuffer = this.backBuffer1;
-        this.currentCtx = this.backCtx1;
-        this.nextBuffer = this.backBuffer2;
-        this.nextCtx = this.backCtx2;
-
         // 描画状態のキャッシュ
         this._strokeStyle = "rgba(0, 100, 0, 0.8)";
         this._lineWidth = 1;
@@ -52,36 +40,27 @@ export class SubNetworkWorker
     }
 
     /**
-     * 描画状態の設定
+     * 描画状態を設定
+     * 
+     * @param {CanvasRenderingContext2D} ctx 
      */
     _setDrawingState(ctx)
     {
-        if (ctx.strokeStyle !== this._strokeStyle) {
-            ctx.strokeStyle = this._strokeStyle;
-        }
-        if (ctx.lineWidth !== this._lineWidth) {
-            ctx.lineWidth = this._lineWidth;
-        }
-        if (ctx.shadowColor !== this._shadowColor) {
-            ctx.shadowColor = this._shadowColor;
-        }
-        if (ctx.shadowBlur !== this._shadowBlur) {
-            ctx.shadowBlur = this._shadowBlur;
-        }
-        if (ctx.fillStyle !== this._fillStyle) {
-            ctx.fillStyle = this._fillStyle;
-        }
+        ctx.strokeStyle = this._strokeStyle;
+        ctx.lineWidth = this._lineWidth;
+        ctx.shadowColor = this._shadowColor;
+        ctx.shadowBlur = this._shadowBlur;
+        ctx.fillStyle = this._fillStyle;
     }
 
     /**
      * ネットワークの追加
      * 
-     * @param {Object} data
-     * @returns {void}
+     * @param {Object} subNetwork 
      */
-    addNetwork(data)
+    addNetwork(subNetwork)
     {
-        this.networks[data.id] = new SimpleSubNetwork(data, this.windowWidth, this.windowHeight);
+        this.networks[subNetwork.id] = new SimpleSubNetwork(subNetwork);
     }
 
     /**
@@ -89,40 +68,32 @@ export class SubNetworkWorker
      */
     clearNetworks()
     {
-        // クリアされていても何回も呼ばれる場合があるのでクリア済みかは見ている
-        const keys = Object.keys(this.networks);
-        if (keys.length > 0) {
-            Object.keys(this.networks).forEach((key) => {
-                this.networks[key].delete();
-                delete this.networks[key];
-            });
-            this.networks = {};
+        this.networks = {};
+    }
+
+    /**
+     * ノードの位置を設定
+     * 
+     * @param {Object} subNetwork 
+     */
+    setNodePos(subNetwork)
+    {
+        if (this.networks[subNetwork.id]) {
+            this.networks[subNetwork.id].setNodePos(subNetwork);
         }
     }
 
     /**
-     * 1ネットワーク内のノードの位置をセット
+     * 描画深さの設定
      * 
-     * @param {Object} data 
-     */
-    setNodePos(data)
-    {
-        this.networks[data.id].updateNodes(data, this.windowWidth, this.windowHeight);
-    }
-
-    /**
-     * 1ネットワークの描画深さをセット
-     * 
-     * @param {int} id
-     * @param {int} min
-     * @param {int} max
-     * @returns {void}
+     * @param {string} id 
+     * @param {number} min 
+     * @param {number} max 
      */
     setDrawDepth(id, min, max)
     {
         if (this.networks[id]) {
-            this.networks[id].minDrawDepth = min;
-            this.networks[id].maxDrawDepth = max;
+            this.networks[id].setDrawDepth(min, max);
         }
     }
 
@@ -134,53 +105,26 @@ export class SubNetworkWorker
         const offsetX = viewRect.left - (viewRect.left * SUB_NETWORK_SCROLL_RATE);
         const offsetY = viewRect.top - (viewRect.top * SUB_NETWORK_SCROLL_RATE);
 
-        // 次のバッファのサイズを設定
-        this.nextBuffer.width = this.displayCanvas.width;
-        this.nextBuffer.height = this.displayCanvas.height;
-
-        // 次のバッファをクリア
-        this.nextCtx.clearRect(0, 0, this.nextBuffer.width, this.nextBuffer.height);
+        // キャンバスをクリア
+        this.displayCtx.clearRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
         
         // 描画状態を設定
-        this._setDrawingState(this.nextCtx);
+        this._setDrawingState(this.displayCtx);
 
-        // 次のバッファに描画
+        // 描画実行
         Object.keys(this.networks).forEach((key) => {
-            this.networks[key].draw(this.nextCtx, viewRect, offsetX, offsetY);
+            this.networks[key].draw(this.displayCtx, viewRect, offsetX, offsetY);
         });
 
-        // 描画完了後、バッファをスワップ
-        //:this.displayCtx.clearRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
-        this.displayCtx.drawImage(this.nextBuffer, 0, 0);
-
-        // バッファの参照をスワップ
-        const tempBuffer = this.currentBuffer;
-        const tempCtx = this.currentCtx;
-        this.currentBuffer = this.nextBuffer;
-        this.currentCtx = this.nextCtx;
-        this.nextBuffer = tempBuffer;
-        this.nextCtx = tempCtx;
-
-        return this.currentBuffer.transferToImageBitmap();
-    }
-
-    addFadeCnt(addCnt)
-    {
-        this.fadeCnt += addCnt;
-        if (this.fadeCnt > 7) {
-            this.fadeCnt = 7;
-        } else if (this.fadeCnt < 0) {
-            this.fadeCnt = 0;
-        }
-
-        this.setStrokeStyle();
+        // ImageBitmapを作成して返す
+        return this.displayCanvas.transferToImageBitmap();
     }
 
     setStrokeStyle()
     {
         let alpha = this.fadeCnt / 10;
         this._strokeStyle = "rgba(0, 70, 0, " + alpha + ")";
-        this._setDrawingState(this.currentCtx);
+        this._setDrawingState(this.displayCtx);
     }
 
     /**
@@ -197,12 +141,6 @@ export class SubNetworkWorker
         this.displayCanvas.height = canvasHeight;
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
-
-        // 両方のバッファのサイズを更新
-        this.backBuffer1.width = canvasWidth;
-        this.backBuffer1.height = canvasHeight;
-        this.backBuffer2.width = canvasWidth;
-        this.backBuffer2.height = canvasHeight;
 
         Object.values(this.networks).forEach(network => {
             network.updateNodesDrawOffset(this.windowWidth, this.windowHeight);
@@ -256,6 +194,18 @@ class SimpleSubNetwork
     }
 
     /**
+     * 描画深さの設定
+     * 
+     * @param {number} min 
+     * @param {number} max 
+     */
+    setDrawDepth(min, max)
+    {
+        this.minDrawDepth = min;
+        this.maxDrawDepth = max;
+    }
+
+    /**
      * 各ノードの描画オフセットを設定
      * 
      * @param {number} windowWidth
@@ -269,21 +219,19 @@ class SimpleSubNetwork
     }
 
     /**
-     * ノードの更新
+     * ノードの位置を設定
      * 
-     * @param {*} data 
+     * @param {Object} subNetwork 
      */
-    updateNodes(data, windowWidth, windowHeight)
+    setNodePos(subNetwork)
     {
-        if (data.hasOwnProperty('parent')) {
-            this.parentNode.update(data.parent);
+        if (subNetwork.hasOwnProperty('parent')) {
+            this.parentNode.update(subNetwork.parent);
         }
 
-        Object.keys(data.nodes).forEach((no) => {
-            this.nodes[no].update(data.nodes[no]);
+        Object.keys(subNetwork.nodes).forEach((no) => {
+            this.nodes[no].update(subNetwork.nodes[no]);
         });
-
-        this.updateNodesDrawOffset(windowWidth, windowHeight);
     }
 
     /**

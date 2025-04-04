@@ -319,7 +319,10 @@ export class HorrorGameNetwork
         this.offscreenCanvas.width = window.innerWidth;
         this.offscreenCanvas.height = window.innerHeight;
 
-        this.postMessageToSubNetworkWorker({
+        this.subCanvas.width = this.body.offsetWidth;
+        this.subCanvas.height = this.viewer.height;
+
+        this.subNetworkWorker.postMessage({
             type: 'resize',
             width: this.body.offsetWidth, 
             height: this.viewer.height,
@@ -413,7 +416,7 @@ export class HorrorGameNetwork
      */
     setDrawSub()
     {
-        this.postMessageToSubNetworkWorker({ type: 'draw', viewRect: this.viewer.viewRect });
+        this.subNetworkWorker.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
     }
 
     /**
