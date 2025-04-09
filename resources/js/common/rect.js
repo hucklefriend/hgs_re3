@@ -93,6 +93,20 @@ export class Rect
     }
 
     /**
+     * 別のRectの内容をコピー
+     * 
+     * @param {Rect} rect
+     */
+    copyFrom(rect)
+    {
+        this.left = rect.left;
+        this.right = rect.right;
+        this.top = rect.top;
+        this.bottom = rect.bottom;
+        this.calcSize();
+    }
+
+    /**
      * 移動
      * 
      * @param {number} x

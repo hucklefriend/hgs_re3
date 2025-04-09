@@ -98,21 +98,10 @@ export class DOMNode extends OctaNode
         this.center = new Vertex(this.x + this.w / 2, this.y + this.h / 2);
 
         this._animFunc = null;
-        this._isInViewRect = false;
 
         DOM.addEventListener('mousedown', (e) => {
             e.stopPropagation(); // イベントの伝播を停止
         });
-    }
-
-    /**
-     * 表示するかどうか設定
-     *
-     * @param isInViewRect
-     */
-    setIsInViewRect(isInViewRect)
-    {
-        this._isInViewRect = isInViewRect;
     }
 
     /**
@@ -144,7 +133,7 @@ export class DOMNode extends OctaNode
         }
 
         this.subNetwork = network;
-        this.subNetwork.postAdd();
+        //this.subNetwork.postAdd();
     }
 
     /**
@@ -352,7 +341,7 @@ export class DOMNode extends OctaNode
 
         if (this.subNetwork !== null) {
             this.subNetwork.reload();
-            this.subNetwork.postSetNodePos();
+            //this.subNetwork.postSetNodePos();
         }
     }
 
@@ -495,14 +484,29 @@ export class DOMNode extends OctaNode
      */
     update(viewRect, isInViewRectDefault = true)
     {
-        this._isInViewRect = isInViewRectDefault;
+        this.setIsInViewRect(isInViewRectDefault);
         if (viewRect !== null && !viewRect.overlapWith(this.rect)) {
-            this._isInViewRect = false;
+            this.setIsInViewRect(false);
         }
 
         if (this._animFunc !== null) {
             this._animFunc();
         }
+    }
+
+    /**
+     * サブ描画更新
+     * 
+     * @param {Rect} viewRect
+     * @param {Rect} subViewRect
+     */
+    updateSub(viewRect, subViewRect)
+    {
+        if (this.subNetwork === null) {
+            return;
+        }
+
+        this.subNetwork.update(viewRect, subViewRect);
     }
 
     /**
@@ -533,6 +537,23 @@ export class DOMNode extends OctaNode
         this.setDefaultNodeStyle(ctx);
 
         super.draw(ctx, offsetX, offsetY);
+    }   
+
+    /**
+     * サブ描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     * @param {number} minDrawDepth
+     * @param {number} maxDrawDepth
+     */
+    drawSub(ctx, viewRect, minDrawDepth, maxDrawDepth)
+    {
+        if (this.subNetwork === null) {
+            return;
+        }
+
+        this.subNetwork.draw(ctx, viewRect, minDrawDepth, maxDrawDepth);
     }
 
     /**

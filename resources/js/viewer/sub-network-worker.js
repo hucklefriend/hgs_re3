@@ -543,7 +543,6 @@ class SubNetworkPointNode
         if (!this._path) {
             this._path = new Path2D();
         }
-        this._path = new Path2D();
         this._path.arc(x, y, r, 0, MATH_PI_2, false);
     }
 

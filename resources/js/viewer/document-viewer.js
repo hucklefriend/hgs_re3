@@ -487,6 +487,23 @@ export class DocumentViewer extends ViewerBase
     }
 
     /**
+     * サブ描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    drawSub(ctx)
+    {
+        if (this._entranceNode) {
+            this._entranceNode.drawSub(ctx, this.viewRect);
+        }
+/*
+        this._domNodes.forEach(node => {
+            node.drawSub(ctx, this.viewRect);
+        });
+*/
+    }
+
+    /**
      * 更新
      */
     update()
@@ -500,6 +517,20 @@ export class DocumentViewer extends ViewerBase
         });
         this._hrList.forEach(hr => {
             hr.update(this.viewRect);
+        });
+    }
+
+    /** 
+     * サブ描画更新
+     */
+    updateSub()
+    {
+        if (this._entranceNode) {
+            this._entranceNode.updateSub(this.viewRect, window.hgn.subNetworkViewer.viewRect);
+        }
+
+        this._domNodes.forEach(node => {
+            node.updateSub(this.viewRect, window.hgn.subNetworkViewer.viewRect);
         });
     }
 

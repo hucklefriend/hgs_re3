@@ -5,7 +5,7 @@ import { PopupViewer } from './viewer/popup-viewer.js';
 import { Param } from './common/param.js';
 import { Util } from './common/util.js';
 import { Background } from './viewer/background.js';
-import SubNetworkWorker from './viewer/sub-network-worker.js';
+import { SubNetworkViewer } from './viewer/sub-network-viewer.js';
 import { loadComponents } from './components/index.js';
 import { NormalLink } from './common/normal-link.js';
 
@@ -39,9 +39,10 @@ export class HorrorGameNetwork
         this.viewer = null;         // 現在のメインビューア
         this.waitViewer = null;     // 交代前の待ちビューア
 
-        // コンテンツビューアとポップアップビューアはthis.viewerに入ることはないサブのビューア
+        // 以下はthis.viewerに入ることはないサブのビューア
         this.contentViewer = new ContentViewer();
         this.popupViewer = new PopupViewer();
+        this.subNetworkViewer = new SubNetworkViewer();
 
         this.background = new Background(); // 背景
 
@@ -66,28 +67,7 @@ export class HorrorGameNetwork
 
         this._isDrawMain = false;    // 次の更新でメインを再描画するフラグ
         this._isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
-        
-        // サブネットワークのワーカー
-        const workerUrl = import.meta.env.DEV
-            ? '/vite/resources/js/viewer/sub-network-worker.js'             // 開発用
-            : new URL('./viewer/sub-network-worker.js', import.meta.url);   // 本番用
-        const worker = new Worker(workerUrl, { type: 'module' });
-        this.subNetworkWorker = worker;
-        this.subCanvas = document.querySelector('#sub-canvas');
-        this.subCanvasOffscreen = new OffscreenCanvas(this.subCanvas.width, this.subCanvas.height);
-        this.subNetworkWorker.postMessage({ type: 'init', canvas: this.subCanvasOffscreen }, [this.subCanvasOffscreen]);
-        this.subCtx = this.subCanvas.getContext('2d');
-
-        // ワーカーメッセージのハンドラを設定
-        this.subNetworkWorker.onmessage = (e) => {
-            if (e.data.type === 'draw-complete') {
-                // ワーカーでの描画が完了したら、subCanvasに描画
-                this.subCtx.clearRect(0, 0, this.subCanvas.width, this.subCanvas.height);
-                this.subCtx.drawImage(e.data.bitmap, 0, 0);
-                // ImageBitmapを使用後に解放
-                e.data.bitmap.close();
-            }
-        };
+        this._isDrawSub = false; // サブ描画フラグ
 
         window.addEventListener('popstate', (e) => {
             this.popState(e);
@@ -222,16 +202,6 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブネットワークワーカーにメッセージを送信
-     * 
-     * @param {Object} obj
-     */
-    postMessageToSubNetworkWorker(obj)
-    {
-        this.subNetworkWorker.postMessage(obj);
-    }
-
-    /**
      * 更新 
      * 
      * @param {number} time
@@ -252,11 +222,20 @@ export class HorrorGameNetwork
             this._isDrawOutsideView = false;
         }
 
+        if (this._isDrawSub) {
+            this.subNetworkViewer.update(this.viewer.viewRect);
+            this.viewer.updateSub();
+    
+            // サブ描画
+            this.drawSub();
+            this._isDrawSub = false;
+        }
+
         // 次のビューワが交代を待っている？
         if (this.waitViewer !== null) {
             // 現在のビューワでノードが全部消えて、次のビューワの準備が整っているなら交代する
             if (this.viewer.isAllNodeDisappeared()) {
-                this.postMessageToSubNetworkWorker({ type: 'clear-networks', viewRect: this.viewer.viewRect });
+                //this.subNetworkViewer.postMessage({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
                 if (this.waitViewer.isWait) {
                     this.clearComponents(); // 作成済みコンポーネントの削除
@@ -319,16 +298,7 @@ export class HorrorGameNetwork
         this.offscreenCanvas.width = window.innerWidth;
         this.offscreenCanvas.height = window.innerHeight;
 
-        this.subCanvas.width = this.body.offsetWidth;
-        this.subCanvas.height = this.viewer.height;
-
-        this.subNetworkWorker.postMessage({
-            type: 'resize',
-            width: this.body.offsetWidth, 
-            height: this.viewer.height,
-            windowWidth: window.innerWidth,
-            windowHeight: window.innerHeight
-        });
+        this.subNetworkViewer.setCanvasSize();
 
         document.querySelector('#canvas-container-pad').style.top = this.mainCanvas.height + 'px';
     }
@@ -341,15 +311,7 @@ export class HorrorGameNetwork
     scroll(isNewViewer = false)
     {
         this.viewer.scroll(isNewViewer);
-
-        // スクロール処理を遅延実行
-        if (this._scrollTimeout !== null) {
-            clearTimeout(this._scrollTimeout);
-        }
-        this._scrollTimeout = setTimeout(() => {
-            this.setDrawSub();
-            this._scrollTimeout = null;
-        }, 16); // 約60fps
+        this.setDrawSub();
     }
 
     /**
@@ -387,6 +349,15 @@ export class HorrorGameNetwork
                 this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
             );
         }
+    }   
+
+    /**
+     * サブ描画
+     */
+    drawSub()
+    {
+        this.viewer.drawSub(this.subNetworkViewer.subOffscreenCtx);
+        this.subNetworkViewer.drawCanvas(this.viewer.viewRect);
     }
 
     /**
@@ -412,11 +383,12 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブ描画をサブネットワークワーカーへ指示
+     * サブ描画フラグを立てる
      */
     setDrawSub()
     {
-        this.subNetworkWorker.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
+        this._isDrawSub = true;
+        //this.subNetworkViewer.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
     }
 
     /**

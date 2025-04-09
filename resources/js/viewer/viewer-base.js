@@ -190,4 +190,28 @@ export class ViewerBase
     {
         
     }
+
+    /**
+     * サブ描画
+     */
+    drawSub()
+    {
+
+    }
+
+    /**
+     * 更新
+     */
+    update()
+    {
+
+    }
+
+    /**
+     * サブ描画更新
+     */
+    updateSub()
+    {
+
+    }
 }

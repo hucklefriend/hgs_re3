@@ -1,3 +1,4 @@
+import { Param } from '../common/param.js';
 import { OctaNode, SubOctaNode } from '../node/octa-node.js';
 import { SubPointNode } from "../node/point-node.js";
 import { Network } from './network.js';
@@ -165,7 +166,7 @@ export class SubNetwork extends Network
         this.minDrawDepth = min;
         this.maxDrawDepth = max;
 
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -176,7 +177,7 @@ export class SubNetwork extends Network
     setMinDrawDepth(min)
     {
         this.minDrawDepth = min;
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -187,7 +188,7 @@ export class SubNetwork extends Network
     setMaxDrawDepth(max)
     {
         this.maxDrawDepth = max;
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -204,6 +205,41 @@ export class SubNetwork extends Network
     }
 
     /**
+     * 更新
+     * 
+     * @param {Rect} viewRect
+     * @param {Rect} subViewRect
+     */
+    update(viewRect, subViewRect)
+    {
+        this.nodes.forEach(node => {
+            node.update(viewRect, subViewRect, this.minDrawDepth, this.maxDrawDepth);
+        });
+    }
+    
+
+    /**
+     * 描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     */
+    draw(ctx, viewRect)
+    {
+        // エッジを描画
+        this.nodes.forEach(node => {
+            node.drawEdge(ctx, viewRect, this.minDrawDepth, this.maxDrawDepth, this.parentNode);
+        });
+
+        // 図形を描画
+        this.nodes.forEach(node => {
+            node.draw(ctx, viewRect);
+        });
+    }
+
+
+
+    /**
      * サブネットワークワーカーへネットワーク登録をポスト
      */
     postAdd()
@@ -214,7 +250,7 @@ export class SubNetwork extends Network
         });
 
         // サブネットワークワーカーへデータを転送
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'add-network',
             subNetwork: {
                 id: this.parentNode.id,
@@ -237,7 +273,7 @@ export class SubNetwork extends Network
         });
 
         // サブネットワークワーカーへ更新データを転送
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'set-node-pos',
             subNetwork: {
                 id: this.parentNode.id,
@@ -252,7 +288,7 @@ export class SubNetwork extends Network
      */
     postSetDrawDepth()
     {
-        window.hgn.postMessageToSubNetworkWorker({
+        window.hgn.subNetworkViewer.postMessage({
             type: 'set-draw-depth', 
             id: this.parentNode.id,
             min: this.minDrawDepth,
