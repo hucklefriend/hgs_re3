@@ -114,6 +114,15 @@ export class SubConnect
         }
     }
 
+    getTargetY()
+    {
+        if (this.node instanceof OctaNode) {
+            return this.node.vertices[this.vertexNo].y;
+        } else if (this.node instanceof PointNode) {
+            return this.node.y;
+        }
+    }
+
     /**
      * オブジェクトに変換
      * 

@@ -122,7 +122,7 @@ export class EntranceNode extends LinkNode
         network.addOctaNode(604, null, 608, -120, 10, 25);
 
         this.subNetwork = network;
-        this.subNetwork.postAdd();
+        //this.subNetwork.postAdd();
     }
 
     /**

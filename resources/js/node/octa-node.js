@@ -40,6 +40,7 @@ export class OctaNode
         this.forceDraw = false;
         this._id = null;
         this._isDraw = true;
+        this._isInViewRect = false;
 
         this.setRect();
 
@@ -54,6 +55,16 @@ export class OctaNode
     get id()
     {
         return this._id;
+    }
+
+    /**
+     * ViewRectに含まれるかどうかを設定
+     *
+     * @param isInViewRect
+     */
+    setIsInViewRect(isInViewRect)
+    {
+        this._isInViewRect = isInViewRect;
     }
 
     /**
@@ -565,18 +576,43 @@ export class SubOctaNode extends OctaNode
             nearVertexNo = this.getNearVertexNo(parent);
         }
 
+        this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
+
+        this.centerOffsetY = 0;
+        if (this.connection.node.y > window.innerHeight) {
+            let distance = this.connection.node.y - (window.innerHeight / 2);
+            this.centerOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
+        }
+
         // 頂点によって距離が違うため、接続頂点を決めたところで親ノードとの位置を補正
+        // 頂点を決めるのにあらかじめ配置情報が必要だったので、後から補正している
         let moveX = this.x - this.vertices[nearVertexNo].x;
         let moveY = this.y - this.vertices[nearVertexNo].y;
-        this.move(moveX, moveY);
+        this.move(moveX, moveY - this.centerOffsetY);
 
-        this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
+        this.offsetX += moveX;
+        this.offsetY += moveY;
+
+        this.depth = 0;
+        this._isInDrawDepth = false;
 
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
+        this.originX = this.x;
+        this.originY = this.y;
+    }
 
-        this.depth = 0;
+    
+
+    get isInDrawDepth()
+    {
+        return this._isInDrawDepth;
+    }
+
+    get isInViewRect()
+    {
+        return this._isInViewRect;
     }
 
     /**
@@ -596,7 +632,91 @@ export class SubOctaNode extends OctaNode
     reload()
     {
         super.reload(this.connection.getVertex().x + this.offsetX,
-            this.connection.getVertex().y + this.offsetY, this.w, this.h);
+            this.connection.getVertex().y + this.offsetY - this.centerOffsetY, this.w, this.h);
+
+        this.originX = this.x;
+        this.originY = this.y;
+    }
+
+    /**
+     * 更新
+     * 
+     * @param {Rect} subViewRect
+     * @param {number} minDrawDepth
+     * @param {number} maxDrawDepth
+     */
+    update(viewRect, subViewRect, minDrawDepth, maxDrawDepth)
+    {
+        // 描画対象の深さに含まれているか
+        this._isInDrawDepth = (this.depth >= minDrawDepth && this.depth <= maxDrawDepth);
+
+        super.reload(this.originX, this.originY, this.w, this.h);
+
+        // ViewRectの中に入っているか
+        this._isInViewRect = subViewRect.overlapWith(this.rect);
+
+        this.move(0, -subViewRect.top);
+    }
+    
+    /**
+     * 描画するか
+     */
+    isDraw()
+    {
+        return this._isInDrawDepth && this._isInViewRect;
+    }
+    
+
+    /**
+     * 描画
+     *
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     */
+    draw(ctx, viewRect)
+    {
+        if (this.isDraw()) {
+            this.setShapePath(ctx);
+            ctx.stroke();
+        }
+    }
+
+    drawEdge(ctx, viewRect)
+    {
+        // 接続先が描画されているなら自分が画面外にあったとしてもエッジを描画
+        if (this._isInDrawDepth) {
+            this.connects.forEach((connect, vertexNo) => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_INCOMING) {
+                    const targetNode = connect.node;
+                
+                    if (targetNode) {
+                        if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
+                            if (!targetNode.isInDrawDepth) {
+                                return;
+                            }
+                        }
+
+                        if (!this.isDraw() && !targetNode.isDraw()) {
+                            return;
+                        }
+
+                        ctx.beginPath();
+
+                        const targetVertex = connect.getVertex();
+                        if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
+                            ctx.moveTo(targetVertex.x, targetVertex.y);
+                        } else {
+                            ctx.moveTo(targetVertex.x - viewRect.left, targetVertex.y - viewRect.top);
+                        }
+
+                        let x = this.vertices[vertexNo].x;
+                        let y = this.vertices[vertexNo].y;
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
     }
 
     /**

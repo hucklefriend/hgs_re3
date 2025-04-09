@@ -270,7 +270,6 @@ export class SubPointNode extends PointNode
      */
     constructor(no, parent, vertexNo, offsetX, offsetY, r)
     {
-
         let x = parent.x;
         let y = parent.y;
         if (parent instanceof OctaNode) {
@@ -284,13 +283,20 @@ export class SubPointNode extends PointNode
         this.connection = new SubConnect(parent, vertexNo);
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.drawOffsetY = 0;
         this.depth = 0;
+        this._isInDrawDepth = false;
 
+        // スクロールして画面中央に来た時にあるべき配置にするため、あらかじめずらしておく量
+        this.centerOffsetY = 0;
         if (this.connection.node.y > window.innerHeight) {
             let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.drawOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
+            this.centerOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
         }
+
+        this.y -= this.centerOffsetY;
+
+        this.originX = this.x;
+        this.originY = this.y;
     }
 
     /**
@@ -311,8 +317,113 @@ export class SubPointNode extends PointNode
     {
         const v = this.connection.getVertex();
         this.x = v.x + this.offsetX;
-        this.y = v.y + this.offsetY;
+        this.y = v.y + this.offsetY - this.centerOffsetY;
+
+        this.originX = this.x;
+        this.originY = this.y;
     }
+
+    /**
+     * 更新
+     * 
+     * @param {Rect} viewRect
+     * @param {number} minDrawDepth
+     * @param {number} maxDrawDepth
+     */
+    update(viewRect, subViewRect, minDrawDepth, maxDrawDepth)
+    {
+        // 描画対象の深さではない場合は描画されない
+        this._isInDrawDepth = this.depth >= minDrawDepth && this.depth <= maxDrawDepth;
+
+        // スクロールに合わせて表示位置をずらす
+        this.y = this.originY;
+
+        this._isInViewRect = true;
+        if (subViewRect !== null) {
+            if (this.x < subViewRect.left || this.x > subViewRect.right ||
+                this.y < subViewRect.top || this.y > subViewRect.bottom) {
+                this._isInViewRect = false;
+            }
+        }
+
+        this.y -= subViewRect.top;
+    }
+
+    get isInDrawDepth()
+    {
+        return this._isInDrawDepth;
+    }
+
+    get isInViewRect()
+    {
+        return this._isInViewRect;
+    }
+
+    /**
+     * 描画するか
+     */
+    isDraw()
+    {
+        return this._isInViewRect && this._isInDrawDepth;
+    }
+
+    /**
+     * 描画
+     *
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     */
+    draw(ctx, viewRect)
+    {
+        if (this.isDraw()) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Param.MATH_PI_2, false);
+            ctx.fill();
+        }
+    }
+
+    /**
+     * エッジを描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     */
+    drawEdge(ctx, viewRect)
+    {
+        // 接続先が描画されているなら自分が画面外にあったとしてもエッジを描画
+        if (this._isInDrawDepth) {
+            this.connects.forEach(connect => {
+                if (connect !== null && connect.type === Param.CONNECT_TYPE_INCOMING) {
+                    const targetNode = connect.node;
+
+                    if (targetNode) {
+                        if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
+                            if (!targetNode.isInDrawDepth) {
+                                return;
+                            }
+                        }
+
+                        if (!this.isDraw() && !targetNode.isDraw()) {
+                            return;
+                        }
+                
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+
+                        const targetVertex = connect.getVertex();
+                        if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
+                            ctx.lineTo(targetVertex.x, targetVertex.y);
+                        } else {
+                            ctx.lineTo(targetVertex.x - viewRect.left, targetVertex.y - viewRect.top);
+                        }
+                        
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
+    }
+
 
     /**
      * 初期登録用オブジェクト化

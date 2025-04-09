@@ -67,6 +67,7 @@ export class HorrorGameNetwork
 
         this._isDrawMain = false;    // 次の更新でメインを再描画するフラグ
         this._isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
+        this._isDrawSub = false; // サブ描画フラグ
 
         window.addEventListener('popstate', (e) => {
             this.popState(e);
@@ -221,11 +222,20 @@ export class HorrorGameNetwork
             this._isDrawOutsideView = false;
         }
 
+        if (this._isDrawSub) {
+            this.subNetworkViewer.update(this.viewer.viewRect);
+            this.viewer.updateSub();
+    
+            // サブ描画
+            this.drawSub();
+            this._isDrawSub = false;
+        }
+
         // 次のビューワが交代を待っている？
         if (this.waitViewer !== null) {
             // 現在のビューワでノードが全部消えて、次のビューワの準備が整っているなら交代する
             if (this.viewer.isAllNodeDisappeared()) {
-                this.subNetworkViewer.postMessage({ type: 'clear-networks', viewRect: this.viewer.viewRect });
+                //this.subNetworkViewer.postMessage({ type: 'clear-networks', viewRect: this.viewer.viewRect });
 
                 if (this.waitViewer.isWait) {
                     this.clearComponents(); // 作成済みコンポーネントの削除
@@ -301,15 +311,7 @@ export class HorrorGameNetwork
     scroll(isNewViewer = false)
     {
         this.viewer.scroll(isNewViewer);
-
-        // スクロール処理を遅延実行
-        if (this._scrollTimeout !== null) {
-            clearTimeout(this._scrollTimeout);
-        }
-        this._scrollTimeout = setTimeout(() => {
-            this.setDrawSub();
-            this._scrollTimeout = null;
-        }, 16); // 約60fps
+        this.setDrawSub();
     }
 
     /**
@@ -347,6 +349,15 @@ export class HorrorGameNetwork
                 this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
             );
         }
+    }   
+
+    /**
+     * サブ描画
+     */
+    drawSub()
+    {
+        this.viewer.drawSub(this.subNetworkViewer.subOffscreenCtx);
+        this.subNetworkViewer.drawCanvas(this.viewer.viewRect);
     }
 
     /**
@@ -372,11 +383,12 @@ export class HorrorGameNetwork
     }
 
     /**
-     * サブ描画をサブネットワークワーカーへ指示
+     * サブ描画フラグを立てる
      */
     setDrawSub()
     {
-        this.subNetworkViewer.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
+        this._isDrawSub = true;
+        //this.subNetworkViewer.postMessage({ type: 'draw', viewRect: this.viewer.viewRect });
     }
 
     /**

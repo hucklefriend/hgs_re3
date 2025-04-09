@@ -1,3 +1,4 @@
+import { Param } from '../common/param.js';
 import { OctaNode, SubOctaNode } from '../node/octa-node.js';
 import { SubPointNode } from "../node/point-node.js";
 import { Network } from './network.js';
@@ -165,7 +166,7 @@ export class SubNetwork extends Network
         this.minDrawDepth = min;
         this.maxDrawDepth = max;
 
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -176,7 +177,7 @@ export class SubNetwork extends Network
     setMinDrawDepth(min)
     {
         this.minDrawDepth = min;
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -187,7 +188,7 @@ export class SubNetwork extends Network
     setMaxDrawDepth(max)
     {
         this.maxDrawDepth = max;
-        this.postSetDrawDepth();
+        //this.postSetDrawDepth();
     }
 
     /**
@@ -202,6 +203,41 @@ export class SubNetwork extends Network
             }
         });
     }
+
+    /**
+     * 更新
+     * 
+     * @param {Rect} viewRect
+     * @param {Rect} subViewRect
+     */
+    update(viewRect, subViewRect)
+    {
+        this.nodes.forEach(node => {
+            node.update(viewRect, subViewRect, this.minDrawDepth, this.maxDrawDepth);
+        });
+    }
+    
+
+    /**
+     * 描画
+     * 
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Rect} viewRect
+     */
+    draw(ctx, viewRect)
+    {
+        // エッジを描画
+        this.nodes.forEach(node => {
+            node.drawEdge(ctx, viewRect, this.minDrawDepth, this.maxDrawDepth, this.parentNode);
+        });
+
+        // 図形を描画
+        this.nodes.forEach(node => {
+            node.draw(ctx, viewRect);
+        });
+    }
+
+
 
     /**
      * サブネットワークワーカーへネットワーク登録をポスト
