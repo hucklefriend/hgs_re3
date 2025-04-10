@@ -48,6 +48,11 @@ export class SubNetworkViewer
         this.subCanvas.width = window.hgn.body.offsetWidth;
         this.subCanvas.height = window.hgn.viewer.height;
 
+        this.subOffscreenCanvas.width = window.innerWidth;
+        this.subOffscreenCanvas.height = window.innerHeight;
+
+        this._setDrawingState(this.subOffscreenCtx);
+
         // this.postMessage({
         //     type: 'resize',
         //     width: this.subCanvas.width, 
