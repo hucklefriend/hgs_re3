@@ -640,7 +640,7 @@ export class SubOctaNode extends OctaNode
      */
     reload()
     {
-        const parent = this.connection.node;
+        const parent = this.connection.getVertex();
         super.reload(parent.x + this.offsetX, parent.y + this.offsetY, this.w, this.h);
 
         this.drawOffsetX = 0;

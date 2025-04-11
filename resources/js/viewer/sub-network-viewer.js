@@ -54,7 +54,7 @@ export class SubNetworkViewer
 
         //this.subOffscreenCanvas.width = window.innerWidth;
         //this.subOffscreenCanvas.height = window.innerHeight;
-        this.subOffscreenCanvas.width = this.subCanvas.width;
+        this.subOffscreenCanvas.width = window.innerWidth;
         this.subOffscreenCanvas.height = this.subCanvas.height;
 
         this._setDrawingState(this.subOffscreenCtx);
@@ -90,7 +90,7 @@ export class SubNetworkViewer
     update(viewRect)
     {
         this.viewRect.copyFrom(viewRect);
-        this.viewRect.move(0, this.viewRect.top - (this.viewRect.top * Param.SUB_NETWORK_SCROLL_RATE));
+        //this.viewRect.move(0, this.viewRect.top - (this.viewRect.top * Param.SUB_NETWORK_SCROLL_RATE));
     }
 
     /**
@@ -107,8 +107,8 @@ export class SubNetworkViewer
         );
         this.subCtx.drawImage(
             this.subOffscreenCanvas,
-            0, 0, // ソースの開始位置
-            this.subOffscreenCanvas.width, this.subOffscreenCanvas.height, // ソースのサイズ
+            0, 0//, // ソースの開始位置
+            //this.subOffscreenCanvas.width, this.subOffscreenCanvas.height, // ソースのサイズ
             // viewRect.left, viewRect.top, // 描画先の開始位置
             // viewRect.width, viewRect.height // 描画先のサイズ
         );
