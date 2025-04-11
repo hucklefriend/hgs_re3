@@ -83,14 +83,12 @@ export class EntranceNode extends LinkNode
         network.addOctaNode(104, Param.RRB, 106, 60, 20, 35);
 
         network.addOctaNode(this, Param.RRB, 201, 50, -20, 35);
-        /*
         network.addOctaNode(201, Param.RTT, 202, 50, -40, 25);
         network.addPointNode(201, Param.RRB, 203, 60, 20, 5);
         network.addOctaNode(203, Param.RTT, 204, 50, -40, 25);
         network.addOctaNode(203, Param.RBB, 205, 10, 80, 35);
         network.addOctaNode(205, Param.RRT, 206, 50, -20, 30);
         network.addOctaNode(205, Param.LBB, 207, -40, 60, 30);
-        */
 
         network.addOctaNode(this, Param.RBB, 301, 20, 60, 30, null, null, Param.LTT);
         network.addOctaNode(301, Param.LLT, 302, -80, -20, 30);

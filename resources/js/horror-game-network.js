@@ -55,15 +55,15 @@ export class HorrorGameNetwork
 
         // オフスクリーンキャンバスの生成
         // 未対応の場合は既存のcanvasで代用
-        this.offscreenCanvas = null;
-        if (typeof OffscreenCanvas !== 'undefined') {
-            this.offscreenCanvas = new OffscreenCanvas(1, 1);
-        } else {
-            this.offscreenCanvas = document.createElement('canvas');
-            this.offscreenCanvas.width = 1;
-            this.offscreenCanvas.height = 1;
-        }
-        this.offscreenCtx = this.offscreenCanvas.getContext('2d');
+        // this.offscreenCanvas = null;
+        // if (typeof OffscreenCanvas !== 'undefined') {
+        //     this.offscreenCanvas = new OffscreenCanvas(1, 1);
+        // } else {
+        //     this.offscreenCanvas = document.createElement('canvas');
+        //     this.offscreenCanvas.width = 1;
+        //     this.offscreenCanvas.height = 1;
+        // }
+        // this.offscreenCtx = this.offscreenCanvas.getContext('2d');
 
         this._isDrawMain = false;    // 次の更新でメインを再描画するフラグ
         this._isDrawOutsideView = false; // メインの描画で表示領域外も描画するか
@@ -295,8 +295,8 @@ export class HorrorGameNetwork
         this.mainCanvas.width = this.body.offsetWidth;
         this.mainCanvas.height = this.viewer.height;
 
-        this.offscreenCanvas.width = window.innerWidth;
-        this.offscreenCanvas.height = window.innerHeight;
+        //this.offscreenCanvas.width = window.innerWidth;
+        //this.offscreenCanvas.height = window.innerHeight;
 
         this.subNetworkViewer.setCanvasSize();
 
@@ -320,35 +320,38 @@ export class HorrorGameNetwork
     drawMain()
     {
         if (this._isDrawOutsideView) {
-            this.offscreenCanvas.width = this.mainCanvas.width;
-            this.offscreenCanvas.height = this.mainCanvas.height;
-        } else {
-            this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
-        }
-
-        this.viewer.draw(this.offscreenCtx, this._isDrawOutsideView);
-
-        if (this._isDrawOutsideView) {
-            // オフスクリーンキャンバスの内容をメインキャンバスへ
+            //this.offscreenCanvas.width = this.mainCanvas.width;
+            //this.offscreenCanvas.height = this.mainCanvas.height;
             this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
-            this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
-
-            this.offscreenCanvas.width = this.viewer.viewRect.width;
-            this.offscreenCanvas.height = this.viewer.viewRect.height;
         } else {
-            // オフスクリーンキャンバスの内容をメインキャンバスへ
-            this.mainCtx.clearRect(
-                this.viewer.viewRect.left, this.viewer.viewRect.top,
-                this.viewer.viewRect.width, this.viewer.viewRect.height
-            );
-            this.mainCtx.drawImage(
-                this.offscreenCanvas,
-                0, 0, // ソースの開始位置
-                this.offscreenCanvas.width, this.offscreenCanvas.height, // ソースのサイズ
-                this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
-                this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
-            );
+            //this.offscreenCtx.clearRect(0, 0, this.offscreenCanvas.width, this.offscreenCanvas.height);
+
+            this.mainCtx.clearRect(this.viewer.viewRect.left, this.viewer.viewRect.top, this.viewer.viewRect.width, this.viewer.viewRect.height);
         }
+
+        this.viewer.draw(this.mainCtx, this._isDrawOutsideView);
+
+        // if (this._isDrawOutsideView) {
+        //     // オフスクリーンキャンバスの内容をメインキャンバスへ
+        //     this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+        //     this.mainCtx.drawImage(this.offscreenCanvas, 0, 0);
+
+        //     this.offscreenCanvas.width = this.viewer.viewRect.width;
+        //     this.offscreenCanvas.height = this.viewer.viewRect.height;
+        // } else {
+        //     // オフスクリーンキャンバスの内容をメインキャンバスへ
+        //     this.mainCtx.clearRect(
+        //         this.viewer.viewRect.left, this.viewer.viewRect.top,
+        //         this.viewer.viewRect.width, this.viewer.viewRect.height
+        //     );
+        //     this.mainCtx.drawImage(
+        //         this.offscreenCanvas,
+        //         0, 0, // ソースの開始位置
+        //         this.offscreenCanvas.width, this.offscreenCanvas.height, // ソースのサイズ
+        //         this.viewer.viewRect.left, this.viewer.viewRect.top, // 描画先の開始位置
+        //         this.viewer.viewRect.width, this.viewer.viewRect.height // 描画先のサイズ
+        //     );
+        // }
     }   
 
     /**
