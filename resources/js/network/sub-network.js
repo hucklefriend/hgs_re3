@@ -210,10 +210,10 @@ export class SubNetwork extends Network
      * @param {Rect} viewRect
      * @param {Rect} subViewRect
      */
-    update(viewRect, subViewRect)
+    update(viewRect, subScrollY)
     {
         this.nodes.forEach(node => {
-            node.update(viewRect, subViewRect, this.minDrawDepth, this.maxDrawDepth);
+            node.update(viewRect, subScrollY, this.minDrawDepth, this.maxDrawDepth);
         });
     }
     
