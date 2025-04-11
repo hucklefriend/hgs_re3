@@ -457,8 +457,8 @@ export class DocumentViewer extends ViewerBase
      */
     draw(ctx, isDrawOutsideView = false)
     {
-        const offsetX = isDrawOutsideView ? 0 : -this.viewRect.left;
-        const offsetY = isDrawOutsideView ? 0 : -this.viewRect.top;
+        const offsetX = 0;//isDrawOutsideView ? 0 : -this.viewRect.left;
+        const offsetY = 0;//isDrawOutsideView ? 0 : -this.viewRect.top;
 
         this.drawNodes(ctx, offsetX, offsetY, isDrawOutsideView);
 
