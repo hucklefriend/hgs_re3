@@ -498,15 +498,15 @@ export class DOMNode extends OctaNode
      * サブ描画更新
      * 
      * @param {Rect} viewRect
-     * @param {Rect} subViewRect
+     * @param {number} subScrollY
      */
-    updateSub(viewRect, subViewRect)
+    updateSub(viewRect, subScrollY)
     {
         if (this.subNetwork === null) {
             return;
         }
 
-        this.subNetwork.update(viewRect, subViewRect);
+        this.subNetwork.update(viewRect, subScrollY);
     }
 
     /**

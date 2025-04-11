@@ -82,4 +82,28 @@
             </div>
         </div>
     </section>
+
+    <section style="margin-top: 200vh;">
+        <div class="node">
+            <h2 class="head2 fade" id="h2-nm3">Network Map</h2>
+        </div>
+
+        <div class="node-map">
+            <div>
+                <div class="link-node fade" data-sub="l" id="franchise-node3">
+                    <a href="{{ route('Game.FranchiseNetwork') }}">Franchise</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:500px;margin-bottom:50px;">
+            <div class="node-map">
+                <div>
+                    <div class="content-link-node fade" id="about-node3">
+                        <a href="{{ route('About') }}">About</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection

@@ -287,16 +287,12 @@ export class SubPointNode extends PointNode
         this._isInDrawDepth = false;
 
         // スクロールして画面中央に来た時にあるべき配置にするため、あらかじめずらしておく量
-        this.centerOffsetY = 0;
-        if (this.connection.node.y > window.innerHeight) {
-            let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.centerOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
-        }
+        const tv = this.connection.getVertex();
+        let distance = (tv.y - (window.innerHeight / 2));
+        this.centerOffsetY = -(distance - (distance * Param.SUB_NETWORK_SCROLL_RATE));
 
-        this.y -= this.centerOffsetY;
-
-        this.originX = this.x;
-        this.originY = this.y;
+        this.drawOffsetX = 0;
+        this.drawOffsetY = -this.centerOffsetY;
     }
 
     /**
@@ -317,36 +313,37 @@ export class SubPointNode extends PointNode
     {
         const v = this.connection.getVertex();
         this.x = v.x + this.offsetX;
-        this.y = v.y + this.offsetY - this.centerOffsetY;
+        this.y = v.y + this.offsetY;
 
-        this.originX = this.x;
-        this.originY = this.y;
+        this.drawOffsetX = 0;
+        this.drawOffsetY = -this.centerOffsetY;
     }
 
     /**
      * 更新
      * 
      * @param {Rect} viewRect
+     * @param {number} scrollOffsetY
      * @param {number} minDrawDepth
      * @param {number} maxDrawDepth
      */
-    update(viewRect, subViewRect, minDrawDepth, maxDrawDepth)
+    update(viewRect, scrollOffsetY, minDrawDepth, maxDrawDepth)
     {
         // 描画対象の深さではない場合は描画されない
         this._isInDrawDepth = this.depth >= minDrawDepth && this.depth <= maxDrawDepth;
 
-        // スクロールに合わせて表示位置をずらす
-        this.y = this.originY;
+        this.drawOffsetY = -this.centerOffsetY - scrollOffsetY;
+
+        const x = this.x + this.drawOffsetX;
+        const y = this.y + this.drawOffsetY;
 
         this._isInViewRect = true;
-        if (subViewRect !== null) {
-            if (this.x < subViewRect.left || this.x > subViewRect.right ||
-                this.y < subViewRect.top || this.y > subViewRect.bottom) {
+        if (viewRect !== null) {
+            if (x < viewRect.left || x > viewRect.right ||
+                y < viewRect.top || y > viewRect.bottom) {
                 this._isInViewRect = false;
             }
         }
-
-        this.y -= subViewRect.top;
     }
 
     get isInDrawDepth()
@@ -377,7 +374,7 @@ export class SubPointNode extends PointNode
     {
         if (this.isDraw()) {
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r, 0, Param.MATH_PI_2, false);
+            ctx.arc(this.x + this.drawOffsetX, this.y + this.drawOffsetY, this.r, 0, Param.MATH_PI_2, false);
             ctx.fill();
         }
     }
@@ -408,13 +405,13 @@ export class SubPointNode extends PointNode
                         }
                 
                         ctx.beginPath();
-                        ctx.moveTo(this.x, this.y);
+                        ctx.moveTo(this.x + this.drawOffsetX, this.y + this.drawOffsetY);
 
                         const targetVertex = connect.getVertex();
                         if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
-                            ctx.lineTo(targetVertex.x, targetVertex.y);
+                            ctx.lineTo(targetVertex.x + targetNode.drawOffsetX, targetVertex.y + targetNode.drawOffsetY);
                         } else {
-                            ctx.lineTo(targetVertex.x - viewRect.left, targetVertex.y - viewRect.top);
+                            ctx.lineTo(targetVertex.x, targetVertex.y);
                         }
                         
                         ctx.stroke();

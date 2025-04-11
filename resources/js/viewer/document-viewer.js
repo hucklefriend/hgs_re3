@@ -496,11 +496,10 @@ export class DocumentViewer extends ViewerBase
         if (this._entranceNode) {
             this._entranceNode.drawSub(ctx, this.viewRect);
         }
-/*
+        
         this._domNodes.forEach(node => {
             node.drawSub(ctx, this.viewRect);
         });
-*/
     }
 
     /**
@@ -525,12 +524,14 @@ export class DocumentViewer extends ViewerBase
      */
     updateSub()
     {
+        const subScrollY = this.viewRect.top - (this.viewRect.top * Param.SUB_NETWORK_SCROLL_RATE);
+
         if (this._entranceNode) {
-            this._entranceNode.updateSub(this.viewRect, window.hgn.subNetworkViewer.viewRect);
+            this._entranceNode.updateSub(this.viewRect, subScrollY);
         }
 
         this._domNodes.forEach(node => {
-            node.updateSub(this.viewRect, window.hgn.subNetworkViewer.viewRect);
+            node.updateSub(this.viewRect, subScrollY);
         });
     }
 

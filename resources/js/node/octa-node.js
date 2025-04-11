@@ -578,20 +578,27 @@ export class SubOctaNode extends OctaNode
 
         this.connection = new SubConnect(parent, vertexNo, nearVertexNo);
 
-        this.centerOffsetY = 0;
-        if (this.connection.node.y > window.innerHeight) {
-            let distance = this.connection.node.y - (window.innerHeight / 2);
-            this.centerOffsetY = distance - (distance / Param.SUB_NETWORK_SCROLL_RATE);
-        }
-
-        // 頂点によって距離が違うため、接続頂点を決めたところで親ノードとの位置を補正
-        // 頂点を決めるのにあらかじめ配置情報が必要だったので、後から補正している
         let moveX = this.x - this.vertices[nearVertexNo].x;
         let moveY = this.y - this.vertices[nearVertexNo].y;
-        this.move(moveX, moveY - this.centerOffsetY);
-
+        this.move(moveX, moveY);
         this.offsetX += moveX;
         this.offsetY += moveY;
+
+
+        // ウィンドウの中心点で現在のthis.yと一致するように、あらかじめずらしておく量を計算する
+        this.centerOffsetY = 0;
+
+        // ウィンドウの中心点で現在のthis.yと一致するように、あらかじめずらしておく量を計算する
+
+
+
+
+        const tv = this.connection.getVertex();
+        //if (tv.y > window.innerHeight) {
+            let distance = (tv.y - (window.innerHeight / 2));
+            this.centerOffsetY = -(distance - (distance * Param.SUB_NETWORK_SCROLL_RATE));
+            //this.centerOffsetY = 0;//tv.y - (window.innerHeight / 2) * Param.SUB_NETWORK_SCROLL_RATE;
+        //}
 
         this.depth = 0;
         this._isInDrawDepth = false;
@@ -599,8 +606,10 @@ export class SubOctaNode extends OctaNode
         if (this.w > 0 && this.h > 0 && this.notchSize > 0) {
             this.setOctagon();
         }
-        this.originX = this.x;
-        this.originY = this.y;
+
+        this.drawOffsetX = 0;
+        this.drawOffsetY = -this.centerOffsetY;
+        this.rect2 = new Rect(0, 0, 0, 0);
     }
 
     
@@ -631,11 +640,11 @@ export class SubOctaNode extends OctaNode
      */
     reload()
     {
-        super.reload(this.connection.getVertex().x + this.offsetX,
-            this.connection.getVertex().y + this.offsetY - this.centerOffsetY, this.w, this.h);
+        const parent = this.connection.node;
+        super.reload(parent.x + this.offsetX, parent.y + this.offsetY, this.w, this.h);
 
-        this.originX = this.x;
-        this.originY = this.y;
+        this.drawOffsetX = 0;
+        this.drawOffsetY = -this.centerOffsetY;
     }
 
     /**
@@ -645,17 +654,18 @@ export class SubOctaNode extends OctaNode
      * @param {number} minDrawDepth
      * @param {number} maxDrawDepth
      */
-    update(viewRect, subViewRect, minDrawDepth, maxDrawDepth)
+    update(viewRect, subScrollY, minDrawDepth, maxDrawDepth)
     {
         // 描画対象の深さに含まれているか
         this._isInDrawDepth = (this.depth >= minDrawDepth && this.depth <= maxDrawDepth);
 
-        super.reload(this.originX, this.originY, this.w, this.h);
+        this.drawOffsetY = -this.centerOffsetY - subScrollY;
+
+        this.rect2.copyFrom(this.rect);
+        this.rect2.move(0, this.drawOffsetY);
 
         // ViewRectの中に入っているか
-        this._isInViewRect = subViewRect.overlapWith(this.rect);
-
-        this.move(0, -subViewRect.top);
+        this._isInViewRect = viewRect.overlapWith(this.rect2);
     }
     
     /**
@@ -676,7 +686,7 @@ export class SubOctaNode extends OctaNode
     draw(ctx, viewRect)
     {
         if (this.isDraw()) {
-            this.setShapePath(ctx);
+            this.setShapePath(ctx, this.drawOffsetX, this.drawOffsetY);
             ctx.stroke();
         }
     }
@@ -704,13 +714,13 @@ export class SubOctaNode extends OctaNode
 
                         const targetVertex = connect.getVertex();
                         if (targetNode instanceof SubPointNode || targetNode instanceof SubOctaNode) {
-                            ctx.moveTo(targetVertex.x, targetVertex.y);
+                            ctx.moveTo(targetVertex.x + targetNode.drawOffsetX, targetVertex.y + targetNode.drawOffsetY);
                         } else {
-                            ctx.moveTo(targetVertex.x - viewRect.left, targetVertex.y - viewRect.top);
+                            ctx.moveTo(targetVertex.x, targetVertex.y);
                         }
 
-                        let x = this.vertices[vertexNo].x;
-                        let y = this.vertices[vertexNo].y;
+                        let x = this.vertices[vertexNo].x + this.drawOffsetX;
+                        let y = this.vertices[vertexNo].y + this.drawOffsetY;
                         ctx.lineTo(x, y);
                         ctx.stroke();
                     }

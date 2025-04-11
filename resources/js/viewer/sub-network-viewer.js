@@ -25,7 +25,7 @@ export class SubNetworkViewer
     {
         this.subCanvas = document.querySelector('#sub-canvas');
         this.subCtx = this.subCanvas.getContext('2d');
-        this.subOffscreenCanvas = new OffscreenCanvas(window.innerWidth, window.innerHeight);
+        this.subOffscreenCanvas = new OffscreenCanvas(1, 1);
         this.subOffscreenCtx = this.subOffscreenCanvas.getContext('2d');
 
         // 描画状態のキャッシュ
@@ -45,11 +45,17 @@ export class SubNetworkViewer
      */
     setCanvasSize()
     {
+        if (this.subCanvas.height == window.hgn.viewer.height) {
+            return;
+        }
+
         this.subCanvas.width = window.hgn.body.offsetWidth;
         this.subCanvas.height = window.hgn.viewer.height;
 
-        this.subOffscreenCanvas.width = window.innerWidth;
-        this.subOffscreenCanvas.height = window.innerHeight;
+        //this.subOffscreenCanvas.width = window.innerWidth;
+        //this.subOffscreenCanvas.height = window.innerHeight;
+        this.subOffscreenCanvas.width = this.subCanvas.width;
+        this.subOffscreenCanvas.height = this.subCanvas.height;
 
         this._setDrawingState(this.subOffscreenCtx);
 
@@ -94,15 +100,17 @@ export class SubNetworkViewer
     {
         // オフスクリーンキャンバスの内容をメインキャンバスへ
         this.subCtx.clearRect(
-            viewRect.left, viewRect.top,
-            viewRect.width, viewRect.height
+            // viewRect.left, viewRect.top,
+            // viewRect.width, viewRect.height
+            0, 0, 
+            this.subCanvas.width, this.subCanvas.height
         );
         this.subCtx.drawImage(
             this.subOffscreenCanvas,
             0, 0, // ソースの開始位置
             this.subOffscreenCanvas.width, this.subOffscreenCanvas.height, // ソースのサイズ
-            viewRect.left, viewRect.top, // 描画先の開始位置
-            viewRect.width, viewRect.height // 描画先のサイズ
+            // viewRect.left, viewRect.top, // 描画先の開始位置
+            // viewRect.width, viewRect.height // 描画先のサイズ
         );
 
         this.subOffscreenCtx.clearRect(0, 0,
