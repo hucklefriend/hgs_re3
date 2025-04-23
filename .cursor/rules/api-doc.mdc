@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# API設計書
+
+- OpenAPI形式で記述する
+- `app/Http/Controllers/Api`以下のファイルを変更した場合、`docs/api/v1`以下の対応するAPI設計書を更新するか確認する
