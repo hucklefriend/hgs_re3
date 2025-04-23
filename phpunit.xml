@@ -33,4 +33,7 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="DB_SCHEMA_PATH" value="database/schema/mysql-schema.dump"/>
     </php>
+    <extensions>
+        <bootstrap class="Tests\Extension"/>
+    </extensions>
 </phpunit>

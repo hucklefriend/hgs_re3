@@ -2,10 +2,12 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TestFailedNotification;
+use Tests\Subscribers\TestFailedSubscriber;
 abstract class TestCase extends BaseTestCase
 {
     use DatabaseTransactions;
@@ -20,5 +22,18 @@ abstract class TestCase extends BaseTestCase
             $sql = file_get_contents($schemaPath);
             DB::unprepared($sql);
         }
+    }
+
+    protected function tearDown(): void
+    {
+        $failedSubscriber = TestFailedSubscriber::getInstance();
+        if (!empty($failedSubscriber->getFailures())) {
+            Notification::route('slack', config('services.slack.test_error_webhook_url'))
+                ->notify(new TestFailedNotification($failedSubscriber->getFailures()));
+
+            $failedSubscriber->clearFailures();
+        }
+
+        parent::tearDown();
     }
 }
