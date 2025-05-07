@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// 本番環境と開発環境の両方でエントランスルートを設定
+Route::get('/', [HgnController::class, 'entrance'])->name('Entrance');
+
 if (App::environment('production')) {
-    Route::get('', [HgnController::class, 'entrance'])->name('Entrance');
     return;
 }
 
@@ -295,7 +297,6 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 $class = HgnController::class;
-Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
 Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
