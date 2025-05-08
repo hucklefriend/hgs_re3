@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// 本番環境と開発環境の両方でエントランスルートを設定
 Route::get('/', [HgnController::class, 'entrance'])->name('Entrance');
-
 if (App::environment('production')) {
     return;
 }
