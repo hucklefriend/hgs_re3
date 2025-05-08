@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', [HgnController::class, 'entrance'])->name('Entrance');
 if (App::environment('production')) {
-    Route::get('', [HgnController::class, 'entrance'])->name('Entrance');
     return;
 }
 
@@ -295,7 +295,6 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 $class = HgnController::class;
-Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
 Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
