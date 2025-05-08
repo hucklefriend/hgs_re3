@@ -1,0 +1,39 @@
+// Variables
+$glow-primary: #66aa66;
+$glow-hover: #99ff99;
+$glow-border: #006600;
+$glow-border-hover: #00ff00;
+
+// Tailwind
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.glow-button {
+    color: $glow-primary;
+    background-color: transparent;
+    border: 2px solid $glow-border;
+    padding: 12px 32px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba($glow-border, 0.33), 0 0 20px rgba($glow-border, 0.13);
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: $glow-hover;
+        border: 2px solid $glow-border-hover;
+        text-shadow: 0 0 5px $glow-border-hover, 0 0 10px $glow-border-hover;
+        box-shadow: 0 0 15px rgba($glow-border-hover, 0.67), 0 0 30px rgba($glow-border-hover, 0.53);
+        cursor: pointer;
+    }
+} 
