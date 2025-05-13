@@ -23,13 +23,13 @@
             window.ratingCheck = false;
         @endif
     </script>
-    @vite(['resources/css/app.scss'])
+    @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
 <body>
-
     <main class="mx-auto max-w-[700px] px-4">
         @yield('content')
         <div class="scroller-pad" id="document-pad"></div>
     </main>
+    <canvas id="canvas"></canvas>
 </body>
 </html>

@@ -3,15 +3,22 @@
 @section('title', 'Entrance | ホラーゲームネットワーク')
 
 @section('content')
-    <h1>Horror Game Network</h1>
-
+    <header>
+        <span class="tree-pt">●</span>
+        <h1>Horror Game Network</h1>
+    </header>
     <div>
-        <ul class="list-none space-y-4">
-            <li class="glow-button">Games</li>
-            <li class="glow-button">Information</li>
-            <li class="glow-button">About</li>
-            <li class="glow-button">Privacy Policy</li>
+        <ul>
+            <li><a href="#" class="node network-link-node">
+                <span class="tree-pt">●</span><span>Games</span>
+            </a></li>
+            <li><a href="#" class="node network-link-node">
+                <span class="tree-pt">●</span><span>Information</span>
+            </a></li>
+            <li><a href="#" class="node content-link-node">About</a></li>
+            <li><a href="#" class="node content-link-node">Privacy Policy</a></li>
         </ul>
     </div>
 
+    
 @endsection
