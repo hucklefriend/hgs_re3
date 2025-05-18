@@ -3,8 +3,10 @@ export class HorrorGameNetwork
     private static instance: HorrorGameNetwork;
     private canvas: HTMLCanvasElement;
     private canvasCtx: CanvasRenderingContext2D;
-    private parentTreePoint: HTMLSpanElement;
-    private childTreePoints: NodeListOf<HTMLSpanElement>;
+    private headNodePoint: HTMLSpanElement;
+    private nodePoints: {[id: string]: HTMLSpanElement};
+    private contentLinks: {[id: string]: HTMLAnchorElement};
+    private childNodePoints: {[id: string]: HTMLSpanElement[]};
     private body: HTMLBodyElement;
 
     /**
@@ -14,8 +16,35 @@ export class HorrorGameNetwork
     {
         this.canvas = document.querySelector('#canvas') as HTMLCanvasElement;
         this.canvasCtx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-        this.parentTreePoint = document.querySelector('header .tree-pt') as HTMLSpanElement;
-        this.childTreePoints = document.querySelectorAll('a.network-link-node .tree-pt');
+        this.headNodePoint = document.querySelector('header .node-pt') as HTMLSpanElement;
+        
+        this.nodePoints = {};
+        this.childNodePoints = {};
+        this.contentLinks = {};
+
+        const mainNodes = document.querySelectorAll('section.node');
+        mainNodes.forEach(mainNode => {
+            const mainNodeId = mainNode.id;
+            const head = mainNode.querySelector('.node-head') as HTMLDivElement;
+            if (head) {
+                const mainNodePt = head.querySelector('.main-node-pt') as HTMLSpanElement;
+                if (mainNodePt) {
+                    this.nodePoints[mainNodeId] = mainNodePt;
+                }
+
+                const contentLink = head.querySelector('.content-link') as HTMLAnchorElement;
+                if (contentLink) {
+                    this.contentLinks[mainNodeId] = contentLink;
+                }
+            }
+
+            const subNodeContainer = mainNode.querySelector('.sub-node-container') as HTMLDivElement;
+            if (subNodeContainer) {
+                const childPoints = subNodeContainer.querySelectorAll('.node-pt') as NodeListOf<HTMLSpanElement>;
+                this.childNodePoints[mainNodeId] = Array.from(childPoints);
+            }
+        });
+
         this.body = document.querySelector('body') as HTMLBodyElement;
     }
 
@@ -61,10 +90,34 @@ export class HorrorGameNetwork
         
         this.canvasCtx.beginPath();
         this.canvasCtx.strokeStyle = gradient;
-        this.canvasCtx.lineWidth = 1;
+        this.canvasCtx.lineWidth = 2;
         this.canvasCtx.moveTo(startX, startY);
         this.canvasCtx.lineTo(startX, startY + (endY - startY) * 0.7); // 下方向に伸びる（80%の位置まで）
         this.canvasCtx.quadraticCurveTo(controlPoint.x, controlPoint.y, endX, endY);
+        this.canvasCtx.stroke();
+    }
+
+    /**
+     * 子要素へのカーブ線を描画する
+     * @param startX 開始点のX座標
+     * @param startY 開始点のY座標
+     * @param endX 終了点のX座標
+     * @param endY 終了点のY座標
+     * @param gradient グラデーション
+     */
+    private drawChildCurvedLine(startX: number, startY: number, endX: number, endY: number, gradient: CanvasGradient): void
+    {
+        // 線の透明度と色を徐々に変化させるためのグラデーション
+        const lineGradient = this.canvasCtx.createLinearGradient(startX, startY, endX, endY);
+        lineGradient.addColorStop(0, 'rgba(70, 150, 70, 0.8)');     // 開始点（明るい緑、不透明）
+        lineGradient.addColorStop(0.5, 'rgba(50, 125, 50, 0.6)');   // 中間点（やや暗い緑、中間の透明度）
+        lineGradient.addColorStop(1, 'rgba(30, 100, 30, 0.1)');       // 終了点（暗い緑、半透明）
+
+        this.canvasCtx.beginPath();
+        this.canvasCtx.strokeStyle = lineGradient;
+        this.canvasCtx.lineWidth = 2;  // 開始点の太さ
+        this.canvasCtx.moveTo(startX, startY);
+        this.canvasCtx.quadraticCurveTo(startX + (endX - startX) * 0.1, endY, endX, endY);
         this.canvasCtx.stroke();
     }
 
@@ -105,9 +158,9 @@ export class HorrorGameNetwork
 
         // 発光効果のためのグラデーション
         const gradient = this.canvasCtx.createLinearGradient(0, 0, 0, this.canvas.height);
-        gradient.addColorStop(0, 'rgba(144, 238, 144, 0.8)');   // 薄い緑色
-        gradient.addColorStop(0.5, 'rgba(144, 238, 144, 0.4)'); // 中間
-        gradient.addColorStop(1, 'rgba(144, 238, 144, 0.8)');   // 薄い緑色
+        gradient.addColorStop(0, 'rgba(144, 255, 144, 0.8)');   // 薄い緑色
+        //gradient.addColorStop(0.5, 'rgba(144, 255, 144, 0.4)'); // 中間
+        gradient.addColorStop(1, 'rgba(70, 150, 70, 0.8)');   // 薄い緑色
 
         // 発光効果の設定
         this.canvasCtx.shadowColor = 'rgba(144, 238, 144, 0.5)';
@@ -115,23 +168,66 @@ export class HorrorGameNetwork
         this.canvasCtx.shadowOffsetX = 0;
         this.canvasCtx.shadowOffsetY = 0;
 
-        // 親要素の位置情報を取得
-        const parentCenterX = this.parentTreePoint.offsetLeft + this.parentTreePoint.offsetWidth / 2;
-        const parentCenterY = this.parentTreePoint.offsetTop + this.parentTreePoint.offsetHeight / 2;
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const canvasOffsetLeft = canvasRect.left;
+        const canvasOffsetTop = canvasRect.top;
 
-        // 子要素の位置情報を取得して線を描画
-        this.childTreePoints.forEach(childPoint => {
-            const childCenterX = childPoint.offsetLeft + childPoint.offsetWidth / 2;
-            const childCenterY = childPoint.offsetTop + childPoint.offsetHeight / 2;
+        // headNodePoint の位置情報を取得
+        const headRect = this.headNodePoint.getBoundingClientRect();
+        const headParentCenterX = headRect.left + headRect.width / 2 - canvasOffsetLeft;
+        const headParentCenterY = headRect.top + headRect.height / 2 - canvasOffsetTop;
 
-            // 線を描画
+        // nodePoints の位置情報を取得し、headNodePoint からの線を描画
+        Object.values(this.nodePoints).forEach(mainNodePoint => {
+            const mainRect = mainNodePoint.getBoundingClientRect();
+            const mainNodePointCenterX = mainRect.left + mainRect.width / 2 - canvasOffsetLeft;
+            const mainNodePointCenterY = mainRect.top + mainRect.height / 2 - canvasOffsetTop;
+
             this.drawCurvedLine(
-                parentCenterX,
-                parentCenterY,
-                childCenterX,
-                childCenterY,
+                headParentCenterX,
+                headParentCenterY,
+                mainNodePointCenterX,
+                mainNodePointCenterY,
                 gradient
             );
+        });
+
+        Object.values(this.contentLinks).forEach(contentLink => {
+            const contentLinkRect = contentLink.getBoundingClientRect();
+            const contentLinkLeftX = contentLinkRect.left - canvasOffsetLeft;
+            const contentLinkCenterY = contentLinkRect.top + contentLinkRect.height / 2 - canvasOffsetTop;
+            
+            this.drawCurvedLine(
+                headParentCenterX,
+                headParentCenterY,
+                contentLinkLeftX,
+                contentLinkCenterY,
+                gradient
+            );
+        });
+
+        // nodePoints から childNodePoints への線を描画
+        Object.keys(this.nodePoints).forEach(key => {
+            const parentPoint = this.nodePoints[key];
+            const parentRect = parentPoint.getBoundingClientRect();
+            const parentCenterX = parentRect.left + parentRect.width / 2 - canvasOffsetLeft;
+            const parentCenterY = parentRect.top + parentRect.height / 2 - canvasOffsetTop;
+
+            if (this.childNodePoints[key]) {
+                this.childNodePoints[key].forEach(childPoint => {
+                    const childRect = childPoint.getBoundingClientRect();
+                    const childCenterX = childRect.left + childRect.width / 2 - canvasOffsetLeft;
+                    const childCenterY = childRect.top + childRect.height / 2 - canvasOffsetTop;
+
+                    this.drawChildCurvedLine(
+                        parentCenterX,
+                        parentCenterY,
+                        childCenterX,
+                        childCenterY,
+                        gradient
+                    );
+                });
+            }
         });
     }
 } 

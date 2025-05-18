@@ -28,8 +28,8 @@
 <body>
     <main class="mx-auto max-w-[700px] px-4">
         @yield('content')
-        <div class="scroller-pad" id="document-pad"></div>
     </main>
     <canvas id="canvas"></canvas>
+    <div id="bg1"></div>
 </body>
 </html>
