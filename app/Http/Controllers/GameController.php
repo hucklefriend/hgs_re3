@@ -24,6 +24,11 @@ class GameController extends Controller
 {
     const ITEM_PER_PAGE = 50;
 
+    public function horrorGames(Request $request): JsonResponse|Application|Factory|View
+    {
+        return $this->document(view('horror_games'));
+    }
+
     /**
      * ホラーゲームネットワーク
      *

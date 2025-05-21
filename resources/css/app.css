@@ -1,783 +1,199 @@
-/*
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*/
 
 :root {
-    --mn-camera-x1: 0;
-    --mn-camera-y1: 0;
-    --mn-camera-x2: 0;
-    --mn-camera-y2: 0;
-    --mn-camera-x3: 0;
-    --mn-camera-y3: 0;
-    --mn-camera-x4: 0;
-    --mn-camera-y4: 0;
+    --node-pt-light: #66ff66;
+    --node-pt-light-shadow: #00ff00;
+    --node-pt-dark: #336633;
+    --sub-node-pt: #003300;
+}
+
+
+html {
+    padding: 0;
+    margin: 0;
 }
 
 body {
-    background-color: black;
     color: white;
-    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
-    font-weight: 300;
-    font-style: normal;
-    font-size: 14px;
-    margin: 0;
-    padding: 0;
-    overflow-y: scroll;
-}
-
-table {
-    font-size: 14px;
-}
-
-#document {
-    margin: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.hide {
-    visibility: hidden;
-}
-
-.container {
-    margin: 0;
-    padding: 0 5px;
-    width: calc(100% - 10px);
-}
-
-
-#document.self-scroll, #canvas-container.self-scroll {
-    height: 100vh;
-    overflow-y: hidden;
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-
-/*
-    main {
-        padding-bottom: 100vh;
-    }
-*/
-    /*scrollbar-width: none;*/
-}
-
-#canvas-container.self-scroll {
-    width: 100%;
-}
-
-#document-scroller.self-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-#canvas-container-pad {
-    position: absolute;
-    width: 1px;
-}
-
-p, blockquote {
-    padding: 0;
-    margin: 0;
-}
-
-.only_sp {
-}
-
-
-.more_than_phablet {
-    display: none;
-}
-
-main {
-    padding-top: 50px;
-
-    section {
-        margin-bottom: 150px;
-    }
-}
-
-/* documentがposition:fixedになるときに、mainのpadding-bottom:50pxが無視されてしまうので、無理やり50pxの要素を付け足す */
-main::after {
-    content: '';
-    display: block;
-    height: 50px; /* 必要な余白の高さ */
-    pointer-events: none;
-}
-
-a:link, a:visited {
-    color: #88CC88;
-    text-decoration: none;
-}
-
-a:hover, a:active {
-    color: #AAFFAA;
-}
-
-hr {
-    border: none;
-    height: 1px;
-}
-
-.info {
-    margin-top: 100px;
-    margin-bottom: 100px;
-
-    > .node:not(:last-child) {
-        margin-bottom: 1rem;
-    }
-}
-
-
-.horrorgame_search {
-
-    form {
-        > label {
-            margin: 1rem 0;
-            font-size: 1.1rem;
-        }
-
-        > div {
-            margin: 20px 0;
-            padding: 0 1rem;
-        }
-    }
-
-    #platform_check, #rating_check {
-        display: flex;
-        flex-wrap: wrap;
-
-        div {
-            flex: 0 0 50%;
-            padding: 10px 0;
-            display: flex;
-            align-items: center;
-
-            label {
-                line-height: 18px;
-                text-align: left;
-                white-space: wrap;
-                display: inline-block;
-                padding-left: 4px;
-                padding-bottom: 2px;
-            }
-        }
-    }
-
-    #search-footer {
-        padding-top: 20px;
-        display: flex;
-        justify-content: space-around;
-    }
-}
-
-#main-canvas {
-    position: absolute;
-    top:0;
-    left:0;
-    z-index:-1000;
-    backdrop-filter: blur(1px);
-    pointer-events: none;
-    touch-action: none;
-    user-select: none;
-    width: 100%;
-}
-
-#sub-canvas {
-    position: absolute;
-    top:0;
-    left:0;
-    z-index:-1001;
-    pointer-events: none;
-    touch-action: none;
-    user-select: none;
-    width: 100%;
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-#bg {
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:-1003;
-    overflow:hidden;
-    width:100%;
-    height:100vh;
-    padding:0;
-    text-align: center;
-    background-image: url('../img/bg3_2.jpg');
-    background-position-x: 0;
-    background-position-y: 0;
-    background-repeat: repeat;
-    background-size: 2048px 2048px;
-    pointer-events: none;
-}
-
-#debug {
-    position: fixed;
-    left: 0;
-    top: 0;
-    background-color: rgba(0,0,0,0.7);
-    display: inline-block;
-}
-
-
-.title-review {
-    margin-bottom: 30px;
-
-
-    > div:last-child {
-        margin-top: 1rem;
-    }
-}
-
-.product-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-
-    > .product-info {
-        width: 50%;
-        padding: 2px 3px;
-        margin-bottom: 1rem;
-
-        > .text-node {
-            text-align: center;
-
-            .platform-name {
-                margin-bottom: 1rem;
-                white-space: nowrap; /* テキストを改行させない */
-                overflow: hidden;    /* 表示領域を超えた部分を隠す */
-                text-overflow: clip; /* テキストが切れる部分をクリップする */
-                min-width: 100px;        /* 表示領域の幅を設定 */
-            }
-
-            .pkg-img {
-                display:flex;
-                align-items: center;
-                text-align: center;
-                justify-content: center;
-                position: relative;
-                margin-bottom: 1rem;
-                height: 100px;
-
-                .shop-title {
-                    position: absolute; /* 子要素を絶対位置に設定 */
-                    bottom: 0; /* 子要素を親要素の最下部に配置 */
-                    left: 0; /* 子要素を親要素の左端に配置 */
-                    width: 100%; /* 子要素の幅を親要素に合わせる */
-                    background-color: rgba(0, 0, 0, 0.6); /* 背景色を設定（透明度を追加） */
-                    padding: 0 10px; /* パディングを追加 */
-                    box-sizing: border-box; /* パディングを含めたボックスサイズを設定 */
-                    font-size: 10px;
-                    text-align: center;
-                }
-
-                img {
-                    width: auto;
-                    max-width:100%;
-                    max-height:100px;
-                }
-
-                img.default-img {
-                    max-width: 100px !important;
-                    max-height: 100px;
-                }
-            }
-
-            .shop-link {
-                > div {
-                    > a {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-
-                        > i {
-                            margin-right: 2px;
-                        }
-
-                        > span {
-                            padding-top: 2px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-.shop-link {
-    margin-top: 10px;
-    font-size: 12px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-around;
-
-
-    > div {
-        margin: 5px;
-
-        > a {
-            white-space: nowrap;
-        }
-    }
-}
-
-.review-score {
-    white-space: nowrap;
-    text-align: center;
-
-    .review-score-fear {
-        font-size: 20px;
-        margin-bottom: 20px;
-    }
-
-    .review-score-other {
-        display:flex;
-        flex-wrap:wrap;
-
-        > div {
-            width: 50%;
-        }
-
-        > div:first-child {
-            margin-bottom: 20px;
-        }
-    }
-
-    .review-score-fear, .review-score-other > div {
-        span:first-child {
-            display: inline-block;
-            width: 100px;
-            text-align: center;
-        }
-    }
-}
-
-.description {
-    > footer {
-        text-align: right;
-        margin-top: 1rem;
-    }
-}
-
-.ogp-info {
-    text-align: center;
     position: relative;
-    margin-bottom: 1rem;
+    padding: 0;
+    margin: 0;
 
-    img {
-        display: block;
-        max-width: 100%;
-        max-height: 400px;
+    background-color: #000000;
+
+    /*
+    background: linear-gradient(
+        315deg,
+        rgba(0, 255, 0, 0.1) 0%,
+        rgba(0, 255, 0, 0.05) 50%,
+        transparent 70%
+    ),
+    black;
+    background-attachment: fixed;
+    */
+}
+
+.node-pt {
+    color: var(--node-pt-dark);
+    display: inline-block;
+    line-height: 1;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    width: 20px;
+}
+
+
+header.node {
+    margin-top: 10px;
+    margin-bottom: 50px;
+
+    .node-pt {
+        text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
+        color: var(--node-pt-light);
+        width: 30px;
+    }
+}
+
+h1 {
+    font-size: 1.2rem;
+}
+
+.node {
+    > .node-head {
+        display: flex;
+        align-items: center;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
     }
 
-    blockquote {
-        position: absolute; /* 子要素を絶対位置に設定 */
-        bottom: 0; /* 子要素を親要素の最下部に配置 */
-        left: 0; /* 子要素を親要素の左端に配置 */
-        width: 100%; /* 子要素の幅を親要素に合わせる */
-        background-color: rgba(0, 0, 0, 0.6); /* 背景色を設定（透明度を追加） */
-        padding: 0 20px; /* パディングを追加 */
-        box-sizing: border-box; /* パディングを含めたボックスサイズを設定 */
-        font-size: 10px;
+    > .node-content {
+        margin-left: 25px;
+    }
+}
 
-        > footer {
-            text-align: right;
+
+
+.node-container {
+    > section {
+        margin-left: 30px;
+        margin-bottom: 40px;
+
+        
+        .sub-node-container
+        {
+            position: relative;
+            left: 40px;
+            height: 0px;
+            font-size: 13px;
+            z-index: -100;
+            pointer-events: none;
+
+            > .sub-node {
+                filter: blur(1px);
+                display: flex;
+                color: rgba(100, 100, 100, 0.5);
+                padding: 12px 0;
+
+                > .node-pt {
+                    color: var(--sub-node-pt);
+                }
+            }
         }
     }
 }
 
-.fade {
-    opacity: 0;
+.network-link {
+    color: gray;
+    background-color: transparent;
+    margin-left: 4px;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+
+    & + .node-pt {
+        transition: all 0.3s ease;
+    }
+
+    &:hover {
+        color: white;
+        cursor: pointer;
+
+        & + .node-pt {
+            color: var(--node-pt-light);
+            text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
+            transition: all 0.3s ease;
+        }
+    }
 }
 
-.admin-edit {
-    text-align: right;
+
+.content-link {
+    color: gray;
+    display: inline-block;
+    background-color: transparent;
+    border: 2px solid var(--node-pt-dark);
+    margin-left: 10px;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.7);
+
+    &:hover {
+        color: white;
+        border: 2px solid var(--node-pt-light);
+        box-shadow: 0 0 3px var(--node-pt-light-shadow), 0 0 10px var(--node-pt-light-shadow);
+        cursor: pointer;
+    }
 }
 
-#rating-check-popup > div {
-    text-align: center;
-    h1 {
+.node {
+    > .node-pt {
+        width: 32px;
         text-align: center;
-    }
-
-    p {
-        margin: 2rem 0;
-    }
-
-    a {
-        margin: 0 1rem;
+        font-size: 10px;
     }
 }
 
-#loading {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    background-color: black;
-    opacity: 0.6;
-    display: none;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in-text {
-    animation: fadeIn 0.2s ease-in-out forwards;
-}
-
-.show-text {
-    opacity: 1 !important;
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.fade-out-text {
-    animation: fadeOut 0.2s ease-in-out forwards;
-}
-
-#map {
+#bg1 {
     position: absolute;
-    left: 0;
     top: 0;
-    overflow: hidden;
+    left: 0;
     width: 100%;
     height: 100%;
-
-    .franchise {
-        z-index: 1000;
-    }
+    pointer-events: none;
 }
 
-div#main-network-debug {
-    position: fixed;
-    left: 0;
-    top: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    touch-action: none;
-    user-select: none;
-    color: white;
-    z-index: 10000;
-}
-
-canvas#main-network-debug-canvas {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 9999;
-    border: dotted 1px red;
-}
-
-
-.map-header {
-    position: fixed;
+#canvas {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 10000;
-    background-color: rgba(0, 0, 0, 0.7);
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
 }
 
-#horror-game-search-header {
-    padding: 10px;
-    box-sizing: border-box;
-
-    .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .menu-button {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        padding: 5px;
-        color: #FFFFFF;
-
-        &:hover {
-            color: #666;
-        }
-    }
-
-    .menu-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        opacity: 0;
-        visibility: hidden;
-        z-index: 10001;
-        transition: opacity 0.2s ease, visibility 0.2s ease;
-
-        &.active {
-            opacity: 1;
-            visibility: visible;
-        }
-    }
-
-    .menu-content {
-        position: fixed;
-        top: 60px;
-        right: -250px;
-        width: 250px;
-        background-color: #1a1a1a;
-        border-radius: 4px 0 0 4px;
-        padding: 20px 0;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-        transition: right 0.2s ease;
-    }
-
-    .menu-overlay.active .menu-content {
-        right: 0;
-    }
-
-    .menu-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 20px;
-        color: #FFFFFF;
-        text-decoration: none;
-        transition: background-color 0.2s;
-
-        &:hover {
-            background-color: #333;
-        }
-
-        i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-    }
-
-    /* 検索サジェストのスタイル */
-    .search-container {
-        position: relative;
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #666;
-        pointer-events: none;
-    }
-
-    #search-input {
-        width: 100%;
-        padding: 8px 12px 8px 40px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-        background-color: white;
-
-        &::placeholder {
-            color: #666;
-        }
-
-        &:focus {
-            outline: none;
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
-
-            &::placeholder {
-                color: #999;
-            }
-        }
-    }
-
-    .search-suggestions {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        max-height: 300px;
-        overflow-y: auto;
-        z-index: 1000;
-        display: none;
-    }
-
-    .suggestion-item {
-        padding: 8px 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #000;
-
-        &:hover {
-            background-color: #f5f5f5;
-        }
-    }
-
-    .suggestion-icon {
-        font-size: 0.8em;
-        color: #666;
-        background: #eee;
-        padding: 2px 6px;
-        border-radius: 3px;
-    }
-
-    .suggestion-name {
-        flex: 1;
-    }
-
-    #search-form {
-        position: relative;
-    }
-}
-
-
-.map-sub {
-    opacity: 0;
-    animation: none;
-    z-index: 1000;
-}
-
-.map-sub.fade-in {
-    animation: mapSubFadeIn 0.5s ease-in-out forwards;
-}
-
-.map-sub.fade-out {
-    animation: mapSubFadeOut 0.5s ease-in-out forwards;
-}
-
-/* フェードイン/フェードアウトアニメーション */
-@keyframes mapSubFadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes mapSubFadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-
-
-/* スマホ～ */
-@media (min-width: 400px) {
-}
-
-/* ファブレット～ */
-@media (min-width: 550px) {
-    .product-list {
-        > .product-info {
-            width: 33%;
-            padding: 2px 3px;
-        }
-    }
-
-    .only_sp {
-        display: none;
-    }
-
-    .more_than_phablet {
-        display: revert;
-    }
-
-
-    .map-header {
-        .search-container {
-            width: 50%;
-        }
-    }
-}
-
-/* タブレット～ */
-@media (min-width: 750px) {
-    body {
-        display: grid;
-        justify-content: center;
-    }
-    #document {
-        width: 700px;
-    }
-
-    .title-packages {
-        justify-content: center;
-
-        > .title-package-info {
-            max-width: 200px;
-            margin-right: 10px;
-            margin-bottom: 1rem;
-        }
-    }
-
-    .review-score {
-        .review-score-other {
-            > div {
-                width: 25%;
-            }
-
-            > div:first-child {
-                margin-bottom: 0;
-            }
-        }
-
-        .review-score-other > div {
-            span:first-child {
-                text-align: right;
-            }
-        }
-    }
-
-    .horrorgame_search {
-        #platform_check, #rating_check {
-            div {
-                flex: 0 0 33.33%;
-                padding: 5px 0;
-            }
-        }
-    }
-}
-/* PC～ */
-@media (min-width: 1000px) {
-
-
-    .horrorgame_search {
-        #platform_check, #rating_check {
-            div {
-                flex: 0 0 25%;
-                padding: 5px 0;
-            }
-        }
-    }
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 700px;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 100, 0, 0.05) 0%,
+        rgba(0, 100, 0, 0.1) 50%,
+        rgba(0, 100, 0, 0.05) 100%
+    );
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    border: 1px solid rgba(0, 128, 0, 0.5);
+    box-shadow: 0 0 10px #008800;
+    border-bottom: none;
+    padding: 10px 20px;
 }

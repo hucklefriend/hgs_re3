@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', [HgnController::class, 'entrance'])->name('Entrance');
 if (App::environment('production')) {
-    Route::get('', [HgnController::class, 'entrance'])->name('Entrance');
     return;
 }
 
@@ -295,7 +295,6 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 $class = HgnController::class;
-Route::get('', [$class, 'entrance'])->name('Entrance');
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
 Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
@@ -306,7 +305,8 @@ Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // ホラーゲームネットワーク
-    Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    //Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    Route::get('/', [$class, 'horrorGames'])->name('Game.HorrorGames');
     // フランチャイズ詳細ネットワーク
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク

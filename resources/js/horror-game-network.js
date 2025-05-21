@@ -30,7 +30,12 @@ export class HorrorGameNetwork
             throw new Error('HorrorGameNetworkのインスタンスは既に存在します。getInstance()を使用してください。');
         }
 
-        this.components = loadComponents();;
+        this.canvas = document.querySelector('#canvas');
+        this.canvasCtx = this.canvas.getContext('2d');
+
+
+/*
+        this.components = loadComponents();
         this.createdComponents = {};
 
         // 各種ビューアの用意
@@ -98,6 +103,7 @@ export class HorrorGameNetwork
         }
 
         this._scrollTimeout = null;
+*/
     }
 
     /**
