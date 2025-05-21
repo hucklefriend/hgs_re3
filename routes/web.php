@@ -305,7 +305,8 @@ Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // ホラーゲームネットワーク
-    Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    //Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
+    Route::get('/', [$class, 'horrorGames'])->name('Game.HorrorGames');
     // フランチャイズ詳細ネットワーク
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
     // フランチャイズネットワーク

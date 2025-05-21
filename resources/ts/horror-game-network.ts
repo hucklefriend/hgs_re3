@@ -91,8 +91,9 @@ export class HorrorGameNetwork
         this.canvasCtx.beginPath();
         this.canvasCtx.strokeStyle = gradient;
         this.canvasCtx.lineWidth = 2;
-        this.canvasCtx.moveTo(startX, startY);
-        this.canvasCtx.lineTo(startX, startY + (endY - startY) * 0.7); // 下方向に伸びる（80%の位置まで）
+        //this.canvasCtx.moveTo(startX, startY);
+        //this.canvasCtx.lineTo(startX, startY + (endY - startY) * 0.7); // 下方向に伸びる（80%の位置まで）
+        this.canvasCtx.moveTo(startX, endY - 30);
         this.canvasCtx.quadraticCurveTo(controlPoint.x, controlPoint.y, endX, endY);
         this.canvasCtx.stroke();
     }
@@ -159,7 +160,7 @@ export class HorrorGameNetwork
         // 発光効果のためのグラデーション
         const gradient = this.canvasCtx.createLinearGradient(0, 0, 0, this.canvas.height);
         gradient.addColorStop(0, 'rgba(144, 255, 144, 0.8)');   // 薄い緑色
-        //gradient.addColorStop(0.5, 'rgba(144, 255, 144, 0.4)'); // 中間
+        gradient.addColorStop(0.5, 'rgba(144, 255, 144, 0.4)'); // 中間
         gradient.addColorStop(1, 'rgba(70, 150, 70, 0.8)');   // 薄い緑色
 
         // 発光効果の設定
@@ -191,6 +192,14 @@ export class HorrorGameNetwork
                 gradient
             );
         });
+
+        // headParentCenterXからcanvasの下端まで直線を引く
+        this.canvasCtx.beginPath();
+        this.canvasCtx.strokeStyle = 'rgb(144, 255, 144)';
+        this.canvasCtx.lineWidth = 2;
+        this.canvasCtx.moveTo(headParentCenterX, headParentCenterY);
+        this.canvasCtx.lineTo(headParentCenterX, this.canvas.height);
+        this.canvasCtx.stroke();
 
         Object.values(this.contentLinks).forEach(contentLink => {
             const contentLinkRect = contentLink.getBoundingClientRect();
