@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'normalize.css';
 
 :root {
     --node-pt-light: #66ff66;
@@ -8,7 +6,6 @@
     --node-pt-dark: #336633;
     --sub-node-pt: #003300;
 }
-
 
 html {
     padding: 0;
@@ -34,6 +31,19 @@ body {
     background-attachment: fixed;
     */
 }
+
+main {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 700px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+a {
+    text-decoration: none;
+}
+
 
 .node-pt {
     color: var(--node-pt-dark);
@@ -151,6 +161,8 @@ h1 {
 }
 
 .node {
+    position: relative;
+
     > .node-pt {
         width: 32px;
         text-align: center;
@@ -196,4 +208,15 @@ footer {
     box-shadow: 0 0 10px #008800;
     border-bottom: none;
     padding: 10px 20px;
+}
+
+
+canvas.node-canvas {
+    position: absolute;
+    top: 0;
+    left: -16px;
+    width: 100%;
+    height: calc(100% + 150px);
+    z-index: -1;
+    pointer-events: none;
 }

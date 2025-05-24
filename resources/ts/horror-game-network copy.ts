@@ -1,5 +1,6 @@
-export class Node
+export class HorrorGameNetwork
 {
+    private static instance: HorrorGameNetwork;
     private canvas: HTMLCanvasElement;
     private canvasCtx: CanvasRenderingContext2D;
     private headNodePoint: HTMLSpanElement;
@@ -45,6 +46,17 @@ export class Node
         });
 
         this.body = document.querySelector('body') as HTMLBodyElement;
+    }
+
+    /**
+     * インスタンスを返す
+     */
+    public static getInstance(): HorrorGameNetwork
+    {
+        if (!HorrorGameNetwork.instance) {
+            HorrorGameNetwork.instance = new HorrorGameNetwork();
+        }
+        return HorrorGameNetwork.instance;
     }
 
     /**

@@ -26,12 +26,9 @@
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
 <body>
-    <main class="mx-auto max-w-[700px] px-4" style="position:relative;">
+    <main class="" style="position:relative;">
         @yield('content')
         <div style="position:absolute;left:30px;top:13px;height:100%;border-left:2px solid #66ff66;box-shadow: 0 0 10px 0 rgba(102, 255, 102, 0.5);"></div>
     </main>
-
-    <canvas id="canvas"></canvas>
-    <div id="bg1"></div>
 </body>
 </html>

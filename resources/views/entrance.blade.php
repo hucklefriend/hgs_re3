@@ -10,7 +10,7 @@
         </div>
     </header>
     <div class="node-container">
-        <section class="node" id="horror-games-node">
+        <section class="node link-node" id="horror-games-node">
             <div class="node-head">
                 <a href="#" class="network-link">Horror Games</a>
                 <span class="node-pt main-node-pt">●</span>
@@ -26,7 +26,9 @@
                     <span class="node-pt">●</span><span>Platforms</span>
                 </div>
             </div>
+            <canvas class="node-canvas"></canvas>
         </section>
+        {{--
         <section class="node" id="information-node">
             <div class="node-head">
                 <a href="#" class="network-link">Informations</a>
@@ -49,25 +51,11 @@
                 <a href="#" class="content-link">About</a>
             </div>
         </section>
-            <section class="node" id="privacy-policy-node">
+        <section class="node" id="privacy-policy-node">
             <div class="node-head">
                 <a href="#" class="content-link">Privacy Policy</a>
             </div>
         </section>
+        --}}
     </div>
-    
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 @endsection
