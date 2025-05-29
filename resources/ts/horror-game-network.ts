@@ -90,7 +90,6 @@ export class HorrorGameNetwork
             this.mainLine.setStartPoint(headerPosition.x-1, headerPosition.y);
 
             const lastNodePosition = this.lastNode.getConnectionPoint();
-            console.log(this.lastNode.getNodeElement().offsetTop);
             this.mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - 24);
         }
     }

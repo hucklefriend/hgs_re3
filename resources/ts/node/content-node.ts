@@ -1,9 +1,8 @@
-import { NodeBase } from "./node-base";
-import { NodePoint } from "./parts/node-point";
+import { MainNodeBase } from "./main-node-base";
 
-export class ContentNode extends NodeBase
+export class ContentNode extends MainNodeBase
 {
-    private point: NodePoint;
+    private linkElement: HTMLElement;
 
     /**
      * コンストラクタ
@@ -12,11 +11,14 @@ export class ContentNode extends NodeBase
     {
         super(nodeElement);
 
-        this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
+        this.linkElement = nodeElement.querySelector('.content-link') as HTMLElement;
     }
 
     public getConnectionPoint(): {x: number, y: number}
     {
-        return this.point.getCenterPosition();
+        return {
+            x: this.linkElement.offsetLeft,
+            y: this.linkElement.offsetTop + this.linkElement.offsetHeight / 2
+        };
     }
 } 

@@ -2,7 +2,7 @@ import { Point } from "../../common/point";
 
 export class NodePoint
 {
-    private element: HTMLSpanElement;
+    public element: HTMLSpanElement;
 
     /**
      * コンストラクタ

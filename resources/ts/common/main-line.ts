@@ -18,7 +18,6 @@ export class MainLine
 
     public setHeight(height: number): void
     {
-        console.log(height);
         this.element.style.height = `${height}px`;
     }
 } 

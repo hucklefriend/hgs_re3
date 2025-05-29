@@ -1,7 +1,6 @@
-import { MainNodeBase } from "./main-node-base";
 import { NodePoint } from "./parts/node-point";
 
-export class LinkNode extends MainNodeBase
+export class SubLinkNode
 {
     private point: NodePoint;
 
@@ -10,13 +9,15 @@ export class LinkNode extends MainNodeBase
      */
     public constructor(nodeElement: HTMLElement)
     {
-        super(nodeElement);
-
-        this.point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
+        this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
     }
 
     public getConnectionPoint(): {x: number, y: number}
     {
-        return this.point.getCenterPosition();
+        const rect = this.point.element.getBoundingClientRect();
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
     }
 } 
