@@ -1,9 +1,10 @@
 import { NodeBase } from "./node-base";
-import { Point } from "./parts/point";
+import { NodePoint } from "./parts/node-point";
+import { Point } from "../common/point";
 
 export class HeaderNode extends NodeBase
 {
-    private point: Point;
+    private point: NodePoint;
     private title: HTMLElement;
     //private content: HTMLElement;
 
@@ -14,15 +15,17 @@ export class HeaderNode extends NodeBase
     {
         super(nodeElement);
 
-        this.point = new Point(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
+        this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
         this.title = nodeElement.querySelector('.node-head h1') as HTMLElement;
         //this.content = nodeElement.querySelector('.node-body') as HTMLElement;
     }
 
     /**
      * 接続点を取得する
+     * 
+     * @returns 接続点
      */
-    protected getConnectionPoint(): {x: number, y: number}
+    public getConnectionPoint(): Point
     {
         return this.point.getCenterPosition();
     }

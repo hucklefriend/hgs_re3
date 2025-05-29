@@ -1,6 +1,7 @@
 import { HeaderNode } from "./node/header-node";
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
+import { MainLine } from "./common/main-line";
 
 export class HorrorGameNetwork
 {
@@ -8,6 +9,8 @@ export class HorrorGameNetwork
     private headerNode: HeaderNode;
     private linkNodes: LinkNode[];
     private contentNodes: ContentNode[];
+    private lastNode: LinkNode | ContentNode | null;
+    private mainLine: MainLine | null;
 
     /**
      * コンストラクタ
@@ -17,6 +20,8 @@ export class HorrorGameNetwork
         this.headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
         this.linkNodes = [];
         this.contentNodes = [];
+        this.lastNode = null;
+        this.mainLine = null;
     }
 
     /**
@@ -35,6 +40,8 @@ export class HorrorGameNetwork
      */
     public start(): void
     {
+        this.mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
+
         // リサイズイベントの登録
         window.addEventListener('resize', () => this.resize());
 
@@ -50,6 +57,7 @@ export class HorrorGameNetwork
      */
     private loadNodes(): void
     {
+        this.lastNode = null;
         const mainNodes = document.querySelectorAll('div.node-container > section.node');
         mainNodes.forEach(mainNode => {
             const mainNodeId = mainNode.id;
@@ -57,11 +65,13 @@ export class HorrorGameNetwork
             // link-nodeクラスがあればLinkNodeを作成
             if (mainNode.classList.contains('link-node')) {
                 this.linkNodes.push(new LinkNode(mainNode as HTMLElement));
+                this.lastNode = this.linkNodes[this.linkNodes.length - 1];
             }
 
             // content-nodeクラスがあればContentNodeを作成
             if (mainNode.classList.contains('content-node')) {
                 this.contentNodes.push(new ContentNode(mainNode as HTMLElement));
+                this.lastNode = this.contentNodes[this.contentNodes.length - 1];
             }
         });
     }
@@ -74,6 +84,15 @@ export class HorrorGameNetwork
         this.headerNode.resize();
         this.linkNodes.forEach(linkNode => linkNode.resize());
         this.contentNodes.forEach(contentNode => contentNode.resize());
+
+        if (this.mainLine && this.lastNode) {
+            const headerPosition = this.headerNode.getConnectionPoint();
+            this.mainLine.setStartPoint(headerPosition.x-1, headerPosition.y);
+
+            const lastNodePosition = this.lastNode.getConnectionPoint();
+            console.log(this.lastNode.getNodeElement().offsetTop);
+            this.mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - 24);
+        }
     }
 
     /**

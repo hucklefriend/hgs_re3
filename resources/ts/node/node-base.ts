@@ -14,6 +14,11 @@ export abstract class NodeBase
         this.isDraw = false;
     }
 
+    public getNodeElement(): HTMLElement
+    {
+        return this.nodeElement;
+    }
+
     /**
      * 次のアニメーションフレームで描画を行う
      */

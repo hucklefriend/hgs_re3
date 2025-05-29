@@ -28,7 +28,7 @@
 <body>
     <main class="" style="position:relative;">
         @yield('content')
-        <div style="position:absolute;left:30px;top:13px;height:100%;border-left:2px solid #66ff66;box-shadow: 0 0 10px 0 rgba(102, 255, 102, 0.5);"></div>
+        <div id="main-line"></div>
     </main>
 </body>
 </html>

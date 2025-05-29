@@ -35,15 +35,22 @@ body {
 main {
     margin-left: auto;
     margin-right: auto;
-    max-width: 700px;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    width: 100vw;
+    max-width: 500px;
 }
 
 a {
     text-decoration: none;
 }
 
+div#main-line {
+    position: absolute;
+    left: 14px;
+    top: 24px;
+    height: 100%;
+    border-left: 2px solid #66ff66;
+    box-shadow: 0 0 10px #66ff66;
+}
 
 .node-pt {
     color: var(--node-pt-dark);
@@ -55,6 +62,7 @@ a {
     justify-content: center;
     font-size: 10px;
     width: 20px;
+    min-width: 20px;
 }
 
 
@@ -62,10 +70,15 @@ header.node {
     margin-top: 10px;
     margin-bottom: 50px;
 
-    .node-pt {
-        text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
-        color: var(--node-pt-light);
-        width: 30px;
+    .node-head {
+        white-space: nowrap;
+
+        .node-pt {
+            text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
+            color: var(--node-pt-light);
+            width: 30px;
+            min-width: 30px;
+        }
     }
 }
 
@@ -90,7 +103,7 @@ h1 {
 
 .node-container {
     > section {
-        margin-left: 30px;
+        padding-left: 30px;
         margin-bottom: 40px;
 
         
@@ -165,6 +178,7 @@ h1 {
 
     > .node-pt {
         width: 32px;
+        min-width: 32px;
         text-align: center;
         font-size: 10px;
     }
@@ -214,8 +228,8 @@ footer {
 canvas.node-canvas {
     position: absolute;
     top: 0;
-    left: -16px;
-    width: 100%;
+    left: 0;
+    width: 200px;
     height: calc(100% + 150px);
     z-index: -1;
     pointer-events: none;
