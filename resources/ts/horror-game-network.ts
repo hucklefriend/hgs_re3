@@ -11,6 +11,7 @@ export class HorrorGameNetwork
     private contentNodes: ContentNode[];
     private lastNode: LinkNode | ContentNode | null;
     private mainLine: MainLine | null;
+    private _timestamp: number;
 
     /**
      * コンストラクタ
@@ -22,6 +23,7 @@ export class HorrorGameNetwork
         this.contentNodes = [];
         this.lastNode = null;
         this.mainLine = null;
+        this._timestamp = 0;
     }
 
     /**
@@ -33,6 +35,14 @@ export class HorrorGameNetwork
             HorrorGameNetwork.instance = new HorrorGameNetwork();
         }
         return HorrorGameNetwork.instance;
+    }
+
+    /**
+     * 現在のタイムスタンプを取得
+     */
+    public get timestamp(): number
+    {
+        return this._timestamp;
     }
 
     /**
@@ -49,7 +59,7 @@ export class HorrorGameNetwork
 
         this.resize();
 
-        this.update();
+        requestAnimationFrame((timestamp) => this.update(timestamp));
     }
 
     /**
@@ -90,22 +100,23 @@ export class HorrorGameNetwork
             this.mainLine.setStartPoint(headerPosition.x-1, headerPosition.y);
 
             const lastNodePosition = this.lastNode.getConnectionPoint();
-            this.mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - 24);
+            this.mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
         }
     }
 
     /**
      * アニメーションの更新処理
      */
-    private update(): void
+    private update(timestamp: number): void
     {
+        this._timestamp = timestamp;
         this.headerNode.update();
         this.linkNodes.forEach(linkNode => linkNode.update());
         this.contentNodes.forEach(contentNode => contentNode.update());
 
         this.draw();
 
-        requestAnimationFrame(() => this.update());
+        requestAnimationFrame((timestamp) => this.update(timestamp));
     }
 
     /**
