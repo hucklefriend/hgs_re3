@@ -25,6 +25,9 @@
                 <div class="sub-node sub-link-node">
                     <span class="node-pt">●</span><span>Platforms</span>
                 </div>
+                <div class="sub-node sub-link-node">
+                    <span class="node-pt">●</span><span>ABCDEFG</span>
+                </div>
             </div>
             <canvas class="node-canvas"></canvas>
         </section>
