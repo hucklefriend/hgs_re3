@@ -5,7 +5,6 @@ export class LinkNode extends MainNodeBase
 {
     private point: NodePoint;
     private anchor: HTMLAnchorElement;
-    private isHovered: boolean;
     private updateGradientEndAlphaFunc: (() => void) | null;
 
     /**
@@ -17,7 +16,6 @@ export class LinkNode extends MainNodeBase
 
         this.point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this.anchor = nodeElement.querySelector('.node-head .network-link') as HTMLAnchorElement;
-        this.isHovered = false;
         this.updateGradientEndAlphaFunc = null;
 
         // ホバーイベントの設定
@@ -31,8 +29,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnHover(): void
     {
         this.gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        this.maxChildEndOpacity = this.getAnimationValue(0.5, 0.7, 200);
-        this.minChildEndOpacity = this.getAnimationValue(0.1, 0.5, 200);
+        this.maxSubEndOpacity = this.getAnimationValue(0.5, 0.7, 200);
+        this.minSubEndOpacity = this.getAnimationValue(0.1, 0.5, 200);
         if (this.gradientEndAlpha >= 1.0) {
             this.gradientEndAlpha = 1.0;
             this.updateGradientEndAlphaFunc = null;
@@ -46,8 +44,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnUnhover(): void
     {
         this.gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        this.maxChildEndOpacity = this.getAnimationValue(0.7, 0.5, 200);
-        this.minChildEndOpacity = this.getAnimationValue(0.5, 0.1, 200);
+        this.maxSubEndOpacity = this.getAnimationValue(0.7, 0.5, 200);
+        this.minSubEndOpacity = this.getAnimationValue(0.5, 0.1, 200);
         if (this.gradientEndAlpha <= 0.3) {
             this.gradientEndAlpha = 0.3;
             this.updateGradientEndAlphaFunc = null;
@@ -70,7 +68,6 @@ export class LinkNode extends MainNodeBase
      */
     private hover(): void
     {
-        this.isHovered = true;
         this.subNodeContainer.classList.add('hover');
         this.animationStartTime = (window as any).hgn.timestamp;
         this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
@@ -81,7 +78,6 @@ export class LinkNode extends MainNodeBase
      */
     private unhover(): void
     {
-        this.isHovered = false;
         this.subNodeContainer.classList.remove('hover');
         this.animationStartTime = (window as any).hgn.timestamp;
         this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;

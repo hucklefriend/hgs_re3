@@ -9,8 +9,8 @@ export abstract class MainNodeBase extends NodeBase
     protected subNodeContainer: HTMLElement;
     protected gradientEndAlpha: number;
     protected animationStartTime: number;
-    protected maxChildEndOpacity: number;
-    protected minChildEndOpacity: number;
+    protected maxSubEndOpacity: number;
+    protected minSubEndOpacity: number;
     
     /**
      * コンストラクタ
@@ -23,8 +23,8 @@ export abstract class MainNodeBase extends NodeBase
         this.canvasCtx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.gradientEndAlpha = 0.3;
         this.animationStartTime = 0;
-        this.maxChildEndOpacity = 0.5;
-        this.minChildEndOpacity = 0.1;
+        this.maxSubEndOpacity = 0.5;
+        this.minSubEndOpacity = 0.1;
 
         this.subNodeContainer = nodeElement.querySelector('.sub-node-container') as HTMLElement;
 
@@ -148,9 +148,9 @@ export abstract class MainNodeBase extends NodeBase
      */
     private drawChildCurvedLine(startX: number, startY: number, endX: number, endY: number, loopCount: number): void
     {
-        // ループ回数に応じて透明度を調整（maxChildEndOpacityからminChildEndOpacityまで徐々に減少）
-        const opacity = this.maxChildEndOpacity - (loopCount * 0.1);
-        const endOpacity = Math.max(this.minChildEndOpacity, opacity - this.minChildEndOpacity);
+        // ループ回数に応じて透明度を調整（maxSubEndOpacityからminSubEndOpacityまで徐々に減少）
+        const opacity = this.maxSubEndOpacity - (loopCount * 0.1);
+        const endOpacity = Math.max(this.minSubEndOpacity, opacity - this.minSubEndOpacity);
 
         const gradient = this.canvasCtx.createLinearGradient(startX, startY, endX, endY);
         gradient.addColorStop(0, `rgba(100, 200, 100, ${this.gradientEndAlpha})`);   // 開始点の透明度
