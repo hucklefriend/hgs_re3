@@ -58,6 +58,8 @@ export class LinkNode extends MainNodeBase
      */
     public update(): void
     {
+        super.update();
+
         if (this.updateGradientEndAlphaFunc !== null) {
             this.updateGradientEndAlphaFunc();
         }

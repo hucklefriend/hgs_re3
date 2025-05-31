@@ -3,6 +3,12 @@ import { SubLinkNode } from "./sub-link-node";
 
 export abstract class MainNodeBase extends NodeBase
 {
+    public static readonly APPEAR_STATUS_NONE = 0;
+    public static readonly APPEAR_STATUS_APPEARING = 1;
+    public static readonly APPEAR_STATUS_APPEARED = 2;
+    public static readonly APPEAR_STATUS_DISAPPEARING = 3;
+    public static readonly APPEAR_STATUS_DISAPPEARED = 4;
+
     protected canvas: HTMLCanvasElement;
     protected canvasCtx: CanvasRenderingContext2D;
     protected subLinkNodes: SubLinkNode[] = [];
@@ -11,6 +17,8 @@ export abstract class MainNodeBase extends NodeBase
     protected animationStartTime: number;
     protected maxSubEndOpacity: number;
     protected minSubEndOpacity: number;
+    protected appearAnimationFunc: (() => void) | null;
+    protected appearStatus: number;
     
     /**
      * コンストラクタ
@@ -25,8 +33,9 @@ export abstract class MainNodeBase extends NodeBase
         this.animationStartTime = 0;
         this.maxSubEndOpacity = 0.5;
         this.minSubEndOpacity = 0.1;
-
+        this.appearAnimationFunc = null;
         this.subNodeContainer = nodeElement.querySelector('.sub-node-container') as HTMLElement;
+        this.appearStatus = MainNodeBase.APPEAR_STATUS_NONE;
 
         const subLinkNodeElements = this.subNodeContainer?.querySelectorAll('.sub-link-node') || [];
         this.subLinkNodes = Array.from(subLinkNodeElements)
@@ -48,8 +57,10 @@ export abstract class MainNodeBase extends NodeBase
      */
     public setCanvasSize(): void
     {
-        this.canvas.width = this.canvas.offsetWidth;
-        this.canvas.height = this.canvas.offsetHeight;
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = this.canvas.clientWidth * dpr;
+        this.canvas.height = this.canvas.clientHeight * dpr;
+        this.canvasCtx.scale(dpr, dpr);
     }
 
     /**
@@ -59,6 +70,50 @@ export abstract class MainNodeBase extends NodeBase
     {
         this.canvas.style.left = -this.nodeElement.offsetLeft + 'px';
         this.canvas.style.top = this.nodeElement.offsetHeight - 40 + 'px';
+    }
+
+    /**
+     * アニメーションの更新処理
+     */
+    public update(): void
+    {
+        super.update();
+
+        if (this.appearAnimationFunc) {
+            this.appearAnimationFunc();
+        }
+    }
+
+    /**
+     * 出現アニメーション開始
+     */
+    public appear(): void
+    {
+        if (this.appearStatus === MainNodeBase.APPEAR_STATUS_NONE) {
+            this.appearStatus = MainNodeBase.APPEAR_STATUS_APPEARING;
+            this.appearAnimationFunc = this.appearAnimation;
+            this.nodeElement.style.visibility = 'visible';
+        }
+    }
+
+    protected appearAnimation(): void
+    {
+        this.animationStartTime = (window as any).hgn.timestamp;
+        this.appearAnimationFunc = this.appearAnimation;
+    }
+
+    /**
+     * 消滅アニメーション開始
+     */
+    public disappear(): void
+    {
+        this.appearAnimationFunc = this.disappearAnimation;
+    }
+
+    protected disappearAnimation(): void
+    {
+        this.animationStartTime = (window as any).hgn.timestamp;
+        this.appearAnimationFunc = this.disappearAnimation;
     }
 
     /**
@@ -108,6 +163,7 @@ export abstract class MainNodeBase extends NodeBase
                 index
             );
         });
+        
         this.isDraw = false;
     }
 

@@ -1,6 +1,6 @@
 export abstract class NodeBase
 {
-    protected id: string;
+    private _id: string;
     protected nodeElement: HTMLElement;
     protected isDraw: boolean;
     
@@ -9,9 +9,14 @@ export abstract class NodeBase
      */
     public constructor(nodeElement: HTMLElement)
     {
-        this.id = nodeElement.id;
+        this._id = nodeElement.id;
         this.nodeElement = nodeElement;
         this.isDraw = false;
+    }
+
+    public get id(): string
+    {
+        return this._id;
     }
 
     public getNodeElement(): HTMLElement
@@ -45,6 +50,20 @@ export abstract class NodeBase
      * 更新処理
      */
     public update(): void
+    {
+    }
+
+    /**
+     * 出現アニメーション開始
+     */
+    public appear(): void
+    {
+    }
+
+    /**
+     * 消滅アニメーション開始
+     */
+    public disappear(): void
     {
     }
 
