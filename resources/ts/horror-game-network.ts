@@ -10,8 +10,9 @@ export class HorrorGameNetwork
     private linkNodes: LinkNode[];
     private contentNodes: ContentNode[];
     private lastNode: LinkNode | ContentNode | null;
-    private mainLine: MainLine | null;
+    private _mainLine: MainLine;
     private _timestamp: number;
+    private _appearAnimationFunc: (() => void) | null;
 
     /**
      * コンストラクタ
@@ -19,11 +20,12 @@ export class HorrorGameNetwork
     private constructor()
     {
         this.headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
+        this._mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
         this.linkNodes = [];
         this.contentNodes = [];
         this.lastNode = null;
-        this.mainLine = null;
         this._timestamp = 0;
+        this._appearAnimationFunc = null;
     }
 
     /**
@@ -46,18 +48,26 @@ export class HorrorGameNetwork
     }
 
     /**
+     * メインラインを取得
+     */
+    public get mainLine(): MainLine
+    {
+        return this._mainLine;
+    }
+
+    /**
      * 開始処理
      */
     public start(): void
     {
-        this.mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
-
         // リサイズイベントの登録
         window.addEventListener('resize', () => this.resize());
 
         this.loadNodes();
 
         this.resize();
+
+        this.appear();
 
         requestAnimationFrame((timestamp) => this.update(timestamp));
     }
@@ -95,12 +105,9 @@ export class HorrorGameNetwork
         this.linkNodes.forEach(linkNode => linkNode.resize());
         this.contentNodes.forEach(contentNode => contentNode.resize());
 
-        if (this.mainLine && this.lastNode) {
+        if (this._mainLine && this.lastNode) {
             const headerPosition = this.headerNode.getConnectionPoint();
-            this.mainLine.setStartPoint(headerPosition.x-1, headerPosition.y);
-
-            const lastNodePosition = this.lastNode.getConnectionPoint();
-            this.mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
+            this._mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
         }
     }
 
@@ -110,6 +117,12 @@ export class HorrorGameNetwork
     private update(timestamp: number): void
     {
         this._timestamp = timestamp;
+
+        if (this._appearAnimationFunc) {
+            this._appearAnimationFunc();
+        }
+
+        this._mainLine.update();
         this.headerNode.update();
         this.linkNodes.forEach(linkNode => linkNode.update());
         this.contentNodes.forEach(contentNode => contentNode.update());
@@ -117,6 +130,58 @@ export class HorrorGameNetwork
         this.draw();
 
         requestAnimationFrame((timestamp) => this.update(timestamp));
+    }
+
+    /**
+     * 出現アニメーション開始
+     */
+    public appear(): void
+    {
+        this._mainLine.appear();
+        this.headerNode.appear();
+        // this.linkNodes.forEach(linkNode => linkNode.appear());
+        // this.contentNodes.forEach(contentNode => contentNode.appear());
+
+        this._appearAnimationFunc = this.appearAnimation;
+    }
+
+    private appearAnimation(): void
+    {
+        const mainLineHeight = this._mainLine.getAnimationHeight();
+
+        this.linkNodes.forEach(linkNode => {
+            const linkNodeTop = linkNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
+            
+            if (linkNodeTop <= mainLineHeight) {
+                linkNode.appear();
+            }
+        });
+
+        this.contentNodes.forEach(contentNode => {
+            const contentNodeTop = contentNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
+            if (contentNodeTop <= mainLineHeight) {
+                contentNode.appear();
+            }
+        });
+
+        if (this._mainLine.isAppeared()) {
+            this._appearAnimationFunc = null;
+        }
+    }
+
+    /**
+     * 消滅アニメーション開始
+     */
+    public disappear(): void
+    {
+        this._mainLine.disappear();
+        this.headerNode.disappear();
+        this.linkNodes.forEach(linkNode => linkNode.disappear());
+        this.contentNodes.forEach(contentNode => contentNode.disappear());
+    }
+
+    private disappearAnimation(): void
+    {
     }
 
     /**
