@@ -48,7 +48,6 @@ export abstract class MainNodeBase extends NodeBase
     public resize(): void
     {
         this.setCanvasSize();
-        //this.setCanvasPos();
         this.setDraw();
     }
 
@@ -96,6 +95,9 @@ export abstract class MainNodeBase extends NodeBase
         }
     }
 
+    /**
+     * 出現アニメーション
+     */
     protected appearAnimation(): void
     {
         this.animationStartTime = (window as any).hgn.timestamp;
@@ -110,6 +112,9 @@ export abstract class MainNodeBase extends NodeBase
         this.appearAnimationFunc = this.disappearAnimation;
     }
 
+    /**
+     * 消滾アニメーション
+     */
     protected disappearAnimation(): void
     {
         this.animationStartTime = (window as any).hgn.timestamp;
@@ -220,6 +225,9 @@ export abstract class MainNodeBase extends NodeBase
         this.canvasCtx.stroke();
     }
 
+    /**
+     * 接続点を取得する
+     */
     public abstract getConnectionPoint(): {x: number, y: number};
 
     /**

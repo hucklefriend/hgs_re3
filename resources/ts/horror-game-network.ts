@@ -145,6 +145,9 @@ export class HorrorGameNetwork
         this._appearAnimationFunc = this.appearAnimation;
     }
 
+    /**
+     * 出現アニメーション
+     */
     private appearAnimation(): void
     {
         const mainLineHeight = this._mainLine.getAnimationHeight();
@@ -180,6 +183,9 @@ export class HorrorGameNetwork
         this.contentNodes.forEach(contentNode => contentNode.disappear());
     }
 
+    /**
+     * 消滅アニメーション
+     */
     private disappearAnimation(): void
     {
     }

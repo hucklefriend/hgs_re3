@@ -8,6 +8,7 @@ export class MainLine
 
     /**
      * コンストラクタ
+     * @param element メインラインの要素
      */
     public constructor(element: HTMLDivElement)
     {
@@ -20,7 +21,6 @@ export class MainLine
 
     /**
      * 高さを設定
-     * 
      * @param height 高さ
      */
     public setHeight(height: number): void
@@ -29,11 +29,17 @@ export class MainLine
         this.height = height;
     }
 
+    /**
+     * アニメーションの高さを取得する
+     */
     public getAnimationHeight(): number
     {
         return this.animationHeight;
     }
 
+    /**
+     * アニメーションの更新
+     */
     public update(): void
     {
         if (this.appearAnimationFunc) {
@@ -41,12 +47,18 @@ export class MainLine
         }
     }
 
+    /**
+     * 出現アニメーション開始
+     */
     public appear(): void
     {
         this.animationStartTime = (window as any).hgn.timestamp;
         this.appearAnimationFunc = this.appearAnimation;
     }
 
+    /**
+     * 出現アニメーション
+     */
     private appearAnimation(): void
     {
         const progress = (window as any).hgn.timestamp - this.animationStartTime;
@@ -60,6 +72,9 @@ export class MainLine
         this.element.style.height = `${this.animationHeight}px`;
     }
 
+    /**
+     * 消滅アニメーション開始
+     */
     public disappear(): void
     {
         this.element.style.visibility = 'hidden';
@@ -67,6 +82,9 @@ export class MainLine
         this.appearAnimationFunc = this.disappearAnimation;
     }
 
+    /**
+     * 消滾アニメーション
+     */
     private disappearAnimation(): void
     {
         const progress = (window as any).hgn.timestamp - this.animationStartTime;
@@ -80,6 +98,10 @@ export class MainLine
         this.element.style.height = `${this.animationHeight}px`;
     }
 
+    /**
+     * 出現しきったかどうかを取得する
+     * @returns 出現しきったかどうか
+     */
     public isAppeared(): boolean
     {
         return this.animationHeight >= this.height;
