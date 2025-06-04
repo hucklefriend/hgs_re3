@@ -38,7 +38,7 @@ export abstract class MainNodeBase extends NodeBase
         this.gradientEndAlpha = 0;
         this.animationStartTime = 0;
         this.subGradientStartAlpha = 0;
-        this.maxSubEndOpacity = 0.5;
+        this.maxSubEndOpacity = 0.3;
         this.minSubEndOpacity = 0.1;
         this.appearAnimationFunc = null;
         this.subNodeContainer = nodeElement.querySelector('.sub-node-container') as HTMLElement;
@@ -130,7 +130,6 @@ export abstract class MainNodeBase extends NodeBase
     protected appearSubNodesAnimation(): void
     {
         const progress = this.getAnimationProgress(1000);
-        console.log(progress);
         if (progress >= 1) {
             this.subCurveAppearProgress = [1, 1, 1, 1];
             this.appearStatus = MainNodeBase.APPEAR_STATUS_APPEARED;
@@ -298,7 +297,7 @@ export abstract class MainNodeBase extends NodeBase
         }
 
         const gradient = this.canvasCtx.createLinearGradient(startX, startY, currentEndX, currentEndY);
-        gradient.addColorStop(0, `rgba(100, 200, 100, ${this.gradientEndAlpha})`);   // 開始点の透明度
+        gradient.addColorStop(0, `rgba(100, 200, 100, ${endOpacity})`);   // 開始点の透明度
         gradient.addColorStop(1, `rgba(20, 80, 20, ${endOpacity})`);   // 終了点の透明度
 
         this.canvasCtx.beginPath();
