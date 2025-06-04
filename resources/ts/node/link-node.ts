@@ -30,8 +30,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnHover(): void
     {
         this.gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        this.maxSubEndOpacity = this.getAnimationValue(0.5, 0.7, 200);
-        this.minSubEndOpacity = this.getAnimationValue(0.1, 0.5, 200);
+        this.maxSubEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
+        this.minSubEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
         if (this.gradientEndAlpha >= 1.0) {
             this.gradientEndAlpha = 1.0;
             this.updateGradientEndAlphaFunc = null;
@@ -45,8 +45,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnUnhover(): void
     {
         this.gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        this.maxSubEndOpacity = this.getAnimationValue(0.7, 0.5, 200);
-        this.minSubEndOpacity = this.getAnimationValue(0.5, 0.1, 200);
+        this.maxSubEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
+        this.minSubEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
         if (this.gradientEndAlpha <= 0.3) {
             this.gradientEndAlpha = 0.3;
             this.updateGradientEndAlphaFunc = null;

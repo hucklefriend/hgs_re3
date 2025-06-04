@@ -31,7 +31,6 @@
             </div>
             <canvas class="node-canvas"></canvas>
         </section>
-        {{-- 
         <section class="node link-node" id="information-node">
             <div class="node-head disappear">
                 <a href="#" class="network-link">Informations</a>
@@ -62,6 +61,5 @@
             </div>
             <canvas class="node-canvas"></canvas>
         </section>
-         --}}
     </div>
 @endsection
