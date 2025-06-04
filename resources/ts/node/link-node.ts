@@ -9,6 +9,7 @@ export class LinkNode extends MainNodeBase
 
     /**
      * コンストラクタ
+     * @param nodeElement ノードの要素
      */
     public constructor(nodeElement: HTMLElement)
     {
@@ -85,6 +86,10 @@ export class LinkNode extends MainNodeBase
         this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
     }
 
+    /**
+     * 接続点を取得する
+     * @returns 接続点の座標
+     */
     public getConnectionPoint(): {x: number, y: number}
     {
         return this.point.getCenterPosition();

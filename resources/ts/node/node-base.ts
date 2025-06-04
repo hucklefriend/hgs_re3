@@ -14,11 +14,17 @@ export abstract class NodeBase
         this.isDraw = false;
     }
 
+    /**
+     * ノードのIDを取得する
+     */
     public get id(): string
     {
         return this._id;
     }
 
+    /**
+     * ノードの要素を取得する
+     */
     public getNodeElement(): HTMLElement
     {
         return this.nodeElement;
@@ -74,5 +80,8 @@ export abstract class NodeBase
     {
     }
 
+    /**
+     * 接続点を取得する
+     */
     protected abstract getConnectionPoint(): {x: number, y: number};
 } 

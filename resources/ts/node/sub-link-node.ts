@@ -3,6 +3,7 @@ import { NodePoint } from "./parts/node-point";
 export class SubLinkNode
 {
     private point: NodePoint;
+    public element: HTMLElement;
 
     /**
      * コンストラクタ
@@ -10,6 +11,7 @@ export class SubLinkNode
     public constructor(nodeElement: HTMLElement)
     {
         this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
+        this.element = nodeElement;
     }
 
     public getConnectionPoint(): {x: number, y: number}
