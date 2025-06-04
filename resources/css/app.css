@@ -96,6 +96,8 @@ h1 {
         align-items: center;
         flex-direction: row-reverse;
         justify-content: flex-end;
+
+        transition: all 0.3s ease-out;
     }
 
     > .node-content {
@@ -229,6 +231,10 @@ h1 {
             transition: all 0.3s ease;
         }
     }
+}
+
+.disappear {
+    opacity: 0;
 }
 
 .content-link {
