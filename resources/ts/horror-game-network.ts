@@ -74,12 +74,19 @@ export class HorrorGameNetwork
         // リサイズイベントの登録
         window.addEventListener('resize', () => this.resize());
 
-        // タブの可視性変更イベントの登録
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
+        // ページ遷移前のイベント登録
+        window.addEventListener('beforeunload', () => {
+            sessionStorage.setItem('isPageTransition', 'true');
+        });
+
+        // ページ表示イベントの登録（キャッシュからの復元時）
+        window.addEventListener('pageshow', (event) => {
+            const isPageTransition = sessionStorage.getItem('isPageTransition') === 'true';
+            if (event.persisted && !isPageTransition) {
                 this.resize();
                 this.draw();
             }
+            sessionStorage.removeItem('isPageTransition');
         });
 
         this.loadNodes();
