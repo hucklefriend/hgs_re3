@@ -74,6 +74,14 @@ export class HorrorGameNetwork
         // リサイズイベントの登録
         window.addEventListener('resize', () => this.resize());
 
+        // タブの可視性変更イベントの登録
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                this.resize();
+                this.draw();
+            }
+        });
+
         this.loadNodes();
 
         this.resize();
