@@ -29,6 +29,15 @@
     <main class="" style="position:relative;">
         @yield('content')
         <div id="main-line"></div>
+        <div id="content-node-view">
+            <header>
+                <h1></h1>
+            </header>
+            <div id="content-node-view-content">
+            </div>
+            <footer>
+            </footer>
+        </div>
     </main>
 </body>
 </html>
