@@ -2,6 +2,7 @@ import { HeaderNode } from "./node/header-node";
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
 import { MainLine } from "./common/main-line";
+import { ContentNodeView } from "./node/parts/content-node-view";
 
 export class HorrorGameNetwork
 {
@@ -13,6 +14,7 @@ export class HorrorGameNetwork
     private _mainLine: MainLine;
     private _timestamp: number;
     private _appearAnimationFunc: (() => void) | null;
+    private _contentNodeView: ContentNodeView;
 
     /**
      * コンストラクタ
@@ -26,6 +28,7 @@ export class HorrorGameNetwork
         this.lastNode = null;
         this._timestamp = 0;
         this._appearAnimationFunc = null;
+        this._contentNodeView = new ContentNodeView(document.querySelector('div#content-node-view') as HTMLDivElement);
     }
 
     /**
@@ -53,6 +56,14 @@ export class HorrorGameNetwork
     public get mainLine(): MainLine
     {
         return this._mainLine;
+    }
+
+    /**
+     * コンテンツノードビューを取得
+     */
+    public get contentNodeView(): ContentNodeView
+    {
+        return this._contentNodeView;
     }
 
     /**

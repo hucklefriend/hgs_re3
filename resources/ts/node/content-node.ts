@@ -88,4 +88,4 @@ export class ContentNode extends MainNodeBase
             y: this.anchor.offsetTop + this.anchor.offsetHeight / 2
         };
     }
-} 
+}
