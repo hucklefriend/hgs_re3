@@ -7,10 +7,10 @@ import { ContentNodeView } from "./node/parts/content-node-view";
 export class HorrorGameNetwork
 {
     private static instance: HorrorGameNetwork;
-    private headerNode: HeaderNode;
-    private linkNodes: LinkNode[];
-    private contentNodes: ContentNode[];
-    private lastNode: LinkNode | ContentNode | null;
+    private _headerNode: HeaderNode;
+    private _linkNodes: LinkNode[];
+    private _contentNodes: ContentNode[];
+    private _lastNode: LinkNode | ContentNode | null;
     private _mainLine: MainLine;
     private _timestamp: number;
     private _appearAnimationFunc: (() => void) | null;
@@ -21,11 +21,11 @@ export class HorrorGameNetwork
      */
     private constructor()
     {
-        this.headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
+        this._headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
         this._mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
-        this.linkNodes = [];
-        this.contentNodes = [];
-        this.lastNode = null;
+        this._linkNodes = [];
+        this._contentNodes = [];
+        this._lastNode = null;
         this._timestamp = 0;
         this._appearAnimationFunc = null;
         this._contentNodeView = new ContentNodeView(document.querySelector('div#content-node-view') as HTMLDivElement);
@@ -103,21 +103,21 @@ export class HorrorGameNetwork
      */
     private loadNodes(): void
     {
-        this.lastNode = null;
+        this._lastNode = null;
         const mainNodes = document.querySelectorAll('div.node-container > section.node');
         mainNodes.forEach(mainNode => {
             const mainNodeId = mainNode.id;
 
             // link-nodeクラスがあればLinkNodeを作成
             if (mainNode.classList.contains('link-node')) {
-                this.linkNodes.push(new LinkNode(mainNode as HTMLElement));
-                this.lastNode = this.linkNodes[this.linkNodes.length - 1];
+                this._linkNodes.push(new LinkNode(mainNode as HTMLElement));
+                this._lastNode = this._linkNodes[this._linkNodes.length - 1];
             }
 
             // content-nodeクラスがあればContentNodeを作成
             if (mainNode.classList.contains('content-node')) {
-                this.contentNodes.push(new ContentNode(mainNode as HTMLElement));
-                this.lastNode = this.contentNodes[this.contentNodes.length - 1];
+                this._contentNodes.push(new ContentNode(mainNode as HTMLElement));
+                this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
         });
     }
@@ -127,13 +127,13 @@ export class HorrorGameNetwork
      */
     private resize(): void
     {
-        this.headerNode.resize();
-        this.linkNodes.forEach(linkNode => linkNode.resize());
-        this.contentNodes.forEach(contentNode => contentNode.resize());
+        this._headerNode.resize();
+        this._linkNodes.forEach(linkNode => linkNode.resize());
+        this._contentNodes.forEach(contentNode => contentNode.resize());
 
-        if (this._mainLine && this.lastNode) {
-            const headerPosition = this.headerNode.getConnectionPoint();
-            this._mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
+        if (this._mainLine && this._lastNode) {
+            const headerPosition = this._headerNode.getConnectionPoint();
+            this._mainLine.setHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
         }
     }
 
@@ -149,9 +149,9 @@ export class HorrorGameNetwork
         }
 
         this._mainLine.update();
-        this.headerNode.update();
-        this.linkNodes.forEach(linkNode => linkNode.update());
-        this.contentNodes.forEach(contentNode => contentNode.update());
+        this._headerNode.update();
+        this._linkNodes.forEach(linkNode => linkNode.update());
+        this._contentNodes.forEach(contentNode => contentNode.update());
 
         this.draw();
 
@@ -164,9 +164,9 @@ export class HorrorGameNetwork
     public appear(): void
     {
         this._mainLine.appear();
-        this.headerNode.appear();
-        // this.linkNodes.forEach(linkNode => linkNode.appear());
-        // this.contentNodes.forEach(contentNode => contentNode.appear());
+        this._headerNode.appear();
+        // this._linkNodes.forEach(linkNode => linkNode.appear());
+        // this._contentNodes.forEach(contentNode => contentNode.appear());
 
         this._appearAnimationFunc = this.appearAnimation;
     }
@@ -178,16 +178,16 @@ export class HorrorGameNetwork
     {
         const mainLineHeight = this._mainLine.getAnimationHeight();
 
-        this.linkNodes.forEach(linkNode => {
-            const linkNodeTop = linkNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
+        this._linkNodes.forEach(linkNode => {
+            const linkNodeTop = linkNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
             
             if (linkNodeTop <= mainLineHeight) {
                 linkNode.appear();
             }
         });
 
-        this.contentNodes.forEach(contentNode => {
-            const contentNodeTop = contentNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
+        this._contentNodes.forEach(contentNode => {
+            const contentNodeTop = contentNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
             if (contentNodeTop <= mainLineHeight) {
                 contentNode.appear();
             }
@@ -204,9 +204,9 @@ export class HorrorGameNetwork
     public disappear(): void
     {
         this._mainLine.disappear();
-        this.headerNode.disappear();
-        this.linkNodes.forEach(linkNode => linkNode.disappear());
-        this.contentNodes.forEach(contentNode => contentNode.disappear());
+        this._headerNode.disappear();
+        this._linkNodes.forEach(linkNode => linkNode.disappear());
+        this._contentNodes.forEach(contentNode => contentNode.disappear());
     }
 
     /**
@@ -221,8 +221,8 @@ export class HorrorGameNetwork
      */
     public draw(): void
     {
-        this.headerNode.draw();
-        this.linkNodes.forEach(linkNode => linkNode.draw());
-        this.contentNodes.forEach(contentNode => contentNode.draw());
+        this._headerNode.draw();
+        this._linkNodes.forEach(linkNode => linkNode.draw());
+        this._contentNodes.forEach(contentNode => contentNode.draw());
     }
 } 
