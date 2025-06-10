@@ -51,13 +51,13 @@
         </section>
         <section class="node content-node" id="about-node">
             <div class="node-head disappear">
-                <a href="#" class="content-link">About</a>
+                <a href="{{ route('About') }}" class="content-link">About</a>
             </div>
             <canvas class="node-canvas"></canvas>
         </section>
         <section class="node content-node" id="privacy-policy-node">
             <div class="node-head disappear">
-                <a href="#" class="content-link">Privacy Policy</a>
+                <a href="{{ route('PrivacyPolicy') }}" class="content-link">Privacy Policy</a>
             </div>
             <canvas class="node-canvas"></canvas>
         </section>
