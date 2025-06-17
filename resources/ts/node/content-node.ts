@@ -135,6 +135,26 @@ export class ContentNode extends MainNodeBase
         this._isOpen = true;
         this.animationStartTime = (window as any).hgn.timestamp;
         this.openAnimationFunc = this.openAnimation;
+
+        const hgn = (window as any).hgn;
+        const contentNodeView = hgn.contentNodeView;
+        contentNodeView.element.style.display = 'block';
+        //contentNodeView.element.classList.add('blur');
+        //contentNodeView.element.classList.add('blur-active');
+
+        // ContentNodeViewの位置とサイズを設定
+        const anchorRect = this._anchor.getBoundingClientRect();
+        const element = contentNodeView.element;
+        
+        const main = hgn.main;
+
+        element.style.left = `${this._anchor.offsetLeft - 3}px`;
+        element.style.top = `${this.nodeElement.offsetTop - 3}px`;
+        element.style.width = `${this._anchor.clientWidth + 6}px`;
+        element.style.height = `${this._anchor.clientHeight + 6}px`;
+
+        //contentNodeView.title.textContent = this._anchor.textContent;
+        contentNodeView.content.innerHTML = '';
     }
 
     /**

@@ -26,9 +26,11 @@
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
 <body>
-    <main class="" style="position:relative;">
-        @yield('content')
-        <div id="main-line"></div>
+    <main>
+        <div class="tree-view">
+            @yield('content')
+            <div id="main-line"></div>
+        </div>
         <div id="content-node-view">
             <header>
                 <h1></h1>
