@@ -114,8 +114,10 @@ export class ContentNode extends MainNodeBase
      */
     private hover(): void
     {
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+        if (!this.isOpen) {
+            this.animationStartTime = (window as any).hgn.timestamp;
+            this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+        }
     }
 
     /**
@@ -123,8 +125,10 @@ export class ContentNode extends MainNodeBase
      */
     private unhover(): void
     {
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+        if (!this.isOpen) {
+            this.animationStartTime = (window as any).hgn.timestamp;
+            this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+        }
     }
 
     /**
@@ -139,8 +143,8 @@ export class ContentNode extends MainNodeBase
         const hgn = (window as any).hgn;
         const contentNodeView = hgn.contentNodeView;
         contentNodeView.element.style.display = 'block';
-        //contentNodeView.element.classList.add('blur');
-        //contentNodeView.element.classList.add('blur-active');
+        contentNodeView.element.classList.add('blur');
+        contentNodeView.element.classList.add('blur-active');
 
         // ContentNodeViewの位置とサイズを設定
         const anchorRect = this._anchor.getBoundingClientRect();
@@ -148,10 +152,10 @@ export class ContentNode extends MainNodeBase
         
         const main = hgn.main;
 
-        element.style.left = `${this._anchor.offsetLeft - 3}px`;
-        element.style.top = `${this.nodeElement.offsetTop - 3}px`;
-        element.style.width = `${this._anchor.clientWidth + 6}px`;
-        element.style.height = `${this._anchor.clientHeight + 6}px`;
+        element.style.left = `${this._anchor.offsetLeft}px`;
+        element.style.top = `${this.nodeElement.offsetTop}px`;
+        element.style.width = `${this._anchor.clientWidth}px`;
+        element.style.height = `${this._anchor.clientHeight}px`;
 
         //contentNodeView.title.textContent = this._anchor.textContent;
         contentNodeView.content.innerHTML = '';
@@ -162,7 +166,41 @@ export class ContentNode extends MainNodeBase
      */
     private openAnimation(): void
     {
-        this.openAnimationFunc = null;
+        const hgn = (window as any).hgn;
+        const contentNodeView = hgn.contentNodeView;
+        const element = contentNodeView.element;
+        const main = hgn.main;
+
+        const startLeft = this._anchor.offsetLeft;
+        const startTop = this.nodeElement.offsetTop;
+        const startWidth = this._anchor.clientWidth;
+        const startHeight = this._anchor.clientHeight;
+        const endWidth = main.clientWidth;
+        const endHeight = main.clientHeight;
+
+        const currentTime = (window as any).hgn.timestamp;
+        const elapsedTime = currentTime - this.animationStartTime;
+        const duration = 100;
+
+        if (elapsedTime >= duration) {
+            element.style.left = '0px';
+            element.style.top = '0px';
+            element.style.width = `${endWidth}px`;
+            element.style.height = `${endHeight}px`;
+            this.openAnimationFunc = null;
+            return;
+        }
+
+        const progress = elapsedTime / duration;
+        const currentLeft = startLeft * (1 - progress);
+        const currentTop = startTop * (1 - progress);
+        const currentWidth = startWidth + (endWidth - startWidth) * progress;
+        const currentHeight = startHeight + (endHeight - startHeight) * progress;
+
+        element.style.left = `${currentLeft}px`;
+        element.style.top = `${currentTop}px`;
+        element.style.width = `${currentWidth}px`;
+        element.style.height = `${currentHeight}px`;
     }
 
     /**

@@ -97,6 +97,9 @@ h1 {
 }
 
 .node {
+    position: relative;
+    contain: layout;
+
     > .node-head {
         display: flex;
         align-items: center;
@@ -112,10 +115,18 @@ h1 {
 }
 
 .node-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
     > section {
         padding-left: 30px;
         margin-bottom: 40px;
         visibility: hidden;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
 
         .sub-node-container
         {
@@ -302,6 +313,9 @@ canvas.node-canvas {
     height: calc(100% + 350px);
     z-index: -100;
     pointer-events: none;
+    contain: layout style paint;
+    position: absolute;
+    transform: translateZ(0);
 }
 
 #content-node-view {
