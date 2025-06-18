@@ -1,19 +1,12 @@
-import { HeaderNode } from "./node/header-node";
-import { LinkNode } from "./node/link-node";
-import { ContentNode } from "./node/content-node";
-import { MainLine } from "./common/main-line";
-import { ContentNodeView } from "./node/parts/content-node-view";
+import { TreeView } from "./tree-view";
+import { ContentNodeView } from "./content-node-view";
 
 export class HorrorGameNetwork
 {
     private static instance: HorrorGameNetwork;
-    private headerNode: HeaderNode;
-    private linkNodes: LinkNode[];
-    private contentNodes: ContentNode[];
-    private lastNode: LinkNode | ContentNode | null;
-    private _mainLine: MainLine;
     private _timestamp: number;
-    private _appearAnimationFunc: (() => void) | null;
+    private _main: HTMLElement;
+    private _treeView: TreeView;
     private _contentNodeView: ContentNodeView;
 
     /**
@@ -21,14 +14,11 @@ export class HorrorGameNetwork
      */
     private constructor()
     {
-        this.headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
-        this._mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
-        this.linkNodes = [];
-        this.contentNodes = [];
-        this.lastNode = null;
-        this._timestamp = 0;
-        this._appearAnimationFunc = null;
+        this._main = document.querySelector('main') as HTMLElement;
+        this._treeView = new TreeView(document.querySelector('div.tree-view') as HTMLElement);
         this._contentNodeView = new ContentNodeView(document.querySelector('div#content-node-view') as HTMLDivElement);
+
+        this._timestamp = 0;
     }
 
     /**
@@ -51,11 +41,19 @@ export class HorrorGameNetwork
     }
 
     /**
-     * メインラインを取得
+     * main要素を取得
      */
-    public get mainLine(): MainLine
+    public get main(): HTMLElement
     {
-        return this._mainLine;
+        return this._main;
+    }
+
+    /**
+     * ツリービューを取得
+     */
+    public get treeView(): TreeView
+    {
+        return this._treeView;
     }
 
     /**
@@ -89,37 +87,13 @@ export class HorrorGameNetwork
             sessionStorage.removeItem('isPageTransition');
         });
 
-        this.loadNodes();
-
+        this.treeView.loadNodes();
+        
         this.resize();
 
-        this.appear();
+        this.treeView.appear();
 
         requestAnimationFrame((timestamp) => this.update(timestamp));
-    }
-
-    /**
-     * ノードの読み込み
-     */
-    private loadNodes(): void
-    {
-        this.lastNode = null;
-        const mainNodes = document.querySelectorAll('div.node-container > section.node');
-        mainNodes.forEach(mainNode => {
-            const mainNodeId = mainNode.id;
-
-            // link-nodeクラスがあればLinkNodeを作成
-            if (mainNode.classList.contains('link-node')) {
-                this.linkNodes.push(new LinkNode(mainNode as HTMLElement));
-                this.lastNode = this.linkNodes[this.linkNodes.length - 1];
-            }
-
-            // content-nodeクラスがあればContentNodeを作成
-            if (mainNode.classList.contains('content-node')) {
-                this.contentNodes.push(new ContentNode(mainNode as HTMLElement));
-                this.lastNode = this.contentNodes[this.contentNodes.length - 1];
-            }
-        });
     }
 
     /**
@@ -127,14 +101,7 @@ export class HorrorGameNetwork
      */
     private resize(): void
     {
-        this.headerNode.resize();
-        this.linkNodes.forEach(linkNode => linkNode.resize());
-        this.contentNodes.forEach(contentNode => contentNode.resize());
-
-        if (this._mainLine && this.lastNode) {
-            const headerPosition = this.headerNode.getConnectionPoint();
-            this._mainLine.setHeight(this.lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
-        }
+        this._treeView.resize();
     }
 
     /**
@@ -144,76 +111,12 @@ export class HorrorGameNetwork
     {
         this._timestamp = timestamp;
 
-        if (this._appearAnimationFunc) {
-            this._appearAnimationFunc();
-        }
-
-        this._mainLine.update();
-        this.headerNode.update();
-        this.linkNodes.forEach(linkNode => linkNode.update());
-        this.contentNodes.forEach(contentNode => contentNode.update());
-
+        this.treeView.update();
+        //this.contentNodeView.update();
+        
         this.draw();
 
         requestAnimationFrame((timestamp) => this.update(timestamp));
-    }
-
-    /**
-     * 出現アニメーション開始
-     */
-    public appear(): void
-    {
-        this._mainLine.appear();
-        this.headerNode.appear();
-        // this.linkNodes.forEach(linkNode => linkNode.appear());
-        // this.contentNodes.forEach(contentNode => contentNode.appear());
-
-        this._appearAnimationFunc = this.appearAnimation;
-    }
-
-    /**
-     * 出現アニメーション
-     */
-    private appearAnimation(): void
-    {
-        const mainLineHeight = this._mainLine.getAnimationHeight();
-
-        this.linkNodes.forEach(linkNode => {
-            const linkNodeTop = linkNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
-            
-            if (linkNodeTop <= mainLineHeight) {
-                linkNode.appear();
-            }
-        });
-
-        this.contentNodes.forEach(contentNode => {
-            const contentNodeTop = contentNode.getNodeElement().offsetTop - this.headerNode.getConnectionPoint().y;
-            if (contentNodeTop <= mainLineHeight) {
-                contentNode.appear();
-            }
-        });
-
-        if (this._mainLine.isAppeared()) {
-            this._appearAnimationFunc = null;
-        }
-    }
-
-    /**
-     * 消滅アニメーション開始
-     */
-    public disappear(): void
-    {
-        this._mainLine.disappear();
-        this.headerNode.disappear();
-        this.linkNodes.forEach(linkNode => linkNode.disappear());
-        this.contentNodes.forEach(contentNode => contentNode.disappear());
-    }
-
-    /**
-     * 消滅アニメーション
-     */
-    private disappearAnimation(): void
-    {
     }
 
     /**
@@ -221,8 +124,7 @@ export class HorrorGameNetwork
      */
     public draw(): void
     {
-        this.headerNode.draw();
-        this.linkNodes.forEach(linkNode => linkNode.draw());
-        this.contentNodes.forEach(contentNode => contentNode.draw());
+        this.treeView.draw();
+        //this.contentNodeView.draw();
     }
 } 
