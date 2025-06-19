@@ -4,8 +4,6 @@ export class ContentNode extends MainNodeBase
 {
     private _anchor: HTMLAnchorElement;
     private updateGradientEndAlphaFunc: (() => void) | null;
-    private openAnimationFunc: (() => void) | null;
-    private _isOpen: boolean;
 
     /**
      * コンストラクタ
@@ -17,8 +15,6 @@ export class ContentNode extends MainNodeBase
 
         this._anchor = nodeElement.querySelector('.content-link') as HTMLAnchorElement;
         this.updateGradientEndAlphaFunc = null;
-        this.openAnimationFunc = null;
-        this._isOpen = false;
 
         // ホバーイベントの設定
         this._anchor.addEventListener('mouseenter', () => this.hover());
@@ -28,13 +24,11 @@ export class ContentNode extends MainNodeBase
         this._anchor.addEventListener('click', (event: MouseEvent) => this.onClick(event));
     }
 
-    /**
-     * 開いているかどうかを取得する
-     * @returns 開いているかどうか
-     */
-    public get isOpen(): boolean
+    private isOpenContentView(): boolean
     {
-        return this._isOpen;
+        const hgn = (window as any).hgn;
+        const contentNodeView = hgn.contentNodeView;
+        return contentNodeView.isOpen;
     }
 
     /**
@@ -45,11 +39,12 @@ export class ContentNode extends MainNodeBase
     {
         event.preventDefault();
 
-        if (this.isOpen) {
+        if (this.isOpenContentView()) {
             return ;
         }
 
-        this.open();
+        const hgn = (window as any).hgn;
+        hgn.contentNodeView.open(this._anchor, this.nodeElement.offsetTop);
 
         const url = this._anchor.href;
         fetch(url, {
@@ -60,6 +55,7 @@ export class ContentNode extends MainNodeBase
             .then(response => response.json())
             .then(data => {
                 console.log('取得したデータ:', data);
+                hgn.contentNodeView.setContent(data);
             })
             .catch(error => {
                 console.error('データの取得に失敗しました:', error);
@@ -97,15 +93,10 @@ export class ContentNode extends MainNodeBase
      */
     public update(): void
     {
-        if (this.openAnimationFunc !== null) {
-            // 開くアニメーション中は親のupdateを呼ばない
-            this.openAnimationFunc();
-        } else {
-            super.update();
+        super.update();
 
-            if (this.updateGradientEndAlphaFunc !== null) {
-                this.updateGradientEndAlphaFunc();
-            }
+        if (this.updateGradientEndAlphaFunc !== null) {
+            this.updateGradientEndAlphaFunc();
         }
     }
 
@@ -114,7 +105,7 @@ export class ContentNode extends MainNodeBase
      */
     private hover(): void
     {
-        if (!this.isOpen) {
+        if (!this.isOpenContentView()) {
             this.animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
         }
@@ -125,100 +116,10 @@ export class ContentNode extends MainNodeBase
      */
     private unhover(): void
     {
-        if (!this.isOpen) {
+        if (!this.isOpenContentView()) {
             this.animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
         }
-    }
-
-    /**
-     * 開くアニメーション開始
-     */
-    private open(): void
-    {
-        this._isOpen = true;
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.openAnimationFunc = this.openAnimation;
-
-        const hgn = (window as any).hgn;
-        const contentNodeView = hgn.contentNodeView;
-        contentNodeView.element.style.display = 'block';
-        contentNodeView.element.classList.add('blur');
-        contentNodeView.element.classList.add('blur-active');
-
-        // ContentNodeViewの位置とサイズを設定
-        const anchorRect = this._anchor.getBoundingClientRect();
-        const element = contentNodeView.element;
-        
-        const main = hgn.main;
-
-        element.style.left = `${this._anchor.offsetLeft}px`;
-        element.style.top = `${this.nodeElement.offsetTop}px`;
-        element.style.width = `${this._anchor.clientWidth}px`;
-        element.style.height = `${this._anchor.clientHeight}px`;
-
-        //contentNodeView.title.textContent = this._anchor.textContent;
-        contentNodeView.content.innerHTML = '';
-    }
-
-    /**
-     * 開くアニメーション
-     */
-    private openAnimation(): void
-    {
-        const hgn = (window as any).hgn;
-        const contentNodeView = hgn.contentNodeView;
-        const element = contentNodeView.element;
-        const main = hgn.main;
-
-        const startLeft = this._anchor.offsetLeft;
-        const startTop = this.nodeElement.offsetTop;
-        const startWidth = this._anchor.clientWidth;
-        const startHeight = this._anchor.clientHeight;
-        const endWidth = main.clientWidth;
-        const endHeight = main.clientHeight;
-
-        const currentTime = (window as any).hgn.timestamp;
-        const elapsedTime = currentTime - this.animationStartTime;
-        const duration = 100;
-
-        if (elapsedTime >= duration) {
-            element.style.left = '0px';
-            element.style.top = '0px';
-            element.style.width = `${endWidth}px`;
-            element.style.height = `${endHeight}px`;
-            this.openAnimationFunc = null;
-            return;
-        }
-
-        const progress = elapsedTime / duration;
-        const currentLeft = startLeft * (1 - progress);
-        const currentTop = startTop * (1 - progress);
-        const currentWidth = startWidth + (endWidth - startWidth) * progress;
-        const currentHeight = startHeight + (endHeight - startHeight) * progress;
-
-        element.style.left = `${currentLeft}px`;
-        element.style.top = `${currentTop}px`;
-        element.style.width = `${currentWidth}px`;
-        element.style.height = `${currentHeight}px`;
-    }
-
-    /**
-     * 閉じるアニメーション開始
-     */
-    private close(): void
-    {
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.openAnimationFunc = this.closeAnimation;
-    }
-
-    /**
-     * 閉じるアニメーション
-     */
-    private closeAnimation(): void
-    {
-        this.openAnimationFunc = null;
-        this._isOpen = false;
     }
     
     /**

@@ -112,7 +112,7 @@ export class HorrorGameNetwork
         this._timestamp = timestamp;
 
         this.treeView.update();
-        //this.contentNodeView.update();
+        this.contentNodeView.update();
         
         this.draw();
 
