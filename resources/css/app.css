@@ -21,6 +21,10 @@ body {
     margin: 0;
     font-family: 'Noto Sans JP', sans-serif;
 
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-sizing: border-box;
+
     background-color: #000000;
 
     /*
@@ -39,7 +43,7 @@ main {
     margin-left: auto;
     margin-right: auto;
     width: 100vw;
-    max-width: 500px;
+    max-width: 767px;
 
     position: relative;
 
@@ -76,7 +80,7 @@ div#main-line {
 
 
 header.node {
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 50px;
 
     .node-head {
@@ -101,7 +105,7 @@ h1 {
     contain: layout;
 
     > .node-head {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         flex-direction: row-reverse;
         justify-content: flex-end;
@@ -115,7 +119,7 @@ h1 {
 }
 
 .node-container {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: 20px;
 
@@ -319,13 +323,76 @@ canvas.node-canvas {
 }
 
 #content-node-view {
+    background-color: rgba(0, 0, 0, 0.6);
 
-    > header {
-        > h1 {
-            padding: 0;
-            margin: 0;
-            font-size: 1rem;
-            font-weight: normal;
+    > div#content-node-view-header {
+        position: sticky;
+        top: 0px;
+        z-index: 100;
+
+        > div {
+            height: 3px;
+            background-color: black;
+        }
+        
+        > header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--node-pt-light);
+
+
+            > h1 {
+                padding: 0;
+                margin: 10px;
+                font-size: 1.2rem;
+                font-weight: normal;
+            }
+
+            > span {
+                font-size: 1.0rem;
+                cursor: pointer;
+                margin: 10px;
+                color: lightgray;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: white;
+                }
+            }
+        }
+    }
+
+
+    > div#content-node-view-content {
+        padding: 10px;
+        border: 2px solid var(--node-pt-light);
+        border-top: none;
+
+        > section {
+            margin-bottom: 50px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            > h2 {
+                font-size: 1.2rem;
+                font-weight: normal;
+
+                &::before {
+                    content: '●';
+                    margin-right: 5px;
+                    color: var(--node-pt-light);
+                    font-size: 0.8rem;
+                    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
+                    display: inline-block;
+                    vertical-align: text-bottom;
+                    position: relative;
+                    top: -0.4em;
+                }
+            }
         }
     }
 
@@ -337,8 +404,6 @@ canvas.node-canvas {
     height: 100%;
     /*background-color: rgba(0, 0, 0, 0.6);*/
     color: white;
-    border: 2px solid var(--node-pt-light);
-    box-shadow: 0 0 3px var(--node-pt-light-shadow), 0 0 10px var(--node-pt-light-shadow);
 }
 
 .blur {

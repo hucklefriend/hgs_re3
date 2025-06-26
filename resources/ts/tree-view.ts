@@ -147,7 +147,6 @@ export class TreeView
     private appearAnimation(): void
     {
         const mainLineHeight = this._mainLine.getAnimationHeight();
-        console.log('mainLineHeight', mainLineHeight.toFixed(0));
 
         this._linkNodes.forEach(linkNode => {
             const linkNodeTop = linkNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
