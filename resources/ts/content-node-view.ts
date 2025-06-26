@@ -231,4 +231,25 @@ export class ContentNodeView
         element.style.width = `${currentWidth}px`;
         element.style.height = `${currentHeight}px`;
     }
+
+    /**
+     * スクロールバーの幅を取得する
+     * @returns スクロールバーの幅
+     */
+    private getScrollbarWidth(): number
+    {
+        // スクロールバーの幅を計算
+        const outer = document.createElement('div');
+        outer.style.visibility = 'hidden';
+        outer.style.overflow = 'scroll';
+        document.body.appendChild(outer);
+
+        const inner = document.createElement('div');
+        outer.appendChild(inner);
+
+        const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+        outer.parentNode?.removeChild(outer);
+
+        return scrollbarWidth;
+    }
 } 

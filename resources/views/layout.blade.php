@@ -32,10 +32,13 @@
             <div id="main-line"></div>
         </div>
         <div id="content-node-view">
-            <header>
-                <h1></h1>
-                <span id="content-node-view-close">×</span>
-            </header>
+            <div id="content-node-view-header">
+                <div></div>
+                <header>
+                    <h1></h1>
+                    <span id="content-node-view-close">×</span>
+                </header>
+            </div>
             <div id="content-node-view-content">
             </div>
             <footer>
