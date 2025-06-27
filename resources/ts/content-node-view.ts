@@ -63,13 +63,8 @@ export class ContentNodeView
             if (this.openAnimationFunc === null) {
                 this.content.innerHTML = data.body;
                 
-                // コンテンツの高さに合わせて要素の高さを調整
-                const contentHeight = this.content.scrollHeight;
-                const headerHeight = this.header.offsetHeight;
-                const footerHeight = this.footer.offsetHeight;
-                const totalHeight = contentHeight + headerHeight + footerHeight;
-                
-                this.element.style.height = `${totalHeight}px`;
+                // CSSの設定を適用するため、style属性を削除
+                this.element.style.removeProperty('height');
             } else {
                 // アニメーション中はデータを保持
                 this._pendingContent = data;
@@ -149,10 +144,10 @@ export class ContentNodeView
         const duration = 100;
 
         if (elapsedTime >= duration) {
-            this.element.style.left = '0px';
+            this.element.style.left = '5px';
             this.element.style.top = '0px';
-            this.element.style.width = `${endWidth}px`;
-            this.element.style.height = `${endHeight}px`;
+            this.element.style.removeProperty('width');
+            this.element.style.removeProperty('height');
             this.openAnimationFunc = null;
             
             // アニメーション完了時に保持されたコンテンツがあれば設定
@@ -164,8 +159,8 @@ export class ContentNodeView
         }
 
         const progress = elapsedTime / duration;
-        const currentLeft = startLeft * (1 - progress);
-        const currentTop = startTop * (1 - progress);
+        const currentLeft = startLeft + (5 - startLeft) * progress;
+        const currentTop = startTop + (0 - startTop) * progress;
         const currentWidth = startWidth + (endWidth - startWidth) * progress;
         const currentHeight = startHeight + (endHeight - startHeight) * progress;
 
@@ -230,26 +225,5 @@ export class ContentNodeView
         element.style.top = `${currentTop}px`;
         element.style.width = `${currentWidth}px`;
         element.style.height = `${currentHeight}px`;
-    }
-
-    /**
-     * スクロールバーの幅を取得する
-     * @returns スクロールバーの幅
-     */
-    private getScrollbarWidth(): number
-    {
-        // スクロールバーの幅を計算
-        const outer = document.createElement('div');
-        outer.style.visibility = 'hidden';
-        outer.style.overflow = 'scroll';
-        document.body.appendChild(outer);
-
-        const inner = document.createElement('div');
-        outer.appendChild(inner);
-
-        const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
-        outer.parentNode?.removeChild(outer);
-
-        return scrollbarWidth;
     }
 } 
