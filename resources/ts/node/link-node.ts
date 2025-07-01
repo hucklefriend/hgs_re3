@@ -24,6 +24,11 @@ export class LinkNode extends MainNodeBase
         this.anchor.addEventListener('mouseleave', () => this.unhover());
     }
 
+    public getAnchorId(): string
+    {
+        return this.anchor.id;
+    }
+
     /**
      * ホバー開始時のグラデーションα値を更新
      */

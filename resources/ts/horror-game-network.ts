@@ -87,6 +87,9 @@ export class HorrorGameNetwork
             sessionStorage.removeItem('isPageTransition');
         });
 
+        // popstateイベントの登録
+        window.addEventListener('popstate', () => this.popState());
+
         this.treeView.loadNodes();
         
         this.resize();
@@ -126,5 +129,40 @@ export class HorrorGameNetwork
     {
         this.treeView.draw();
         //this.contentNodeView.draw();
+    }
+
+    /**
+     * popstateイベントの処理
+     */
+    private popState(): void
+    {
+        const state = history.state;
+        
+        // content-node-viewが表示中だったら閉じる
+        if (this.contentNodeView.isOpen) {
+            this.contentNodeView.close(true);
+        }
+        
+        // content-nodeで行った場合の処理
+        if (state && state.type === 'content-node') {
+            console.log('content-nodeからの戻り:', state);
+            
+            // anchorIdから要素を取得してクリックイベントを発火
+            if (state.anchorId) {
+                const node = this.treeView.getContentNodeByAnchorId(state.anchorId);
+                if (node) {
+                    node.openContentNodeView(true);
+                }
+            }
+        }
+        
+        // content-node-closeで行った場合の処理
+        if (state && state.type === 'content-node-close') {
+            console.log('content-node-closeからの戻り:', state);
+            // 必要に応じて追加の処理をここに記述
+        }
+        
+        this.resize();
+        this.draw();
     }
 } 

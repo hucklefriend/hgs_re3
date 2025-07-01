@@ -81,6 +81,16 @@ export class TreeView
         });
     }
 
+    public getContentNodeByAnchorId(anchorId: string): ContentNode | null
+    {
+        for (const contentNode of this._contentNodes) {
+            if (contentNode.getAnchorId() === anchorId) {
+                return contentNode;
+            }
+        }
+        return null;
+    }
+
     /**
      * リサイズ時の処理
      */
