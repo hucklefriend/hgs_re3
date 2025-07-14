@@ -4,8 +4,9 @@ import { Point } from "../common/point";
 
 export class HeaderNode extends NodeBase
 {
-    private point: NodePoint;
-    private title: HTMLElement;
+    private _point: NodePoint;
+    private _nodeHead: HTMLElement;
+    private _title: HTMLElement;
     //private content: HTMLElement;
 
     /**
@@ -15,8 +16,9 @@ export class HeaderNode extends NodeBase
     {
         super(nodeElement);
 
-        this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
-        this.title = nodeElement.querySelector('.node-head h1') as HTMLElement;
+        this._point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
+        this._nodeHead = nodeElement.querySelector('.node-head') as HTMLElement;
+        this._title = this._nodeHead.querySelector('h1') as HTMLElement;
         //this.content = nodeElement.querySelector('.node-body') as HTMLElement;
     }
 
@@ -27,6 +29,18 @@ export class HeaderNode extends NodeBase
      */
     public getConnectionPoint(): Point
     {
-        return this.point.getCenterPosition();
+        return this._point.getCenterPosition();
+    }
+
+    public disappear(): void
+    {
+        if (!this._nodeHead.classList.contains('fade-out-right')) {
+            this._nodeHead.classList.add('fade-out-right');
+        }
+    }
+
+    public get point(): NodePoint
+    {
+        return this._point;
     }
 } 

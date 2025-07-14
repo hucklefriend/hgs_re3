@@ -61,8 +61,15 @@ div#main-line {
     left: 14px;
     top: 24px;
     height: 0;
-    border-left: 2px solid #66ff66;
+    width: 2px;
+    background: #66ff66;
     box-shadow: 0 0 10px #66ff66;
+    transition: background 0.25s ease, box-shadow 0.1s ease;
+
+    &.fade-out {
+        background: transparent;
+        box-shadow: 0 0 0;
+    }
 }
 
 .node-pt {
@@ -85,14 +92,52 @@ header.node {
 
     .node-head {
         white-space: nowrap;
+        position: relative;
 
         .node-pt {
             text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
             color: var(--node-pt-light);
             width: 30px;
             min-width: 30px;
+            transition: opacity 0.3s ease;
+
+            &.fade-out {
+                opacity: 0;
+            }
+        }
+
+        /* 右側から透明になるアニメーション用のクラス */
+        &.fade-out-right {
+            h1 {
+                /* マスクグラデーション：右から透明が左に侵食していく */
+                mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+                -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+                
+                mask-size: 200% 100%;
+                -webkit-mask-size: 200% 100%;
+
+                mask-position: 0% 0;
+                -webkit-mask-position: 0% 0;
+
+                mask-repeat: no-repeat;
+                -webkit-mask-repeat: no-repeat;
+
+                animation: fadeout-mask 1s forwards;
+            }
         }
     }
+}
+
+/* 右側から透明になるアニメーション */
+@keyframes fadeout-mask {
+    0% {
+        mask-position: 0% 0;
+        -webkit-mask-position: 0% 0;
+      }
+      100% {
+        mask-position: 200% 0;
+        -webkit-mask-position: 200% 0;
+      }
 }
 
 h1 {
@@ -415,4 +460,15 @@ canvas.node-canvas {
     backdrop-filter: blur(2px);
 }
 
+#free-pt {
+    display: inline;
+    position: absolute;
+    font-size: 10px;
+    text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
+    color: var(--node-pt-light);
+    width: 30px;
+    min-width: 30px;
+    text-align: center;
+    line-height: 1;
+}
 

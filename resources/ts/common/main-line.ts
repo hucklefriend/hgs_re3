@@ -1,10 +1,18 @@
 export class MainLine
 {
-    private element: HTMLDivElement;
-    private height: number;
-    private animationHeight: number;
-    private animationStartTime: number;
-    private appearAnimationFunc: (() => void) | null;
+    public static readonly APPEAR_STATUS_NONE = 0;
+    public static readonly APPEAR_STATUS_APPEARING = 1;
+    public static readonly APPEAR_STATUS_APPEARED = 2;
+    public static readonly APPEAR_STATUS_DISAPPEARING = 3;
+    public static readonly APPEAR_STATUS_DISAPPEARED = 4;
+
+    private _element: HTMLDivElement;
+    private _height: number;
+    private _animationHeight: number;
+    private _animationStartTime: number;
+    private _appearAnimationFunc: (() => void) | null;
+    private _appearStatus: number;
+    private _disappearHeight: number;
 
     /**
      * コンストラクタ
@@ -12,11 +20,13 @@ export class MainLine
      */
     public constructor(element: HTMLDivElement)
     {
-        this.element = element;
-        this.height = 0;
-        this.animationHeight = 0;
-        this.animationStartTime = 0;
-        this.appearAnimationFunc = null;
+        this._element = element;
+        this._height = 0;
+        this._animationHeight = 0;
+        this._animationStartTime = 0;
+        this._appearAnimationFunc = null;
+        this._appearStatus = MainLine.APPEAR_STATUS_NONE;
+        this._disappearHeight = 0;
     }
 
     /**
@@ -25,8 +35,8 @@ export class MainLine
      */
     public setHeight(height: number): void
     {
-        //this.element.style.height = `${height}px`;
-        this.height = height;
+        //this._element.style.height = `${height}px`;
+        this._height = height;
     }
 
     /**
@@ -34,7 +44,7 @@ export class MainLine
      */
     public getAnimationHeight(): number
     {
-        return this.animationHeight;
+        return this._animationHeight;
     }
 
     /**
@@ -42,8 +52,8 @@ export class MainLine
      */
     public update(): void
     {
-        if (this.appearAnimationFunc) {
-            this.appearAnimationFunc();
+        if (this._appearAnimationFunc) {
+            this._appearAnimationFunc();
         }
     }
 
@@ -52,8 +62,9 @@ export class MainLine
      */
     public appear(): void
     {
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.appearAnimationFunc = this.appearAnimation;
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._appearAnimationFunc = this.appearAnimation;
+        this._appearStatus = MainLine.APPEAR_STATUS_APPEARING;
     }
 
     /**
@@ -61,25 +72,32 @@ export class MainLine
      */
     private appearAnimation(): void
     {
-        const progress = (window as any).hgn.timestamp - this.animationStartTime;
-        this.animationHeight = this.height * progress / 1000;
+        const progress = (window as any).hgn.timestamp - this._animationStartTime;
+        this._animationHeight = this._height * progress / 1000;
 
-        if (this.animationHeight >= this.height) {
-            this.animationHeight = this.height;
-            this.appearAnimationFunc = null;
+        if (this._animationHeight >= this._height) {
+            this._animationHeight = this._height;
+            this._appearAnimationFunc = null;
+            this._appearStatus = MainLine.APPEAR_STATUS_APPEARED;
         }
 
-        this.element.style.height = `${this.animationHeight}px`;
+        this._element.style.height = `${this._animationHeight}px`;
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappear(disappearHeight: number, isFadeOut: boolean = false): void
     {
-        this.element.style.visibility = 'hidden';
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.appearAnimationFunc = this.disappearAnimation;
+        this._disappearHeight = disappearHeight;
+        if (this._appearAnimationFunc === null) {
+            this._appearStatus = MainLine.APPEAR_STATUS_DISAPPEARING;
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._appearAnimationFunc = this.disappearAnimation;
+            if (isFadeOut) {
+                this._element.classList.add('fade-out');
+            }
+        }
     }
 
     /**
@@ -87,15 +105,18 @@ export class MainLine
      */
     private disappearAnimation(): void
     {
-        const progress = (window as any).hgn.timestamp - this.animationStartTime;
-        this.animationHeight = this.height * (1 - progress / 300);
+        const progress = (window as any).hgn.timestamp - this._animationStartTime;
+        this._animationHeight = this._height * (1 - progress / 300);
 
-        if (this.animationHeight <= 0) {
-            this.animationHeight = 0;
-            this.appearAnimationFunc = null;
+        if (this._animationHeight <= this._disappearHeight) {
+            this._animationHeight = this._disappearHeight;
+            this._appearAnimationFunc = null;
+            //this._element.style.visibility = 'hidden';
+            this._appearStatus = MainLine.APPEAR_STATUS_DISAPPEARED;
+            this.setHeight(this._disappearHeight);
         }
 
-        this.element.style.height = `${this.animationHeight}px`;
+        this._element.style.height = `${this._animationHeight}px`;
     }
 
     /**
@@ -104,6 +125,33 @@ export class MainLine
      */
     public isAppeared(): boolean
     {
-        return this.animationHeight >= this.height;
+        return this._appearStatus === MainLine.APPEAR_STATUS_APPEARED;
+    }
+
+    /**
+     * 出現中かどうかを取得する
+     * @returns 出現中かどうか
+     */
+    public isAppearing(): boolean
+    {
+        return this._appearStatus === MainLine.APPEAR_STATUS_APPEARING;
+    }
+
+    /**
+     * 消滅中かどうかを取得する
+     * @returns 消滾中かどうか
+     */
+    public isDisappearing(): boolean
+    {
+        return this._appearStatus === MainLine.APPEAR_STATUS_DISAPPEARING;
+    }
+
+    /**
+     * 消滅しきったかどうかを取得する
+     * @returns 消滅しきったかどうか
+     */
+    public isDisappeared(): boolean
+    {
+        return this._appearStatus === MainLine.APPEAR_STATUS_DISAPPEARED;
     }
 } 

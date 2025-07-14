@@ -30,6 +30,7 @@
         <div class="tree-view">
             @yield('content')
             <div id="main-line"></div>
+            <div id="free-pt">●</div>
         </div>
         <div id="content-node-view">
             <div id="content-node-view-header">
