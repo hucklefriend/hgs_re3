@@ -24,6 +24,11 @@ export class ContentNode extends MainNodeBase
         this._anchor.addEventListener('click', (event: MouseEvent) => this.onClick(event));
     }
 
+    public getAnchorId(): string
+    {
+        return this._anchor.id;
+    }
+
     private isOpenContentView(): boolean
     {
         const hgn = (window as any).hgn;
@@ -43,10 +48,28 @@ export class ContentNode extends MainNodeBase
             return ;
         }
 
+        this.openContentNodeView(false);
+    }
+
+    public openContentNodeView(isFromPopState: boolean): void
+    {
         const hgn = (window as any).hgn;
         hgn.contentNodeView.open(this._anchor, this.nodeElement.offsetTop);
 
         const url = this._anchor.href;
+        
+        if (!isFromPopState) {
+            // pushStateで履歴に追加（content-nodeで行ったことを記録）
+            const stateData = {
+                type: 'content-node',
+                url: url,
+                anchorId: this._anchor.id,
+                timestamp: Date.now()
+            };
+            history.pushState(stateData, '', url);
+            console.log('stateData:', stateData);
+        }
+
         fetch(url, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
@@ -54,7 +77,7 @@ export class ContentNode extends MainNodeBase
         })
             .then(response => response.json())
             .then(data => {
-                console.log('取得したデータ:', data);
+                //console.log('取得したデータ:', data);
                 hgn.contentNodeView.setContent(data);
             })
             .catch(error => {

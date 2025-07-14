@@ -1,5 +1,6 @@
 import { NodeBase } from "./node-base";
 import { SubLinkNode } from "./sub-link-node";
+import { TreeView } from "../tree-view";
 
 export abstract class MainNodeBase extends NodeBase
 {
@@ -176,6 +177,15 @@ export abstract class MainNodeBase extends NodeBase
      */
     public disappear(): void
     {
+        this.nodeHead.classList.add('disappear');
+        this.subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
+        this.subCurveAppearProgress = [0,0,0,0];
+        this.animationStartTime = (window as any).hgn.timestamp;
+        this.gradientEndAlpha = 0;
+
+        this.isDraw = true;
+
+
         this.appearAnimationFunc = this.disappearAnimation;
     }
 
@@ -184,8 +194,17 @@ export abstract class MainNodeBase extends NodeBase
      */
     protected disappearAnimation(): void
     {
-        this.animationStartTime = (window as any).hgn.timestamp;
-        this.appearAnimationFunc = this.disappearAnimation;
+        this.curveAppearProgress = 1 - this.getAnimationProgress(500);
+        if (this.curveAppearProgress <= 0) {
+            this.curveAppearProgress = 0;
+            this.gradientEndAlpha = 0;
+            this.appearAnimationFunc = null;
+            this.nodeHead.classList.add('disappear');
+            const treeView = (window as any).hgn.treeView;
+            treeView.disappearMainLine();
+        }
+        
+        this.isDraw = true;
     }
 
     /**
@@ -243,7 +262,7 @@ export abstract class MainNodeBase extends NodeBase
      * @param endX 終了点のX座標
      * @param endY 終了点のY座標
      */
-    private drawCurvedLine(startX: number, startY: number, endX: number, endY: number): void
+    protected drawCurvedLine(startX: number, startY: number, endX: number, endY: number): void
     {
         const controlX = startX;
         const controlY = endY;
@@ -309,6 +328,47 @@ export abstract class MainNodeBase extends NodeBase
     }
 
     /**
+     * 二次ベジェ曲線上の座標を計算する
+     * @param startX 開始点のX座標
+     * @param startY 開始点のY座標
+     * @param controlX 制御点のX座標
+     * @param controlY 制御点のY座標
+     * @param endX 終了点のX座標
+     * @param endY 終了点のY座標
+     * @param t 進行度（0.0～1.0）
+     * @returns 指定された進行度での座標
+     */
+    protected getQuadraticBezierPoint(
+        startX: number, 
+        startY: number, 
+        controlX: number, 
+        controlY: number, 
+        endX: number, 
+        endY: number, 
+        t: number
+    ): {x: number, y: number}
+    {
+        // 二次ベジェ曲線の数式: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
+        const x = Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * controlX + Math.pow(t, 2) * endX;
+        const y = Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * controlY + Math.pow(t, 2) * endY;
+        
+        return {x, y};
+    }
+
+    /**
+     * アニメーションの値を計算
+     * @param startValue 開始値
+     * @param endValue 終了値
+     * @param duration アニメーションの持続時間（ミリ秒）
+     * @returns 現在の値
+     */
+    protected getAnimationValue(startValue: number, endValue: number, duration: number): number
+    {
+        const progress = this.getAnimationProgress(duration);
+        return startValue + (endValue - startValue) * progress;
+    }
+
+    /**
      * 接続点を取得する
      */
     public abstract getConnectionPoint(): {x: number, y: number};
@@ -327,18 +387,5 @@ export abstract class MainNodeBase extends NodeBase
             return elapsedTime / duration;
         }
         return 1.0;
-    }
-
-    /**
-     * アニメーションの値を計算
-     * @param startValue 開始値
-     * @param endValue 終了値
-     * @param duration アニメーションの持続時間（ミリ秒）
-     * @returns 現在の値
-     */
-    protected getAnimationValue(startValue: number, endValue: number, duration: number): number
-    {
-        const progress = this.getAnimationProgress(duration);
-        return startValue + (endValue - startValue) * progress;
     }
 } 

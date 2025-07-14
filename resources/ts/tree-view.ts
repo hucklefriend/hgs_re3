@@ -20,6 +20,10 @@ export class TreeView
     private _scrollStartY: number;
     private _appearAnimationFunc: (() => void) | null;
 
+    private _selectedLinkNode: LinkNode | null;
+
+    private _freePt: HTMLElement | null;
+
     /**
      * コンストラクタ
      * 
@@ -40,6 +44,10 @@ export class TreeView
         this._scrollStartY = 0;
 
         this._appearAnimationFunc = null;
+
+        this._selectedLinkNode = null;
+
+        this._freePt = document.querySelector('div#free-pt') as HTMLElement;
     }
 
     /**
@@ -79,6 +87,16 @@ export class TreeView
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
         });
+    }
+
+    public getContentNodeByAnchorId(anchorId: string): ContentNode | null
+    {
+        for (const contentNode of this._contentNodes) {
+            if (contentNode.getAnchorId() === anchorId) {
+                return contentNode;
+            }
+        }
+        return null;
     }
 
     /**
@@ -172,12 +190,32 @@ export class TreeView
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappear(selectedLinkNode: LinkNode): void
     {
-        this._mainLine.disappear();
+        this._selectedLinkNode = selectedLinkNode;
         this._headerNode.disappear();
-        this._linkNodes.forEach(linkNode => linkNode.disappear());
+        this._linkNodes.forEach(linkNode => {
+            if (linkNode.id !== selectedLinkNode.id) {
+                linkNode.disappear();
+            } else {
+                linkNode.selectedDisappear();
+            }
+        });
         this._contentNodes.forEach(contentNode => contentNode.disappear());
+    }
+
+    public disappearMainLine(): void
+    {
+        if (this._mainLine.isAppeared()) {
+            if (this._selectedLinkNode) {
+                const headerPosition = this._headerNode.getConnectionPoint();
+                const disappearHeight = this._selectedLinkNode.getNodeElement().offsetTop - headerPosition.y + 2;
+                this._mainLine.disappear(disappearHeight);
+            } else {
+                this._mainLine.disappear(0);
+            }
+            this._headerNode.disappear();
+        }
     }
 
     /**
@@ -195,5 +233,20 @@ export class TreeView
         this._headerNode.draw();
         this._linkNodes.forEach(linkNode => linkNode.draw());
         this._contentNodes.forEach(contentNode => contentNode.draw());
+    }
+
+    public get freePt(): HTMLElement | null
+    {
+        return this._freePt;
+    }
+
+    public get mainLine(): MainLine
+    {
+        return this._mainLine;
+    }
+
+    public get headerNode(): HeaderNode
+    {
+        return this._headerNode;
     }
 }

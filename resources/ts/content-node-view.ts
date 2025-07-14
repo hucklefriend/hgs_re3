@@ -14,6 +14,8 @@ export class ContentNodeView
     private _anchor: HTMLAnchorElement | null;
     private _startRect: Rect;
     private _pendingContent: any | null;
+    private _previousUrl: string | null;
+    private _isFromPopState: boolean;
 
     /**
      * コンストラクタ
@@ -33,12 +35,14 @@ export class ContentNodeView
         this._isOpen = false;
         this._anchor = null;
         this._pendingContent = null;
+        this._previousUrl = null;   
+        this._isFromPopState = false;
 
         // 閉じるボタンのクリックイベントリスナーを追加
         const closeButton = element.querySelector('#content-node-view-close') as HTMLElement;
         if (closeButton) {
             closeButton.addEventListener('click', () => {
-                this.close();
+                this.close(false);
             });
         }
     }
@@ -95,6 +99,9 @@ export class ContentNodeView
         this._isOpen = true;
         this._animationStartTime = (window as any).hgn.timestamp;
         this.openAnimationFunc = this.openAnimation;
+
+        // 前のURLを保存
+        this._previousUrl = window.location.href;
 
         this.element.style.display = 'block';
         this.element.classList.add('blur');
@@ -173,10 +180,11 @@ export class ContentNodeView
     /**
      * 閉じるアニメーション開始
      */
-    public close(): void
+    public close(isFromPopState: boolean): void
     {
         this._animationStartTime = (window as any).hgn.timestamp;
         this.openAnimationFunc = this.closeAnimation;
+        this._isFromPopState = isFromPopState;
     }
 
     /**
@@ -212,6 +220,20 @@ export class ContentNodeView
             this.element.style.display = 'none';
             this.element.classList.remove('blur');
             this.element.classList.remove('blur-active');
+            this._anchor = null;
+
+            // 前のURLに戻るためのpushState
+            if (!this._isFromPopState && this._previousUrl) {
+                const stateData = {
+                    type: 'content-node-close',
+                    previousUrl: this._previousUrl,
+                    timestamp: Date.now()
+                };
+                history.pushState(stateData, '', this._previousUrl);
+                console.log('stateData:', stateData);
+                this._previousUrl = null;
+            }
+
             return;
         }
 
