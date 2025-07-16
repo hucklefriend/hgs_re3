@@ -1,8 +1,8 @@
 export abstract class NodeBase
 {
     private _id: string;
-    protected nodeElement: HTMLElement;
-    protected isDraw: boolean;
+    protected _nodeElement: HTMLElement;
+    protected _isDraw: boolean;
     
     /**
      * コンストラクタ
@@ -10,8 +10,8 @@ export abstract class NodeBase
     public constructor(nodeElement: HTMLElement)
     {
         this._id = nodeElement.id;
-        this.nodeElement = nodeElement;
-        this.isDraw = false;
+        this._nodeElement = nodeElement;
+        this._isDraw = false;
     }
 
     /**
@@ -27,7 +27,7 @@ export abstract class NodeBase
      */
     public getNodeElement(): HTMLElement
     {
-        return this.nodeElement;
+        return this._nodeElement;
     }
 
     /**
@@ -35,7 +35,7 @@ export abstract class NodeBase
      */
     public setDraw(): void
     {
-        this.isDraw = true;
+        this._isDraw = true;
     }
 
     /**

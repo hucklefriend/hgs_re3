@@ -41,11 +41,11 @@ export class LinkNode extends MainNodeBase
      */
     private updateGradientEndAlphaOnHover(): void
     {
-        this.gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        this.maxSubEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
-        this.minSubEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
-        if (this.gradientEndAlpha >= 1.0) {
-            this.gradientEndAlpha = 1.0;
+        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
+        this._maxSubEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
+        this._minSubEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
+        if (this._gradientEndAlpha >= 1.0) {
+            this._gradientEndAlpha = 1.0;
             this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -56,11 +56,11 @@ export class LinkNode extends MainNodeBase
      */
     private updateGradientEndAlphaOnUnhover(): void
     {
-        this.gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        this.maxSubEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
-        this.minSubEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
-        if (this.gradientEndAlpha <= 0.3) {
-            this.gradientEndAlpha = 0.3;
+        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
+        this._maxSubEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
+        this._minSubEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
+        if (this._gradientEndAlpha <= 0.3) {
+            this._gradientEndAlpha = 0.3;
             this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -83,8 +83,8 @@ export class LinkNode extends MainNodeBase
      */
     private hover(): void
     {
-        this.subNodeContainer.classList.add('hover');
-        this.animationStartTime = (window as any).hgn.timestamp;
+        this._subNodeContainer.classList.add('hover');
+        this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
     }
 
@@ -93,8 +93,8 @@ export class LinkNode extends MainNodeBase
      */
     private unhover(): void
     {
-        this.subNodeContainer.classList.remove('hover');
-        this.animationStartTime = (window as any).hgn.timestamp;
+        this._subNodeContainer.classList.remove('hover');
+        this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
     }
 
@@ -164,20 +164,20 @@ export class LinkNode extends MainNodeBase
             1
         );
 
-        this._freePtPos.x = this.nodeElement.offsetLeft;
-        this._freePtPos.y = this.nodeElement.offsetTop - freePt.clientHeight / 2;
+        this._freePtPos.x = this._nodeElement.offsetLeft;
+        this._freePtPos.y = this._nodeElement.offsetTop - freePt.clientHeight / 2;
         freePt.style.left = this._freePtPos.x + pos.x + 'px';
         freePt.style.top = this._freePtPos.y + pos.y + 'px';
         
-        this.subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
-        this.subCurveAppearProgress = [0,0,0,0];
-        this.animationStartTime = hgn.timestamp;
-        this.gradientEndAlpha = 0;
+        this._subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
+        this._subCurveAppearProgress = [0,0,0,0];
+        this._animationStartTime = hgn.timestamp;
+        this._gradientEndAlpha = 0;
         this._point.element.style.visibility = 'hidden';
-        this.nodeHead.classList.add('disappear');
-        this.isDraw = true;
+        this._nodeHead.classList.add('disappear');
+        this._isDraw = true;
 
-        this.appearAnimationFunc = this.selectedDisappearAnimation;
+        this._appearAnimationFunc = this.selectedDisappearAnimation;
     }
 
     /**
@@ -189,13 +189,13 @@ export class LinkNode extends MainNodeBase
 
         const hgn = (window as any).hgn;
 
-        this.curveAppearProgress = 1 - this.getAnimationProgress(1000);
-        if (this.curveAppearProgress <= 0) {
-            this.curveAppearProgress = 0;
-            this.gradientEndAlpha = 0;
-            this.appearAnimationFunc = this.selectedDisappearAnimation2;
+        this._curveAppearProgress = 1 - this.getAnimationProgress(1000);
+        if (this._curveAppearProgress <= 0) {
+            this._curveAppearProgress = 0;
+            this._gradientEndAlpha = 0;
+            this._appearAnimationFunc = this.selectedDisappearAnimation2;
 
-            this.animationStartTime = hgn.timestamp;
+            this._animationStartTime = hgn.timestamp;
             hgn.treeView.mainLine.disappear(0, true);
 
             const headerNode = hgn.treeView.headerNode;
@@ -215,13 +215,13 @@ export class LinkNode extends MainNodeBase
             0, 0,
             0, connectionPoint.y,
             connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
-            this.curveAppearProgress
+            this._curveAppearProgress
         );
         freePt.style.left = (this._freePtPos.x + pos.x) + 'px';
         freePt.style.top = (this._freePtPos.y + pos.y) + 'px';
         freePt.classList.add('visible');
         
-        this.isDraw = true;
+        this._isDraw = true;
     }
 
     protected selectedDisappearAnimation2(): void
@@ -233,9 +233,9 @@ export class LinkNode extends MainNodeBase
 
         const progress = 1 - this.getAnimationProgress(300);
         if (progress <= 0) {
-            this.appearAnimationFunc = null;
+            this._appearAnimationFunc = null;
             freePt.style.top = headerPoint.element.offsetTop + 'px';
-            this.appearStatus = AppearStatus.DISAPPEARED;
+            this._appearStatus = AppearStatus.DISAPPEARED;
             (window as any).hgn.treeView.disappeared();
         } else {
             freePt.style.top = posY + (this._freePtPos.y - posY) * progress + 'px';

@@ -90,9 +90,9 @@ export class ContentNode extends MainNodeBase
      */
     private updateGradientEndAlphaOnHover(): void
     {
-        this.gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        if (this.gradientEndAlpha >= 1.0) {
-            this.gradientEndAlpha = 1.0;
+        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
+        if (this._gradientEndAlpha >= 1.0) {
+            this._gradientEndAlpha = 1.0;
             this.updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -103,9 +103,9 @@ export class ContentNode extends MainNodeBase
      */
     private updateGradientEndAlphaOnUnhover(): void
     {
-        this.gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        if (this.gradientEndAlpha <= 0.3) {
-            this.gradientEndAlpha = 0.3;
+        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
+        if (this._gradientEndAlpha <= 0.3) {
+            this._gradientEndAlpha = 0.3;
             this.updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -129,7 +129,7 @@ export class ContentNode extends MainNodeBase
     private hover(): void
     {
         if (!this.isOpenContentView()) {
-            this.animationStartTime = (window as any).hgn.timestamp;
+            this._animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
         }
     }
@@ -140,7 +140,7 @@ export class ContentNode extends MainNodeBase
     private unhover(): void
     {
         if (!this.isOpenContentView()) {
-            this.animationStartTime = (window as any).hgn.timestamp;
+            this._animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
         }
     }
