@@ -9,7 +9,7 @@ export class ContentNodeView
     public footer: HTMLElement;
 
     private _animationStartTime: number;
-    private openAnimationFunc: (() => void) | null;
+    private _openAnimationFunc: (() => void) | null;
     private _isOpen: boolean;
     private _anchor: HTMLAnchorElement | null;
     private _startRect: Rect;
@@ -31,7 +31,7 @@ export class ContentNodeView
         this._startRect = new Rect(0, 0, 0, 0);
 
         this._animationStartTime = 0;
-        this.openAnimationFunc = null;
+        this._openAnimationFunc = null;
         this._isOpen = false;
         this._anchor = null;
         this._pendingContent = null;
@@ -64,7 +64,7 @@ export class ContentNodeView
     {
         if (data && data.body) {
             // アニメーションが終わっている場合は即座に設定
-            if (this.openAnimationFunc === null) {
+            if (this._openAnimationFunc === null) {
                 this.content.innerHTML = data.body;
                 
                 // CSSの設定を適用するため、style属性を削除
@@ -85,8 +85,8 @@ export class ContentNodeView
             return;
         }
 
-        if (this.openAnimationFunc !== null) {
-            this.openAnimationFunc();
+        if (this._openAnimationFunc !== null) {
+            this._openAnimationFunc();
         }
     }
 
@@ -98,7 +98,7 @@ export class ContentNodeView
         this._anchor = anchor;
         this._isOpen = true;
         this._animationStartTime = (window as any).hgn.timestamp;
-        this.openAnimationFunc = this.openAnimation;
+        this._openAnimationFunc = this.openAnimation;
 
         // 前のURLを保存
         this._previousUrl = window.location.href;
@@ -155,7 +155,7 @@ export class ContentNodeView
             this.element.style.top = '0px';
             this.element.style.removeProperty('width');
             this.element.style.removeProperty('height');
-            this.openAnimationFunc = null;
+            this._openAnimationFunc = null;
             
             // アニメーション完了時に保持されたコンテンツがあれば設定
             if (this._pendingContent !== null) {
@@ -183,7 +183,7 @@ export class ContentNodeView
     public close(isFromPopState: boolean): void
     {
         this._animationStartTime = (window as any).hgn.timestamp;
-        this.openAnimationFunc = this.closeAnimation;
+        this._openAnimationFunc = this.closeAnimation;
         this._isFromPopState = isFromPopState;
     }
 
@@ -215,7 +215,7 @@ export class ContentNodeView
             element.style.top = `${endTop}px`;
             element.style.width = `${endWidth}px`;
             element.style.height = `${endHeight}px`;
-            this.openAnimationFunc = null;
+            this._openAnimationFunc = null;
             this._isOpen = false;
             this.element.style.display = 'none';
             this.element.classList.remove('blur');

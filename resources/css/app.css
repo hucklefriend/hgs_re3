@@ -99,9 +99,9 @@ header.node {
             color: var(--node-pt-light);
             width: 30px;
             min-width: 30px;
-            transition: opacity 0.3s ease;
 
             &.fade-out {
+                transition: opacity 1s ease;
                 opacity: 0;
             }
         }
@@ -282,7 +282,7 @@ h1 {
     transition: all 0.3s ease;
 
     & + .node-pt {
-        transition: all 0.3s ease;
+        /*transition: color 0.3s ease, text-shadow 0.3s ease;*/
     }
 
     &:hover {
@@ -290,9 +290,9 @@ h1 {
         cursor: pointer;
 
         & + .node-pt {
+            transition: color 0.3s ease, text-shadow 0.3s ease;
             color: var(--node-pt-light);
             text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
-            transition: all 0.3s ease;
         }
     }
 }
@@ -470,5 +470,11 @@ canvas.node-canvas {
     min-width: 30px;
     text-align: center;
     line-height: 1;
+    visibility: hidden;
+    user-select: none;
+
+    &.visible {
+        visibility: visible;
+    }
 }
 

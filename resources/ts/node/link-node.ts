@@ -1,5 +1,6 @@
 import { MainNodeBase } from "./main-node-base";
 import { NodePoint } from "./parts/node-point";
+import { AppearStatus } from "../enum/appear-status";
 
 export class LinkNode extends MainNodeBase
 {
@@ -105,9 +106,6 @@ export class LinkNode extends MainNodeBase
     {
         // デフォルトの動作を防ぐ
         e.preventDefault();
-        
-        // クリック時の処理をここに実装
-        console.log('LinkNode clicked:', this._anchor.id);
 
         this.moveTree(false);
     }
@@ -116,19 +114,17 @@ export class LinkNode extends MainNodeBase
     {
         const hgn = (window as any).hgn;
         hgn.treeView.disappear(this);
-/*
+
         const url = this._anchor.href;
         
         if (!isFromPopState) {
             // pushStateで履歴に追加（content-nodeで行ったことを記録）
             const stateData = {
-                type: 'content-node',
+                type: 'link-node',
                 url: url,
-                anchorId: this._anchor.id,
-                timestamp: Date.now()
+                anchorId: this._anchor.id
             };
-            history.pushState(stateData, '', url);
-            console.log('stateData:', stateData);
+            //history.pushState(stateData, '', url);
         }
 
         fetch(url, {
@@ -138,13 +134,12 @@ export class LinkNode extends MainNodeBase
         })
             .then(response => response.json())
             .then(data => {
-                //console.log('取得したデータ:', data);
-                hgn.contentNodeView.setContent(data);
+                console.log('data:', data);
+                hgn.treeView.nextTreeCache = data;
             })
             .catch(error => {
                 console.error('データの取得に失敗しました:', error);
             });
-*/
     }
 
     /**
@@ -159,28 +154,20 @@ export class LinkNode extends MainNodeBase
     public selectedDisappear(): void
     {
         const hgn = (window as any).hgn;
-
         const freePt = hgn.treeView.freePt;
-        if (freePt) {
-            const connectionPoint = this.getConnectionPoint();
-            const nodeHeadY = this.nodeElement.offsetTop - this._point.element.clientHeight / 2;
+        const connectionPoint = this.getConnectionPoint();
 
-            const pos = this.getQuadraticBezierPoint(
-                0, 0,
-                0, connectionPoint.y,
-                connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
-                1
-            );
+        const pos = this.getQuadraticBezierPoint(
+            0, 0,
+            0, connectionPoint.y,
+            connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
+            1
+        );
 
-
-            // freePt.style.left = (connectionPoint.x - 5) + 'px';
-            // freePt.style.top = (connectionPoint.y + nodeHeadY) + 'px';
-
-            this._freePtPos.x = this.nodeElement.offsetLeft;
-            this._freePtPos.y = this.nodeElement.offsetTop - freePt.clientHeight / 2;
-            freePt.style.left = this._freePtPos.x + pos.x + 'px';
-            freePt.style.top = this._freePtPos.y + pos.y + 'px';
-        }
+        this._freePtPos.x = this.nodeElement.offsetLeft;
+        this._freePtPos.y = this.nodeElement.offsetTop - freePt.clientHeight / 2;
+        freePt.style.left = this._freePtPos.x + pos.x + 'px';
+        freePt.style.top = this._freePtPos.y + pos.y + 'px';
         
         this.subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
         this.subCurveAppearProgress = [0,0,0,0];
@@ -224,16 +211,15 @@ export class LinkNode extends MainNodeBase
         }
 
         const freePt = hgn.treeView.freePt;
-        if (freePt) {
-            const pos = this.getQuadraticBezierPoint(
-                0, 0,
-                0, connectionPoint.y,
-                connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
-                this.curveAppearProgress
-            );
-            freePt.style.left = (this._freePtPos.x + pos.x) + 'px';
-            freePt.style.top = (this._freePtPos.y + pos.y) + 'px';
-        }
+        const pos = this.getQuadraticBezierPoint(
+            0, 0,
+            0, connectionPoint.y,
+            connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
+            this.curveAppearProgress
+        );
+        freePt.style.left = (this._freePtPos.x + pos.x) + 'px';
+        freePt.style.top = (this._freePtPos.y + pos.y) + 'px';
+        freePt.classList.add('visible');
         
         this.isDraw = true;
     }
@@ -249,6 +235,8 @@ export class LinkNode extends MainNodeBase
         if (progress <= 0) {
             this.appearAnimationFunc = null;
             freePt.style.top = headerPoint.element.offsetTop + 'px';
+            this.appearStatus = AppearStatus.DISAPPEARED;
+            (window as any).hgn.treeView.disappeared();
         } else {
             freePt.style.top = posY + (this._freePtPos.y - posY) * progress + 'px';
         }

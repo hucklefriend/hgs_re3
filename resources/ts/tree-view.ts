@@ -22,7 +22,10 @@ export class TreeView
 
     private _selectedLinkNode: LinkNode | null;
 
-    private _freePt: HTMLElement | null;
+    private _freePt: HTMLElement;
+
+    private _isResetting: boolean;
+    private _nextTreeCache: object | null;
 
     /**
      * コンストラクタ
@@ -48,6 +51,10 @@ export class TreeView
         this._selectedLinkNode = null;
 
         this._freePt = document.querySelector('div#free-pt') as HTMLElement;
+
+        this._nextTreeCache = null;
+
+        this._isResetting = false;
     }
 
     /**
@@ -138,14 +145,21 @@ export class TreeView
      */
     public update(): void
     {
-        if (this._appearAnimationFunc !== null) {
-            this._appearAnimationFunc();
+        if (this._isResetting) {
+            if (this._nextTreeCache) {
+                const nextTreeCache = this._nextTreeCache;
+                this._nextTreeCache = null;
+            }
+        } else {
+            if (this._appearAnimationFunc !== null) {
+                this._appearAnimationFunc();
+            }
+    
+            this._headerNode.update();
+            this._mainLine.update();
+            this._linkNodes.forEach(linkNode => linkNode.update());
+            this._contentNodes.forEach(contentNode => contentNode.update());
         }
-
-        this._headerNode.update();
-        this._mainLine.update();
-        this._linkNodes.forEach(linkNode => linkNode.update());
-        this._contentNodes.forEach(contentNode => contentNode.update());
     }
 
     /**
@@ -219,10 +233,25 @@ export class TreeView
     }
 
     /**
-     * 消滅アニメーション
+     * 消滅完了
      */
-    private disappearAnimation(): void
+    public disappeared(): void
     {
+        // if (this._nextTreeCache) {
+        //     const nextTreeCache = this._nextTreeCache;
+        //     this._nextTreeCache = null;
+        //     const anchorId = nextTreeCache.anchorId;
+        //     const contentNode = this.getContentNodeByAnchorId(anchorId);
+        // }
+
+        this._isResetting = true;
+        this._freePt.classList.remove('visible');
+        this._headerNode.point.element.classList.remove('fade-out');
+
+        if (this._nextTreeCache) {
+            this._nextTreeCache = null;
+            this.appear();
+        }
     }
 
     /**
@@ -235,7 +264,7 @@ export class TreeView
         this._contentNodes.forEach(contentNode => contentNode.draw());
     }
 
-    public get freePt(): HTMLElement | null
+    public get freePt(): HTMLElement
     {
         return this._freePt;
     }
@@ -248,5 +277,10 @@ export class TreeView
     public get headerNode(): HeaderNode
     {
         return this._headerNode;
+    }
+
+    public set nextTreeCache(cache: object)
+    {
+        this._nextTreeCache = cache;
     }
 }

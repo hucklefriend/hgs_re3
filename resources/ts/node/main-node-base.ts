@@ -1,15 +1,9 @@
 import { NodeBase } from "./node-base";
 import { SubLinkNode } from "./sub-link-node";
-import { TreeView } from "../tree-view";
+import { AppearStatus } from "../enum/appear-status";
 
 export abstract class MainNodeBase extends NodeBase
 {
-    public static readonly APPEAR_STATUS_NONE = 0;
-    public static readonly APPEAR_STATUS_APPEARING = 1;
-    public static readonly APPEAR_STATUS_APPEARED = 2;
-    public static readonly APPEAR_STATUS_DISAPPEARING = 3;
-    public static readonly APPEAR_STATUS_DISAPPEARED = 4;
-
     protected canvas: HTMLCanvasElement;
     protected canvasCtx: CanvasRenderingContext2D;
     protected subLinkNodes: SubLinkNode[] = [];
@@ -21,7 +15,7 @@ export abstract class MainNodeBase extends NodeBase
     protected maxSubEndOpacity: number;
     protected minSubEndOpacity: number;
     protected appearAnimationFunc: (() => void) | null;
-    protected appearStatus: number;
+    protected appearStatus: AppearStatus;
     protected curveAppearProgress: number;
     protected subCurveAppearProgress: number[];
 
@@ -43,7 +37,7 @@ export abstract class MainNodeBase extends NodeBase
         this.minSubEndOpacity = 0.1;
         this.appearAnimationFunc = null;
         this.subNodeContainer = nodeElement.querySelector('.sub-node-container') as HTMLElement;
-        this.appearStatus = MainNodeBase.APPEAR_STATUS_NONE;
+        this.appearStatus = AppearStatus.NONE;
         this.curveAppearProgress = 0;
         this.subCurveAppearProgress = [0, 0, 0, 0];
 
@@ -98,8 +92,8 @@ export abstract class MainNodeBase extends NodeBase
      */
     public appear(): void
     {
-        if (this.appearStatus === MainNodeBase.APPEAR_STATUS_NONE) {
-            this.appearStatus = MainNodeBase.APPEAR_STATUS_APPEARING;
+        if (this.appearStatus === AppearStatus.NONE) {
+            this.appearStatus = AppearStatus.APPEARING;
             this.appearAnimationFunc = this.appearAnimation;
             this.nodeElement.style.visibility = 'visible';
             this.curveAppearProgress = 0;
@@ -133,7 +127,7 @@ export abstract class MainNodeBase extends NodeBase
         const progress = this.getAnimationProgress(1000);
         if (progress >= 1) {
             this.subCurveAppearProgress = [1, 1, 1, 1];
-            this.appearStatus = MainNodeBase.APPEAR_STATUS_APPEARED;
+            this.appearStatus = AppearStatus.APPEARED;
 
             this.appearAnimationFunc = null;
         }
