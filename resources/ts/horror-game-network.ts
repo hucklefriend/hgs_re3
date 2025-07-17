@@ -3,7 +3,7 @@ import { ContentNodeView } from "./content-node-view";
 
 export class HorrorGameNetwork
 {
-    private static instance: HorrorGameNetwork;
+    private static _instance: HorrorGameNetwork;
     private _timestamp: number;
     private _main: HTMLElement;
     private _treeView: TreeView;
@@ -26,10 +26,10 @@ export class HorrorGameNetwork
      */
     public static getInstance(): HorrorGameNetwork
     {
-        if (!HorrorGameNetwork.instance) {
-            HorrorGameNetwork.instance = new HorrorGameNetwork();
+        if (!HorrorGameNetwork._instance) {
+            HorrorGameNetwork._instance = new HorrorGameNetwork();
         }
-        return HorrorGameNetwork.instance;
+        return HorrorGameNetwork._instance;
     }
 
     /**

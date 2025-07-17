@@ -50,6 +50,33 @@ abstract class Controller
     }
 
     /**
+     * ツリーの生成
+     *
+     * @param Factory|View $view
+     * @param bool $ratingCheck
+     * @param array $components
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    protected function tree(Factory|View $view, bool $ratingCheck = false, array $components = []): JsonResponse|Application|Factory|View
+    {
+        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
+        if (self::isAjax()) {
+            $rendered = $view->renderSections();
+            return response()->json([
+                'title'       => $rendered['title'],
+                'tree'        => $rendered['content'],
+                'popup'       => $rendered['popup'] ?? '',
+                'ratingCheck' => $ratingCheck,
+                'components'  => $components,
+            ]);
+        }
+
+        return $view->with('viewerType', 'tree')
+            ->with('components', $components);
+    }
+
+    /**
      * ネットワークの生成
      *
      * @param Factory|View $view

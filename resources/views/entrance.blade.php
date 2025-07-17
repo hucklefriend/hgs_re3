@@ -12,7 +12,7 @@
     <div class="node-container">
         <section class="node link-node" id="horror-games-node">
             <div class="node-head disappear">
-                <a href="#" class="network-link">Horror Games</a>
+                <a href="{{ route('Game.HorrorGames') }}" class="network-link">Horror Games</a>
                 <span class="node-pt main-node-pt">●</span>
             </div>
             <div class="sub-node-container">

@@ -99,9 +99,9 @@ header.node {
             color: var(--node-pt-light);
             width: 30px;
             min-width: 30px;
-            transition: opacity 0.3s ease;
 
             &.fade-out {
+                transition: opacity 1s ease;
                 opacity: 0;
             }
         }
@@ -125,6 +125,23 @@ header.node {
                 animation: fadeout-mask 1s forwards;
             }
         }
+        &.fade-in-left {
+            h1 {
+                mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+                -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+
+                mask-size: 200% 100%;
+                -webkit-mask-size: 200% 100%;
+
+                mask-position: 200% 0;
+                -webkit-mask-position: 200% 0;
+
+                mask-repeat: no-repeat;
+                -webkit-mask-repeat: no-repeat;
+
+                animation: fadein-mask 1s forwards;
+            }
+        }
     }
 }
 
@@ -137,6 +154,18 @@ header.node {
       100% {
         mask-position: 200% 0;
         -webkit-mask-position: 200% 0;
+      }
+}
+
+/* 右側から透明になるアニメーション */
+@keyframes fadein-mask {
+    0% {
+        mask-position: 200% 0;
+        -webkit-mask-position: 200% 0;
+      }
+      100% {
+        mask-position: 0% 0;
+        -webkit-mask-position: 0% 0;
       }
 }
 
@@ -282,7 +311,7 @@ h1 {
     transition: all 0.3s ease;
 
     & + .node-pt {
-        transition: all 0.3s ease;
+        /*transition: color 0.3s ease, text-shadow 0.3s ease;*/
     }
 
     &:hover {
@@ -290,9 +319,9 @@ h1 {
         cursor: pointer;
 
         & + .node-pt {
+            transition: color 0.3s ease, text-shadow 0.3s ease;
             color: var(--node-pt-light);
             text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
-            transition: all 0.3s ease;
         }
     }
 }
@@ -470,5 +499,11 @@ canvas.node-canvas {
     min-width: 30px;
     text-align: center;
     line-height: 1;
+    visibility: hidden;
+    user-select: none;
+
+    &.visible {
+        visibility: visible;
+    }
 }
 

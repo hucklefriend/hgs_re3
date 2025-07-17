@@ -2,7 +2,7 @@ import { NodePoint } from "./parts/node-point";
 
 export class SubLinkNode
 {
-    private point: NodePoint;
+    private _point: NodePoint;
     public element: HTMLElement;
 
     /**
@@ -10,13 +10,13 @@ export class SubLinkNode
      */
     public constructor(nodeElement: HTMLElement)
     {
-        this.point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
+        this._point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
         this.element = nodeElement;
     }
 
     public getConnectionPoint(): {x: number, y: number}
     {
-        const rect = this.point.element.getBoundingClientRect();
+        const rect = this._point.element.getBoundingClientRect();
         return {
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2
