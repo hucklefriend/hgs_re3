@@ -32,11 +32,24 @@ export class HeaderNode extends NodeBase
         return this._point.getCenterPosition();
     }
 
+    public appear(): void
+    {
+        this._point.element.classList.remove('fade-out');
+        this._nodeHead.classList.remove('fade-out-right');
+        this._nodeHead.classList.add('fade-in-left');
+    }
+
     public disappear(): void
     {
+        this._nodeHead.classList.remove('fade-in-left');
         if (!this._nodeHead.classList.contains('fade-out-right')) {
             this._nodeHead.classList.add('fade-out-right');
         }
+    }
+
+    public disappearPoint(): void
+    {
+        this._point.element.classList.add('fade-out');
     }
 
     public get point(): NodePoint

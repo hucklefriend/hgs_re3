@@ -125,6 +125,23 @@ header.node {
                 animation: fadeout-mask 1s forwards;
             }
         }
+        &.fade-in-left {
+            h1 {
+                mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+                -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+
+                mask-size: 200% 100%;
+                -webkit-mask-size: 200% 100%;
+
+                mask-position: 200% 0;
+                -webkit-mask-position: 200% 0;
+
+                mask-repeat: no-repeat;
+                -webkit-mask-repeat: no-repeat;
+
+                animation: fadein-mask 1s forwards;
+            }
+        }
     }
 }
 
@@ -137,6 +154,18 @@ header.node {
       100% {
         mask-position: 200% 0;
         -webkit-mask-position: 200% 0;
+      }
+}
+
+/* 右側から透明になるアニメーション */
+@keyframes fadein-mask {
+    0% {
+        mask-position: 200% 0;
+        -webkit-mask-position: 200% 0;
+      }
+      100% {
+        mask-position: 0% 0;
+        -webkit-mask-position: 0% 0;
       }
 }
 

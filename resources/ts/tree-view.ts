@@ -146,10 +146,9 @@ export class TreeView
     public update(): void
     {
         if (this._isResetting) {
-            if (this._nextTreeCache) {
-                const nextTreeCache = this._nextTreeCache;
-                this._nextTreeCache = null;
-            }
+            this._nextTreeCache = null;
+            this.appear();
+            this._isResetting = false;
         } else {
             if (this._appearAnimationFunc !== null) {
                 this._appearAnimationFunc();
@@ -168,7 +167,12 @@ export class TreeView
     public appear(): void
     {
         this._headerNode.appear();
-        this._mainLine.appear();
+
+        if (this._lastNode) {
+            const headerPosition = this._headerNode.getConnectionPoint();
+            this._mainLine.setHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
+            this._mainLine.appear();
+        }
 
         this._appearAnimationFunc = this.appearAnimation;
     }
@@ -251,6 +255,7 @@ export class TreeView
         if (this._nextTreeCache) {
             this._nextTreeCache = null;
             this.appear();
+            this._isResetting = false;
         }
     }
 

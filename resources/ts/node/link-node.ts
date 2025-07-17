@@ -197,10 +197,7 @@ export class LinkNode extends MainNodeBase
 
             this._animationStartTime = hgn.timestamp;
             hgn.treeView.mainLine.disappear(0, true);
-
-            const headerNode = hgn.treeView.headerNode;
-            const pt = headerNode.point;
-            pt.element.classList.add('fade-out');
+            hgn.treeView.headerNode.disappearPoint();
         } else {
             this.drawCurvedLine(
                 15,
@@ -237,6 +234,8 @@ export class LinkNode extends MainNodeBase
             freePt.style.top = headerPoint.element.offsetTop + 'px';
             this._appearStatus = AppearStatus.DISAPPEARED;
             (window as any).hgn.treeView.disappeared();
+            
+            this._point.element.style.visibility = 'visible';
         } else {
             freePt.style.top = posY + (this._freePtPos.y - posY) * progress + 'px';
         }

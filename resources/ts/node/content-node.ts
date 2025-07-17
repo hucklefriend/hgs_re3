@@ -54,7 +54,7 @@ export class ContentNode extends MainNodeBase
     public openContentNodeView(isFromPopState: boolean): void
     {
         const hgn = (window as any).hgn;
-        hgn.contentNodeView.open(this._anchor, this.nodeElement.offsetTop);
+        hgn.contentNodeView.open(this._anchor, this._nodeElement.offsetTop);
 
         const url = this._anchor.href;
         

@@ -92,7 +92,8 @@ export abstract class MainNodeBase extends NodeBase
      */
     public appear(): void
     {
-        if (this._appearStatus === AppearStatus.NONE) {
+        if (this._appearStatus === AppearStatus.NONE || this._appearStatus === AppearStatus.DISAPPEARED) {
+            this._nodeHead.classList.remove('disappear');
             this._appearStatus = AppearStatus.APPEARING;
             this._appearAnimationFunc = this.appearAnimation;
             this._nodeElement.style.visibility = 'visible';
@@ -176,6 +177,7 @@ export abstract class MainNodeBase extends NodeBase
         this._subCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
+        this._appearStatus = AppearStatus.DISAPPEARING;
 
         this._isDraw = true;
 
@@ -196,6 +198,7 @@ export abstract class MainNodeBase extends NodeBase
             this._nodeHead.classList.add('disappear');
             const treeView = (window as any).hgn.treeView;
             treeView.disappearMainLine();
+            this._appearStatus = AppearStatus.DISAPPEARED;
         }
         
         this._isDraw = true;
