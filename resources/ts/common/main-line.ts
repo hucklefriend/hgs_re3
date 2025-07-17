@@ -59,6 +59,7 @@ export class MainLine
      */
     public appear(): void
     {
+        console.log(this._height);
         this._animationStartTime = (window as any).hgn.timestamp;
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;

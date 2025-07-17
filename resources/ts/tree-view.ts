@@ -11,6 +11,7 @@ export class TreeView
 
     private _headerNode: HeaderNode;
     private _mainLine: MainLine;
+    private _treeNodes: HTMLElement;
     private _linkNodes: LinkNode[];
     private _contentNodes: ContentNode[];
     private _lastNode: LinkNode | ContentNode | null;
@@ -24,8 +25,13 @@ export class TreeView
 
     private _freePt: HTMLElement;
 
-    private _isResetting: boolean;
-    private _nextTreeCache: object | null;
+    private _isChanging: boolean;
+    private _nextTreeCache: {
+        title: string;
+        tree: string;
+        popup: string;
+        ratingCheck: boolean;
+    } | null;
 
     /**
      * コンストラクタ
@@ -38,6 +44,7 @@ export class TreeView
 
         this._headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
         this._mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
+        this._treeNodes = document.querySelector('div#tree-nodes') as HTMLElement;
         this._linkNodes = [];
         this._contentNodes = [];
         this._lastNode = null;
@@ -54,7 +61,7 @@ export class TreeView
 
         this._nextTreeCache = null;
 
-        this._isResetting = false;
+        this._isChanging = false;
     }
 
     /**
@@ -94,6 +101,37 @@ export class TreeView
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
         });
+        console.log(this._lastNode);
+    }
+
+    /**
+     * ノードの開放
+     */
+    public disposeNodes(): void
+    {
+        // LinkNodeの開放
+        this._linkNodes.forEach(linkNode => {
+            if (linkNode) {
+                // イベントリスナーの削除（必要に応じて実装）
+                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
+                // ノードインスタンスを削除することで参照がクリアされる
+            }
+        });
+        this._linkNodes = [];
+
+        // ContentNodeの開放
+        this._contentNodes.forEach(contentNode => {
+            if (contentNode) {
+                // イベントリスナーの削除（必要に応じて実装）
+                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
+                // ノードインスタンスを削除することで参照がクリアされる
+            }
+        });
+        this._contentNodes = [];
+
+        // 最後のノード参照をクリア
+        this._lastNode = null;
+        this._selectedLinkNode = null;
     }
 
     public getContentNodeByAnchorId(anchorId: string): ContentNode | null
@@ -145,10 +183,8 @@ export class TreeView
      */
     public update(): void
     {
-        if (this._isResetting) {
-            this._nextTreeCache = null;
-            this.appear();
-            this._isResetting = false;
+        if (this._isChanging) {
+            this.changeTree();
         } else {
             if (this._appearAnimationFunc !== null) {
                 this._appearAnimationFunc();
@@ -248,14 +284,28 @@ export class TreeView
         //     const contentNode = this.getContentNodeByAnchorId(anchorId);
         // }
 
-        this._isResetting = true;
         this._freePt.classList.remove('visible');
         this._headerNode.point.element.classList.remove('fade-out');
 
+        this.changeTree();
+    }
+
+    private changeTree(): void
+    {
         if (this._nextTreeCache) {
+            this._isChanging = false;
+            this.disposeNodes();
+
+            this._headerNode.title = this._nextTreeCache.title;
+            this._treeNodes.innerHTML = this._nextTreeCache.tree;
+
+            this.loadNodes();
+            this.resize();
             this._nextTreeCache = null;
+            
             this.appear();
-            this._isResetting = false;
+        } else {
+            this._isChanging = true;
         }
     }
 
@@ -284,7 +334,7 @@ export class TreeView
         return this._headerNode;
     }
 
-    public set nextTreeCache(cache: object)
+    public set nextTreeCache(cache: { title: string; tree: string; popup: string; ratingCheck: boolean; })
     {
         this._nextTreeCache = cache;
     }

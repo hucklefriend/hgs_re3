@@ -124,7 +124,7 @@ export class LinkNode extends MainNodeBase
                 url: url,
                 anchorId: this._anchor.id
             };
-            //history.pushState(stateData, '', url);
+            history.pushState(stateData, '', url);
         }
 
         fetch(url, {
@@ -134,7 +134,7 @@ export class LinkNode extends MainNodeBase
         })
             .then(response => response.json())
             .then(data => {
-                console.log('data:', data);
+                //console.log('data:', data);
                 hgn.treeView.nextTreeCache = data;
             })
             .catch(error => {
