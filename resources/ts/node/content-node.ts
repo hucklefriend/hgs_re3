@@ -123,11 +123,17 @@ export class ContentNode extends MainNodeBase
         }
     }
 
+    protected isHover(): boolean
+    {
+        return this._anchor.classList.contains('hover');
+    }
+
     /**
      * ホバー時の処理
      */
     private hover(): void
     {
+        this._anchor.classList.add('hover');
         if (!this.isOpenContentView()) {
             this._animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
@@ -139,6 +145,7 @@ export class ContentNode extends MainNodeBase
      */
     private unhover(): void
     {
+        this._anchor.classList.remove('hover');
         if (!this.isOpenContentView()) {
             this._animationStartTime = (window as any).hgn.timestamp;
             this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;

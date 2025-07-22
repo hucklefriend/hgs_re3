@@ -78,11 +78,20 @@ export class LinkNode extends MainNodeBase
         }
     }
 
+    protected isHover(): boolean
+    {
+        return this._anchor.classList.contains('hover');
+    }
+
     /**
      * ホバー時の処理
      */
     private hover(): void
     {
+        this._anchor.classList.add('hover');
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
+        }
         this._subNodeContainer.classList.add('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
@@ -93,6 +102,10 @@ export class LinkNode extends MainNodeBase
      */
     private unhover(): void
     {
+        this._anchor.classList.remove('hover');
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
+        }
         this._subNodeContainer.classList.remove('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
@@ -172,6 +185,7 @@ export class LinkNode extends MainNodeBase
         this._subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
         this._subCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = hgn.timestamp;
+        this._appearStatus = AppearStatus.DISAPPEARING;
         this._gradientEndAlpha = 0;
         this._point.element.style.visibility = 'hidden';
         this._nodeHead.classList.add('disappear');
