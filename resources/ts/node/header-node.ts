@@ -56,4 +56,9 @@ export class HeaderNode extends NodeBase
     {
         return this._point;
     }
+
+    public set title(title: string)
+    {
+        this._title.innerHTML = title;
+    }
 } 

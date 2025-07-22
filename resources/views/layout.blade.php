@@ -28,7 +28,9 @@
 <body>
     <main>
         <div class="tree-view">
-            @yield('content')
+            <div id="tree-nodes">
+                @yield('content')
+            </div>
             <div id="main-line"></div>
             <div id="free-pt">●</div>
         </div>

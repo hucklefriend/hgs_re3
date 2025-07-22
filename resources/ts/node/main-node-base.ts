@@ -111,7 +111,7 @@ export abstract class MainNodeBase extends NodeBase
         this._curveAppearProgress = this.getAnimationProgress(500);
         if (this._curveAppearProgress >= 1) {
             this._curveAppearProgress = 1;
-            this._gradientEndAlpha = 0.3;
+            this._gradientEndAlpha = this.isHover() ? 1 : 0.3;
             this._appearAnimationFunc = this.appearSubNodesAnimation;
             this._nodeHead.classList.remove('disappear');
             this._animationStartTime = (window as any).hgn.timestamp;
@@ -119,6 +119,8 @@ export abstract class MainNodeBase extends NodeBase
         
         this._isDraw = true;
     }
+
+    protected abstract isHover(): boolean;
 
     /**
      * サブノードの出現アニメーション

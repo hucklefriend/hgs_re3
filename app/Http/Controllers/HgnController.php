@@ -31,7 +31,7 @@ class HgnController extends Controller
             ->orderBy('open_at', 'desc')
             ->get();
 
-        return $this->document(view('entrance', compact('infoList')));
+        return $this->tree(view('entrance', compact('infoList')));
     }
 
     /**
