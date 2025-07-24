@@ -101,7 +101,6 @@ export class TreeView
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
         });
-        console.log(this._lastNode);
     }
 
     /**
@@ -244,12 +243,12 @@ export class TreeView
     /**
      * 消滅アニメーション開始
      */
-    public disappear(selectedLinkNode: LinkNode): void
+    public disappear(selectedLinkNode: LinkNode | null): void
     {
         this._selectedLinkNode = selectedLinkNode;
         this._headerNode.disappear();
         this._linkNodes.forEach(linkNode => {
-            if (linkNode.id !== selectedLinkNode.id) {
+            if (selectedLinkNode && linkNode.id !== selectedLinkNode.id) {
                 linkNode.disappear();
             } else {
                 linkNode.selectedDisappear();
@@ -287,7 +286,7 @@ export class TreeView
         this._freePt.classList.remove('visible');
         this._headerNode.point.element.classList.remove('fade-out');
 
-        this.changeTree();
+        this._isChanging = true;
     }
 
     private changeTree(): void
@@ -337,5 +336,35 @@ export class TreeView
     public set nextTreeCache(cache: { title: string; tree: string; popup: string; ratingCheck: boolean; })
     {
         this._nextTreeCache = cache;
+    }
+
+    
+
+    public moveTree(url: string, linkNode: LinkNode | null, isFromPopState: boolean): void
+    {
+        this.disappear(linkNode);
+
+        if (!isFromPopState) {
+            // pushStateで履歴に追加
+            const stateData = {
+                type: 'link-node',
+                url: url,
+                anchorId: linkNode?.getAnchorId() || ''
+            };
+            history.pushState(stateData, '', url);
+        }
+
+        fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.nextTreeCache = data;
+            })
+            .catch(error => {
+                console.error('データの取得に失敗しました:', error);
+            });
     }
 }

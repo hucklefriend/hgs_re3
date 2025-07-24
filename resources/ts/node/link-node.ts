@@ -120,39 +120,8 @@ export class LinkNode extends MainNodeBase
         // デフォルトの動作を防ぐ
         e.preventDefault();
 
-        this.moveTree(false);
-    }
-
-    public moveTree(isFromPopState: boolean): void
-    {
-        const hgn = (window as any).hgn;
-        hgn.treeView.disappear(this);
-
-        const url = this._anchor.href;
-        
-        if (!isFromPopState) {
-            // pushStateで履歴に追加（content-nodeで行ったことを記録）
-            const stateData = {
-                type: 'link-node',
-                url: url,
-                anchorId: this._anchor.id
-            };
-            history.pushState(stateData, '', url);
-        }
-
-        fetch(url, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                //console.log('data:', data);
-                hgn.treeView.nextTreeCache = data;
-            })
-            .catch(error => {
-                console.error('データの取得に失敗しました:', error);
-            });
+        const treeView = (window as any).hgn.treeView;
+        treeView.moveTree(this._anchor.href, this, false);
     }
 
     /**
