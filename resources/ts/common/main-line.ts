@@ -32,7 +32,6 @@ export class MainLine
      */
     public setHeight(height: number): void
     {
-        //this._element.style.height = `${height}px`;
         this._height = height;
     }
 
@@ -59,7 +58,6 @@ export class MainLine
      */
     public appear(): void
     {
-        console.log(this._height);
         this._animationStartTime = (window as any).hgn.timestamp;
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
@@ -72,7 +70,6 @@ export class MainLine
     {
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight = this._height * progress / 1000;
-
         if (this._animationHeight >= this._height) {
             this._animationHeight = this._height;
             this._appearAnimationFunc = null;

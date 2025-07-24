@@ -88,13 +88,21 @@ export class HorrorGameNetwork
         });
 
         // popstateイベントの登録
-        window.addEventListener('popstate', () => this.popState());
+        window.addEventListener('popstate', (event) => {this.popState(event)});
 
         this.treeView.loadNodes();
         
         this.resize();
 
         this.treeView.appear();
+
+        // 初期状態の履歴を設定
+        const initialState = {
+            type: 'link-node',
+            url: window.location.href,
+            anchorId: ''
+        };
+        history.replaceState(initialState, '', window.location.href);
 
         requestAnimationFrame((timestamp) => this.update(timestamp));
     }
@@ -134,32 +142,39 @@ export class HorrorGameNetwork
     /**
      * popstateイベントの処理
      */
-    private popState(): void
+    private popState(event?: PopStateEvent): void
     {
-        const state = history.state;
+        // popstateイベントの引数から移動前のstateを取得
+        const previousState = event?.state;
         
         // content-node-viewが表示中だったら閉じる
         if (this.contentNodeView.isOpen) {
             this.contentNodeView.close(true);
-        }
-        
-        // content-nodeで行った場合の処理
-        if (state && state.type === 'content-node') {
-            console.log('content-nodeからの戻り:', state);
-            
-            // anchorIdから要素を取得してクリックイベントを発火
-            if (state.anchorId) {
-                const node = this.treeView.getContentNodeByAnchorId(state.anchorId);
-                if (node) {
-                    node.openContentNodeView(true);
+        } else if (previousState) {
+            // content-nodeで行った場合の処理
+            if (previousState.type === 'content-node') {
+                console.log('content-nodeからの戻り:', previousState);
+                
+                // anchorIdから要素を取得してクリックイベントを発火
+                if (previousState.anchorId) {
+                    const node = this.treeView.getContentNodeByAnchorId(previousState.anchorId);
+                    if (node) {
+                        node.openContentNodeView(true);
+                    }
                 }
             }
-        }
-        
-        // content-node-closeで行った場合の処理
-        if (state && state.type === 'content-node-close') {
-            console.log('content-node-closeからの戻り:', state);
-            // 必要に応じて追加の処理をここに記述
+            
+            // content-node-closeで行った場合の処理
+            if (previousState.type === 'content-node-close') {
+                console.log('content-node-closeからの戻り:', previousState);
+                // 必要に応じて追加の処理をここに記述
+            }
+
+            if (previousState.type === 'link-node') {
+                console.log('link-nodeからの戻り:', previousState);
+                
+                this.treeView.moveTree(previousState.url, null, true);
+            }
         }
         
         this.resize();
