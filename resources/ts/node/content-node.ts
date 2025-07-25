@@ -1,5 +1,6 @@
 import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
+import { Util } from "../common/util";
 
 export class ContentNode extends MainNodeBase
 {
@@ -68,7 +69,8 @@ export class ContentNode extends MainNodeBase
             history.pushState(stateData, '', url);
         }
 
-        fetch(url, {
+        const urlWithParam = Util.addParameterA(url);
+        fetch(urlWithParam, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
