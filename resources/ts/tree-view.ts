@@ -2,6 +2,7 @@ import { HeaderNode } from "./node/header-node";
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
 import { MainLine } from "./common/main-line";
+import { Util } from "./common/util";
 
 export class TreeView
 {
@@ -355,7 +356,8 @@ export class TreeView
             history.pushState(stateData, '', url);
         }
 
-        fetch(url, {
+        const urlWithParam = Util.addParameterA(url);
+        fetch(urlWithParam, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
