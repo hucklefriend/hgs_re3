@@ -1,9 +1,9 @@
 import { MainNodeBase } from "./main-node-base";
+import { AppearStatus } from "../enum/appear-status";
 
 export class ContentNode extends MainNodeBase
 {
     private _anchor: HTMLAnchorElement;
-    private updateGradientEndAlphaFunc: (() => void) | null;
 
     /**
      * コンストラクタ
@@ -14,7 +14,6 @@ export class ContentNode extends MainNodeBase
         super(nodeElement);
 
         this._anchor = nodeElement.querySelector('.content-link') as HTMLAnchorElement;
-        this.updateGradientEndAlphaFunc = null;
 
         // ホバーイベントの設定
         this._anchor.addEventListener('mouseenter', () => this.hover());
@@ -67,7 +66,6 @@ export class ContentNode extends MainNodeBase
                 timestamp: Date.now()
             };
             history.pushState(stateData, '', url);
-            console.log('stateData:', stateData);
         }
 
         fetch(url, {
@@ -93,7 +91,7 @@ export class ContentNode extends MainNodeBase
         this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
         if (this._gradientEndAlpha >= 1.0) {
             this._gradientEndAlpha = 1.0;
-            this.updateGradientEndAlphaFunc = null;
+            this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
     }
@@ -106,7 +104,7 @@ export class ContentNode extends MainNodeBase
         this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
         if (this._gradientEndAlpha <= 0.3) {
             this._gradientEndAlpha = 0.3;
-            this.updateGradientEndAlphaFunc = null;
+            this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
     }
@@ -117,15 +115,11 @@ export class ContentNode extends MainNodeBase
     public update(): void
     {
         super.update();
-
-        if (this.updateGradientEndAlphaFunc !== null) {
-            this.updateGradientEndAlphaFunc();
-        }
     }
 
     protected isHover(): boolean
     {
-        return this._anchor.classList.contains('hover');
+        return this._appearStatus === AppearStatus.APPEARED && this._anchor.classList.contains('hover');
     }
 
     /**
@@ -136,7 +130,7 @@ export class ContentNode extends MainNodeBase
         this._anchor.classList.add('hover');
         if (!this.isOpenContentView()) {
             this._animationStartTime = (window as any).hgn.timestamp;
-            this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
         }
     }
 
@@ -148,7 +142,7 @@ export class ContentNode extends MainNodeBase
         this._anchor.classList.remove('hover');
         if (!this.isOpenContentView()) {
             this._animationStartTime = (window as any).hgn.timestamp;
-            this.updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
         }
     }
     

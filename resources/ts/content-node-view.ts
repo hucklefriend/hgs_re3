@@ -230,7 +230,6 @@ export class ContentNodeView
                     timestamp: Date.now()
                 };
                 history.pushState(stateData, '', this._previousUrl);
-                console.log('stateData:', stateData);
                 this._previousUrl = null;
             }
 
