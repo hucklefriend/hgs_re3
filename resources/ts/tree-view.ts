@@ -155,7 +155,6 @@ export class TreeView
 
         if (this._mainLine && this._lastNode) {
             const headerPosition = this._headerNode.getConnectionPoint();
-            console.log('resize', this._headerNode.point.element);
             this._mainLine.setHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
         }
         this._scrollStartX = window.scrollX;
@@ -207,7 +206,6 @@ export class TreeView
 
         if (this._lastNode) {
             const headerPosition = this._headerNode.getConnectionPoint();
-            console.log('appear', this._headerNode.point.element);
             this._mainLine.setHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
             this._mainLine.appear();
         }

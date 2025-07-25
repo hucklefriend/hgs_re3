@@ -18,6 +18,7 @@ export abstract class MainNodeBase extends NodeBase
     protected _appearStatus: AppearStatus;
     protected _curveAppearProgress: number;
     protected _subCurveAppearProgress: number[];
+    protected _updateGradientEndAlphaFunc: (() => void) | null;
 
     /**
      * コンストラクタ
@@ -40,6 +41,7 @@ export abstract class MainNodeBase extends NodeBase
         this._appearStatus = AppearStatus.NONE;
         this._curveAppearProgress = 0;
         this._subCurveAppearProgress = [0, 0, 0, 0];
+        this._updateGradientEndAlphaFunc = null;
 
         const subLinkNodeElements = this._subNodeContainer?.querySelectorAll('.sub-link-node') || [];
         this._subLinkNodes = Array.from(subLinkNodeElements)
@@ -84,6 +86,10 @@ export abstract class MainNodeBase extends NodeBase
 
         if (this._appearAnimationFunc) {
             this._appearAnimationFunc();
+        }
+
+        if (this._updateGradientEndAlphaFunc) {
+            this._updateGradientEndAlphaFunc();
         }
     }
 
@@ -180,6 +186,7 @@ export abstract class MainNodeBase extends NodeBase
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
+        this._updateGradientEndAlphaFunc = null;
 
         this._isDraw = true;
 

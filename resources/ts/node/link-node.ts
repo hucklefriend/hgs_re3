@@ -6,7 +6,6 @@ export class LinkNode extends MainNodeBase
 {
     private _point: NodePoint;
     private _anchor: HTMLAnchorElement;
-    private _updateGradientEndAlphaFunc: (() => void) | null;
 
     private _freePtPos: {x: number, y: number};
 
@@ -20,7 +19,6 @@ export class LinkNode extends MainNodeBase
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._anchor = nodeElement.querySelector('.node-head .network-link') as HTMLAnchorElement;
-        this._updateGradientEndAlphaFunc = null;
 
         // ホバーイベントの設定
         this._anchor.addEventListener('mouseenter', () => this.hover());
@@ -80,7 +78,7 @@ export class LinkNode extends MainNodeBase
 
     protected isHover(): boolean
     {
-        return this._anchor.classList.contains('hover');
+        return this._appearStatus === AppearStatus.APPEARED && this._anchor.classList.contains('hover');
     }
 
     /**
@@ -138,6 +136,7 @@ export class LinkNode extends MainNodeBase
         const hgn = (window as any).hgn;
         const freePt = hgn.treeView.freePt;
         const connectionPoint = this.getConnectionPoint();
+        this._updateGradientEndAlphaFunc = null;
 
         const pos = this.getQuadraticBezierPoint(
             0, 0,
