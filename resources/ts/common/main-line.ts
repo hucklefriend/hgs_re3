@@ -150,4 +150,10 @@ export class MainLine
     {
         return this._appearStatus === AppearStatus.DISAPPEARED;
     }
+
+    public changeHeight(height: number): void
+    {
+        this._height = height;
+        this._element.style.height = `${this._height}px`;
+    }
 } 

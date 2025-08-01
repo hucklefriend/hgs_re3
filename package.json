@@ -21,6 +21,7 @@
     "dependencies": {
         "interactjs": "^1.10.27",
         "lz-string": "^1.5.0",
-        "normalize.css": "^8.0.1"
+        "normalize.css": "^8.0.1",
+        "tom-select": "^2.4.3"
     }
 }
