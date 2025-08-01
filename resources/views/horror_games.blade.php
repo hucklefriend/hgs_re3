@@ -10,6 +10,68 @@
         </div>
     </header>
     <div class="node-container">
+        <section class="node link-node" id="search-node">
+            <div class="node-head disappear">
+                <a href="#" class="network-link">Search</a>
+                <span class="node-pt main-node-pt">●</span>
+            </div>
+            <div class="sub-node-container"></div>
+            <div class="terminal-node-container">
+                タイトル、発売時期などから検索できます。
+                {{-- 検索フォーム 
+                <form>
+                    <div>
+                        <label for="search-input">タイトル</label>
+                        <input type="text" class="search-input" placeholder="Search">
+                    </div>
+                    <div>
+                        <label>発売時期</label>
+                        <input type="date" class="search-input" placeholder="Search">
+                    </div>
+                    <div>
+                        <label>プラットフォーム</label>
+                        <style>
+                            .ts-wrapper .option .title {
+                                display: block;
+                            }
+                            .ts-wrapper .option .url {
+                                font-size: 12px;
+                                display: block;
+                                color: #a0a0a0;
+                            }
+                            </style>
+                        <select id="select-links" multiple placeholder="Pick some links..."></select>
+                        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/js/tom-select.complete.min.js"></script>
+                        <script>
+                            
+                            new TomSelect('#select-links',{
+                                valueField: 'id',
+                                searchField: 'title',
+                                options: [
+                                    {id: 1, title: 'DIY', url: 'https://diy.org'},
+                                    {id: 2, title: 'Google', url: 'http://google.com'},
+                                    {id: 3, title: 'Yahoo', url: 'http://yahoo.com'},
+                                ],
+                                render: {
+                                    option: function(data, escape) {
+                                        return '<div>' +
+                                                '<span class="title">' + escape(data.title) + '</span>' +
+                                                '<span class="url">' + escape(data.url) + '</span>' +
+                                            '</div>';
+                                    },
+                                    item: function(data, escape) {
+                                        return '<div title="' + escape(data.url) + '">' + escape(data.title) + '</div>';
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                --}}
+            </div>
+            <canvas class="node-canvas"></canvas>
+        </section>
         <section class="node link-node" id="franchises-node">
             <div class="node-head disappear">
                 <a href="#" class="network-link">Franchises</a>
@@ -17,25 +79,28 @@
             </div>
             <div class="sub-node-container">
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>アカイイト</span>
+                    <span class="node-pt">●</span><span>Steam</span>
                 </div>
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>OUTLAST</span>
+                    <span class="node-pt">●</span><span>PlayStation</span>
                 </div>
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>朝の来ない夜に抱かれて -ETERNAL NIGHT-</span>
+                    <span class="node-pt">●</span><span>Xbox</span>
                 </div>
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>アノニマス</span>
+                    <span class="node-pt">●</span><span>Nintendo Switch</span>
                 </div>
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>エコーナイト</span>
+                    <span class="node-pt">●</span><span>Oculus</span>
                 </div>
                 <div class="sub-node sub-link-node disappear">
-                    <span class="node-pt">●</span><span>es</span>
+                    <span class="node-pt">●</span><span>PSVR</span>
                 </div>
             </div>
             <canvas class="node-canvas"></canvas>
+            <div class="terminal-node-container">
+                同じ世界観やキャラクターを共有するシリーズ作品群を1つのフランチャイズと定義し、フランチャイズ別にホラーゲームをリストアップしています。
+            </div>
         </section>
         <section class="node link-node" id="platforms-node">
             <div class="node-head disappear">
@@ -63,6 +128,9 @@
                 </div>
             </div>
             <canvas class="node-canvas"></canvas>
+            <div class="terminal-node-container">
+                ゲームハードや配信プラットフォーム別にホラーゲームをリストアップしています。
+            </div>
         </section>
         <section class="node link-node" id="makers-node">
             <div class="node-head disappear">
@@ -89,23 +157,19 @@
                     <span class="node-pt">●</span><span>ソニー</span>
                 </div>
             </div>
+            <div class="terminal-node-container">
+                ゲームメーカー別にホラーゲームをリストアップしています。<br>
+                個人開発者や同人サークルなども1つのメーカーとしています。
+            </div>
             <canvas class="node-canvas"></canvas>
         </section>
         <section class="node link-node" id="entrance-node">
             <div class="node-head disappear">
-                <a href="#" class="network-link">Entrance</a>
+                <a href="{{ route('Entrance') }}" class="network-link">Entrance</a>
                 <span class="node-pt main-node-pt">●</span>
             </div>
+            <div class="sub-node-container"></div>
             <canvas class="node-canvas"></canvas>
         </section>
-        @for($i = 0; $i < 30; $i++)
-            <section class="node link-node" id="horror-game-{{ $i }}-node">
-                <div class="node-head">
-                    <a href="#" class="network-link">Horror Game {{ $i }}</a>
-                    <span class="node-pt main-node-pt">●</span>
-                </div>
-                <canvas class="node-canvas"></canvas>
-            </section>
-        @endfor
     </div>
 @endsection

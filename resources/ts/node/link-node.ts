@@ -93,6 +93,7 @@ export class LinkNode extends MainNodeBase
         this._subNodeContainer.classList.add('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+        super.terminalNodeHover();
     }
 
     /**
@@ -107,6 +108,7 @@ export class LinkNode extends MainNodeBase
         this._subNodeContainer.classList.remove('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+        super.terminalNodeUnhover();
     }
 
     /**
@@ -221,5 +223,15 @@ export class LinkNode extends MainNodeBase
         } else {
             freePt.style.top = posY + (this._freePtPos.y - posY) * progress + 'px';
         }
+    }
+
+    protected terminalNodeHover(): void
+    {
+        this.hover();
+    }
+    
+    protected terminalNodeUnhover(): void
+    {
+        this.unhover();
     }
 } 

@@ -11,6 +11,9 @@ export default defineConfig({
       refresh: true,
     })
   ],
+  css: {
+    postcss: './postcss.config.js',
+  },
   resolve: {
     alias: {
       '@': '/resources/js', // tsconfig.jsonと合わせる

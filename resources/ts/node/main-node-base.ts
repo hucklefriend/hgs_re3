@@ -19,6 +19,7 @@ export abstract class MainNodeBase extends NodeBase
     protected _curveAppearProgress: number;
     protected _subCurveAppearProgress: number[];
     protected _updateGradientEndAlphaFunc: (() => void) | null;
+    protected _terminalNodeContainer: HTMLElement | null;
 
     /**
      * コンストラクタ
@@ -46,6 +47,12 @@ export abstract class MainNodeBase extends NodeBase
         const subLinkNodeElements = this._subNodeContainer?.querySelectorAll('.sub-link-node') || [];
         this._subLinkNodes = Array.from(subLinkNodeElements)
             .map(node => new SubLinkNode(node as HTMLElement));
+
+        this._terminalNodeContainer = nodeElement.querySelector('.terminal-node-container') as HTMLElement | null;
+        if (this._terminalNodeContainer) {
+            this._terminalNodeContainer.addEventListener('mouseenter', () => this.terminalNodeHover());
+            this._terminalNodeContainer.addEventListener('mouseleave', () => this.terminalNodeUnhover());
+        }
     }
 
     /**
@@ -127,6 +134,26 @@ export abstract class MainNodeBase extends NodeBase
     }
 
     protected abstract isHover(): boolean;
+
+    /**
+     * ターミナルノードのホバー処理
+     */
+    protected terminalNodeHover(): void
+    {
+        if (this._terminalNodeContainer) {
+            this._terminalNodeContainer.classList.add('hover');
+        }
+    }
+
+    /**
+     * ターミナルノードのホバー解除処理
+     */
+    protected terminalNodeUnhover(): void
+    {
+        if (this._terminalNodeContainer) {
+            this._terminalNodeContainer.classList.remove('hover');
+        }
+    }
 
     /**
      * サブノードの出現アニメーション
