@@ -3,13 +3,12 @@
 @section('title', $franchise->name . 'フランチャイズ | ホラーゲームネットワーク')
 
 @section('content')
-    <section>
-        <div class="node h1">
-            <h1 class="head1 fade" id="h1_title">
-                {!! $franchise->h1_node_name !!}<br>
-                フランチャイズ
-            </h1>
+    <header class="node">
+        <div class="node-head" style="margin-bottom: 10px;">
+            <h1>{!! $franchise->h1_node_name !!}<br>フランチャイズ</h1>
+            <span class="node-pt">●</span>
         </div>
+        
 
         @if (!empty($franchise->description))
             <div class="node">
@@ -18,6 +17,27 @@
                 </div>
             </div>
         @endif
+    </header>
+    <div class="node-container">
+        <section class="node link-node" id="search-node">
+            <div class="node-head disappear">
+                <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">タイトルラインナップ</a>
+                <span class="node-pt main-node-pt">●</span>
+            </div>
+            <div class="sub-node-container"></div>
+            <div class="terminal-node-container">
+                
+            </div>
+            <canvas class="node-canvas"></canvas>
+        </section>
+    </div>
+{{--
+    <section>
+        <div class="node h1">
+            <h1 class="head1 fade" id="h1_title">
+                
+            </h1>
+        </div>
     </section>
 
     <section>
@@ -114,5 +134,5 @@
             <a href="{{ route('Admin.Game.Franchise.Detail', $franchise) }}">管理</a>
         </div>
     @endif
-
+--}}
 @endsection

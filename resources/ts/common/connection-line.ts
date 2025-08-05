@@ -1,7 +1,8 @@
 import { AppearStatus } from "../enum/appear-status";
 
-export class MainLine
+export class ConnectionLine
 {
+
     private _element: HTMLDivElement;
     private _height: number;
     private _animationHeight: number;
@@ -12,11 +13,12 @@ export class MainLine
 
     /**
      * コンストラクタ
-     * @param element メインラインの要素
+     * @param element 接続線の要素
      */
     public constructor(element: HTMLDivElement)
     {
         this._element = element;
+        console.log(this._element);
         this._height = 0;
         this._animationHeight = 0;
         this._animationStartTime = 0;

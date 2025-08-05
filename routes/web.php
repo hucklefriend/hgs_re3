@@ -307,10 +307,10 @@ Route::group(['prefix' => 'game'], function () {
     // ホラーゲームネットワーク
     //Route::get('/', [$class, 'horrorGameNetwork'])->name('Game.HorrorGameNetwork');
     Route::get('/', [$class, 'horrorGames'])->name('Game.HorrorGames');
-    // フランチャイズ詳細ネットワーク
-    Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetailNetwork'])->name('Game.FranchiseDetailNetwork');
-    // フランチャイズネットワーク
-    Route::get('/franchise-network/{prefix?}', [$class, 'franchiseNetwork'])->name('Game.FranchiseNetwork');
+    // フランチャイズ詳細
+    Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetail'])->name('Game.FranchiseDetail');
+    // フランチャイズ
+    Route::get('/franchises/{prefix?}', [$class, 'franchises'])->name('Game.Franchises');
     // タイトル詳細ネットワーク
     Route::get('/title/{titleKey}', [$class, 'titleDetailNetwork'])->name('Game.TitleDetailNetwork');
 

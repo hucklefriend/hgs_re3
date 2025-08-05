@@ -200,8 +200,9 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function franchiseNetwork(Request $request, string $prefix = 'a'): JsonResponse|Application|Factory|View
+    public function franchises(Request $request, string $prefix = 'a'): JsonResponse|Application|Factory|View
     {
+        /*
         if (preg_match('/^[akstnhmry]$/', $prefix) !== 1) {
             $prefix = 'a';
         }
@@ -253,9 +254,14 @@ class GameController extends Controller
 
             // レビュー、お気に入りユーザー数なども加味してゆく
         });
+        */
+
+        $franchises = GameFranchise::select(['id', 'key', 'name', 'description'])
+            ->orderBy('phonetic')
+            ->get();
 
 
-        return $this->document(view('game.franchise_network', compact('franchises')));
+        return $this->tree(view('game.franchises', compact('franchises')));
     }
 
     /**
@@ -266,7 +272,7 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function franchiseDetailNetwork(Request $request, string $franchiseKey): JsonResponse|Application|Factory|View
+    public function franchiseDetail(Request $request, string $franchiseKey): JsonResponse|Application|Factory|View
     {
         $franchise = GameFranchise::findByKey($franchiseKey);
         $titles = [];
@@ -279,12 +285,9 @@ class GameController extends Controller
             $titles[] = $title;
         }
 
-        return $this->document(view('game.franchise_detail_network', [
+        return $this->document(view('game.franchise_detail', [
             'franchise'   => $franchise,
             'titles'      => $titles,
-            'footerLinks' => [
-                'Franchise' => route('Game.FranchiseNetwork'),
-            ],
         ]));
     }
 

@@ -233,7 +233,7 @@ export abstract class MainNodeBase extends NodeBase
             this._appearAnimationFunc = null;
             this._nodeHead.classList.add('disappear');
             const treeView = (window as any).hgn.treeView;
-            treeView.disappearMainLine();
+            treeView.tree.disappearConnectionLine();
             this._appearStatus = AppearStatus.DISAPPEARED;
         }
         
