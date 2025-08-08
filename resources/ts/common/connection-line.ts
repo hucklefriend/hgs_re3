@@ -18,13 +18,18 @@ export class ConnectionLine
     public constructor(element: HTMLDivElement)
     {
         this._element = element;
-        console.log(this._element);
         this._height = 0;
         this._animationHeight = 0;
         this._animationStartTime = 0;
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.NONE;
         this._disappearHeight = 0;
+    }
+
+    public setPosition(x: number, y: number): void
+    {
+        this._element.style.left = `${x}px`;
+        this._element.style.top = `${y}px`;
     }
 
     /**
@@ -78,6 +83,7 @@ export class ConnectionLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
+        this._element.classList.add('visible');
     }
 
     /**

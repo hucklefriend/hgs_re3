@@ -5,8 +5,6 @@ import { Tree } from "../common/tree";
 
 export class SubTreeNode extends MainNodeBase
 {
-    private _point: NodePoint;
-    private _title: HTMLSpanElement;
     private _tree: Tree;
 
     /**
@@ -17,15 +15,12 @@ export class SubTreeNode extends MainNodeBase
     {
         super(nodeElement);
 
-        this._tree = new Tree(nodeElement);
+        this._tree = new Tree(
+            nodeElement.querySelector('.header-node') as HTMLElement,
+            nodeElement.querySelector('.connection-line') as HTMLDivElement
+        );
 
-        this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
-        this._title = nodeElement.querySelector('.terminal-title') as HTMLSpanElement;
-    }
-
-    public get title(): string
-    {
-        return this._title.innerHTML;
+        this._tree.loadNodes(nodeElement.querySelectorAll('.sub-tree-node-container section.node'));
     }
 
     /**
@@ -54,17 +49,27 @@ export class SubTreeNode extends MainNodeBase
         this.setDraw();
     }
 
+    public resize(): void
+    {
+        super.resize();
+        this._tree.resize();
+    }
+
     /**
      * アニメーションの更新処理
      */
     public update(): void
     {
         super.update();
+
+        this._tree.update();
     }
+
+    
 
     protected isHover(): boolean
     {
-        return this._appearStatus === AppearStatus.APPEARED && this._title.classList.contains('hover');
+        return this._appearStatus === AppearStatus.APPEARED;
     }
 
     /**
@@ -72,7 +77,6 @@ export class SubTreeNode extends MainNodeBase
      */
     private hover(): void
     {
-        this._title.classList.add('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
         super.terminalNodeHover();
@@ -83,7 +87,6 @@ export class SubTreeNode extends MainNodeBase
      */
     private unhover(): void
     {
-        this._title.classList.remove('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
         super.terminalNodeUnhover();
@@ -98,6 +101,46 @@ export class SubTreeNode extends MainNodeBase
     {
         this.unhover();
     }
+
+    public appearAnimation(): void
+    {
+        super.appearAnimation();
+
+        if (this._curveAppearProgress === 1) {
+            this._tree.appear();
+
+            this._appearAnimationFunc = this.appearAnimation2;
+
+        }
+    }
+    
+
+    /**
+     * 出現アニメーション
+     */
+    private appearAnimation2(): void
+    {
+        this._tree.appearAnimation();
+
+        if (this._tree.connectionLine.isAppeared()) {
+            this._appearAnimationFunc = null;
+        }
+    }
+    
+
+    /**
+     * サブノードの出現アニメーション
+     */
+    protected appearSubNodesAnimation(): void
+    {
+        
+    }
+
+    public draw(): void
+    {
+        super.draw();
+        this._tree.draw();
+    }
     
     /**
      * 接続点を取得する
@@ -105,6 +148,8 @@ export class SubTreeNode extends MainNodeBase
      */
     public getConnectionPoint(): {x: number, y: number}
     {
-        return this._point.getCenterPosition();
+        let connectionPoint = this._tree.headerNode.getConnectionPoint();
+        //connectionPoint.x += this._tree.headerNode.element.offsetLeft;
+        return connectionPoint;
     }
 }

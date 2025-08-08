@@ -60,7 +60,7 @@ a {
     text-decoration: none;
 }
 
-div#main-line {
+div.connection-line {
     position: absolute;
     left: 14px;
     top: 24px;
@@ -69,6 +69,11 @@ div#main-line {
     background: #66ff66;
     box-shadow: 0 0 10px #66ff66;
     transition: background 0.25s ease, box-shadow 0.1s ease;
+    visibility: hidden;
+
+    &.visible {
+        visibility: visible;
+    }
 
     &.fade-out {
         background: transparent;
@@ -98,11 +103,26 @@ header.header-node {
         white-space: nowrap;
         position: relative;
 
+        &.hidden {
+            visibility: hidden;
+        }
+
+        > h1 {
+            font-size: 1.2rem;
+            font-weight: normal;
+        }
+
+        > h2 {
+            font-size: 1.0rem;
+            font-weight: normal;
+        }
+
         .node-pt {
             text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
             color: var(--node-pt-light);
             width: 30px;
             min-width: 30px;
+            opacity: 1;
 
             &.fade-out {
                 transition: opacity 1s ease;
@@ -112,7 +132,7 @@ header.header-node {
 
         /* 右側から透明になるアニメーション用のクラス */
         &.fade-out-right {
-            h1 {
+            h1, h2, h3, h4, h5, h6 {
                 /* マスクグラデーション：右から透明が左に侵食していく */
                 mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
                 -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
@@ -130,7 +150,7 @@ header.header-node {
             }
         }
         &.fade-in-left {
-            h1 {
+            h1, h2, h3, h4, h5, h6 {
                 mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
                 -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -173,11 +193,6 @@ header.header-node {
       }
 }
 
-h1 {
-    font-size: 1.2rem;
-    font-weight: normal;
-}
-
 .node {
     position: relative;
     contain: layout;
@@ -196,7 +211,7 @@ h1 {
     }
 }
 
-.node-container {
+.node-container, .sub-tree-node-container {
     display: inline-flex;
     flex-direction: column;
     gap: 20px;
@@ -223,7 +238,7 @@ h1 {
             }
         }
 
-        .sub-node-container
+        .behind-node-container
         {
             position: relative;
             padding-left: 40px;
@@ -232,7 +247,7 @@ h1 {
             z-index: -10;
             pointer-events: none;
 
-            > .sub-node {
+            > .behind-node {
                 filter: blur(2px);
                 display: flex;
                 padding: 20px 0;
@@ -343,6 +358,10 @@ h1 {
     }
 }
 
+.sub-tree-node {
+    transition: opacity 0.3s ease;
+}
+
 .disappear {
     opacity: 0;
 }
@@ -446,7 +465,7 @@ canvas.node-canvas {
             > h1 {
                 padding: 0;
                 margin: 10px;
-                font-size: 1.2rem;
+                font-size: 1.4rem;
                 font-weight: normal;
             }
 

@@ -5,39 +5,100 @@
 
 @section('tree-nodes')
     <section class="node sub-tree-node" id="horror-games-node">
-        <div class="node-head disappear">
-            <a href="{{ route('Game.HorrorGames') }}" class="network-link">Horror Games</a>
-            <span class="node-pt main-node-pt">●</span>
-        </div>
-        <div class="sub-node-container">
-            <div class="sub-node sub-link-node disappear">
-                <span class="node-pt">●</span><span>Search</span>
+        <header class="node header-node hidden" id="horror-games-header-node">
+            <div class="node-head" style="margin-bottom: 10px;">
+                <h2>Horror Games</h2>
+                <span class="node-pt hidden">●</span>
             </div>
-            <div class="sub-node sub-link-node disappear">
-                <span class="node-pt">●</span><span>Franchises</span>
-            </div>
-            <div class="sub-node sub-link-node disappear">
-                <span class="node-pt">●</span><span>Makers</span>
-            </div>
-            <div class="sub-node sub-link-node disappear">
-                <span class="node-pt">●</span><span>Platforms</span>
-            </div>
+        </header>
+        <div class="sub-tree-node-container">
+            <section class="node link-node" id="search-link-node">
+                <div class="node-head disappear">
+                    <a href="#" class="network-link">Search</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                </div>
+                <canvas class="node-canvas"></canvas>
+            </section>
+
+            <section class="node link-node" id="franchises-link-node">
+                <div class="node-head disappear">
+                    <a href="#" class="network-link">Franchises</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>アカイイト</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>アオイシロ</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>バイオハザード</span>
+                    </div>
+                </div>
+                <canvas class="node-canvas">
+                </canvas>
+            </section>
+            <section class="node link-node" id="makers-link-node">
+                <div class="node-head disappear">
+                    <a href="#" class="network-link">Makers</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>コナミ</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>カプコン</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>エニックス</span>
+                    </div>
+                </div>
+                <canvas class="node-canvas">
+                </canvas>
+            </section>
+            <section class="node link-node" id="platforms-link-node">
+                <div class="node-head disappear">
+                    <a href="#" class="network-link">Platforms</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>PC</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>PS5</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>Xbox Series X</span>
+                    </div>
+                    <div class="behind-node behind-link-node disappear">
+                        <span class="node-pt">●</span><span>Nintendo Switch</span>
+                    </div>
+                </div>
+                <canvas class="node-canvas"></canvas>
+            </section>
         </div>
         <canvas class="node-canvas"></canvas>
+        <div class="connection-line"></div>
     </section>
+
     <section class="node link-node" id="information-node">
         <div class="node-head disappear">
             <a href="#" class="network-link">Informations</a>
             <span class="node-pt main-node-pt">●</span>
         </div>
-        <div class="sub-node-container">
-            <div class="sub-node sub-link-node disappear">
+        <div class="behind-node-container">
+            <div class="behind-node behind-link-node disappear">
                 <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
             </div>
-            <div class="sub-node sub-link-node disappear">
+            <div class="behind-node behind-link-node disappear">
                 <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
             </div>
-            <div class="sub-node sub-link-node disappear">
+            <div class="behind-node behind-link-node disappear">
                 <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
             </div>
         </div>
@@ -55,4 +116,5 @@
         </div>
         <canvas class="node-canvas"></canvas>
     </section>
+
 @endsection
