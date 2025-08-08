@@ -1,6 +1,6 @@
 import { AppearStatus } from "../enum/appear-status";
 
-export class MainLine
+export class ConnectionLine
 {
 
     private _element: HTMLDivElement;
@@ -13,7 +13,7 @@ export class MainLine
 
     /**
      * コンストラクタ
-     * @param element メインラインの要素
+     * @param element 接続線の要素
      */
     public constructor(element: HTMLDivElement)
     {
@@ -24,6 +24,12 @@ export class MainLine
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.NONE;
         this._disappearHeight = 0;
+    }
+
+    public setPosition(x: number, y: number): void
+    {
+        this._element.style.left = `${x}px`;
+        this._element.style.top = `${y}px`;
     }
 
     /**
@@ -77,6 +83,7 @@ export class MainLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
+        this._element.classList.add('visible');
     }
 
     /**

@@ -29,9 +29,17 @@
     <main>
         <div class="tree-view">
             <div id="tree-nodes">
-                @yield('content')
+                <header class="node header-node">
+                    <div class="node-head" style="margin-bottom: 10px;">
+                        <h1>@yield('tree-header-title')</h1>
+                        <span class="node-pt">●</span>
+                    </div>
+                </header>
+                <div class="node-container">
+                    @yield('tree-nodes')
+                </div>
             </div>
-            <div id="main-line"></div>
+            <div id="main-line" class="connection-line"></div>
             <div id="free-pt">●</div>
         </div>
         <div id="content-node-view">

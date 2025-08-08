@@ -1,23 +1,17 @@
 import { HeaderNode } from "./node/header-node";
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
-import { TerminalNode } from "./node/terminal-node";
-import { MainLine } from "./common/main-line";
 import { Util } from "./common/util";
+import { Tree } from "./common/tree";
 
 export class TreeView
 {
     private static SCROLL_SPEED_RATE: number = 0.7;
-    
-    private _element: HTMLElement;
 
-    private _headerNode: HeaderNode;
-    private _mainLine: MainLine;
+    private _element: HTMLElement;
+    
     private _treeNodes: HTMLElement;
-    private _linkNodes: LinkNode[];
-    private _contentNodes: ContentNode[];
-    private _terminalNodes: TerminalNode[];
-    private _lastNode: LinkNode | ContentNode | TerminalNode | null;
+    private _tree: Tree;
 
     private _isSelfScroll: boolean;
     private _scrollStartX: number;
@@ -25,13 +19,13 @@ export class TreeView
     private _appearAnimationFunc: (() => void) | null;
 
     private _selectedLinkNode: LinkNode | null;
-
     private _freePt: HTMLElement;
 
     private _isChanging: boolean;
     private _nextTreeCache: {
         title: string;
-        tree: string;
+        treeHeaderTitle: string;
+        treeNodes: string;
         popup: string;
         ratingCheck: boolean;
     } | null;
@@ -44,14 +38,12 @@ export class TreeView
     public constructor(element: HTMLElement)
     {
         this._element = element;
+        this._tree = new Tree(
+            element.querySelector('.tree-view > #tree-nodes > .header-node') as HTMLElement,
+            element.querySelector('.tree-view > .connection-line') as HTMLDivElement
+        );
 
-        this._headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
-        this._mainLine = new MainLine(document.querySelector('div#main-line') as HTMLDivElement);
-        this._treeNodes = document.querySelector('div#tree-nodes') as HTMLElement;
-        this._linkNodes = [];
-        this._contentNodes = [];
-        this._terminalNodes = [];
-        this._lastNode = null;
+        this._treeNodes = document.querySelector('div#tree-nodes > .node-container') as HTMLElement;
 
         this._isSelfScroll = false;
         this._scrollStartX = 0;
@@ -88,30 +80,8 @@ export class TreeView
      */
     public loadNodes(): void
     {
-        this._headerNode = new HeaderNode(document.querySelector('header') as HTMLElement);
-        this._lastNode = null;
         const mainNodes = document.querySelectorAll('div.node-container > section.node');
-        mainNodes.forEach(mainNode => {
-            const mainNodeId = mainNode.id;
-
-            // link-nodeクラスがあればLinkNodeを作成
-            if (mainNode.classList.contains('link-node')) {
-                this._linkNodes.push(new LinkNode(mainNode as HTMLElement));
-                this._lastNode = this._linkNodes[this._linkNodes.length - 1];
-            }
-
-            // content-nodeクラスがあればContentNodeを作成
-            if (mainNode.classList.contains('content-node')) {
-                this._contentNodes.push(new ContentNode(mainNode as HTMLElement));
-                this._lastNode = this._contentNodes[this._contentNodes.length - 1];
-            }
-
-            // terminal-nodeクラスがあればTerminalNodeを作成
-            if (mainNode.classList.contains('terminal-node')) {
-                this._terminalNodes.push(new TerminalNode(mainNode as HTMLElement));
-                this._lastNode = this._terminalNodes[this._terminalNodes.length - 1];
-            }
-        });
+        this._tree.loadNodes(mainNodes);
     }
 
     /**
@@ -119,44 +89,13 @@ export class TreeView
      */
     public disposeNodes(): void
     {
-        // LinkNodeの開放
-        this._linkNodes.forEach(linkNode => {
-            if (linkNode) {
-                // イベントリスナーの削除（必要に応じて実装）
-                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
-                // ノードインスタンスを削除することで参照がクリアされる
-            }
-        });
-        this._linkNodes = [];
-
-        // ContentNodeの開放
-        this._contentNodes.forEach(contentNode => {
-            if (contentNode) {
-                // イベントリスナーの削除（必要に応じて実装）
-                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
-                // ノードインスタンスを削除することで参照がクリアされる
-            }
-        });
-        this._contentNodes = [];
-
-        // TerminalNodeの開放
-        this._terminalNodes.forEach(terminalNode => {
-            if (terminalNode) {
-                // イベントリスナーの削除（必要に応じて実装）
-                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
-                // ノードインスタンスを削除することで参照がクリアされる
-            }
-        });
-        this._terminalNodes = [];
-
-        // 最後のノード参照をクリア
-        this._lastNode = null;
+        this._tree.disposeNodes();
         this._selectedLinkNode = null;
     }
 
     public getContentNodeByAnchorId(anchorId: string): ContentNode | null
     {
-        for (const contentNode of this._contentNodes) {
+        for (const contentNode of this._tree.contentNodes) {
             if (contentNode.getAnchorId() === anchorId) {
                 return contentNode;
             }
@@ -169,16 +108,8 @@ export class TreeView
      */
     public resize(): void
     {
-        this._headerNode.resize();
-        this._linkNodes.forEach(linkNode => linkNode.resize());
-        this._contentNodes.forEach(contentNode => contentNode.resize());
-        this._terminalNodes.forEach(terminalNode => terminalNode.resize());
+        this._tree.resize();
 
-        if (this._mainLine && this._lastNode) {
-            const headerPosition = this._headerNode.getConnectionPoint();
-            this._mainLine.changeHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
-            
-        }
         this._scrollStartX = window.scrollX;
         this._scrollStartY = window.scrollY;
 
@@ -212,11 +143,7 @@ export class TreeView
                 this._appearAnimationFunc();
             }
     
-            this._headerNode.update();
-            this._mainLine.update();
-            this._linkNodes.forEach(linkNode => linkNode.update());
-            this._contentNodes.forEach(contentNode => contentNode.update());
-            this._terminalNodes.forEach(terminalNode => terminalNode.update());
+            this._tree.update();
         }
     }
 
@@ -225,13 +152,7 @@ export class TreeView
      */
     public appear(): void
     {
-        this._headerNode.appear();
-
-        if (this._lastNode) {
-            const headerPosition = this._headerNode.getConnectionPoint();
-            this._mainLine.setHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
-            this._mainLine.appear();
-        }
+        this._tree.appear();
 
         this._appearAnimationFunc = this.appearAnimation;
     }
@@ -241,33 +162,9 @@ export class TreeView
      */
     private appearAnimation(): void
     {
-        const mainLineHeight = this._mainLine.getAnimationHeight();
+        this._tree.appearAnimation();
 
-        this._linkNodes.forEach(linkNode => {
-            const linkNodeTop = linkNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
-            
-            if (linkNodeTop <= mainLineHeight) {
-                linkNode.appear();
-            }
-        });
-
-        this._contentNodes.forEach(contentNode => {
-            const contentNodeTop = contentNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
-        
-            if (contentNodeTop <= mainLineHeight) {
-                contentNode.appear();
-            }
-        });
-
-        this._terminalNodes.forEach(terminalNode => {
-            const terminalNodeTop = terminalNode.getNodeElement().offsetTop - this._headerNode.getConnectionPoint().y;
-            
-            if (terminalNodeTop <= mainLineHeight) {
-                terminalNode.appear();
-            }
-        });
-
-        if (this._mainLine.isAppeared()) {
+        if (this._tree.connectionLine.isAppeared()) {
             this._appearAnimationFunc = null;
         }
     }
@@ -278,30 +175,7 @@ export class TreeView
     public disappear(selectedLinkNode: LinkNode | null): void
     {
         this._selectedLinkNode = selectedLinkNode;
-        this._headerNode.disappear();
-        this._linkNodes.forEach(linkNode => {
-            if (selectedLinkNode && linkNode.id !== selectedLinkNode.id) {
-                linkNode.disappear();
-            } else {
-                linkNode.selectedDisappear();
-            }
-        });
-        this._contentNodes.forEach(contentNode => contentNode.disappear());
-        this._terminalNodes.forEach(terminalNode => terminalNode.disappear());
-    }
-
-    public disappearMainLine(): void
-    {
-        if (this._mainLine.isAppeared()) {
-            if (this._selectedLinkNode) {
-                const headerPosition = this._headerNode.getConnectionPoint();
-                const disappearHeight = this._selectedLinkNode.getNodeElement().offsetTop - headerPosition.y + 2;
-                this._mainLine.disappear(disappearHeight);
-            } else {
-                this._mainLine.disappear(0);
-            }
-            this._headerNode.disappear();
-        }
+        this._tree.disappear(selectedLinkNode);
     }
 
     /**
@@ -317,7 +191,7 @@ export class TreeView
         // }
 
         this._freePt.classList.remove('visible');
-        this._headerNode.point.element.classList.remove('fade-out');
+        this._tree.headerNode.point.element.classList.remove('fade-out');
 
         this._isChanging = true;
     }
@@ -328,8 +202,8 @@ export class TreeView
             this._isChanging = false;
             this.disposeNodes();
 
-            this._headerNode.title = this._nextTreeCache.title;
-            this._treeNodes.innerHTML = this._nextTreeCache.tree;
+            this._tree.headerNode.title = this._nextTreeCache.treeHeaderTitle;
+            this._treeNodes.innerHTML = this._nextTreeCache.treeNodes;
 
             this.loadNodes();
             this.resize();
@@ -346,10 +220,7 @@ export class TreeView
      */
     public draw(): void
     {
-        this._headerNode.draw();
-        this._linkNodes.forEach(linkNode => linkNode.draw());
-        this._contentNodes.forEach(contentNode => contentNode.draw());
-        this._terminalNodes.forEach(terminalNode => terminalNode.draw());
+        this._tree.draw();
     }
 
     public get freePt(): HTMLElement
@@ -357,17 +228,7 @@ export class TreeView
         return this._freePt;
     }
 
-    public get mainLine(): MainLine
-    {
-        return this._mainLine;
-    }
-
-    public get headerNode(): HeaderNode
-    {
-        return this._headerNode;
-    }
-
-    public set nextTreeCache(cache: { title: string; tree: string; popup: string; ratingCheck: boolean; })
+    public set nextTreeCache(cache: { title: string; treeHeaderTitle: string; treeNodes: string; popup: string; ratingCheck: boolean; })
     {
         this._nextTreeCache = cache;
     }

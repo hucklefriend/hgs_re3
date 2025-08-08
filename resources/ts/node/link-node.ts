@@ -40,8 +40,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnHover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        this._maxSubEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
-        this._minSubEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
+        this._maxBehindEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
+        this._minBehindEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
         if (this._gradientEndAlpha >= 1.0) {
             this._gradientEndAlpha = 1.0;
             this._updateGradientEndAlphaFunc = null;
@@ -55,8 +55,8 @@ export class LinkNode extends MainNodeBase
     private updateGradientEndAlphaOnUnhover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        this._maxSubEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
-        this._minSubEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
+        this._maxBehindEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
+        this._minBehindEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
         if (this._gradientEndAlpha <= 0.3) {
             this._gradientEndAlpha = 0.3;
             this._updateGradientEndAlphaFunc = null;
@@ -90,7 +90,7 @@ export class LinkNode extends MainNodeBase
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
-        this._subNodeContainer.classList.add('hover');
+        this._behindNodeContainer.classList.add('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
         super.terminalNodeHover();
@@ -105,7 +105,7 @@ export class LinkNode extends MainNodeBase
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
-        this._subNodeContainer.classList.remove('hover');
+        this._behindNodeContainer.classList.remove('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
         super.terminalNodeUnhover();
@@ -152,8 +152,8 @@ export class LinkNode extends MainNodeBase
         freePt.style.left = this._freePtPos.x + pos.x + 'px';
         freePt.style.top = this._freePtPos.y + pos.y + 'px';
         
-        this._subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
-        this._subCurveAppearProgress = [0,0,0,0];
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('disappear'));
+        this._behindCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = hgn.timestamp;
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._gradientEndAlpha = 0;

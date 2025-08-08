@@ -22,6 +22,11 @@ export abstract class NodeBase
         return this._id;
     }
 
+    public get element(): HTMLElement
+    {
+        return this._nodeElement;
+    }
+
     /**
      * ノードの要素を取得する
      */

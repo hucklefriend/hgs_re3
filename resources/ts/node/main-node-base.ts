@@ -1,23 +1,23 @@
 import { NodeBase } from "./node-base";
-import { SubLinkNode } from "./sub-link-node";
+import { BehindLinkNode } from "./behind-link-node";
 import { AppearStatus } from "../enum/appear-status";
 
 export abstract class MainNodeBase extends NodeBase
 {
     protected _canvas: HTMLCanvasElement;
     protected _canvasCtx: CanvasRenderingContext2D;
-    protected _subLinkNodes: SubLinkNode[] = [];
+    protected _behindLinkNodes: BehindLinkNode[] = [];
     protected _nodeHead: HTMLElement;
-    protected _subNodeContainer: HTMLElement;
+    protected _behindNodeContainer: HTMLElement;
     protected _gradientEndAlpha: number;
     protected _animationStartTime: number;
-    protected _subGradientStartAlpha: number;
-    protected _maxSubEndOpacity: number;
-    protected _minSubEndOpacity: number;
+    protected _behindGradientStartAlpha: number;
+    protected _maxBehindEndOpacity: number;
+    protected _minBehindEndOpacity: number;
     protected _appearAnimationFunc: (() => void) | null;
     protected _appearStatus: AppearStatus;
     protected _curveAppearProgress: number;
-    protected _subCurveAppearProgress: number[];
+    protected _behindCurveAppearProgress: number[];
     protected _updateGradientEndAlphaFunc: (() => void) | null;
     protected _terminalNodeContainer: HTMLElement | null;
 
@@ -28,27 +28,30 @@ export abstract class MainNodeBase extends NodeBase
     {
         super(nodeElement);
 
-        this._canvas = nodeElement.querySelector('.node-canvas') as HTMLCanvasElement;
+        this._canvas = nodeElement.querySelector(':scope > .node-canvas') as HTMLCanvasElement;
         this._canvasCtx = this._canvas.getContext('2d') as CanvasRenderingContext2D;
-        this._nodeHead = nodeElement.querySelector('.node-head') as HTMLElement;
+        this._nodeHead = nodeElement.querySelector(':scope > .node-head') as HTMLElement;
+        if (!this._nodeHead) {
+            this._nodeHead = nodeElement.querySelector(':scope > header.header-node > .node-head') as HTMLElement;
+        }
         
         this._gradientEndAlpha = 0;
         this._animationStartTime = 0;
-        this._subGradientStartAlpha = 0;
-        this._maxSubEndOpacity = 0.3;
-        this._minSubEndOpacity = 0.1;
+        this._behindGradientStartAlpha = 0;
+        this._maxBehindEndOpacity = 0.3;
+        this._minBehindEndOpacity = 0.1;
         this._appearAnimationFunc = null;
-        this._subNodeContainer = nodeElement.querySelector('.sub-node-container') as HTMLElement;
+        this._behindNodeContainer = nodeElement.querySelector('.node > .behind-node-container') as HTMLElement;
         this._appearStatus = AppearStatus.NONE;
         this._curveAppearProgress = 0;
-        this._subCurveAppearProgress = [0, 0, 0, 0];
+        this._behindCurveAppearProgress = [0, 0, 0, 0];
         this._updateGradientEndAlphaFunc = null;
 
-        const subLinkNodeElements = this._subNodeContainer?.querySelectorAll('.sub-link-node') || [];
-        this._subLinkNodes = Array.from(subLinkNodeElements)
-            .map(node => new SubLinkNode(node as HTMLElement));
+        const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
+        this._behindLinkNodes = Array.from(behindLinkNodeElements)
+            .map(node => new BehindLinkNode(node as HTMLElement));
 
-        this._terminalNodeContainer = nodeElement.querySelector('.terminal-node-container') as HTMLElement | null;
+        this._terminalNodeContainer = nodeElement.querySelector('.node > .terminal-node-container') as HTMLElement | null;
         if (this._terminalNodeContainer) {
             this._terminalNodeContainer.addEventListener('mouseenter', () => this.terminalNodeHover());
             this._terminalNodeContainer.addEventListener('mouseleave', () => this.terminalNodeUnhover());
@@ -162,40 +165,40 @@ export abstract class MainNodeBase extends NodeBase
     {
         const progress = this.getAnimationProgress(1000);
         if (progress >= 1) {
-            this._subCurveAppearProgress = [1, 1, 1, 1];
+            this._behindCurveAppearProgress = [1, 1, 1, 1];
             this._appearStatus = AppearStatus.APPEARED;
 
             this._appearAnimationFunc = null;
         }
 
-        this._subCurveAppearProgress[0] = progress * 2;
-        if (this._subCurveAppearProgress[0] > 1) {
-            this._subCurveAppearProgress[0] = 1;
+        this._behindCurveAppearProgress[0] = progress * 2;
+        if (this._behindCurveAppearProgress[0] > 1) {
+            this._behindCurveAppearProgress[0] = 1;
 
-            if (this._subLinkNodes.length > 0) {
-                this._subLinkNodes[0].element.classList.remove('disappear');
+            if (this._behindLinkNodes.length > 0) {
+                this._behindLinkNodes[0].element.classList.remove('disappear');
             }
         }
-        this._subCurveAppearProgress[1] = progress * 1.5;
-        if (this._subCurveAppearProgress[1] > 1) {
-            this._subCurveAppearProgress[1] = 1;
-            if (this._subLinkNodes.length > 1) {
-                this._subLinkNodes[1].element.classList.remove('disappear');
+        this._behindCurveAppearProgress[1] = progress * 1.5;
+        if (this._behindCurveAppearProgress[1] > 1) {
+            this._behindCurveAppearProgress[1] = 1;
+            if (this._behindLinkNodes.length > 1) {
+                this._behindLinkNodes[1].element.classList.remove('disappear');
             }
         }
-        this._subCurveAppearProgress[2] = progress * 1.2;
-        if (this._subCurveAppearProgress[2] > 1) {
-            this._subCurveAppearProgress[2] = 1;
-            if (this._subLinkNodes.length > 2) {
-                this._subLinkNodes[2].element.classList.remove('disappear');
+        this._behindCurveAppearProgress[2] = progress * 1.2;
+        if (this._behindCurveAppearProgress[2] > 1) {
+            this._behindCurveAppearProgress[2] = 1;
+            if (this._behindLinkNodes.length > 2) {
+                this._behindLinkNodes[2].element.classList.remove('disappear');
             }
         }
 
-        this._subCurveAppearProgress[3] = progress;
-        if (this._subCurveAppearProgress[3] >= 1) {
-            this._subCurveAppearProgress[3] = 1;
-            if (this._subLinkNodes.length > 3) {
-                this._subLinkNodes[3].element.classList.remove('disappear');
+        this._behindCurveAppearProgress[3] = progress;
+        if (this._behindCurveAppearProgress[3] >= 1) {
+            this._behindCurveAppearProgress[3] = 1;
+            if (this._behindLinkNodes.length > 3) {
+                this._behindLinkNodes[3].element.classList.remove('disappear');
             }
         }
         
@@ -208,8 +211,8 @@ export abstract class MainNodeBase extends NodeBase
     public disappear(): void
     {
         this._nodeHead.classList.add('disappear');
-        this._subLinkNodes.forEach(subLinkNode => subLinkNode.element.classList.add('disappear'));
-        this._subCurveAppearProgress = [0,0,0,0];
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('disappear'));
+        this._behindCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
@@ -233,7 +236,7 @@ export abstract class MainNodeBase extends NodeBase
             this._appearAnimationFunc = null;
             this._nodeHead.classList.add('disappear');
             const treeView = (window as any).hgn.treeView;
-            treeView.disappearMainLine();
+            treeView.tree.disappearConnectionLine();
             this._appearStatus = AppearStatus.DISAPPEARED;
         }
         
@@ -271,15 +274,15 @@ export abstract class MainNodeBase extends NodeBase
             );
         }
 
-        if (this._subCurveAppearProgress[0] > 0) {
+        if (this._behindCurveAppearProgress[0] > 0) {
             const canvasRect = this._canvas.getBoundingClientRect();
-            this._subLinkNodes.forEach((subLinkNode, index) => {
+            this._behindLinkNodes.forEach((behindLinkNode, index) => {
                 if (index >= 4) return; // 4回を超えたら処理をスキップ
                 this.drawChildCurvedLine(
                     connectionPoint.x,
                     connectionPoint.y,
-                    subLinkNode.getConnectionPoint().x - canvasRect.left,
-                    subLinkNode.getConnectionPoint().y - canvasRect.top,
+                    behindLinkNode.getConnectionPoint().x - canvasRect.left,
+                    behindLinkNode.getConnectionPoint().y - canvasRect.top,
                     index
                 );
             });
@@ -334,18 +337,18 @@ export abstract class MainNodeBase extends NodeBase
     private drawChildCurvedLine(startX: number, startY: number, endX: number, endY: number, loopCount: number): void
     {
         // ループ回数に応じて透明度を調整（maxSubEndOpacityからminSubEndOpacityまで徐々に減少）
-        const opacity = this._maxSubEndOpacity - (loopCount * 0.1);
-        let endOpacity = Math.max(this._minSubEndOpacity, opacity - this._minSubEndOpacity);
+        const opacity = this._maxBehindEndOpacity - (loopCount * 0.1);
+        let endOpacity = Math.max(this._minBehindEndOpacity, opacity - this._minBehindEndOpacity);
 
         let currentEndX = endX;
         let currentEndY = endY;
 
         // 進行度に応じてグラデーションの終了点を調整
-        if (this._subCurveAppearProgress[loopCount] < 1) {
-            currentEndX = startX + (endX - startX) * this._subCurveAppearProgress[loopCount];
-            currentEndY = startY + (endY - startY) * this._subCurveAppearProgress[loopCount];
+        if (this._behindCurveAppearProgress[loopCount] < 1) {
+            currentEndX = startX + (endX - startX) * this._behindCurveAppearProgress[loopCount];
+            currentEndY = startY + (endY - startY) * this._behindCurveAppearProgress[loopCount];
 
-            endOpacity = endOpacity * this._subCurveAppearProgress[loopCount];
+            endOpacity = endOpacity * this._behindCurveAppearProgress[loopCount];
         }
 
         const gradient = this._canvasCtx.createLinearGradient(startX, startY, currentEndX, currentEndY);
