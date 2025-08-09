@@ -108,9 +108,8 @@ export class SubTreeNode extends MainNodeBase
 
         if (this._curveAppearProgress === 1) {
             this._tree.appear();
-
+            this._gradientEndAlpha = 1;
             this._appearAnimationFunc = this.appearAnimation2;
-
         }
     }
     
