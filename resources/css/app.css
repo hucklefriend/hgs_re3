@@ -94,6 +94,10 @@ div.connection-line {
     min-width: 20px;
 }
 
+.invisible {
+    opacity: 0;
+}
+
 
 header.header-node {
     margin-top: 0;
@@ -102,10 +106,6 @@ header.header-node {
     .node-head {
         white-space: nowrap;
         position: relative;
-
-        &.hidden {
-            visibility: hidden;
-        }
 
         > h1 {
             font-size: 1.2rem;
@@ -122,46 +122,40 @@ header.header-node {
             color: var(--node-pt-light);
             width: 30px;
             min-width: 30px;
-            opacity: 1;
+            transition: opacity 0.2s ease-out;
 
             &.fade-out {
-                transition: opacity 1s ease;
                 opacity: 0;
             }
+        }
+
+        > h1, h2 {
+            mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+            -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+
+            mask-size: 200% 100%;
+            -webkit-mask-size: 200% 100%;
+
+            mask-position: 200% 0;
+            -webkit-mask-position: 200% 0;
+
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
         }
 
         /* 右側から透明になるアニメーション用のクラス */
         &.fade-out-right {
             h1, h2, h3, h4, h5, h6 {
-                /* マスクグラデーション：右から透明が左に侵食していく */
-                mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-                -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-                
-                mask-size: 200% 100%;
-                -webkit-mask-size: 200% 100%;
-
                 mask-position: 0% 0;
                 -webkit-mask-position: 0% 0;
-
-                mask-repeat: no-repeat;
-                -webkit-mask-repeat: no-repeat;
 
                 animation: fadeout-mask 1s forwards;
             }
         }
         &.fade-in-left {
             h1, h2, h3, h4, h5, h6 {
-                mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-                -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-
-                mask-size: 200% 100%;
-                -webkit-mask-size: 200% 100%;
-
                 mask-position: 200% 0;
                 -webkit-mask-position: 200% 0;
-
-                mask-repeat: no-repeat;
-                -webkit-mask-repeat: no-repeat;
 
                 animation: fadein-mask 1s forwards;
             }
@@ -219,7 +213,6 @@ header.header-node {
     > section {
         padding-left: 30px;
         margin-bottom: 40px;
-        visibility: hidden;
 
         &:last-child {
             margin-bottom: 0;
@@ -362,10 +355,6 @@ header.header-node {
     transition: opacity 0.3s ease;
 }
 
-.disappear {
-    opacity: 0;
-}
-
 .content-link {
     color: gray;
     display: inline-block;
@@ -381,10 +370,6 @@ header.header-node {
         border: 2px solid var(--node-pt-light);
         box-shadow: 0 0 3px var(--node-pt-light-shadow), 0 0 10px var(--node-pt-light-shadow);
         cursor: pointer;
-    }
-
-    &.hidden {
-        visibility: hidden;
     }
 }
 

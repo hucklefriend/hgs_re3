@@ -109,10 +109,8 @@ export abstract class MainNodeBase extends NodeBase
     public appear(): void
     {
         if (this._appearStatus === AppearStatus.NONE || this._appearStatus === AppearStatus.DISAPPEARED) {
-            this._nodeHead.classList.remove('disappear');
             this._appearStatus = AppearStatus.APPEARING;
             this._appearAnimationFunc = this.appearAnimation;
-            this._nodeElement.style.visibility = 'visible';
             this._curveAppearProgress = 0;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._gradientEndAlpha = 0;
@@ -124,12 +122,12 @@ export abstract class MainNodeBase extends NodeBase
      */
     protected appearAnimation(): void
     {
-        this._curveAppearProgress = this.getAnimationProgress(500);
+        this._curveAppearProgress = this.getAnimationProgress(200);
         if (this._curveAppearProgress >= 1) {
             this._curveAppearProgress = 1;
             this._gradientEndAlpha = this.isHover() ? 1 : 0.3;
             this._appearAnimationFunc = this.appearSubNodesAnimation;
-            this._nodeHead.classList.remove('disappear');
+            this._nodeHead.classList.remove('invisible');
             this._animationStartTime = (window as any).hgn.timestamp;
         }
         
@@ -176,21 +174,21 @@ export abstract class MainNodeBase extends NodeBase
             this._behindCurveAppearProgress[0] = 1;
 
             if (this._behindLinkNodes.length > 0) {
-                this._behindLinkNodes[0].element.classList.remove('disappear');
+                this._behindLinkNodes[0].element.classList.remove('invisible');
             }
         }
         this._behindCurveAppearProgress[1] = progress * 1.5;
         if (this._behindCurveAppearProgress[1] > 1) {
             this._behindCurveAppearProgress[1] = 1;
             if (this._behindLinkNodes.length > 1) {
-                this._behindLinkNodes[1].element.classList.remove('disappear');
+                this._behindLinkNodes[1].element.classList.remove('invisible');
             }
         }
         this._behindCurveAppearProgress[2] = progress * 1.2;
         if (this._behindCurveAppearProgress[2] > 1) {
             this._behindCurveAppearProgress[2] = 1;
             if (this._behindLinkNodes.length > 2) {
-                this._behindLinkNodes[2].element.classList.remove('disappear');
+                this._behindLinkNodes[2].element.classList.remove('invisible');
             }
         }
 
@@ -198,7 +196,7 @@ export abstract class MainNodeBase extends NodeBase
         if (this._behindCurveAppearProgress[3] >= 1) {
             this._behindCurveAppearProgress[3] = 1;
             if (this._behindLinkNodes.length > 3) {
-                this._behindLinkNodes[3].element.classList.remove('disappear');
+                this._behindLinkNodes[3].element.classList.remove('invisible');
             }
         }
         
@@ -210,8 +208,8 @@ export abstract class MainNodeBase extends NodeBase
      */
     public disappear(): void
     {
-        this._nodeHead.classList.add('disappear');
-        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('disappear'));
+        this._nodeHead.classList.add('invisible');
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('invisible'));
         this._behindCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
@@ -234,7 +232,7 @@ export abstract class MainNodeBase extends NodeBase
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
             this._appearAnimationFunc = null;
-            this._nodeHead.classList.add('disappear');
+            this._nodeHead.classList.add('invisible');
             const treeView = (window as any).hgn.treeView;
             treeView.tree.disappearConnectionLine();
             this._appearStatus = AppearStatus.DISAPPEARED;
