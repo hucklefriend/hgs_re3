@@ -25,4 +25,19 @@ export class NodePoint
             this.element.offsetTop + this.element.offsetHeight / 2
         );
     }
+
+    public getAbsoluteCenterPosition(): Point
+    {
+
+        const rect = this.element.getBoundingClientRect();
+
+
+        console.log(this.getCenterPosition());
+        console.log((rect.left + rect.width / 2), (rect.top + rect.height / 2));
+
+        return new Point(
+            (rect.left + rect.width / 2) + window.scrollX - (window as any).hgn.main.offsetLeft,
+            (rect.top + rect.height / 2) + window.scrollY - (window as any).hgn.main.offsetTop
+        );
+    }
 } 

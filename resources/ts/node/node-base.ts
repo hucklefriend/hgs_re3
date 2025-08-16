@@ -89,4 +89,9 @@ export abstract class NodeBase
      * 接続点を取得する
      */
     protected abstract getConnectionPoint(): {x: number, y: number};
+
+    /**
+     * HTML上の絶対座標で接続点を取得する
+     */
+    protected abstract getAbsoluteConnectionPoint(): {x: number, y: number};
 } 

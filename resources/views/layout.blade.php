@@ -56,5 +56,8 @@
             </footer>
         </div>
     </main>
+
+    <footer style="margin-top: 40px;height: 100px;">
+    </footer>
 </body>
 </html>

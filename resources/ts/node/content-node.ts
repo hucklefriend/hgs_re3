@@ -1,6 +1,7 @@
 import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
+import { Tree } from "../common/tree";
 
 export class ContentNode extends MainNodeBase
 {
@@ -10,9 +11,9 @@ export class ContentNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement)
+    public constructor(nodeElement: HTMLElement, parentTree: Tree)
     {
-        super(nodeElement);
+        super(nodeElement, parentTree);
 
         this._anchor = nodeElement.querySelector('.content-link') as HTMLAnchorElement;
 
@@ -127,7 +128,7 @@ export class ContentNode extends MainNodeBase
     /**
      * ホバー時の処理
      */
-    private hover(): void
+    protected hover(): void
     {
         this._anchor.classList.add('hover');
         if (!this.isOpenContentView()) {
@@ -139,7 +140,7 @@ export class ContentNode extends MainNodeBase
     /**
      * ホバー解除時の処理
      */
-    private unhover(): void
+    protected unhover(): void
     {
         this._anchor.classList.remove('hover');
         if (!this.isOpenContentView()) {
@@ -157,6 +158,19 @@ export class ContentNode extends MainNodeBase
         return {
             x: this._anchor.offsetLeft,
             y: this._anchor.offsetTop + this._anchor.offsetHeight / 2
+        };
+    }
+
+    /**
+     * HTML上の絶対座標で接続点を取得する
+     * @returns 絶対座標の接続点
+     */
+    public getAbsoluteConnectionPoint(): {x: number, y: number}
+    {
+        const rect = this._anchor.getBoundingClientRect();
+        return {
+            x: rect.left + window.scrollX - (window as any).hgn.main.offsetLeft,
+            y: (rect.top + rect.height / 2) + window.scrollY - (window as any).hgn.main.offsetTop
         };
     }
 }

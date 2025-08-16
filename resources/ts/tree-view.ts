@@ -1,8 +1,11 @@
-import { HeaderNode } from "./node/header-node";
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
+import { MainNodeBase } from "./node/main-node-base";
 import { Util } from "./common/util";
 import { Tree } from "./common/tree";
+import { FreePoint } from "./common/free-point";
+import { SubTreeNode } from "./node/sub-tree-node";
+import { AppearStatus } from "./enum/appear-status";
 
 export class TreeView
 {
@@ -18,8 +21,9 @@ export class TreeView
     private _scrollStartY: number;
     private _appearAnimationFunc: (() => void) | null;
 
-    private _selectedLinkNode: LinkNode | null;
-    private _freePt: HTMLElement;
+    private _disappearRouteTrees: Tree[];
+    private _disappearRouteNodes: (SubTreeNode | TreeView)[];
+    private _freePt: FreePoint;
 
     private _isChanging: boolean;
     private _nextTreeCache: {
@@ -39,6 +43,7 @@ export class TreeView
     {
         this._element = element;
         this._tree = new Tree(
+            'tree-view',
             element.querySelector('.tree-view > #tree-nodes > .header-node') as HTMLElement,
             element.querySelector('.tree-view > .connection-line') as HTMLDivElement
         );
@@ -51,13 +56,14 @@ export class TreeView
 
         this._appearAnimationFunc = null;
 
-        this._selectedLinkNode = null;
-
-        this._freePt = document.querySelector('div#free-pt') as HTMLElement;
+        this._freePt = new FreePoint(document.querySelector('div#free-pt') as HTMLDivElement);
 
         this._nextTreeCache = null;
 
         this._isChanging = false;
+
+        this._disappearRouteTrees = [];
+        this._disappearRouteNodes = [];
     }
 
     /**
@@ -89,8 +95,9 @@ export class TreeView
      */
     public disposeNodes(): void
     {
+        this._disappearRouteTrees = [];
+        this._disappearRouteNodes = [];
         this._tree.disposeNodes();
-        this._selectedLinkNode = null;
     }
 
     public getContentNodeByAnchorId(anchorId: string): ContentNode | null
@@ -144,6 +151,7 @@ export class TreeView
             }
     
             this._tree.update();
+            this._freePt.update();
         }
     }
 
@@ -174,8 +182,61 @@ export class TreeView
      */
     public disappear(selectedLinkNode: LinkNode | null): void
     {
-        this._selectedLinkNode = selectedLinkNode;
-        this._tree.disappear(selectedLinkNode);
+        if (selectedLinkNode) {
+            if (selectedLinkNode.parentTree.id !== this._tree.id) {
+                this.searchDisappearRouteTree(this._tree, selectedLinkNode);
+            } else {
+                this._tree.disappearRouteNode = selectedLinkNode;
+            }
+
+            this._disappearRouteTrees.push(this._tree);
+            this._disappearRouteNodes.push(this);
+            selectedLinkNode.isSelectedDisappear = true;
+        }
+
+        this._tree.disappear();
+
+        this._appearAnimationFunc = this.disappearAnimation;
+    }
+
+    private searchDisappearRouteTree(tree: Tree, selectedLinkNode: LinkNode): boolean
+    {
+        tree.subTreeNodes.forEach(subTreeNode => {
+            if (subTreeNode.tree.id === selectedLinkNode.parentTree.id) {
+                this._disappearRouteTrees.push(subTreeNode.tree);
+                this._disappearRouteNodes.push(subTreeNode);
+                subTreeNode.isSelectedDisappear = true;
+                subTreeNode.tree.disappearRouteNode = selectedLinkNode;
+                tree.disappearRouteNode = subTreeNode;
+                return true;
+            } else if (this.searchDisappearRouteTree(subTreeNode.tree, selectedLinkNode)) {
+                this._disappearRouteTrees.push(subTreeNode.tree);
+                this._disappearRouteNodes.push(subTreeNode);
+                subTreeNode.isSelectedDisappear = true;
+                tree.disappearRouteNode = subTreeNode;
+                return true;
+            }
+        });
+
+        return false;
+    }
+
+    private disappearAnimation(): void
+    {
+        if (this._tree.lastNode === null) {
+            this._tree.disappearConnectionLine();
+            this._appearAnimationFunc = this.disappearAnimation2;
+        } else {
+            if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
+                this._tree.disappearConnectionLine();
+                this._appearAnimationFunc = this.disappearAnimation2;
+            }
+        }
+    }
+
+    private disappearAnimation2(): void
+    {
+        //this._tree.disappearAnimation();
     }
 
     /**
@@ -190,10 +251,10 @@ export class TreeView
         //     const contentNode = this.getContentNodeByAnchorId(anchorId);
         // }
 
-        this._freePt.classList.remove('visible');
-        this._tree.headerNode.point.element.classList.remove('fade-out');
+        // this._freePt.hide();
+        // this._tree.headerNode.point.element.classList.remove('fade-out');
 
-        this._isChanging = true;
+        // this._isChanging = true;
     }
 
     private changeTree(): void
@@ -223,7 +284,7 @@ export class TreeView
         this._tree.draw();
     }
 
-    public get freePt(): HTMLElement
+    public get freePt(): FreePoint
     {
         return this._freePt;
     }
@@ -232,8 +293,6 @@ export class TreeView
     {
         this._nextTreeCache = cache;
     }
-
-    
 
     public moveTree(url: string, linkNode: LinkNode | null, isFromPopState: boolean): void
     {
@@ -263,4 +322,19 @@ export class TreeView
                 console.error('データの取得に失敗しました:', error);
             });
     }
+
+    public disappear2(): void
+    {
+        const node = this._disappearRouteNodes.shift();
+        if (node instanceof SubTreeNode) {
+            node.disappear2();
+        } else if (node instanceof TreeView) {
+            console.log('disappear2')
+            this._tree.disappearConnectionLine(true);
+
+            const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
+            this._freePt.moveTo(connectionPoint);
+        }
+    }
 }
+

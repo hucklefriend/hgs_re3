@@ -1,9 +1,13 @@
 import { NodeBase } from "./node-base";
 import { BehindLinkNode } from "./behind-link-node";
 import { AppearStatus } from "../enum/appear-status";
+import { Tree } from "../common/tree";
+import { Util } from "../common/util";
 
 export abstract class MainNodeBase extends NodeBase
 {
+    public isSelectedDisappear: boolean;
+
     protected _canvas: HTMLCanvasElement;
     protected _canvasCtx: CanvasRenderingContext2D;
     protected _behindLinkNodes: BehindLinkNode[] = [];
@@ -20,13 +24,17 @@ export abstract class MainNodeBase extends NodeBase
     protected _behindCurveAppearProgress: number[];
     protected _updateGradientEndAlphaFunc: (() => void) | null;
     protected _terminalNodeContainer: HTMLElement | null;
+    protected _parentTreeId: string;
+    protected _parentTree: Tree;
 
     /**
      * コンストラクタ
      */
-    public constructor(nodeElement: HTMLElement)
+    public constructor(nodeElement: HTMLElement, parentTree: Tree)
     {
         super(nodeElement);
+
+        this.isSelectedDisappear = false;
 
         this._canvas = nodeElement.querySelector(':scope > .node-canvas') as HTMLCanvasElement;
         this._canvasCtx = this._canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -56,6 +64,24 @@ export abstract class MainNodeBase extends NodeBase
             this._terminalNodeContainer.addEventListener('mouseenter', () => this.terminalNodeHover());
             this._terminalNodeContainer.addEventListener('mouseleave', () => this.terminalNodeUnhover());
         }
+
+        this._parentTreeId = nodeElement.id;
+        this._parentTree = parentTree;
+    }
+
+    public get parentTreeId(): string
+    {
+        return this._parentTreeId;
+    }
+
+    public get parentTree(): Tree
+    {
+        return this._parentTree;
+    }
+
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
     }
 
     /**
@@ -86,6 +112,10 @@ export abstract class MainNodeBase extends NodeBase
         this._canvas.style.left = -this._nodeElement.offsetLeft + 'px';
         this._canvas.style.top = this._nodeElement.offsetHeight - 40 + 'px';
     }
+
+    protected hover(): void {}
+
+    protected unhover(): void {}
 
     /**
      * アニメーションの更新処理
@@ -129,6 +159,10 @@ export abstract class MainNodeBase extends NodeBase
             this._appearAnimationFunc = this.appearSubNodesAnimation;
             this._nodeHead.classList.remove('invisible');
             this._animationStartTime = (window as any).hgn.timestamp;
+
+            if (this.getNodeElement().matches(':hover')) {
+                this.hover();
+            }
         }
         
         this._isDraw = true;
@@ -206,20 +240,26 @@ export abstract class MainNodeBase extends NodeBase
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappear(param: any = null): void
     {
+        this._nodeElement.classList.add('invisible');
         this._nodeHead.classList.add('invisible');
-        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('invisible'));
-        this._behindCurveAppearProgress = [0,0,0,0];
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._updateGradientEndAlphaFunc = null;
 
+        this.disappearBehind();
+
         this._isDraw = true;
 
-
         this._appearAnimationFunc = this.disappearAnimation;
+    }
+
+    protected disappearBehind(): void
+    {
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('invisible'));
+        this._behindCurveAppearProgress = [0,0,0,0];
     }
 
     /**
@@ -227,18 +267,25 @@ export abstract class MainNodeBase extends NodeBase
      */
     protected disappearAnimation(): void
     {
-        this._curveAppearProgress = 1 - this.getAnimationProgress(500);
-        if (this._curveAppearProgress <= 0) {
-            this._curveAppearProgress = 0;
-            this._gradientEndAlpha = 0;
+        if (this.curveDisappearAnimation()) {
             this._appearAnimationFunc = null;
             this._nodeHead.classList.add('invisible');
-            const treeView = (window as any).hgn.treeView;
-            treeView.tree.disappearConnectionLine();
             this._appearStatus = AppearStatus.DISAPPEARED;
         }
         
         this._isDraw = true;
+    }
+
+    protected curveDisappearAnimation(): boolean
+    {
+        this._curveAppearProgress = 1 - this.getAnimationProgress(200);
+        if (this._curveAppearProgress <= 0) {
+            this._curveAppearProgress = 0;
+            this._gradientEndAlpha = 0;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -408,18 +455,17 @@ export abstract class MainNodeBase extends NodeBase
     public abstract getConnectionPoint(): {x: number, y: number};
 
     /**
+     * HTML上の絶対座標で接続点を取得する
+     */
+    public abstract getAbsoluteConnectionPoint(): {x: number, y: number};
+
+    /**
      * アニメーションの進行度を計算（0.0～1.0）
      * @param duration アニメーションの持続時間（ミリ秒）
      * @returns 進行度（0.0～1.0）
      */
     protected getAnimationProgress(duration: number): number
     {
-        const currentTime = (window as any).hgn.timestamp;
-        const elapsedTime = currentTime - this._animationStartTime;
-        
-        if (elapsedTime <= duration) {
-            return elapsedTime / duration;
-        }
-        return 1.0;
+        return Util.getAnimationProgress(this._animationStartTime, duration);
     }
 } 

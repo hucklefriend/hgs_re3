@@ -17,4 +17,15 @@ export class Util
             return `${url}${separator}a=1`;
         }
     }
+
+    public static getAnimationProgress(startTime: number, duration: number): number
+    {
+        const currentTime = (window as any).hgn.timestamp;
+        const elapsedTime = currentTime - startTime;
+        
+        if (elapsedTime <= duration) {
+            return elapsedTime / duration;
+        }
+        return 1.0;
+    }
 } 

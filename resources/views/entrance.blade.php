@@ -4,7 +4,7 @@
 @section('tree-header-title', 'Horror Game Network')
 
 @section('tree-nodes')
-    <section class="node sub-tree-node" id="horror-games-node">
+    <section class="node sub-tree-node" id="horror-games-tree-node">
         <header class="node header-node" id="horror-games-header-node">
             <div class="node-head invisible" style="margin-bottom: 10px;">
                 <h2>Horror Games</h2>
@@ -24,7 +24,7 @@
 
             <section class="node link-node" id="franchises-link-node">
                 <div class="node-head invisible">
-                    <a href="#" class="network-link">Franchises</a>
+                    <a href="{{ route('Game.Franchises') }}" class="network-link">Franchises</a>
                     <span class="node-pt main-node-pt">●</span>
                 </div>
                 <div class="behind-node-container">
@@ -43,7 +43,7 @@
             </section>
             <section class="node link-node" id="makers-link-node">
                 <div class="node-head invisible">
-                    <a href="#" class="network-link">Makers</a>
+                    <a href="{{ route('Entrance') }}" class="network-link">Makers</a>
                     <span class="node-pt main-node-pt">●</span>
                 </div>
                 <div class="behind-node-container">
