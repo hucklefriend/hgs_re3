@@ -2,6 +2,7 @@ import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { NodePoint } from "./parts/node-point";
+import { Tree } from "../common/tree";
 
 export class TerminalNode extends MainNodeBase
 {
@@ -12,9 +13,9 @@ export class TerminalNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement)
+    public constructor(nodeElement: HTMLElement, parentTree: Tree)
     {
-        super(nodeElement);
+        super(nodeElement, parentTree);
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._title = nodeElement.querySelector('.terminal-title') as HTMLSpanElement;
@@ -84,7 +85,7 @@ export class TerminalNode extends MainNodeBase
     /**
      * ホバー時の処理
      */
-    private hover(): void
+    protected hover(): void
     {
         this._title.classList.add('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
@@ -95,7 +96,7 @@ export class TerminalNode extends MainNodeBase
     /**
      * ホバー解除時の処理
      */
-    private unhover(): void
+    protected unhover(): void
     {
         this._title.classList.remove('hover');
         this._animationStartTime = (window as any).hgn.timestamp;
@@ -120,5 +121,18 @@ export class TerminalNode extends MainNodeBase
     public getConnectionPoint(): {x: number, y: number}
     {
         return this._point.getCenterPosition();
+    }
+
+    /**
+     * HTML上の絶対座標で接続点を取得する
+     * @returns 絶対座標の接続点
+     */
+    public getAbsoluteConnectionPoint(): {x: number, y: number}
+    {
+        const rect = this._point.element.getBoundingClientRect();
+        return {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
     }
 }

@@ -27,4 +27,13 @@ export class BehindLinkNode
             y: rect.top + rect.height / 2
         };
     }
+
+    /**
+     * HTML上の絶対座標で接続点を取得する
+     * @returns 絶対座標の接続点
+     */
+    public getAbsoluteConnectionPoint(): {x: number, y: number}
+    {
+        return this._point.getAbsoluteCenterPosition();
+    }
 } 

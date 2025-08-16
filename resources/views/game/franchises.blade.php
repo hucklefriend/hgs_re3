@@ -1,19 +1,13 @@
 @extends('layout')
 
 @section('title', 'Franchises | ホラーゲームネットワーク')
+@section('tree-header-title', 'Franchises')
 
-@section('content')
-<header class="node">
-    <div class="node-head" style="margin-bottom: 10px;">
-        <h1>Franchises</h1>
-        <span class="node-pt">●</span>
-    </div>
-</header>
-<div class="node-container">
+@section('tree-nodes')
 
     @foreach ($franchises as $franchise)
     <section class="node link-node" id="search-node">
-        <div class="node-head disappear">
+        <div class="node-head invisible">
             <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a>
             <span class="node-pt main-node-pt">●</span>
         </div>
@@ -24,7 +18,6 @@
         <canvas class="node-canvas"></canvas>
     </section>
     @endforeach
-</div>
 
     @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
         <div class="admin-edit">

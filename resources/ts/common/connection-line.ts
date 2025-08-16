@@ -2,7 +2,6 @@ import { AppearStatus } from "../enum/appear-status";
 
 export class ConnectionLine
 {
-
     private _element: HTMLDivElement;
     private _height: number;
     private _animationHeight: number;
@@ -91,7 +90,11 @@ export class ConnectionLine
      */
     public disappear(disappearHeight: number, isFadeOut: boolean = false): void
     {
-        this._disappearHeight = disappearHeight;
+        this._disappearHeight = disappearHeight - this._element.offsetTop;
+        if (this._disappearHeight < 0) {
+            this._disappearHeight = 0;
+        }
+
         if (this._appearAnimationFunc === null) {
             this._appearStatus = AppearStatus.DISAPPEARING;
             this._animationStartTime = (window as any).hgn.timestamp;
@@ -107,16 +110,20 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
+        
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight = this._height * (1 - progress / 300);
+        console.log('disappearAnimation', this._animationHeight);
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
             this._appearAnimationFunc = null;
-            //this._element.style.visibility = 'hidden';
-            this._appearStatus = AppearStatus.DISAPPEARED;
             this.setHeight(this._disappearHeight);
             this._element.classList.remove('fade-out');
+
+            if (this._height === 0) {
+                this._appearStatus = AppearStatus.DISAPPEARED;
+            }
         }
 
         this._element.style.height = `${this._animationHeight}px`;

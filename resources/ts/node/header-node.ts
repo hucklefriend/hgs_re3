@@ -36,6 +36,20 @@ export class HeaderNode extends NodeBase
         return position;
     }
 
+    /**
+     * HTML上の絶対座標で接続点を取得する
+     * 
+     * @returns 絶対座標の接続点
+     */
+    public getAbsoluteConnectionPoint(): {x: number, y: number}
+    {
+        let position = this._point.getAbsoluteCenterPosition();
+        position.x -= 1;
+        //position.x -= this.element.offsetLeft;
+
+        return position;
+    }
+
     public appear(): void
     {
         this._point.element.classList.remove('fade-out');

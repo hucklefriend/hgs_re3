@@ -8,6 +8,7 @@ import { AppearStatus } from "../enum/appear-status";
 
 export class Tree
 {
+    protected _id: string;
     protected _connectionLine: ConnectionLine;
     protected _headerNode: HeaderNode;
     protected _linkNodes: LinkNode[];
@@ -16,9 +17,13 @@ export class Tree
     protected _subTreeNodes: SubTreeNode[];
     protected _lastNode: LinkNode | ContentNode | TerminalNode | SubTreeNode | null;
     protected _appearStatus: AppearStatus;
+    public disappearRouteNode: LinkNode | SubTreeNode | null;
+    public appearAnimationFunc: (() => void) | null;
 
-    public constructor(headerNodeElement: HTMLElement, connectionLineElement: HTMLDivElement)
+    public constructor(id: string, headerNodeElement: HTMLElement, connectionLineElement: HTMLDivElement)
     {
+        this._id = id;
+        
         this._connectionLine = new ConnectionLine(connectionLineElement);
         this._headerNode = new HeaderNode(headerNodeElement);
 
@@ -28,6 +33,13 @@ export class Tree
         this._subTreeNodes = [];
         this._lastNode = null;
         this._appearStatus = AppearStatus.NONE;
+        this.disappearRouteNode = null;
+        this.appearAnimationFunc = null;
+    }
+
+    public get id(): string
+    {
+        return this._id;
     }
 
     public get headerNode(): HeaderNode
@@ -74,24 +86,24 @@ export class Tree
         nodeElements.forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
-                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement));
+                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement, this));
                 this._lastNode = this._linkNodes[this._linkNodes.length - 1];
             }
 
             // content-nodeクラスがあればContentNodeを作成
             if (nodeElement.classList.contains('content-node')) {
-                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement));
+                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, this));
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
 
             // terminal-nodeクラスがあればTerminalNodeを作成
             if (nodeElement.classList.contains('terminal-node')) {
-                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement));
+                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, this));
                 this._lastNode = this._terminalNodes[this._terminalNodes.length - 1];
             }
 
             if (nodeElement.classList.contains('sub-tree-node')) {
-                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement));
+                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement, this));
                 this._lastNode = this._subTreeNodes[this._subTreeNodes.length - 1];
             }
         });
@@ -159,6 +171,10 @@ export class Tree
         this._contentNodes.forEach(contentNode => contentNode.update());
         this._terminalNodes.forEach(terminalNode => terminalNode.update());
         this._subTreeNodes.forEach(subTreeNode => subTreeNode.update());
+
+        if (this.appearAnimationFunc !== null) {
+            this.appearAnimationFunc();
+        }
     }
 
     public appear(): void
@@ -172,6 +188,7 @@ export class Tree
         }
 
         this._appearStatus = AppearStatus.APPEARING;
+        this.appearAnimationFunc = this.appearAnimation;
     }
 
     /**
@@ -212,18 +229,17 @@ export class Tree
                 subTreeNode.appear();
             }
         });
+
+        if (this.connectionLine.isAppeared()) {
+            this.appearAnimationFunc = null;
+        }
     }
 
-    public disappear(selectedLinkNode: LinkNode | null): void
+    public disappear(): void
     {
         this._headerNode.disappear();
-        this._linkNodes.forEach(linkNode => {
-            if (selectedLinkNode && linkNode.id !== selectedLinkNode.id) {
-                linkNode.disappear();
-            } else {
-                linkNode.selectedDisappear();
-            }
-        });
+
+        this._linkNodes.forEach(linkNode => linkNode.disappear());
         this._contentNodes.forEach(contentNode => contentNode.disappear());
         this._terminalNodes.forEach(terminalNode => terminalNode.disappear());
         this._subTreeNodes.forEach(subTreeNode => subTreeNode.disappear());
@@ -231,17 +247,20 @@ export class Tree
         this._appearStatus = AppearStatus.DISAPPEARING;
     }
 
-    public disappearConnectionLine(): void
+    public disappearAnimation(): void
     {
-        if (this._connectionLine.isAppeared()) {
-            if (this._lastNode) {
-                const headerPosition = this._headerNode.getConnectionPoint();
-                const disappearHeight = this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2;
-                this._connectionLine.disappear(disappearHeight);
+
+    }
+
+    public disappearConnectionLine(force0: boolean = false, isFadeOut: boolean = false): void
+    {
+        if (!this._connectionLine.isDisappeared()) {
+            if (!force0 && this.disappearRouteNode) {
+                const top = this.disappearRouteNode.getNodeElement().offsetTop;
+                this.connectionLine.disappear(top, isFadeOut);   
             } else {
-                this._connectionLine.disappear(0);
+                this.connectionLine.disappear(0, isFadeOut);
             }
-            this._headerNode.disappear();
         }
     }
 
@@ -253,8 +272,6 @@ export class Tree
         this._terminalNodes.forEach(terminalNode => terminalNode.draw());
         this._subTreeNodes.forEach(subTreeNode => subTreeNode.draw());
     }
-
-    
 
     public getContentNodeByAnchorId(anchorId: string): ContentNode | null
     {
