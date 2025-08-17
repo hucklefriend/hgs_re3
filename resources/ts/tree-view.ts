@@ -237,6 +237,7 @@ export class TreeView
     private disappearAnimation2(): void
     {
         //this._tree.disappearAnimation();
+        this.disappeared();
     }
 
     /**
@@ -244,17 +245,10 @@ export class TreeView
      */
     public disappeared(): void
     {
-        // if (this._nextTreeCache) {
-        //     const nextTreeCache = this._nextTreeCache;
-        //     this._nextTreeCache = null;
-        //     const anchorId = nextTreeCache.anchorId;
-        //     const contentNode = this.getContentNodeByAnchorId(anchorId);
-        // }
+        window.scrollTo(0, 0);
+        this._freePt.hide();
+        this._tree.headerNode.point.element.classList.remove('fade-out');
 
-        // this._freePt.hide();
-        // this._tree.headerNode.point.element.classList.remove('fade-out');
-
-        // this._isChanging = true;
     }
 
     private changeTree(): void
