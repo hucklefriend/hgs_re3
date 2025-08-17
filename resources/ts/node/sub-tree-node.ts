@@ -151,18 +151,13 @@ export class SubTreeNode extends MainNodeBase
 
         if (this._tree.lastNode === null) {
             this._tree.disappearConnectionLine();
-            this._appearAnimationFunc = this.disappearAnimation2;
+            this._appearAnimationFunc = null;
         } else {
             if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
                 this._tree.disappearConnectionLine();
-                this._appearAnimationFunc = this.disappearAnimation2;
+                this._appearAnimationFunc = null;
             }
         }
-    }
-
-    public disappearAnimation2(): void
-    {
-        this._tree.disappearAnimation();
     }
 
     public disappear2(): void

@@ -237,7 +237,7 @@ export class TreeView
     private disappearAnimation2(): void
     {
         //this._tree.disappearAnimation();
-        this.disappeared();
+        //this.disappeared();
     }
 
     /**
@@ -248,6 +248,8 @@ export class TreeView
         window.scrollTo(0, 0);
         this._freePt.hide();
         this._tree.headerNode.point.element.classList.remove('fade-out');
+
+        this.changeTree();
 
     }
 
@@ -326,6 +328,9 @@ export class TreeView
             this._tree.disappearConnectionLine(true);
             const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
             this._freePt.moveTo(connectionPoint);
+            setTimeout(() => {
+                this.disappeared();
+            }, 300);
         }
     }
 }
