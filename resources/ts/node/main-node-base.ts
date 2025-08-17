@@ -240,10 +240,11 @@ export abstract class MainNodeBase extends NodeBase
     /**
      * 消滅アニメーション開始
      */
-    public disappear(param: any = null): void
+    public disappear(isInvisibleNodeHead: boolean = true): void
     {
-        this._nodeElement.classList.add('invisible');
-        this._nodeHead.classList.add('invisible');
+        if (isInvisibleNodeHead) {
+            this._nodeHead.classList.add('invisible');
+        }
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
@@ -260,6 +261,11 @@ export abstract class MainNodeBase extends NodeBase
     {
         this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('invisible'));
         this._behindCurveAppearProgress = [0,0,0,0];
+    }
+
+    protected invisibleNodeHead(): void
+    {
+        this._nodeHead.classList.add('invisible');
     }
 
     /**

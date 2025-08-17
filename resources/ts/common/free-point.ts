@@ -47,7 +47,13 @@ export class FreePoint
         this.pos.y = y;
     }
 
-    public move(x: number, y: number): void
+    public fixOffset(): void
+    {
+        this.pos.x = parseInt(this._element.style.left);
+        this.pos.y = parseInt(this._element.style.top);
+    }
+
+    public moveOffset(x: number, y: number): void
     {
         this._element.style.left = this.pos.x + x + 'px';
         this._element.style.top = this.pos.y + y + 'px';
@@ -86,9 +92,9 @@ export class FreePoint
         if (progress >= 1) {
             this._animationFunc = null;
             this.setPos(this._animationGoalPos.x, this._animationGoalPos.y);
-            this.move(0, 0);
+            this.moveOffset(0, 0);
         } else {
-            this.move(
+            this.moveOffset (
                 (this._animationGoalPos.x - this.pos.x) * progress,
                 (this._animationGoalPos.y - this.pos.y) * progress
             );
