@@ -113,7 +113,6 @@ export class ConnectionLine
         
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight = this._height * (1 - progress / 300);
-        console.log('disappearAnimation', this._animationHeight);
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;

@@ -167,7 +167,7 @@ export class LinkNode extends MainNodeBase
             const y = rect.top + window.scrollY;
 
             freePt.setPos(x, y - freePt.clientHeight / 2);
-            freePt.move(pos.x, pos.y);
+            freePt.moveOffset(pos.x, pos.y);
             freePt.show();
             
             this.disappearBehind();
@@ -192,6 +192,7 @@ export class LinkNode extends MainNodeBase
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const treeView = hgn.treeView as TreeView as TreeView;
+        const freePt = hgn.treeView.freePt as FreePoint;
 
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
         if (this._curveAppearProgress <= 0) {
@@ -209,7 +210,6 @@ export class LinkNode extends MainNodeBase
             );
         }
 
-        const freePt = hgn.treeView.freePt as FreePoint;
         const pos = this.getQuadraticBezierPoint(
             0, 0,
             0, connectionPoint.y,
@@ -217,7 +217,7 @@ export class LinkNode extends MainNodeBase
             this._curveAppearProgress
         );
 
-        freePt.move(pos.x, pos.y);
+        freePt.moveOffset(pos.x, pos.y);
         
         this._isDraw = true;
     }
@@ -226,7 +226,10 @@ export class LinkNode extends MainNodeBase
     {
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const treeView = hgn.treeView as TreeView as TreeView;
+        const freePt = hgn.treeView.freePt as FreePoint;
+        freePt.fixOffset();
         treeView.disappear2();
+        this._appearAnimationFunc = null;
     }
 
     protected terminalNodeHover(): void

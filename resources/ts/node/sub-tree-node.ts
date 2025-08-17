@@ -136,7 +136,13 @@ export class SubTreeNode extends MainNodeBase
     public disappear(): void
     {
         this._tree.disappear();
-        super.disappear();
+        super.disappear(false);
+
+        if (!this.isSelectedDisappear) {
+            this._nodeElement.classList.add('invisible');
+        } else {
+            this._gradientEndAlpha = 1;
+        }
     }
 
     public disappearAnimation(): void
@@ -176,10 +182,12 @@ export class SubTreeNode extends MainNodeBase
         const freePt = treeView.freePt as FreePoint;
         const progress = 1 - this.getAnimationProgress(300);
         if (progress <= 0) {
+            this._gradientEndAlpha = 0;
             this._appearAnimationFunc = this.disappear2Animation2;
             this._animationStartTime = (window as any).hgn.timestamp;
+            this.invisibleNodeHead();
         } else {
-            freePt.move(0, 0);
+            freePt.moveOffset(0, 0);
         }
     }
 
@@ -195,6 +203,9 @@ export class SubTreeNode extends MainNodeBase
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
             this._appearAnimationFunc = null;
+
+            const freePt = treeView.freePt as FreePoint;
+            freePt.fixOffset();
             treeView.disappear2();
         } else {
             this.drawCurvedLine(
@@ -209,11 +220,11 @@ export class SubTreeNode extends MainNodeBase
         const pos = this.getQuadraticBezierPoint(
             0, 0,
             0, connectionPoint.y,
-            connectionPoint.x, connectionPoint.y,
+            connectionPoint.x - freePt.clientWidth/2, connectionPoint.y,
             this._curveAppearProgress
         );
 
-        freePt.move(pos.x - freePt.clientWidth/2 - freePt.clientWidth/2 + 1, pos.y - connectionPoint.y);
+        freePt.moveOffset(pos.x- this._tree.headerNode.point.element.offsetWidth, pos.y - connectionPoint.y);
         
         this._isDraw = true;
     }

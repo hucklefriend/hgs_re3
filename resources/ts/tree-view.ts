@@ -329,9 +329,7 @@ export class TreeView
         if (node instanceof SubTreeNode) {
             node.disappear2();
         } else if (node instanceof TreeView) {
-            console.log('disappear2')
             this._tree.disappearConnectionLine(true);
-
             const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
             this._freePt.moveTo(connectionPoint);
         }
