@@ -66,6 +66,7 @@ export class ConnectionLine
         this._animationStartTime = (window as any).hgn.timestamp;
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
+        this._animationHeight = 0;
     }
 
     /**

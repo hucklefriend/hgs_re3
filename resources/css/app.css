@@ -210,7 +210,7 @@ header.header-node {
     flex-direction: column;
     gap: 20px;
 
-    > section {
+    > section.node {
         padding-left: 30px;
         margin-bottom: 40px;
 
@@ -218,7 +218,8 @@ header.header-node {
             margin-bottom: 0;
         }
 
-        .terminal-node-container
+        .terminal-node-container, 
+        .accordion-node-container
         {
             position: relative;
             padding-left: 25px;
@@ -228,6 +229,17 @@ header.header-node {
 
             &.hover {
                 opacity: 1;
+            }
+        }
+
+        .accordion-node-container {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease, opacity 0.3s ease;
+
+            &.closed {
+                opacity: 0;
+                height: 0;
             }
         }
 
@@ -339,7 +351,7 @@ header.header-node {
         transition: color 0.3s ease, text-shadow 0.3s ease;
     }
 
-    &.hover {
+    &.hover, &.active {
         color: white;
         cursor: pointer;
 

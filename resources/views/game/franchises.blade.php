@@ -4,6 +4,34 @@
 @section('tree-header-title', 'Franchises')
 
 @section('tree-nodes')
+    <section class="node accordion-node" id="search-node" data-accordion-group="acc1">
+        <div class="node-head invisible">
+            <a href="" class="network-link">あ</a>
+            <span class="node-pt main-node-pt">●</span>
+        </div>
+        <div class="behind-node-container">
+            <div class="behind-node behind-link-node invisible">
+                <span class="node-pt">●</span><span>アカイイト</span>
+            </div>
+            <div class="behind-node behind-link-node invisible">
+                <span class="node-pt">●</span><span>identity V</span>
+            </div>
+            <div class="behind-node behind-link-node invisible">
+                <span class="node-pt">●</span><span>OUTLAST</span>
+            </div>
+        </div>
+        <div class="accordion-node-container closed">
+            <div class="accordion-node-content">
+                aaa<br>
+                aaa<br>
+                aaa<br>
+                aaa<br>
+                aaa<br>
+                aaa<br>
+            </div>
+        </div>
+        <canvas class="node-canvas"></canvas>
+    </section>
 
     @foreach ($franchises as $franchise)
     <section class="node link-node" id="search-node">

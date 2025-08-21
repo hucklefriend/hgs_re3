@@ -8,8 +8,8 @@ import { Tree } from "../common/tree";
 
 export class LinkNode extends MainNodeBase
 {
-    private _point: NodePoint;
-    private _anchor: HTMLAnchorElement;
+    protected _point: NodePoint;
+    protected _anchor: HTMLAnchorElement;
 
     /**
      * コンストラクタ
@@ -84,30 +84,34 @@ export class LinkNode extends MainNodeBase
     /**
      * ホバー時の処理
      */
-    protected hover(): void
+    protected hover(isCurveAnimation: boolean = true): void
     {
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
         this._anchor.classList.add('hover');
         this._behindNodeContainer.classList.add('hover');
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+        if (isCurveAnimation) {
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
+        }
         super.terminalNodeHover();
     }
 
     /**
      * ホバー解除時の処理
      */
-    protected unhover(): void
+    protected unhover(isCurveAnimation: boolean = true): void
     {
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
         this._anchor.classList.remove('hover');
         this._behindNodeContainer.classList.remove('hover');
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+        if (isCurveAnimation) {
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
+        }
         super.terminalNodeUnhover();
     }
 
@@ -115,7 +119,7 @@ export class LinkNode extends MainNodeBase
      * クリック時の処理
      * @param e クリックイベント
      */
-    private click(e: MouseEvent): void
+    protected click(e: MouseEvent): void
     {
         e.preventDefault();
 
