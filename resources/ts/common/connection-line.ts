@@ -111,7 +111,6 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight = this._height * (1 - progress / 300);
 

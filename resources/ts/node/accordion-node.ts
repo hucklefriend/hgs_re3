@@ -1,16 +1,15 @@
 import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
-import { NodePoint } from "./parts/node-point";
 import { Tree } from "../common/tree";
-import { LinkNode } from "./link-node";
-import { FreePoint } from "../common/free-point";
-import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
 import { AccordionNodeGroup } from "./accordion-node-group";
-import { Util } from "../common/util";
+import { HeaderNode } from "./header-node";
 
-export class AccordionNode extends LinkNode
+export class AccordionNode extends MainNodeBase
 {
+    protected _headerNode: HeaderNode;
+    protected _expandButton: HTMLButtonElement;
+
     protected _groupId: string;
     protected _group: AccordionNodeGroup | null;
     protected _container: HTMLElement;
@@ -24,9 +23,21 @@ export class AccordionNode extends LinkNode
     public constructor(nodeElement: HTMLElement, parentTree: Tree)
     {
         super(nodeElement, parentTree);
+
+        this._headerNode = new HeaderNode(nodeElement.querySelector('.header-node') as HTMLElement);
+        this._expandButton = nodeElement.querySelector('.header-node > .node-head > .accordion-expand-button') as HTMLButtonElement;
+        this._expandButton.addEventListener('mouseenter', () => this.hover());
+        this._expandButton.addEventListener('mouseleave', () => this.unhover());
+        this._expandButton.addEventListener('click', (e) => this.click(e));
+
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
         this._group = null;
-        this._container = nodeElement.querySelector('.accordion-node-container') as HTMLElement;
+
+        let container = nodeElement.querySelector('.accordion-node-container') as HTMLElement | null;
+        if (!container) {
+            container = nodeElement.querySelector('.accordion-tree-node-container') as HTMLElement;
+        }
+        this._container = container;
         this._content = this._container.querySelector('.accordion-node-content') as HTMLElement;
         this._isOpen = false;
     }
@@ -41,12 +52,26 @@ export class AccordionNode extends LinkNode
         return this._groupId;
     }
 
+    public appear(): void
+    {
+        super.appear();
+        this._headerNode.appear();
+        //this._expandButton.setAttribute('aria-expanded', 'false');
+    }
+
+    public disappear(): void
+    {
+        super.disappear();
+        this._headerNode.disappear();
+    }
+
     protected hover(): void
     {
         if (this._isOpen) {
             return;
         }
-        super.hover();
+
+        this._expandButton.classList.add('hover');
     }
 
     protected unhover(): void
@@ -54,7 +79,8 @@ export class AccordionNode extends LinkNode
         if (this._isOpen) {
             return;
         }
-        super.unhover();
+
+        this._expandButton.classList.remove('hover');
     }
 
     /**
@@ -87,7 +113,7 @@ export class AccordionNode extends LinkNode
         this.invisibleBehind();
         this._container.classList.remove('closed');
         this._container.style.height = this._content.scrollHeight + 'px';
-        super.hover(false);
+        super.hover();
         this._isOpen = true;
 
         this._forceResize();
@@ -109,5 +135,20 @@ export class AccordionNode extends LinkNode
         setTimeout(() => {
             treeView.isForceResize = false;
         }, 350);
+    }
+
+    protected isHover(): boolean
+    {
+        return false;
+    }
+
+    public getConnectionPoint(): {x: number, y: number}
+    {
+        return this._headerNode.getConnectionPoint();
+    }
+
+    public getAbsoluteConnectionPoint(): {x: number, y: number}
+    {
+        return this._headerNode.getAbsoluteConnectionPoint();
     }
 }

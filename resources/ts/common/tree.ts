@@ -24,12 +24,13 @@ export class Tree
     public disappearRouteNode: LinkNode | SubTreeNode | null;
     public appearAnimationFunc: (() => void) | null;
 
-    public constructor(id: string, headerNodeElement: HTMLElement, connectionLineElement: HTMLDivElement)
+    public constructor(id: string, headerNodeOrElement: HTMLElement | HeaderNode, connectionLineElement: HTMLDivElement)
     {
         this._id = id;
-        
+
+        this._headerNode = headerNodeOrElement instanceof HeaderNode ?
+            headerNodeOrElement : new HeaderNode(headerNodeOrElement);
         this._connectionLine = new ConnectionLine(connectionLineElement);
-        this._headerNode = new HeaderNode(headerNodeElement);
 
         this._linkNodes = [];
         this._contentNodes = [];
@@ -82,7 +83,7 @@ export class Tree
         return this._accordionGroups;
     }
 
-    public get lastNode(): LinkNode | ContentNode | TerminalNode | SubTreeNode | null
+    public get lastNode(): LinkNode | ContentNode | TerminalNode | SubTreeNode | AccordionNode | AccordionTreeNode | null
     {
         return this._lastNode;
     }
@@ -199,7 +200,7 @@ export class Tree
         this._subTreeNodes.forEach(subTreeNode => subTreeNode.resize());
         Object.values(this._accordionGroups).forEach(accordionGroup => accordionGroup.resize());
 
-        if (this._connectionLine && this._lastNode) {
+        if (this._connectionLine && this._lastNode && !this._connectionLine.isDisappeared()) {
             const headerPosition = this._headerNode.getConnectionPoint();
             this._connectionLine.setPosition(headerPosition.x, headerPosition.y);
             this._connectionLine.changeHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
@@ -221,13 +222,16 @@ export class Tree
         }
     }
 
-    public appear(): void
+    public appear(isHeaderAppear: boolean = true): void
     {
-        this._headerNode.appear();
+        if (isHeaderAppear) {
+            this._headerNode.appear();
+        }
 
         if (this._lastNode) {
             const headerPosition = this._headerNode.getConnectionPoint();
-            this._connectionLine.changeHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
+            const conLineHeight = this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2;
+            this._connectionLine.changeHeight(conLineHeight);
             this._connectionLine.appear();
         }
 
@@ -281,9 +285,11 @@ export class Tree
         }
     }
 
-    public disappear(): void
+    public disappear(isHeaderDisappear: boolean = true): void
     {
-        this._headerNode.disappear();
+        if (isHeaderDisappear) {
+            this._headerNode.disappear();
+        }
 
         this._linkNodes.forEach(linkNode => linkNode.disappear());
         this._contentNodes.forEach(contentNode => contentNode.disappear());

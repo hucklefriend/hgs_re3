@@ -1,8 +1,6 @@
 import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
-import { NodePoint } from "./parts/node-point";
 import { Tree } from "../common/tree";
-import { LinkNode } from "./link-node";
 import { FreePoint } from "../common/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
