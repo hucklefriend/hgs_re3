@@ -202,7 +202,6 @@ class GameController extends Controller
      */
     public function franchises(Request $request, string $prefix = 'a'): JsonResponse|Application|Factory|View
     {
-        /*
         if (preg_match('/^[akstnhmry]$/', $prefix) !== 1) {
             $prefix = 'a';
         }
@@ -219,7 +218,7 @@ class GameController extends Controller
             default => ['あ', 'い', 'う', 'え', 'お'],
         };
 
-        $franchises = GameFranchise::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')]);
+        $franchises = GameFranchise::select(['id', 'key', 'name', 'description']);
         foreach ($like as $word) {
             $franchises->orWhere('phonetic', 'like', $word . '%');
         }
@@ -229,37 +228,21 @@ class GameController extends Controller
         // フランチャイズに紐づくタイトル数を取得
         $franchises = $franchises->get();
 
-        $franchises->each(function ($franchise) {
-            $titleNum = 0;
-            foreach ($franchise->series as $series) {
-                if (empty($titleIds)) {
-                    $titleNum += $series->titles->count();
-                } else {
-                    $titleNum += $series->titles->whereIn('id', $titleIds)->count();
-                }
-            }
-            if (empty($titleIds)) {
-                $titleNum += $franchise->titles->count();
-            } else {
-                $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
-            }
-
-            if ($titleNum >= 10) {
-                $franchise->sub_net = 'l';
-            } else if ($titleNum >= 5) {
-                $franchise->sub_net = 'm';
-            } else if ($titleNum >= 1) {
-                $franchise->sub_net = 's';
-            }
-
-            // レビュー、お気に入りユーザー数なども加味してゆく
-        });
-        */
-
-        $franchises = GameFranchise::select(['id', 'key', 'name', 'description'])
-            ->orderBy('phonetic')
-            ->get();
-
+        // $franchises->each(function ($franchise) {
+        //     $titleNum = 0;
+        //     foreach ($franchise->series as $series) {
+        //         if (empty($titleIds)) {
+        //             $titleNum += $series->titles->count();
+        //         } else {
+        //             $titleNum += $series->titles->whereIn('id', $titleIds)->count();
+        //         }
+        //     }
+        //     if (empty($titleIds)) {
+        //         $titleNum += $franchise->titles->count();
+        //     } else {
+        //         $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
+        //     }
+        // });
 
         return $this->tree(view('game.franchises', compact('franchises')));
     }

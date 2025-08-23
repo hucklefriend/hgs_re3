@@ -7,11 +7,11 @@
     <section class="node sub-tree-node" id="horror-games-tree-node">
         <header class="node header-node" id="horror-games-header-node">
             <div class="node-head invisible" style="margin-bottom: 10px;">
-                <h2>Horror Games</h2>
+                <h2 class="header-node-text active">Horror Games</h2>
                 <span class="node-pt">●</span>
             </div>
         </header>
-        <div class="sub-tree-node-container">
+        <div class="sub-tree-node-container tree-container">
             <section class="node link-node" id="search-link-node">
                 <div class="node-head invisible">
                     <a href="#" class="network-link">Search</a>

@@ -36,4 +36,14 @@ export class BehindLinkNode
     {
         return this._point.getAbsoluteCenterPosition();
     }
+
+    public invisible(): void
+    {
+        this._element.classList.add('invisible');
+    }
+
+    public visible(): void
+    {
+        this._element.classList.remove('invisible');
+    }
 } 

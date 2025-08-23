@@ -1,8 +1,6 @@
 import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
-import { NodePoint } from "./parts/node-point";
 import { Tree } from "../common/tree";
-import { LinkNode } from "./link-node";
 import { FreePoint } from "../common/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
@@ -151,18 +149,13 @@ export class SubTreeNode extends MainNodeBase
 
         if (this._tree.lastNode === null) {
             this._tree.disappearConnectionLine();
-            this._appearAnimationFunc = this.disappearAnimation2;
+            this._appearAnimationFunc = null;
         } else {
             if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
                 this._tree.disappearConnectionLine();
-                this._appearAnimationFunc = this.disappearAnimation2;
+                this._appearAnimationFunc = null;
             }
         }
-    }
-
-    public disappearAnimation2(): void
-    {
-        this._tree.disappearAnimation();
     }
 
     public disappear2(): void

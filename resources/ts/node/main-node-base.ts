@@ -26,6 +26,7 @@ export abstract class MainNodeBase extends NodeBase
     protected _terminalNodeContainer: HTMLElement | null;
     protected _parentTreeId: string;
     protected _parentTree: Tree;
+    protected _isDrawBehind: boolean;
 
     /**
      * コンストラクタ
@@ -54,6 +55,7 @@ export abstract class MainNodeBase extends NodeBase
         this._curveAppearProgress = 0;
         this._behindCurveAppearProgress = [0, 0, 0, 0];
         this._updateGradientEndAlphaFunc = null;
+        this._isDrawBehind = true;
 
         const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
         this._behindLinkNodes = Array.from(behindLinkNodeElements)
@@ -325,7 +327,7 @@ export abstract class MainNodeBase extends NodeBase
             );
         }
 
-        if (this._behindCurveAppearProgress[0] > 0) {
+        if (this._isDrawBehind && this._behindCurveAppearProgress[0] > 0) {
             const canvasRect = this._canvas.getBoundingClientRect();
             this._behindLinkNodes.forEach((behindLinkNode, index) => {
                 if (index >= 4) return; // 4回を超えたら処理をスキップ
@@ -473,5 +475,19 @@ export abstract class MainNodeBase extends NodeBase
     protected getAnimationProgress(duration: number): number
     {
         return Util.getAnimationProgress(this._animationStartTime, duration);
+    }
+
+    public invisibleBehind(): void
+    {
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.invisible());
+        this._isDrawBehind = false;
+        this._isDraw = true;
+    }
+
+    public visibleBehind(): void
+    {
+        this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.visible());
+        this._isDrawBehind = true;
+        this._isDraw = true;
     }
 } 

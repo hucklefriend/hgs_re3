@@ -57,6 +57,12 @@ export class FreePoint
     {
         this._element.style.left = this.pos.x + x + 'px';
         this._element.style.top = this.pos.y + y + 'px';
+
+        // スクロール位置より上に来たら、スクロールYを調整
+        const scrollY = window.scrollY;
+        if (this.pos.y < scrollY) {
+            window.scrollTo(0, this.pos.y);
+        }
     }
 
     public show(): void

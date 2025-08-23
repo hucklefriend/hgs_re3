@@ -29,10 +29,10 @@
     <main>
         <div class="tree-view">
             <div id="tree-nodes">
-                <header class="node header-node">
+                <header class="node header-node main-header-node">
                     <div class="node-head" style="margin-bottom: 10px;">
-                        <h1>@yield('tree-header-title')</h1>
-                        <span class="node-pt">●</span>
+                        <h1 class="header-node-text">@yield('tree-header-title')</h1>
+                        <span class="node-pt main-node-pt">●</span>
                     </div>
                 </header>
                 <div class="node-container">

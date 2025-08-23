@@ -92,6 +92,7 @@ div.connection-line {
     font-size: 10px;
     width: 20px;
     min-width: 20px;
+    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.2s ease;
 }
 
 .invisible {
@@ -101,7 +102,7 @@ div.connection-line {
 
 header.header-node {
     margin-top: 0;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 
     .node-head {
         white-space: nowrap;
@@ -118,18 +119,17 @@ header.header-node {
         }
 
         .node-pt {
-            text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
-            color: var(--node-pt-light);
+            text-shadow: 0 0 20px var(--node-pt-dark-shadow), 0 0 30px var(--node-pt-dark-shadow), 0 0 60px var(--node-pt-light-shadow);
+            color: var(--node-pt-dark);
             width: 30px;
             min-width: 30px;
-            transition: opacity 0.2s ease-out;
 
             &.fade-out {
                 opacity: 0;
             }
         }
 
-        > h1, h2 {
+        > .header-node-text {
             mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
             -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -145,7 +145,7 @@ header.header-node {
 
         /* 右側から透明になるアニメーション用のクラス */
         &.fade-out-right {
-            h1, h2, h3, h4, h5, h6 {
+            .header-node-text {
                 mask-position: 0% 0;
                 -webkit-mask-position: 0% 0;
 
@@ -153,7 +153,7 @@ header.header-node {
             }
         }
         &.fade-in-left {
-            h1, h2, h3, h4, h5, h6 {
+            .header-node-text {
                 mask-position: 200% 0;
                 -webkit-mask-position: 200% 0;
 
@@ -187,6 +187,17 @@ header.header-node {
       }
 }
 
+header.main-header-node {
+    margin-bottom: 50px !important;
+
+    .node-head {
+        .main-node-pt {
+            text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow) !important;
+            color: var(--node-pt-light) !important;
+        }
+    }
+}
+
 .node {
     position: relative;
     contain: layout;
@@ -205,12 +216,12 @@ header.header-node {
     }
 }
 
-.node-container, .sub-tree-node-container {
+.node-container, .sub-tree-node-container, .accordion-tree-node-container {
     display: inline-flex;
     flex-direction: column;
     gap: 20px;
 
-    > section {
+    > section.node, > .accordion-node-content > section.node {
         padding-left: 30px;
         margin-bottom: 40px;
 
@@ -218,16 +229,29 @@ header.header-node {
             margin-bottom: 0;
         }
 
-        .terminal-node-container
+        .terminal-node-container, 
+        .accordion-node-container
         {
             position: relative;
-            padding-left: 25px;
+            padding-left: 30px;
             font-size: 13px;
             transition: all 0.3s ease;
             opacity: 0.5;
 
             &.hover {
                 opacity: 1;
+            }
+        }
+
+        .accordion-node-container,
+        .accordion-tree-node-container {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease, opacity 0.3s ease;
+
+            &.closed {
+                opacity: 0;
+                height: 0;
             }
         }
 
@@ -328,25 +352,43 @@ header.header-node {
     }
 }
 
-.network-link, .terminal-title {
+
+
+button.accordion-expand-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 !important;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none;
+    text-decoration: none;
+    display: inline;
+    line-height: inherit;
+    vertical-align: baseline;
+}
+
+.network-link, .terminal-title, button.accordion-expand-button {
     color: gray;
     background-color: transparent;
     margin-left: 4px;
     padding: 12px 0;
     transition: all 0.3s ease;
+}
 
+.network-link, .terminal-title, .header-node-text {
     & + .node-pt {
-        transition: color 0.3s ease, text-shadow 0.3s ease;
+        color: var(--node-pt-dark) !important;
     }
 
-    &.hover {
+    &.hover, &.active {
         color: white;
         cursor: pointer;
 
         & + .node-pt {
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-            color: var(--node-pt-light);
-            text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
+            color: var(--node-pt-light) !important;
+            text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
         }
     }
 }
@@ -375,13 +417,6 @@ header.header-node {
 
 .node {
     position: relative;
-
-    > .node-pt {
-        width: 32px;
-        min-width: 32px;
-        text-align: center;
-        font-size: 10px;
-    }
 }
 
 #bg1 {

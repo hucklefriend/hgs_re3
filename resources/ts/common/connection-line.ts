@@ -66,6 +66,7 @@ export class ConnectionLine
         this._animationStartTime = (window as any).hgn.timestamp;
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
+        this._animationHeight = 0;
     }
 
     /**
@@ -110,7 +111,6 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight = this._height * (1 - progress / 300);
 

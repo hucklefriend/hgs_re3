@@ -24,6 +24,8 @@ export class TreeView
     private _disappearRouteTrees: Tree[];
     private _disappearRouteNodes: (SubTreeNode | TreeView)[];
     private _freePt: FreePoint;
+    private _appearStatus: AppearStatus;
+    public isForceResize: boolean;
 
     private _isChanging: boolean;
     private _nextTreeCache: {
@@ -64,6 +66,10 @@ export class TreeView
 
         this._disappearRouteTrees = [];
         this._disappearRouteNodes = [];
+
+        this._appearStatus = AppearStatus.NONE;
+
+        this.isForceResize = false;
     }
 
     /**
@@ -143,6 +149,10 @@ export class TreeView
      */
     public update(): void
     {
+        if (this.isForceResize) {
+            this.resize();
+        }
+
         if (this._isChanging) {
             this.changeTree();
         } else {
@@ -237,6 +247,7 @@ export class TreeView
     private disappearAnimation2(): void
     {
         //this._tree.disappearAnimation();
+        //this.disappeared();
     }
 
     /**
@@ -244,23 +255,17 @@ export class TreeView
      */
     public disappeared(): void
     {
-        // if (this._nextTreeCache) {
-        //     const nextTreeCache = this._nextTreeCache;
-        //     this._nextTreeCache = null;
-        //     const anchorId = nextTreeCache.anchorId;
-        //     const contentNode = this.getContentNodeByAnchorId(anchorId);
-        // }
+        window.scrollTo(0, 0);
+        this._freePt.hide();
+        this._tree.headerNode.point.element.classList.remove('fade-out');
 
-        // this._freePt.hide();
-        // this._tree.headerNode.point.element.classList.remove('fade-out');
-
-        // this._isChanging = true;
+        this._isChanging = true;
+        this._appearStatus = AppearStatus.DISAPPEARED;
     }
 
     private changeTree(): void
     {
-        if (this._nextTreeCache) {
-            this._isChanging = false;
+        if (this._nextTreeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
             this.disposeNodes();
 
             this._tree.headerNode.title = this._nextTreeCache.treeHeaderTitle;
@@ -269,10 +274,9 @@ export class TreeView
             this.loadNodes();
             this.resize();
             this._nextTreeCache = null;
+            this._isChanging = false;
             
             this.appear();
-        } else {
-            this._isChanging = true;
         }
     }
 
@@ -332,6 +336,9 @@ export class TreeView
             this._tree.disappearConnectionLine(true);
             const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
             this._freePt.moveTo(connectionPoint);
+            setTimeout(() => {
+                this.disappeared();
+            }, 300);
         }
     }
 }
