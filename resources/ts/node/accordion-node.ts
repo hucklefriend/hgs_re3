@@ -47,7 +47,9 @@ export class AccordionNode extends MainNodeBase
         this._isOpen = false;
 
         this._container.classList.remove('closed');
-        this._containerHeight = this._container.scrollHeight;
+        const rect = this._container.getBoundingClientRect();
+        this._containerHeight = rect.height;
+        alert(this._containerHeight);
         this._container.classList.add('closed');
     }
 
