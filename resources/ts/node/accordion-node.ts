@@ -27,18 +27,10 @@ export class AccordionNode extends MainNodeBase
         this._headerNode = new HeaderNode(nodeElement.querySelector('.header-node') as HTMLElement);
         this._expandButton = nodeElement.querySelector('.header-node > .node-head > .accordion-expand-button') as HTMLButtonElement;
         
-        // デバッグ用：ボタンの状態を確認
-        console.log('Button element:', this._expandButton);
-        console.log('Button disabled:', this._expandButton.disabled);
-        console.log('Button pointer-events:', window.getComputedStyle(this._expandButton).pointerEvents);
-        console.log('Button user-select:', window.getComputedStyle(this._expandButton).userSelect);
-        
+       
         this._expandButton.addEventListener('mouseenter', () => this.hover());
         this._expandButton.addEventListener('mouseleave', () => this.unhover());
-        this._expandButton.addEventListener('click', (e) => {
-            alert('Click event fired on button');
-            this.click(e);
-        });
+        this._expandButton.addEventListener('click', (e) => this.click(e));
         //this._expandButton.addEventListener('touchstart', (e) => this.touchStart(e));
 
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
@@ -139,6 +131,7 @@ export class AccordionNode extends MainNodeBase
         this.invisibleBehind();
         this._container.classList.remove('closed');
         this._container.style.height = this._content.scrollHeight + 'px';
+        alert('open ' + this._content.scrollHeight + 'px');
         super.hover();
         this._isOpen = true;
 
