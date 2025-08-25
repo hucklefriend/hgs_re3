@@ -16,8 +16,6 @@ export class AccordionNode extends MainNodeBase
     protected _content: HTMLElement;
     protected _isOpen: boolean;
 
-    protected _containerHeight: number;
-
     /**
      * コンストラクタ
      * @param nodeElement ノードの要素
@@ -45,12 +43,6 @@ export class AccordionNode extends MainNodeBase
         this._container = container;
         this._content = this._container.querySelector('.accordion-node-content') as HTMLElement;
         this._isOpen = false;
-
-        this._container.classList.remove('closed');
-        const rect = this._container.getBoundingClientRect();
-        this._containerHeight = rect.height;
-        alert(this._containerHeight);
-        this._container.classList.add('closed');
     }
 
     public set group(group: AccordionNodeGroup)
@@ -137,7 +129,6 @@ export class AccordionNode extends MainNodeBase
     public open(): void
     {
         this.invisibleBehind();
-        this._container.style.height = this._containerHeight + 'px';
         this._container.classList.remove('closed');
         super.hover();
         this._isOpen = true;
