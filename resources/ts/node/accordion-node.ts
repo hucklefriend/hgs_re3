@@ -129,6 +129,7 @@ export class AccordionNode extends MainNodeBase
     public open(): void
     {
         this.invisibleBehind();
+        this._container.style.height = this._content.scrollHeight + 'px';
         this._container.classList.remove('closed');
         super.hover();
         this._isOpen = true;
