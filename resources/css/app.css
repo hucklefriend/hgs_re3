@@ -247,6 +247,7 @@ header.main-header-node {
         .accordion-tree-node-container {
             overflow: hidden;
             transition: height 0.3s ease, opacity 0.3s ease;
+            height: auto;
 
             &.closed {
                 transition: height 0.3s ease, opacity 0.3s ease;
