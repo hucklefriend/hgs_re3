@@ -16,6 +16,8 @@ export class AccordionNode extends MainNodeBase
     protected _content: HTMLElement;
     protected _isOpen: boolean;
 
+    protected _containerHeight: number;
+
     /**
      * コンストラクタ
      * @param nodeElement ノードの要素
@@ -43,6 +45,10 @@ export class AccordionNode extends MainNodeBase
         this._container = container;
         this._content = this._container.querySelector('.accordion-node-content') as HTMLElement;
         this._isOpen = false;
+
+        this._container.classList.remove('closed');
+        this._containerHeight = this._container.scrollHeight;
+        this._container.classList.add('closed');
     }
 
     public set group(group: AccordionNodeGroup)
@@ -129,43 +135,8 @@ export class AccordionNode extends MainNodeBase
     public open(): void
     {
         this.invisibleBehind();
+        this._container.style.height = this._containerHeight + 'px';
         this._container.classList.remove('closed');
-        
-        // モバイル対応：一時的に要素を表示してからscrollHeightを取得
-        const originalHeight = this._container.style.height;
-        const originalOverflow = this._container.style.overflow;
-        const originalVisibility = this._container.style.visibility;
-        const originalDisplay = this._container.style.display;
-        
-        // 一時的に表示状態にする
-        this._container.style.height = 'auto';
-        this._container.style.overflow = 'visible';
-        this._container.style.visibility = 'hidden';
-        this._container.style.position = 'absolute';
-        this._container.style.display = 'block';
-        
-        // 強制的にリフローを発生させる
-        this._container.offsetHeight;
-        
-        // scrollHeightを取得（モバイル対応）
-        let scrollHeight = this._content.scrollHeight;
-        
-        // scrollHeightが0の場合は、getBoundingClientRect()を使用
-        if (scrollHeight === 0) {
-            const rect = this._content.getBoundingClientRect();
-            scrollHeight = rect.height;
-        }
-        
-        // 元の状態に戻す
-        this._container.style.height = originalHeight;
-        this._container.style.overflow = originalOverflow;
-        this._container.style.visibility = originalVisibility;
-        this._container.style.position = '';
-        this._container.style.display = originalDisplay;
-        
-        // 取得したscrollHeightでアニメーション開始
-        this._container.style.height = scrollHeight + 'px';
-        alert('open ' + scrollHeight + 'px');
         super.hover();
         this._isOpen = true;
 
@@ -176,7 +147,6 @@ export class AccordionNode extends MainNodeBase
     {
         this.visibleBehind();
         this._container.classList.add('closed');
-        this._container.style.height = '0px';
         this._isOpen = false;
         this._forceResize();
     }
