@@ -19,6 +19,11 @@ export class AccordionNodeGroup
         this._openedNode = null;
     }
 
+    public get nodes(): { [key: string]: AccordionNode | AccordionTreeNode }
+    {
+        return this._nodes;
+    }
+
     public addNode(node: AccordionNode | AccordionTreeNode): void
     {
         this._nodes[node.id] = node;
