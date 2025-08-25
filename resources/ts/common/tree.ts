@@ -21,7 +21,7 @@ export class Tree
     protected _accordionGroups: { [key: string]: AccordionNodeGroup };
     protected _lastNode: LinkNode | ContentNode | TerminalNode | SubTreeNode | AccordionNode | AccordionTreeNode | null;
     protected _appearStatus: AppearStatus;
-    public disappearRouteNode: LinkNode | SubTreeNode | null;
+    public disappearRouteNode: LinkNode | SubTreeNode | AccordionTreeNode | null;
     public appearAnimationFunc: (() => void) | null;
 
     public constructor(id: string, headerNodeOrElement: HTMLElement | HeaderNode, connectionLineElement: HTMLDivElement)

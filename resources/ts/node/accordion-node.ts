@@ -26,9 +26,20 @@ export class AccordionNode extends MainNodeBase
 
         this._headerNode = new HeaderNode(nodeElement.querySelector('.header-node') as HTMLElement);
         this._expandButton = nodeElement.querySelector('.header-node > .node-head > .accordion-expand-button') as HTMLButtonElement;
+        
+        // デバッグ用：ボタンの状態を確認
+        console.log('Button element:', this._expandButton);
+        console.log('Button disabled:', this._expandButton.disabled);
+        console.log('Button pointer-events:', window.getComputedStyle(this._expandButton).pointerEvents);
+        console.log('Button user-select:', window.getComputedStyle(this._expandButton).userSelect);
+        
         this._expandButton.addEventListener('mouseenter', () => this.hover());
         this._expandButton.addEventListener('mouseleave', () => this.unhover());
-        this._expandButton.addEventListener('click', (e) => this.click(e));
+        this._expandButton.addEventListener('click', (e) => {
+            alert('Click event fired on button');
+            this.click(e);
+        });
+        //this._expandButton.addEventListener('touchstart', (e) => this.touchStart(e));
 
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
         this._group = null;
@@ -59,9 +70,9 @@ export class AccordionNode extends MainNodeBase
         //this._expandButton.setAttribute('aria-expanded', 'false');
     }
 
-    public disappear(): void
+    public disappear(isInvisibleNodeHead: boolean = true): void
     {
-        super.disappear();
+        super.disappear(isInvisibleNodeHead);
         this._headerNode.disappear();
     }
 
@@ -88,6 +99,21 @@ export class AccordionNode extends MainNodeBase
      * @param e クリックイベント
      */
     protected click(e: MouseEvent): void
+    {
+        e.preventDefault();
+
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
+        }
+
+        this.toggle();
+    }
+
+    /**
+     * タッチ開始時の処理
+     * @param e タッチイベント
+     */
+    protected touchStart(e: TouchEvent): void
     {
         e.preventDefault();
 

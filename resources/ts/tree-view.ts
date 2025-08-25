@@ -6,6 +6,7 @@ import { Tree } from "./common/tree";
 import { FreePoint } from "./common/free-point";
 import { SubTreeNode } from "./node/sub-tree-node";
 import { AppearStatus } from "./enum/appear-status";
+import { AccordionTreeNode } from "./node/accordion-tree-node";
 
 export class TreeView
 {
@@ -22,7 +23,7 @@ export class TreeView
     private _appearAnimationFunc: (() => void) | null;
 
     private _disappearRouteTrees: Tree[];
-    private _disappearRouteNodes: (SubTreeNode | TreeView)[];
+    private _disappearRouteNodes: (SubTreeNode | TreeView | AccordionTreeNode)[];
     private _freePt: FreePoint;
     private _appearStatus: AppearStatus;
     public isForceResize: boolean;
@@ -228,6 +229,28 @@ export class TreeView
             }
         });
 
+
+        Object.values(tree.accordionGroups).forEach(accordionGroup => {
+            Object.values(accordionGroup.nodes).forEach(node => {
+                if (node instanceof AccordionTreeNode) {
+                    if (node.tree.id === selectedLinkNode.parentTree.id) {
+                        this._disappearRouteTrees.push(node.tree);
+                        this._disappearRouteNodes.push(node);
+                        node.isSelectedDisappear = true;
+                        node.tree.disappearRouteNode = selectedLinkNode;
+                        tree.disappearRouteNode = node;
+                        return true;
+                    } else if (this.searchDisappearRouteTree(node.tree, selectedLinkNode)) {
+                        this._disappearRouteTrees.push(node.tree);
+                        this._disappearRouteNodes.push(node);
+                        node.isSelectedDisappear = true;
+                        tree.disappearRouteNode = node;
+                        return true;
+                    }
+                }
+            });
+        });
+
         return false;
     }
 
@@ -330,7 +353,7 @@ export class TreeView
     public disappear2(): void
     {
         const node = this._disappearRouteNodes.shift();
-        if (node instanceof SubTreeNode) {
+        if (node instanceof SubTreeNode || node instanceof AccordionTreeNode) {
             node.disappear2();
         } else if (node instanceof TreeView) {
             this._tree.disappearConnectionLine(true);
