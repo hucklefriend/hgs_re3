@@ -22,7 +22,7 @@
                 <span class="node-pt">●</span><span>OUTLAST</span>
             </div>
         </div>
-        <div class="accordion-tree-node-container tree-container" id="acc1-a">
+        <div class="accordion-tree-node-container tree-container closed" id="acc1-a">
             <div class="accordion-node-content">
                 @foreach ($franchises as $franchise)
                 <section class="node link-node" id="search-node">
@@ -62,7 +62,7 @@
                 <span class="node-pt">●</span><span>OUTLAST</span>
             </div>
         </div>
-        <div class="accordion-tree-node-container tree-container" id="acc1-ka">
+        <div class="accordion-tree-node-container tree-container closed" id="acc1-ka">
             <div class="accordion-node-content">
                 @foreach ($franchises as $franchise)
                 <section class="node link-node" id="search-node">

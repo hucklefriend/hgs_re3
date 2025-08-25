@@ -245,13 +245,13 @@ header.main-header-node {
 
         .accordion-node-container,
         .accordion-tree-node-container {
-            height: 0;
             overflow: hidden;
             transition: height 0.3s ease, opacity 0.3s ease;
 
             &.closed {
+                transition: height 0.3s ease, opacity 0.3s ease;
                 opacity: 0;
-                height: 0;
+                height: 0 !important;
             }
         }
 
