@@ -27,6 +27,10 @@ export class LinkNode extends MainNodeBase
         this._anchor.addEventListener('mouseleave', () => this.unhover());
         // クリックイベントの設定
         this._anchor.addEventListener('click', (e) => this.click(e));
+
+        if (this.id === 'biohazard-link-node') {
+            console.log(parentTree.id);
+        }
     }
 
     public getAnchorId(): string

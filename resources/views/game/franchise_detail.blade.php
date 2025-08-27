@@ -1,8 +1,148 @@
 @extends('layout')
 
 @section('title', $franchise->name . 'フランチャイズ | ホラーゲームネットワーク')
+@section('tree-header-title', $franchise->name . 'フランチャイズ')
 
-@section('content')
+
+@section('tree-header-content')
+    <div class="header-node-content header-fade-mask">
+        {!! nl2br($franchise->description) !!}
+    </div>
+@endsection
+
+@section('tree-nodes')
+
+    
+    <section class="node sub-tree-node" id="title-lineup-tree-node">
+        <header class="node header-node" id="title-lineup-header-node">
+            <div class="node-head invisible">
+                <h2 class="header-node-text active">タイトルラインナップ</h2>
+                <span class="node-pt">●</span>
+            </div>
+        </header>
+        <div class="sub-tree-node-container tree-container">
+            <section class="node sub-tree-node" id="biohazard-series-tree-node">
+                <header class="node header-node" id="biohazard-series-header-node">
+                    <div class="node-head invisible">
+                        <h2 class="header-node-text active">BIOHAZARDシリーズ</h2>
+                        <span class="node-pt">●</span>
+                    </div>
+                </header>
+                <div class="sub-tree-node-container tree-container">
+                    <section class="node link-node" id="biohazard-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                    {{-- ------------------------------------------ 
+                    <section class="node link-node" id="biohazard2-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD2</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                    <section class="node link-node" id="biohazard3-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD3</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>--}}
+                </div>
+                <canvas class="node-canvas"></canvas>
+                <div class="connection-line" id="biohazard-series-connection-line"></div>
+            </section>
+            <section class="node sub-tree-node" id="biohazard-reverations-series-tree-node">
+                <header class="node header-node" id="biohazard-reverations-series-header-node">
+                    <div class="node-head invisible">
+                        <h2 class="header-node-text active">BIOHAZARD REVERATIONSシリーズ</h2>
+                        <span class="node-pt">●</span>
+                    </div>
+                </header>
+                <div class="sub-tree-node-container tree-container">
+                    <section class="node link-node" id="biohazard-reverations-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD REVERATIONS</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                    <section class="node link-node" id="biohazard-reverations2-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD REVERATIONS 2</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                    <section class="node link-node" id="biohazard-reverations3-link-node">
+                        <div class="node-head invisible">
+                            <a href="#" class="network-link">BIOHAZARD REVERATIONS 3</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                </div>
+                <canvas class="node-canvas"></canvas>
+                <div class="connection-line"></div>
+            </section>
+            <section class="node link-node" id="biohazard-gaiden-link-node">
+                <div class="node-head invisible">
+                    <a href="#" class="network-link">BIOHAZARD GAIDEN</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                </div>
+                <canvas class="node-canvas"></canvas>
+            </section>
+        </div>
+        <canvas class="node-canvas"></canvas>
+        <div class="connection-line"></div>
+    </section>
+
+    <section class="node sub-tree-node" id="media-mix-tree-node">
+        <header class="node header-node" id="media-mix-header-node">
+            <div class="node-head invisible">
+                <h2 class="header-node-text active">メディアミックス</h2>
+                <span class="node-pt">●</span>
+            </div>
+        </header>
+        <div class="sub-tree-node-container tree-container">
+
+
+            <section class="node link-node" id="outlast-link-node">
+                <div class="node-head invisible">
+                    <a href="#" class="network-link">OUTLAST</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                </div>
+                <canvas class="node-canvas"></canvas>
+            </section>
+
+
+        </div>
+        <canvas class="node-canvas"></canvas>
+        <div class="connection-line"></div>
+    </section>
+
+
+
+{{--
     <header class="node">
         <div class="node-head" style="margin-bottom: 10px;">
             <h1>{!! $franchise->h1_node_name !!}<br>フランチャイズ</h1>
@@ -31,7 +171,7 @@
             <canvas class="node-canvas"></canvas>
         </section>
     </div>
-{{--
+
     <section>
         <div class="node h1">
             <h1 class="head1 fade" id="h1_title">

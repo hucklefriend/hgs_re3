@@ -107,6 +107,7 @@ header.header-node {
     .node-head {
         white-space: nowrap;
         position: relative;
+        margin-bottom: 10px;
 
         > h1 {
             font-size: 1.2rem;
@@ -128,43 +129,44 @@ header.header-node {
                 opacity: 0;
             }
         }
+    }
 
-        > .header-node-text {
-            mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-            -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
-
-            mask-size: 200% 100%;
-            -webkit-mask-size: 200% 100%;
-
-            mask-position: 200% 0;
-            -webkit-mask-position: 200% 0;
-
-            mask-repeat: no-repeat;
-            -webkit-mask-repeat: no-repeat;
-        }
-
-        /* 右側から透明になるアニメーション用のクラス */
-        &.fade-out-right {
-            .header-node-text {
-                mask-position: 0% 0;
-                -webkit-mask-position: 0% 0;
-
-                animation: fadeout-mask 1s forwards;
-            }
-        }
-        &.fade-in-left {
-            .header-node-text {
-                mask-position: 200% 0;
-                -webkit-mask-position: 200% 0;
-
-                animation: fadein-mask 1s forwards;
-            }
-        }
+    .header-node-content {
+        margin-top: 20px;
+        margin-left: 30px;
     }
 }
 
+.header-fade-mask {
+    mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+
+    mask-size: 200% 100%;
+    -webkit-mask-size: 200% 100%;
+
+    mask-position: 200% 0;
+    -webkit-mask-position: 200% 0;
+
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+}
+
+/* 右側から透明になるアニメーション用のクラス */
+.header-fade-out-right {
+    mask-position: 0% 0;
+    -webkit-mask-position: 0% 0;
+
+    animation: header-fadeout-mask 1s forwards;
+}
+.header-fade-in-left {
+    mask-position: 200% 0;
+    -webkit-mask-position: 200% 0;
+
+    animation: header-fadein-mask 1s forwards;
+}
+
 /* 右側から透明になるアニメーション */
-@keyframes fadeout-mask {
+@keyframes header-fadeout-mask {
     0% {
         mask-position: 0% 0;
         -webkit-mask-position: 0% 0;
@@ -176,7 +178,7 @@ header.header-node {
 }
 
 /* 右側から透明になるアニメーション */
-@keyframes fadein-mask {
+@keyframes header-fadein-mask {
     0% {
         mask-position: 200% 0;
         -webkit-mask-position: 200% 0;
