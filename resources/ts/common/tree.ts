@@ -8,6 +8,7 @@ import { AppearStatus } from "../enum/appear-status";
 import { AccordionNodeGroup } from "../node/accordion-node-group";
 import { AccordionNode } from "../node/accordion-node";
 import { AccordionTreeNode } from "../node/accordion-tree-node";
+import { MainNodeBase } from "../node/main-node-base";
 
 export class Tree
 {
@@ -91,41 +92,41 @@ export class Tree
     /**
      * ノードの読み込み
      */
-    public loadNodes(nodeElements: NodeListOf<Element>): void
+    public loadNodes(nodeElements: NodeListOf<Element>, parentNode: MainNodeBase | null): void
     {
         this._lastNode = null;
         nodeElements.forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
-                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement, this));
+                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
                 this._lastNode = this._linkNodes[this._linkNodes.length - 1];
             }
 
             // content-nodeクラスがあればContentNodeを作成
             if (nodeElement.classList.contains('content-node')) {
-                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, this));
+                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, parentNode));
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
             }
 
             // terminal-nodeクラスがあればTerminalNodeを作成
             if (nodeElement.classList.contains('terminal-node')) {
-                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, this));
+                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, parentNode));
                 this._lastNode = this._terminalNodes[this._terminalNodes.length - 1];
             }
 
             if (nodeElement.classList.contains('sub-tree-node')) {
-                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement, this));
+                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement, parentNode));
                 this._lastNode = this._subTreeNodes[this._subTreeNodes.length - 1];
             }
 
             if (nodeElement.classList.contains('accordion-node')) {
-                const accordionNode = new AccordionNode(nodeElement as HTMLElement, this);
+                const accordionNode = new AccordionNode(nodeElement as HTMLElement, parentNode);
                 this.addAccordionNode(accordionNode);
                 this._lastNode = accordionNode;
             }
 
             if (nodeElement.classList.contains('accordion-tree-node')) {
-                const accordionTreeNode = new AccordionTreeNode(nodeElement as HTMLElement, this);
+                const accordionTreeNode = new AccordionTreeNode(nodeElement as HTMLElement, parentNode);
                 this.addAccordionNode(accordionTreeNode);
                 this._lastNode = accordionTreeNode;
             }

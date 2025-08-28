@@ -27,8 +27,7 @@
                 @foreach ($franchises as $franchise)
                 <section class="node link-node" id="search-node">
                     <div class="node-head invisible">
-                        {{-- <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a> --}}
-                        <a href="{{ route('Game.Franchises') }}" class="network-link">{{ $franchise->name }}</a>
+                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a>
                         <span class="node-pt main-node-pt">●</span>
                     </div>
                     <div class="behind-node-container"></div>

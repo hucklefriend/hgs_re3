@@ -24,14 +24,13 @@ export abstract class MainNodeBase extends NodeBase
     protected _behindCurveAppearProgress: number[];
     protected _updateGradientEndAlphaFunc: (() => void) | null;
     protected _terminalNodeContainer: HTMLElement | null;
-    protected _parentTreeId: string;
-    protected _parentTree: Tree;
     protected _isDrawBehind: boolean;
+    protected _parentNode: MainNodeBase | null;
 
     /**
      * コンストラクタ
      */
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
         super(nodeElement);
 
@@ -56,6 +55,7 @@ export abstract class MainNodeBase extends NodeBase
         this._behindCurveAppearProgress = [0, 0, 0, 0];
         this._updateGradientEndAlphaFunc = null;
         this._isDrawBehind = true;
+        this._parentNode = parentNode;
 
         const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
         this._behindLinkNodes = Array.from(behindLinkNodeElements)
@@ -66,19 +66,11 @@ export abstract class MainNodeBase extends NodeBase
             this._terminalNodeContainer.addEventListener('mouseenter', () => this.terminalNodeHover());
             this._terminalNodeContainer.addEventListener('mouseleave', () => this.terminalNodeUnhover());
         }
-
-        this._parentTreeId = nodeElement.id;
-        this._parentTree = parentTree;
     }
 
-    public get parentTreeId(): string
+    public get parentNode(): MainNodeBase | null
     {
-        return this._parentTreeId;
-    }
-
-    public get parentTree(): Tree
-    {
-        return this._parentTree;
+        return this._parentNode;
     }
 
     public get appearStatus(): AppearStatus

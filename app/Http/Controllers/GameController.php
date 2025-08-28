@@ -268,7 +268,7 @@ class GameController extends Controller
             $titles[] = $title;
         }
 
-        return $this->document(view('game.franchise_detail', [
+        return $this->tree(view('game.franchise_detail', [
             'franchise'   => $franchise,
             'titles'      => $titles,
         ]));

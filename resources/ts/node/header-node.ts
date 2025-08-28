@@ -7,7 +7,7 @@ export class HeaderNode extends NodeBase
     private _point: NodePoint;
     private _nodeHead: HTMLElement;
     private _title: HTMLElement;
-    //private content: HTMLElement;
+    private _content: HTMLElement | null;
 
     /**
      * コンストラクタ
@@ -18,8 +18,8 @@ export class HeaderNode extends NodeBase
 
         this._point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
         this._nodeHead = nodeElement.querySelector('.node-head') as HTMLElement;
-        this._title = this._nodeHead.querySelector('h1, h2, h3, h4, h5, h6, a') as HTMLElement;
-        //this.content = nodeElement.querySelector('.node-body') as HTMLElement;
+        this._title = this._nodeHead.querySelector('h1, h2, h3, h4, h5, h6, a, button') as HTMLElement;
+        this._content = nodeElement.querySelector('.header-node-content') as HTMLElement;
     }
 
     /**
@@ -53,15 +53,25 @@ export class HeaderNode extends NodeBase
     public appear(): void
     {
         this._point.element.classList.remove('fade-out');
-        this._nodeHead.classList.remove('fade-out-right');
-        this._nodeHead.classList.add('fade-in-left');
+        this._title.classList.remove('header-fade-out-right');
+        this._title.classList.add('header-fade-in-left');
+
+        if (this._content) {
+            this._content.classList.remove('header-fade-out-right');
+            this._content.classList.add('header-fade-in-left');
+        }
     }
 
     public disappear(): void
     {
-        this._nodeHead.classList.remove('fade-in-left');
-        if (!this._nodeHead.classList.contains('fade-out-right')) {
-            this._nodeHead.classList.add('fade-out-right');
+        this._title.classList.remove('header-fade-in-left');
+        if (!this._title.classList.contains('header-fade-out-right')) {
+            this._title.classList.add('header-fade-out-right');
+        }
+
+        if (this._content) {
+            this._content.classList.remove('header-fade-in-left');
+            this._content.classList.add('header-fade-out-right');
         }
     }
 

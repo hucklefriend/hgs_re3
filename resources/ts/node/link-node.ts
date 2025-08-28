@@ -15,9 +15,9 @@ export class LinkNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
-        super(nodeElement, parentTree);
+        super(nodeElement, parentNode);
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._anchor = nodeElement.querySelector('.node-head .network-link') as HTMLAnchorElement;
