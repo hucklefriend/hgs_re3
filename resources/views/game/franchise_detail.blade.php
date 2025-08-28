@@ -61,6 +61,7 @@
                 <canvas class="node-canvas"></canvas>
                 <div class="connection-line" id="biohazard-series-connection-line"></div>
             </section>
+            {{--  
             <section class="node sub-tree-node" id="biohazard-reverations-series-tree-node">
                 <header class="node header-node" id="biohazard-reverations-series-header-node">
                     <div class="node-head invisible">
@@ -108,12 +109,12 @@
                 <div class="behind-node-container">
                 </div>
                 <canvas class="node-canvas"></canvas>
-            </section>
+            </section>--}}
         </div>
         <canvas class="node-canvas"></canvas>
         <div class="connection-line"></div>
     </section>
-
+    {{--  
     <section class="node sub-tree-node" id="media-mix-tree-node">
         <header class="node header-node" id="media-mix-header-node">
             <div class="node-head invisible">
@@ -139,6 +140,7 @@
         <canvas class="node-canvas"></canvas>
         <div class="connection-line"></div>
     </section>
+    --}}
 
 
 

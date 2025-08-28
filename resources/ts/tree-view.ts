@@ -22,7 +22,6 @@ export class TreeView
     private _scrollStartY: number;
     private _appearAnimationFunc: (() => void) | null;
 
-    private _disappearRouteTrees: Tree[];
     private _disappearRouteNodes: (SubTreeNode | TreeView | AccordionTreeNode)[];
     private _freePt: FreePoint;
     private _appearStatus: AppearStatus;
@@ -65,12 +64,16 @@ export class TreeView
 
         this._isChanging = false;
 
-        this._disappearRouteTrees = [];
         this._disappearRouteNodes = [];
 
         this._appearStatus = AppearStatus.NONE;
 
         this.isForceResize = false;
+    }
+
+    public get id(): string
+    {
+        return this._tree.id;
     }
 
     /**
@@ -94,7 +97,7 @@ export class TreeView
     public loadNodes(): void
     {
         const mainNodes = document.querySelectorAll('div.node-container > section.node');
-        this._tree.loadNodes(mainNodes);
+        this._tree.loadNodes(mainNodes, null);
     }
 
     /**
@@ -102,7 +105,6 @@ export class TreeView
      */
     public disposeNodes(): void
     {
-        this._disappearRouteTrees = [];
         this._disappearRouteNodes = [];
         this._tree.disposeNodes();
     }
@@ -194,13 +196,13 @@ export class TreeView
     public disappear(selectedLinkNode: LinkNode | null): void
     {
         if (selectedLinkNode) {
-            if (selectedLinkNode.parentTree.id !== this._tree.id) {
-                this.searchDisappearRouteTree(this._tree, selectedLinkNode);
-            } else {
-                this._tree.disappearRouteNode = selectedLinkNode;
+            let node = selectedLinkNode.parentNode;
+            while (node) {
+                node.isSelectedDisappear = true;
+                this._disappearRouteNodes.push(node as SubTreeNode | AccordionTreeNode);
+                node = node.parentNode;
             }
 
-            this._disappearRouteTrees.push(this._tree);
             this._disappearRouteNodes.push(this);
             selectedLinkNode.isSelectedDisappear = true;
         }
@@ -208,50 +210,6 @@ export class TreeView
         this._tree.disappear();
 
         this._appearAnimationFunc = this.disappearAnimation;
-    }
-
-    private searchDisappearRouteTree(tree: Tree, selectedLinkNode: LinkNode): boolean
-    {
-        tree.subTreeNodes.forEach(subTreeNode => {
-            if (subTreeNode.tree.id === selectedLinkNode.parentTree.id) {
-                this._disappearRouteTrees.push(subTreeNode.tree);
-                this._disappearRouteNodes.push(subTreeNode);
-                subTreeNode.isSelectedDisappear = true;
-                subTreeNode.tree.disappearRouteNode = selectedLinkNode;
-                tree.disappearRouteNode = subTreeNode;
-                return true;
-            } else if (this.searchDisappearRouteTree(subTreeNode.tree, selectedLinkNode)) {
-                this._disappearRouteTrees.push(subTreeNode.tree);
-                this._disappearRouteNodes.push(subTreeNode);
-                subTreeNode.isSelectedDisappear = true;
-                tree.disappearRouteNode = subTreeNode;
-                return true;
-            }
-        });
-
-
-        Object.values(tree.accordionGroups).forEach(accordionGroup => {
-            Object.values(accordionGroup.nodes).forEach(node => {
-                if (node instanceof AccordionTreeNode) {
-                    if (node.tree.id === selectedLinkNode.parentTree.id) {
-                        this._disappearRouteTrees.push(node.tree);
-                        this._disappearRouteNodes.push(node);
-                        node.isSelectedDisappear = true;
-                        node.tree.disappearRouteNode = selectedLinkNode;
-                        tree.disappearRouteNode = node;
-                        return true;
-                    } else if (this.searchDisappearRouteTree(node.tree, selectedLinkNode)) {
-                        this._disappearRouteTrees.push(node.tree);
-                        this._disappearRouteNodes.push(node);
-                        node.isSelectedDisappear = true;
-                        tree.disappearRouteNode = node;
-                        return true;
-                    }
-                }
-            });
-        });
-
-        return false;
     }
 
     private disappearAnimation(): void

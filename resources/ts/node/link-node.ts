@@ -15,9 +15,9 @@ export class LinkNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
-        super(nodeElement, parentTree);
+        super(nodeElement, parentNode);
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._anchor = nodeElement.querySelector('.node-head .network-link') as HTMLAnchorElement;
@@ -27,10 +27,6 @@ export class LinkNode extends MainNodeBase
         this._anchor.addEventListener('mouseleave', () => this.unhover());
         // クリックイベントの設定
         this._anchor.addEventListener('click', (e) => this.click(e));
-
-        if (this.id === 'biohazard-link-node') {
-            console.log(parentTree.id);
-        }
     }
 
     public getAnchorId(): string

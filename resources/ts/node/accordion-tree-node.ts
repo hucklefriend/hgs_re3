@@ -14,9 +14,9 @@ export class AccordionTreeNode extends AccordionNode
 {
     private _tree: Tree;
 
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
-        super(nodeElement, parentTree);
+        super(nodeElement, parentNode);
 
         this._tree = new Tree(
             this.id,
@@ -24,7 +24,7 @@ export class AccordionTreeNode extends AccordionNode
             nodeElement.querySelector('.connection-line') as HTMLDivElement
         );
 
-        this._tree.loadNodes(this._content.querySelectorAll('section.node'));
+        this._tree.loadNodes(this._content.querySelectorAll('section.node'), this);
         this._tree.resize();
     }
 

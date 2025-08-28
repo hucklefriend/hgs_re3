@@ -20,9 +20,9 @@ export class AccordionNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
-        super(nodeElement, parentTree);
+        super(nodeElement, parentNode);
 
         this._headerNode = new HeaderNode(nodeElement.querySelector('.header-node') as HTMLElement);
         this._expandButton = nodeElement.querySelector('.header-node > .node-head > .accordion-expand-button') as HTMLButtonElement;

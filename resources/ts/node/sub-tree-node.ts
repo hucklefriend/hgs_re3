@@ -13,9 +13,9 @@ export class SubTreeNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
     {
-        super(nodeElement, parentTree);
+        super(nodeElement, parentNode);
 
         this._tree = new Tree(
             this.id,
@@ -23,7 +23,7 @@ export class SubTreeNode extends MainNodeBase
             nodeElement.querySelector(':scope > .connection-line') as HTMLDivElement
         );
 
-        this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .sub-tree-node-container > section.node'));
+        this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .sub-tree-node-container > section.node'), this);
     }
 
     public get tree(): Tree
