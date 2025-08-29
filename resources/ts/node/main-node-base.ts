@@ -26,11 +26,12 @@ export abstract class MainNodeBase extends NodeBase
     protected _terminalNodeContainer: HTMLElement | null;
     protected _isDrawBehind: boolean;
     protected _parentNode: MainNodeBase | null;
+    protected _parentTree: Tree;
 
     /**
      * コンストラクタ
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
         super(nodeElement);
 
@@ -56,6 +57,7 @@ export abstract class MainNodeBase extends NodeBase
         this._updateGradientEndAlphaFunc = null;
         this._isDrawBehind = true;
         this._parentNode = parentNode;
+        this._parentTree = parentTree;
 
         const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
         this._behindLinkNodes = Array.from(behindLinkNodeElements)
@@ -271,6 +273,7 @@ export abstract class MainNodeBase extends NodeBase
             this._appearAnimationFunc = null;
             this._nodeHead.classList.add('invisible');
             this._appearStatus = AppearStatus.DISAPPEARED;
+            this._parentTree.increaseDisappearedNodeCount();
         }
         
         this._isDraw = true;

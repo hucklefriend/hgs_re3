@@ -14,9 +14,9 @@ export class AccordionTreeNode extends AccordionNode
 {
     private _tree: Tree;
 
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
-        super(nodeElement, parentNode);
+        super(nodeElement, parentNode, parentTree);
 
         this._tree = new Tree(
             this.id,
@@ -89,8 +89,22 @@ export class AccordionTreeNode extends AccordionNode
         } else {
             if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
                 this._tree.disappearConnectionLine();
-                this._appearAnimationFunc = null;
+
+                if (this.isSelectedDisappear) {
+                    this._appearAnimationFunc = null;
+                } else {
+                    this._appearAnimationFunc = this.disappearAnimation2;
+                }
             }
+        }
+    }
+
+    public disappearAnimation2(): void
+    {
+        if (this._tree.connectionLine.isDisappeared()) {
+            this._appearAnimationFunc = null;
+            this._parentTree.increaseDisappearedNodeCount();
+            this._appearStatus = AppearStatus.DISAPPEARED;
         }
     }
 
@@ -132,6 +146,8 @@ export class AccordionTreeNode extends AccordionNode
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
             this._appearAnimationFunc = null;
+            this._parentTree.increaseDisappearedNodeCount();
+            this._appearStatus = AppearStatus.DISAPPEARED;
 
             const freePt = treeView.freePt as FreePoint;
             freePt.fixOffset();

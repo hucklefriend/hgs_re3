@@ -11,9 +11,9 @@ export class ContentNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
-        super(nodeElement, parentNode);
+        super(nodeElement, parentNode, parentTree);
 
         this._anchor = nodeElement.querySelector('.content-link') as HTMLAnchorElement;
 

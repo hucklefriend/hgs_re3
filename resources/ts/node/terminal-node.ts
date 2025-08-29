@@ -2,6 +2,7 @@ import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { NodePoint } from "./parts/node-point";
+import { Tree } from "../common/tree";
 
 export class TerminalNode extends MainNodeBase
 {
@@ -12,9 +13,9 @@ export class TerminalNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
-        super(nodeElement, parentNode);
+        super(nodeElement, parentNode, parentTree);
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._title = nodeElement.querySelector('.terminal-title') as HTMLSpanElement;

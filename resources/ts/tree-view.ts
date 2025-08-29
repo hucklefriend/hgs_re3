@@ -216,19 +216,29 @@ export class TreeView
     {
         if (this._tree.lastNode === null) {
             this._tree.disappearConnectionLine();
-            this._appearAnimationFunc = this.disappearAnimation2;
+            if (this._disappearRouteNodes.length === 0) {
+                this._appearAnimationFunc = this.disappearAnimation2;
+            } else {
+                this._appearAnimationFunc = null;
+            }
         } else {
             if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
                 this._tree.disappearConnectionLine();
-                this._appearAnimationFunc = this.disappearAnimation2;
+                if (this._disappearRouteNodes.length === 0) {
+                    this._appearAnimationFunc = this.disappearAnimation2;
+                } else {
+                    this._appearAnimationFunc = null;
+                }
             }
         }
     }
 
     private disappearAnimation2(): void
     {
-        //this._tree.disappearAnimation();
-        //this.disappeared();
+        if (this._tree.isDisappeared()) {
+            this._appearAnimationFunc = null;
+            this.disappeared();
+        }
     }
 
     /**
