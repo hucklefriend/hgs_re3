@@ -9,6 +9,7 @@ import { AccordionNodeGroup } from "../node/accordion-node-group";
 import { AccordionNode } from "../node/accordion-node";
 import { AccordionTreeNode } from "../node/accordion-tree-node";
 import { MainNodeBase } from "../node/main-node-base";
+import { TreeOwnNodeType, DisappearRouteNodeType } from "./type";
 
 export class Tree
 {
@@ -22,8 +23,10 @@ export class Tree
     protected _accordionGroups: { [key: string]: AccordionNodeGroup };
     protected _lastNode: LinkNode | ContentNode | TerminalNode | SubTreeNode | AccordionNode | AccordionTreeNode | null;
     protected _appearStatus: AppearStatus;
-    public disappearRouteNode: LinkNode | SubTreeNode | AccordionTreeNode | null;
+    public disappearRouteNode: DisappearRouteNodeType | null;
     public appearAnimationFunc: (() => void) | null;
+    protected _nodeCount: number;
+    protected _disappearedNodeCount: number;
 
     public constructor(id: string, headerNodeOrElement: HTMLElement | HeaderNode, connectionLineElement: HTMLDivElement)
     {
@@ -31,7 +34,7 @@ export class Tree
 
         this._headerNode = headerNodeOrElement instanceof HeaderNode ?
             headerNodeOrElement : new HeaderNode(headerNodeOrElement);
-        this._connectionLine = new ConnectionLine(connectionLineElement);
+        this._connectionLine = new ConnectionLine(connectionLineElement, this);
 
         this._linkNodes = [];
         this._contentNodes = [];
@@ -42,6 +45,8 @@ export class Tree
         this._appearStatus = AppearStatus.NONE;
         this.disappearRouteNode = null;
         this.appearAnimationFunc = null;
+        this._nodeCount = 0;
+        this._disappearedNodeCount = 0;
     }
 
     public get id(): string
@@ -95,40 +100,49 @@ export class Tree
     public loadNodes(nodeElements: NodeListOf<Element>, parentNode: MainNodeBase | null): void
     {
         this._lastNode = null;
+        this._nodeCount = 0;
+        this._disappearedNodeCount = 0;
+        this.disappearRouteNode = null;
         nodeElements.forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
-                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
+                this._linkNodes.push(new LinkNode(nodeElement as HTMLElement, parentNode, this));
                 this._lastNode = this._linkNodes[this._linkNodes.length - 1];
+                this._nodeCount++;
             }
 
             // content-nodeクラスがあればContentNodeを作成
             if (nodeElement.classList.contains('content-node')) {
-                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, parentNode));
+                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, parentNode, this));
                 this._lastNode = this._contentNodes[this._contentNodes.length - 1];
+                this._nodeCount++;
             }
 
             // terminal-nodeクラスがあればTerminalNodeを作成
             if (nodeElement.classList.contains('terminal-node')) {
-                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, parentNode));
+                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, parentNode, this));
                 this._lastNode = this._terminalNodes[this._terminalNodes.length - 1];
+                this._nodeCount++;
             }
 
             if (nodeElement.classList.contains('sub-tree-node')) {
-                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement, parentNode));
+                this._subTreeNodes.push(new SubTreeNode(nodeElement as HTMLElement, parentNode, this));
                 this._lastNode = this._subTreeNodes[this._subTreeNodes.length - 1];
+                this._nodeCount++;
             }
 
             if (nodeElement.classList.contains('accordion-node')) {
-                const accordionNode = new AccordionNode(nodeElement as HTMLElement, parentNode);
+                const accordionNode = new AccordionNode(nodeElement as HTMLElement, parentNode, this);
                 this.addAccordionNode(accordionNode);
                 this._lastNode = accordionNode;
+                this._nodeCount++;
             }
 
             if (nodeElement.classList.contains('accordion-tree-node')) {
-                const accordionTreeNode = new AccordionTreeNode(nodeElement as HTMLElement, parentNode);
+                const accordionTreeNode = new AccordionTreeNode(nodeElement as HTMLElement, parentNode, this);
                 this.addAccordionNode(accordionTreeNode);
                 this._lastNode = accordionTreeNode;
+                this._nodeCount++;
             }
         });
     }
@@ -141,6 +155,15 @@ export class Tree
             const accordionGroup = new AccordionNodeGroup(this);
             accordionGroup.addNode(accordionNode);
             this._accordionGroups[accordionNode.groupId] = accordionGroup;
+        }
+    }
+
+    public increaseDisappearedNodeCount(): void
+    {
+        this._disappearedNodeCount++;
+
+        if (this._nodeCount === this._disappearedNodeCount) {
+            this._appearStatus = AppearStatus.DISAPPEARED;
         }
     }
 
@@ -178,6 +201,16 @@ export class Tree
             }
         });
         this._terminalNodes = [];
+
+        // SubTreeNodeの開放
+        this._subTreeNodes.forEach(subTreeNode => {
+            if (subTreeNode) {
+                // イベントリスナーの削除（必要に応じて実装）
+                // 現在の実装ではイベントリスナーはDOM要素に直接追加されているため、
+                // ノードインスタンスを削除することで参照がクリアされる
+            }
+        });
+        this._subTreeNodes = [];
 
         // AccordionNodeの開放
 
@@ -336,5 +369,10 @@ export class Tree
             }
         }
         return null;
+    }
+
+    public isDisappeared(): boolean
+    {
+        return this._appearStatus === AppearStatus.DISAPPEARED;
     }
 }

@@ -3,6 +3,7 @@ import { BehindLinkNode } from "./behind-link-node";
 import { AppearStatus } from "../enum/appear-status";
 import { Tree } from "../common/tree";
 import { Util } from "../common/util";
+import { TreeOwnNodeType } from "../common/type";
 
 export abstract class MainNodeBase extends NodeBase
 {
@@ -25,12 +26,13 @@ export abstract class MainNodeBase extends NodeBase
     protected _updateGradientEndAlphaFunc: (() => void) | null;
     protected _terminalNodeContainer: HTMLElement | null;
     protected _isDrawBehind: boolean;
-    protected _parentNode: MainNodeBase | null;
+    protected _parentNode: TreeOwnNodeType | null;
+    protected _parentTree: Tree;
 
     /**
      * コンストラクタ
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement);
 
@@ -56,6 +58,7 @@ export abstract class MainNodeBase extends NodeBase
         this._updateGradientEndAlphaFunc = null;
         this._isDrawBehind = true;
         this._parentNode = parentNode;
+        this._parentTree = parentTree;
 
         const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
         this._behindLinkNodes = Array.from(behindLinkNodeElements)
@@ -68,7 +71,7 @@ export abstract class MainNodeBase extends NodeBase
         }
     }
 
-    public get parentNode(): MainNodeBase | null
+    public get parentNode(): TreeOwnNodeType | null
     {
         return this._parentNode;
     }
@@ -271,6 +274,7 @@ export abstract class MainNodeBase extends NodeBase
             this._appearAnimationFunc = null;
             this._nodeHead.classList.add('invisible');
             this._appearStatus = AppearStatus.DISAPPEARED;
+            this._parentTree.increaseDisappearedNodeCount();
         }
         
         this._isDraw = true;
@@ -481,5 +485,10 @@ export abstract class MainNodeBase extends NodeBase
         this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.visible());
         this._isDrawBehind = true;
         this._isDraw = true;
+    }
+
+    public get tree(): Tree | null
+    {
+        return null;
     }
 } 

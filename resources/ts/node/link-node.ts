@@ -4,6 +4,7 @@ import { NodePoint } from "./parts/node-point";
 import { AppearStatus } from "../enum/appear-status";
 import { TreeView } from "../tree-view";
 import { FreePoint } from "../common/free-point";
+import { Util } from "../common/util";
 import { Tree } from "../common/tree";
 
 export class LinkNode extends MainNodeBase
@@ -15,9 +16,9 @@ export class LinkNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
-        super(nodeElement, parentNode);
+        super(nodeElement, parentNode, parentTree);
 
         this._point = new NodePoint(nodeElement.querySelector('.node-head .node-pt') as HTMLSpanElement);
         this._anchor = nodeElement.querySelector('.node-head .network-link') as HTMLAnchorElement;
@@ -234,6 +235,7 @@ export class LinkNode extends MainNodeBase
         freePt.fixOffset();
         treeView.disappear2();
         this._appearAnimationFunc = null;
+        this._parentTree.increaseDisappearedNodeCount();
     }
 
     protected terminalNodeHover(): void

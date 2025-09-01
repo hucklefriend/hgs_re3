@@ -13,9 +13,9 @@ export class SubTreeNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null)
+    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
     {
-        super(nodeElement, parentNode);
+        super(nodeElement, parentNode, parentTree);
 
         this._tree = new Tree(
             this.id,
@@ -26,7 +26,7 @@ export class SubTreeNode extends MainNodeBase
         this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .sub-tree-node-container > section.node'), this);
     }
 
-    public get tree(): Tree
+    public get tree(): Tree | null
     {
         return this._tree;
     }
@@ -153,8 +153,21 @@ export class SubTreeNode extends MainNodeBase
         } else {
             if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
                 this._tree.disappearConnectionLine();
-                this._appearAnimationFunc = null;
+                if (this.isSelectedDisappear) {
+                    this._appearAnimationFunc = null;
+                } else {
+                    this._appearAnimationFunc = this.disappearAnimation2;
+                }
             }
+        }
+    }
+
+    public disappearAnimation2(): void
+    {
+        if (this._tree.connectionLine.isDisappeared()) {
+            this._parentTree.increaseDisappearedNodeCount();
+            this._appearAnimationFunc = null;
+            this._appearStatus = AppearStatus.DISAPPEARED;
         }
     }
 
@@ -196,6 +209,8 @@ export class SubTreeNode extends MainNodeBase
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
             this._appearAnimationFunc = null;
+            this._parentTree.increaseDisappearedNodeCount();
+            this._appearStatus = AppearStatus.DISAPPEARED;
 
             const freePt = treeView.freePt as FreePoint;
             freePt.fixOffset();
