@@ -1,4 +1,5 @@
 import { AppearStatus } from "../enum/appear-status";
+import { Tree } from "./tree";
 
 export class ConnectionLine
 {
@@ -9,12 +10,13 @@ export class ConnectionLine
     private _appearAnimationFunc: (() => void) | null;
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
+    private _parentTree: Tree;
 
     /**
      * コンストラクタ
      * @param element 接続線の要素
      */
-    public constructor(element: HTMLDivElement)
+    public constructor(element: HTMLDivElement, parentTree: Tree)
     {
         this._element = element;
         this._height = 0;
@@ -23,6 +25,7 @@ export class ConnectionLine
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.NONE;
         this._disappearHeight = 0;
+        this._parentTree = parentTree;
     }
 
     public setPosition(x: number, y: number): void
@@ -101,7 +104,7 @@ export class ConnectionLine
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
             if (isFadeOut) {
-                this._element.classList.add('fade-out');
+                //this._element.classList.add('fade-out');
             }
         }
     }
@@ -122,6 +125,7 @@ export class ConnectionLine
 
             if (this._height === 0) {
                 this._appearStatus = AppearStatus.DISAPPEARED;
+                this._element.classList.remove('visible');
             }
         }
 

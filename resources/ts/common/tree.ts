@@ -9,7 +9,7 @@ import { AccordionNodeGroup } from "../node/accordion-node-group";
 import { AccordionNode } from "../node/accordion-node";
 import { AccordionTreeNode } from "../node/accordion-tree-node";
 import { MainNodeBase } from "../node/main-node-base";
-import { Util } from "./util";
+import { TreeOwnNodeType, DisappearRouteNodeType } from "./type";
 
 export class Tree
 {
@@ -23,7 +23,7 @@ export class Tree
     protected _accordionGroups: { [key: string]: AccordionNodeGroup };
     protected _lastNode: LinkNode | ContentNode | TerminalNode | SubTreeNode | AccordionNode | AccordionTreeNode | null;
     protected _appearStatus: AppearStatus;
-    public disappearRouteNode: LinkNode | SubTreeNode | AccordionTreeNode | null;
+    public disappearRouteNode: DisappearRouteNodeType | null;
     public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
     protected _disappearedNodeCount: number;
@@ -34,7 +34,7 @@ export class Tree
 
         this._headerNode = headerNodeOrElement instanceof HeaderNode ?
             headerNodeOrElement : new HeaderNode(headerNodeOrElement);
-        this._connectionLine = new ConnectionLine(connectionLineElement);
+        this._connectionLine = new ConnectionLine(connectionLineElement, this);
 
         this._linkNodes = [];
         this._contentNodes = [];
@@ -102,6 +102,7 @@ export class Tree
         this._lastNode = null;
         this._nodeCount = 0;
         this._disappearedNodeCount = 0;
+        this.disappearRouteNode = null;
         nodeElements.forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {

@@ -7,6 +7,7 @@ import { FreePoint } from "./common/free-point";
 import { SubTreeNode } from "./node/sub-tree-node";
 import { AppearStatus } from "./enum/appear-status";
 import { AccordionTreeNode } from "./node/accordion-tree-node";
+import { TreeOwnNodeType, DisappearRouteNodeType } from "./common/type";
 
 export class TreeView
 {
@@ -22,7 +23,7 @@ export class TreeView
     private _scrollStartY: number;
     private _appearAnimationFunc: (() => void) | null;
 
-    private _disappearRouteNodes: (SubTreeNode | TreeView | AccordionTreeNode)[];
+    private _disappearRouteNodes: (TreeView | DisappearRouteNodeType)[];
     private _freePt: FreePoint;
     private _appearStatus: AppearStatus;
     public isForceResize: boolean;
@@ -197,12 +198,28 @@ export class TreeView
     {
         if (selectedLinkNode) {
             let node = selectedLinkNode.parentNode;
-            while (node) {
-                node.isSelectedDisappear = true;
-                this._disappearRouteNodes.push(node as SubTreeNode | AccordionTreeNode);
-                node = node.parentNode;
+            if (node === null) {
+                this._tree.disappearRouteNode = selectedLinkNode;
+            } else {
+                let child = selectedLinkNode as DisappearRouteNodeType;
+                while (node) {
+                    node.isSelectedDisappear = true;
+    
+                    this._disappearRouteNodes.push(node as TreeOwnNodeType);
+
+                    if (node.tree) {
+                        node.tree.disappearRouteNode = child;
+                    }
+
+                    child = node;
+                    node = node.parentNode;
+                    if (node === null) {
+                        this._tree.disappearRouteNode = child;
+                    }
+                }
             }
 
+            
             this._disappearRouteNodes.push(this);
             selectedLinkNode.isSelectedDisappear = true;
         }

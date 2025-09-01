@@ -26,7 +26,7 @@ export class SubTreeNode extends MainNodeBase
         this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .sub-tree-node-container > section.node'), this);
     }
 
-    public get tree(): Tree
+    public get tree(): Tree | null
     {
         return this._tree;
     }

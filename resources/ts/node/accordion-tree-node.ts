@@ -28,7 +28,7 @@ export class AccordionTreeNode extends AccordionNode
         this._tree.resize();
     }
 
-    public get tree(): Tree
+    public get tree(): Tree | null
     {
         return this._tree;
     }
