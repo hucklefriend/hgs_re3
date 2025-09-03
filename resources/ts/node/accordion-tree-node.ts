@@ -9,12 +9,13 @@ import { TreeView } from "../tree-view";
 import { AccordionNode } from "./accordion-node";
 import { SubTreeNode } from "./sub-tree-node";
 import { AccordionNodeGroup } from "./accordion-node-group";
+import { TreeOwnNodeType } from "../common/type";
 
 export class AccordionTreeNode extends AccordionNode
 {
     private _tree: Tree;
 
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 
@@ -38,6 +39,23 @@ export class AccordionTreeNode extends AccordionNode
         super.open();
         
         this._tree.appear(false);
+
+        this._appearAnimationFunc = this.openAnimation;
+    }
+
+    public openAnimation(): void
+    {
+        if (this._tree.isAppeared()) {
+            this._appearAnimationFunc = null;
+        }
+
+        this._parentTree.resizeConnectionLine();
+
+        let parentNode = this.parentNode;
+        while (parentNode) {
+            parentNode.parentTree.resizeConnectionLine();
+            parentNode = parentNode.parentNode;
+        }
     }
 
     public close(): void
@@ -45,6 +63,8 @@ export class AccordionTreeNode extends AccordionNode
         super.close();
         this._tree.disappear(false);
         this._tree.disappearConnectionLine(true, true);
+
+        this._appearAnimationFunc = this.openAnimation;
     }
 
     public update(): void

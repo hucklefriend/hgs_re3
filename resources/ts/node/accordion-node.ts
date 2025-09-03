@@ -4,6 +4,7 @@ import { Tree } from "../common/tree";
 import { TreeView } from "../tree-view";
 import { AccordionNodeGroup } from "./accordion-node-group";
 import { HeaderNode } from "./header-node";
+import { TreeOwnNodeType } from "../common/type";
 
 export class AccordionNode extends MainNodeBase
 {
@@ -20,14 +21,13 @@ export class AccordionNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 
         this._headerNode = new HeaderNode(nodeElement.querySelector('.header-node') as HTMLElement);
         this._expandButton = nodeElement.querySelector('.header-node > .node-head > .accordion-expand-button') as HTMLButtonElement;
         
-       
         this._expandButton.addEventListener('mouseenter', () => this.hover());
         this._expandButton.addEventListener('mouseleave', () => this.unhover());
         this._expandButton.addEventListener('click', (e) => this.click(e));
@@ -133,8 +133,6 @@ export class AccordionNode extends MainNodeBase
         this._container.classList.remove('closed');
         super.hover();
         this._isOpen = true;
-
-        this._forceResize();
     }
 
     public close(): void
@@ -142,16 +140,6 @@ export class AccordionNode extends MainNodeBase
         this.visibleBehind();
         this._container.classList.add('closed');
         this._isOpen = false;
-        this._forceResize();
-    }
-
-    private _forceResize(): void
-    {
-        const treeView = window.hgn.treeView as TreeView;
-        treeView.isForceResize = true;
-        setTimeout(() => {
-            treeView.isForceResize = false;
-        }, 350);
     }
 
     protected isHover(): boolean

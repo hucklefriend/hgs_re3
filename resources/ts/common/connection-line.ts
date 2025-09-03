@@ -78,7 +78,7 @@ export class ConnectionLine
     private appearAnimation(): void
     {
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
-        this._animationHeight = this._height * progress / 1000;
+        this._animationHeight += 15;
         if (this._animationHeight >= this._height) {
             this._animationHeight = this._height;
             this._appearAnimationFunc = null;
@@ -115,7 +115,7 @@ export class ConnectionLine
     private disappearAnimation(): void
     {
         const progress = (window as any).hgn.timestamp - this._animationStartTime;
-        this._animationHeight = this._height * (1 - progress / 300);
+        this._animationHeight -= 15;
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;

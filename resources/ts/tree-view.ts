@@ -219,7 +219,6 @@ export class TreeView
                 }
             }
 
-            
             this._disappearRouteNodes.push(this);
             selectedLinkNode.isSelectedDisappear = true;
         }
@@ -344,9 +343,7 @@ export class TreeView
             this._tree.disappearConnectionLine(true);
             const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
             this._freePt.moveTo(connectionPoint);
-            setTimeout(() => {
-                this.disappeared();
-            }, 300);
+            this._appearAnimationFunc = this.disappearAnimation2;
         }
     }
 }

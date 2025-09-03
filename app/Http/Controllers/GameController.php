@@ -206,7 +206,8 @@ class GameController extends Controller
             $prefix = 'a';
         }
 
-        $like = match($prefix) {
+        $prefixes =[
+            'a' => ['あ', 'い', 'う', 'え', 'お'],
             'k' => ['か', 'き', 'く', 'け', 'こ', 'が', 'ぎ', 'ぐ', 'げ', 'ご'],
             's' => ['さ', 'し', 'す', 'せ', 'そ', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ'],
             't' => ['た', 'ち', 'つ', 'て', 'と', 'だ', 'ぢ', 'づ', 'で', 'ど'],
@@ -215,36 +216,19 @@ class GameController extends Controller
             'm' => ['ま', 'み', 'む', 'め', 'も'],
             'y' => ['や', 'よ', 'ゆ'],
             'r' => ['ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん'],
-            default => ['あ', 'い', 'う', 'え', 'お'],
-        };
+        ];
 
-        $franchises = GameFranchise::select(['id', 'key', 'name', 'description']);
-        foreach ($like as $word) {
-            $franchises->orWhere('phonetic', 'like', $word . '%');
+        $franchisesByPrefix = [];
+        foreach ($prefixes as $prefix => $words) {
+            $model = GameFranchise::select(['id', 'key', 'name', 'description']);
+            foreach ($words as $word) {
+                $model->orWhere('phonetic', 'like', $word . '%');
+            }
+    
+            $franchisesByPrefix[$prefix] = $model->orderBy('phonetic')->get();
         }
 
-        $franchises = $franchises->orderBy('phonetic');
-
-        // フランチャイズに紐づくタイトル数を取得
-        $franchises = $franchises->get();
-
-        // $franchises->each(function ($franchise) {
-        //     $titleNum = 0;
-        //     foreach ($franchise->series as $series) {
-        //         if (empty($titleIds)) {
-        //             $titleNum += $series->titles->count();
-        //         } else {
-        //             $titleNum += $series->titles->whereIn('id', $titleIds)->count();
-        //         }
-        //     }
-        //     if (empty($titleIds)) {
-        //         $titleNum += $franchise->titles->count();
-        //     } else {
-        //         $titleNum += $franchise->titles->whereIn('id', $titleIds)->count();
-        //     }
-        // });
-
-        return $this->tree(view('game.franchises', compact('franchises')));
+        return $this->tree(view('game.franchises', compact('prefixes', 'franchisesByPrefix')));
     }
 
     /**

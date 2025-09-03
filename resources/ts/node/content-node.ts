@@ -2,6 +2,7 @@ import { MainNodeBase } from "./main-node-base";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { Tree } from "../common/tree";
+import { TreeOwnNodeType } from "../common/type";
 
 export class ContentNode extends MainNodeBase
 {
@@ -11,7 +12,7 @@ export class ContentNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 

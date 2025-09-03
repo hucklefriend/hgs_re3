@@ -4,92 +4,47 @@
 @section('tree-header-title', 'Franchises')
 
 @section('tree-nodes')
-    <section class="node accordion-tree-node" id="a-tree" data-accordion-group="acc1">
-        <header class="node header-node" id="a-header-node">
-            <div class="node-head invisible">
-                <button class="accordion-expand-button header-node-text" type="button" aria-expanded="false" aria-controls="acc1-a" id="acc-btn-a">あ</button>
-                <span class="node-pt">●</span>
-            </div>
-        </header>
-        <div class="behind-node-container">
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>アカイイト</span>
-            </div>
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>identity V</span>
-            </div>
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>OUTLAST</span>
-            </div>
-        </div>
-        <div class="accordion-tree-node-container tree-container closed" id="acc1-a">
-            <div class="accordion-node-content">
+    @foreach ($prefixes as $prefix => $words)
+        @php $franchises = $franchisesByPrefix[$prefix] ?? []; @endphp
+        <section class="node accordion-tree-node" id="{{ $prefix }}-tree" data-accordion-group="acc1" data-accordion-type="auto-close">
+            <header class="node header-node" id="{{ $prefix }}-header-node">
+                <div class="node-head invisible">
+                    <button class="accordion-expand-button header-node-text" type="button" aria-expanded="false" aria-controls="acc1-a" id="acc-btn-a">{{ $words[0] }}</button>
+                    <span class="node-pt">●</span>
+                </div>
+            </header>
+            <div class="behind-node-container">
                 @foreach ($franchises as $franchise)
-                <section class="node link-node" id="search-node">
-                    <div class="node-head invisible">
-                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a>
-                        <span class="node-pt main-node-pt">●</span>
+                    @if ($loop->iteration > 3)
+                        @break
+                    @endif
+                    <div class="behind-node behind-link-node invisible">
+                        <span class="node-pt">●</span><span>{{ $franchise->name }}</span>
                     </div>
-                    <div class="behind-node-container"></div>
-                    <div class="terminal-node-container">
-                        {!! $franchise->description !!}
-                    </div>
-                    <canvas class="node-canvas"></canvas>
-                </section>
                 @endforeach
             </div>
-        </div>
-        <canvas class="node-canvas"></canvas>
-        <div class="connection-line"></div>
-    </section>
+            <div class="accordion-tree-node-container tree-container closed" id="acc1-a">
+                <div class="accordion-node-content">
+                    @foreach ($franchises as $franchise)
+                    <section class="node link-node" id="search-node">
+                        <div class="node-head invisible">
+                            <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a>
+                            <span class="node-pt main-node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container"></div>
+                        <div class="terminal-node-container">
+                            {!! $franchise->description !!}
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                    @endforeach
+                </div>
+            </div>
+            <canvas class="node-canvas"></canvas>
+            <div class="connection-line"></div>
+        </section>
+    @endforeach
 
-    <section class="node accordion-tree-node" id="ka-tree" data-accordion-group="acc1">
-        <header class="node header-node" id="ka-header-node">
-            <div class="node-head invisible">
-                <button class="accordion-expand-button header-node-text" type="button" aria-expanded="false" aria-controls="acc1-ka" id="acc-btn-ka">か</button>
-                <span class="node-pt">●</span>
-            </div>
-        </header>
-        <div class="behind-node-container">
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>アカイイト</span>
-            </div>
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>identity V</span>
-            </div>
-            <div class="behind-node behind-link-node invisible">
-                <span class="node-pt">●</span><span>OUTLAST</span>
-            </div>
-        </div>
-        <div class="accordion-tree-node-container tree-container closed" id="acc1-ka">
-            <div class="accordion-node-content">
-                @foreach ($franchises as $franchise)
-                <section class="node link-node" id="search-node">
-                    <div class="node-head invisible">
-                        {{-- <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="network-link">{{ $franchise->name }}</a> --}}
-                        <a href="{{ route('Game.Franchises') }}" class="network-link">{{ $franchise->name }}</a>
-                        <span class="node-pt main-node-pt">●</span>
-                    </div>
-                    <div class="behind-node-container"></div>
-                    <div class="terminal-node-container">
-                        {!! $franchise->description !!}
-                    </div>
-                    <canvas class="node-canvas"></canvas>
-                </section>
-                @endforeach
-            </div>
-        </div>
-        <canvas class="node-canvas"></canvas>
-        <div class="connection-line"></div>
-    </section>
-
-    
-    <section class="node content-node" id="privacy-policy-node">
-        <div class="node-head invisible">
-            <a href="{{ route('PrivacyPolicy') }}" class="content-link" id="privacy-policy-a">Privacy Policy</a>
-        </div>
-        <canvas class="node-canvas"></canvas>
-    </section>
 
     @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
         <div class="admin-edit">

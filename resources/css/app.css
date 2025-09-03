@@ -447,7 +447,7 @@ canvas.node-canvas {
     top: 0;
     left: 0;
     width: 200px;
-    height: calc(100% + 350px);
+    height: 400px;
     z-index: -100;
     pointer-events: none;
     contain: layout style paint;

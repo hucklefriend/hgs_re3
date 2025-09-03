@@ -76,6 +76,11 @@ export abstract class MainNodeBase extends NodeBase
         return this._parentNode;
     }
 
+    public get parentTree(): Tree
+    {
+        return this._parentTree;
+    }
+
     public get appearStatus(): AppearStatus
     {
         return this._appearStatus;
