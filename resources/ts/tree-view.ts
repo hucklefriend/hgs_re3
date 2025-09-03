@@ -226,8 +226,6 @@ export class TreeView
         this._tree.disappear();
 
         this._appearAnimationFunc = this.disappearAnimation;
-
-        console.log(this._disappearRouteNodes.length);
     }
 
     private disappearAnimation(): void

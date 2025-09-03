@@ -8,7 +8,6 @@ import { AppearStatus } from "../enum/appear-status";
 import { AccordionNodeGroup } from "../node/accordion-node-group";
 import { AccordionNode } from "../node/accordion-node";
 import { AccordionTreeNode } from "../node/accordion-tree-node";
-import { MainNodeBase } from "../node/main-node-base";
 import { TreeOwnNodeType, DisappearRouteNodeType } from "./type";
 
 export class Tree
@@ -97,7 +96,7 @@ export class Tree
     /**
      * ノードの読み込み
      */
-    public loadNodes(nodeElements: NodeListOf<Element>, parentNode: MainNodeBase | null): void
+    public loadNodes(nodeElements: NodeListOf<Element>, parentNode: TreeOwnNodeType | null): void
     {
         this._lastNode = null;
         this._nodeCount = 0;
@@ -234,12 +233,18 @@ export class Tree
         this._subTreeNodes.forEach(subTreeNode => subTreeNode.resize());
         Object.values(this._accordionGroups).forEach(accordionGroup => accordionGroup.resize());
 
+        this.resizeConnectionLine();
+    }
+
+    public resizeConnectionLine(): void
+    {
         if (this._connectionLine && this._lastNode && !this._connectionLine.isDisappeared()) {
             const headerPosition = this._headerNode.getConnectionPoint();
             this._connectionLine.setPosition(headerPosition.x, headerPosition.y);
             this._connectionLine.changeHeight(this._lastNode.getNodeElement().offsetTop - headerPosition.y + 2);
         }
     }
+
 
     public update(): void
     {
@@ -258,6 +263,7 @@ export class Tree
 
     public appear(isHeaderAppear: boolean = true): void
     {
+        console.log('appear');
         if (isHeaderAppear) {
             this._headerNode.appear();
         }
@@ -314,8 +320,21 @@ export class Tree
 
         Object.values(this._accordionGroups).forEach(accordionGroup => accordionGroup.appear(conLineHeight, this._headerNode.getConnectionPoint().y));
 
-        if (this.connectionLine.isAppeared()) {
+        if (this._connectionLine.isAppeared()) {
+            this.appearAnimationFunc = this.appearAnimation2;
+        }
+    }
+
+    public appearAnimation2(): void
+    {
+        if (this._lastNode === null) {
+            this._appearStatus = AppearStatus.APPEARED;
             this.appearAnimationFunc = null;
+            console.log('appearAnimation2-1');
+        } else if (this._lastNode.appearStatus === AppearStatus.APPEARED) {
+            this._appearStatus = AppearStatus.APPEARED;
+            this.appearAnimationFunc = null;
+            console.log('appearAnimation2-2');
         }
     }
 
@@ -374,5 +393,10 @@ export class Tree
     public isDisappeared(): boolean
     {
         return this._appearStatus === AppearStatus.DISAPPEARED;
+    }
+
+    public isAppeared(): boolean
+    {
+        return this._appearStatus === AppearStatus.APPEARED;
     }
 }
