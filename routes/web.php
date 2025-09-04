@@ -311,8 +311,8 @@ Route::group(['prefix' => 'game'], function () {
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetail'])->name('Game.FranchiseDetail');
     // フランチャイズ
     Route::get('/franchises/{prefix?}', [$class, 'franchises'])->name('Game.Franchises');
-    // タイトル詳細ネットワーク
-    Route::get('/title/{titleKey}', [$class, 'titleDetailNetwork'])->name('Game.TitleDetailNetwork');
+    // タイトル詳細
+    Route::get('/title/{titleKey}', [$class, 'titleDetail'])->name('Game.TitleDetail');
 
     // メーカー詳細ネットワーク
     Route::get('/maker/{makerKey}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');

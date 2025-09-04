@@ -1,10 +1,73 @@
 @extends('layout')
 
 @section('title', $title->name . ' | ホラーゲームネットワーク')
-
+@section('tree-header-title', $title->name)
 @section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
 
-@section('content')
+@section('tree-header-content')
+    @include('common.head1', ['model' => $title])
+@endsection
+
+
+@section('tree-nodes')
+<section class="node link-node" id="biohazard-link-node">
+    <div class="node-head invisible">
+        <a href="#" class="network-link">AAA</a>
+        <span class="node-pt main-node-pt">●</span>
+    </div>
+    <div class="behind-node-container">
+    </div>
+    <canvas class="node-canvas"></canvas>
+</section>
+
+@if ($title->packageGroups()->exists() || $title->packages()->exists())
+    <section class="node sub-tree-node" id="title-lineup-tree-node">
+        <header class="node header-node" id="title-lineup-header-node">
+            <div class="node-head invisible">
+                <h2 class="header-node-text active">パッケージラインナップ</h2>
+                <span class="node-pt">●</span>
+            </div>
+        </header>
+        <div class="sub-tree-node-container tree-container">
+            @if ($title->packageGroups()->exists())
+                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
+                    <section class="node sub-tree-node" id="ああ-tree-node">
+                        <header class="node header-node" id="biohazard-series-header-node">
+                            <div class="node-head invisible">
+                                <h2 class="header-node-text active">{{ $pkgGroup->name }}</h2>
+                                <span class="node-pt">●</span>
+                            </div>
+                        </header>
+                        <div class="sub-tree-node-container tree-container">
+                            @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
+                                @include('common.package', ['pkg' => $pkg])
+                            @endforeach
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                        <div class="connection-line" id="biohazard-series-connection-line"></div>
+                    </section>
+                @endforeach
+            @else
+                @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
+                <section class="node link-node" id="biohazard-link-node">
+                    <div class="node-head invisible">
+                        <a href="#" class="network-link">{{ $pkg->node_name }}</a>
+                        <span class="node-pt main-node-pt">●</span>
+                    </div>
+                    <div class="behind-node-container">
+                    </div>
+                    <canvas class="node-canvas"></canvas>
+                </section>
+                @endforeach
+            @endif
+        </div>
+        <canvas class="node-canvas"></canvas>
+        <div class="connection-line"></div>
+    </section>
+
+@endif
+
+{{-- 
     @include('common.head1', ['model' => $title])
 
     @if (!empty($title->issue))
@@ -22,97 +85,6 @@
         </div>
     </section>
     @endif
-
-
-    {{--
-    <section>
-    <div class="node">
-        <h2 class="head2">レビュー総評</h2>
-    </div>
-    <div class="title-review">
-        <div class="text-node review-score">
-            <div class="review-score-fear">
-                <span>怖さ</span>
-                <span>★★★★☆</span>
-            </div>
-            <div class="review-score-other">
-                <div>
-                    <span>グラフィック</span>
-                    <span>★★★★☆</span>
-                </div>
-                <div>
-                    <span>サウンド</span>
-                    <span>★★★★☆</span>
-                </div>
-                <div>
-                    <span>ストーリー</span>
-                    <span>★★★★☆</span>
-                </div>
-                <div>
-                    <span>ゲーム性</span>
-                    <span>★★★★☆</span>
-                </div>
-            </div>
-        </div>
-        <div class="text-node">
-            <h3>AIによる要約</h3>
-            このゲームはとても怖いです。グラフィックもサウンドも素晴らしいです。ストーリーも面白いです。ゲーム性も高いです。
-        </div>
-    </div>
-    </section>
-
-    <section>
-        <div class="node">
-            <h2 class="head2">タグ</h2>
-        </div>
-
-        <div class="node-map">
-            <div>
-                <div class="link-node">
-                    <a href="#test">アドベンチャー</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">和風</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-    <div class="node">
-        <h2 class="head2">ユーザーコンテンツ</h2>
-    </div>
-        <div class="node-map">
-            <div>
-                <div class="link-node">
-                    <a href="#test">レビュー</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">二次創作</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">攻略</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">日記</a>
-                </div>
-            </div>
-            <div>
-                <div class="link-node">
-                    <a href="#test">辞書</a>
-                </div>
-            </div>
-        </div>
-    </section>
---}}
 
     @if ($title->packageGroups()->exists() || $title->packages()->exists())
         <section>
@@ -243,4 +215,6 @@
             <a href="{{ route('Admin.Game.Title.Detail', $title) }}">管理</a>
         </div>
     @endif
+
+    --}}
 @endsection
