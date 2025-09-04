@@ -259,14 +259,14 @@ class GameController extends Controller
     }
 
     /**
-     * タイトルの詳細ネットワーク
+     * タイトルの詳細
      *
      * @param Request $request
      * @param string $titleKey
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function titleDetailNetwork(Request $request, string $titleKey): JsonResponse|Application|Factory|View
+    public function titleDetail(Request $request, string $titleKey): JsonResponse|Application|Factory|View
     {
         $title = GameTitle::findByKey($titleKey);
 
@@ -280,7 +280,7 @@ class GameController extends Controller
 
         $ratingCheck = $title->rating != Rating::None;
 
-        return $this->document(view('game.title_detail_network', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
+        return $this->tree(view('game.title_detail', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
     }
 
     /**

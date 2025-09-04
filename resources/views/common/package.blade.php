@@ -1,3 +1,63 @@
+<section class="node terminal-node" id="biohazard-link-node">
+    <div class="node-head invisible">
+        <span class="terminal-title">
+            @empty($pkg->node_name)
+                {{ $pkg->platform->acronym }}
+            @else
+                {{ $pkg->platform->acronym }}&nbsp;{!! $pkg->node_name !!}
+            @endif
+        </span>
+        <span class="node-pt main-node-pt">●</span>
+    </div>
+    <div class="terminal-node-container">
+        <div class="pkg-img">
+            @if ($pkg->imgShop)
+                @if ($pkg->imgShop->ogp !== null)
+                    <div>
+                        <a href="{{ $pkg->imgShop->url }}">
+                            <img src="{{ $pkg->imgShop->ogp->image }}" style="max-width: 100%;height: auto;">
+                        </a>
+                    </div>
+
+                    <div class="shop-title">
+                        <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->shop()->name() }}</a>
+                    </div>
+                @else
+                    <div>
+                        {!! $pkg->imgShop->img_tag !!}
+                    </div>
+
+                    <div class="shop-title">
+                        画像提供元 <a href="{{ $pkg->imgShop->url }}" class="external-link" target="_blank" rel="sponsored"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
+                    </div>
+                @endif
+            @else
+                <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
+            @endif
+
+            <div style="margin-top: 10px;">
+                {{ $pkg->release_at }}
+            </div>
+    
+            @if ($pkg->shops->count() > 0)
+                <div class="shop-link">
+                    @foreach($pkg->shops as $shop)
+                        <div>
+                            <a href="{{ $shop->url }}" class="external-link" target="_blank" rel="sponsored">
+                                <i class="bi bi-shop"></i><span class="shop-name">{{ $shop->shop()?->name() ?? '--' }}</span>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+    <div class="behind-node-container">
+    </div>
+    <canvas class="node-canvas"></canvas>
+</section>
+
+{{--
 <div class="product-info">
     <div class="text-node fade @if($pkg->rating === \App\Enums\Rating::R18A) text-node-a @endif @if($pkg->rating == \App\Enums\Rating::R18Z) text-node-z @endif ">
         <p class="platform-name">
@@ -51,3 +111,4 @@
         @endif
     </div>
 </div>
+--}}

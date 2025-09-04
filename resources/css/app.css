@@ -237,6 +237,10 @@ header.main-header-node {
             position: relative;
             padding-left: 30px;
             font-size: 13px;
+        }
+
+        .accordion-node-container
+        {
             transition: all 0.3s ease;
             opacity: 0.5;
 
@@ -393,6 +397,20 @@ button.accordion-expand-button {
             color: var(--node-pt-light) !important;
             text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
         }
+    }
+}
+
+.terminal-title {
+    color: white !important;
+}
+
+.external-link {
+    color: gray;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: white;
     }
 }
 
