@@ -1,11 +1,14 @@
 <section class="node terminal-node" id="biohazard-link-node">
     <div class="node-head invisible">
         <span class="terminal-title">
+            {{ $pkg->platform->acronym }}
+            &nbsp;<img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
             @empty($pkg->node_name)
-                {{ $pkg->platform->acronym }}
             @else
-                {{ $pkg->platform->acronym }}&nbsp;{!! $pkg->node_name !!}
+                &nbsp;{!! $pkg->node_name !!}
             @endif
+            &nbsp;{{ $pkg->release_at }}
+
         </span>
         <span class="node-pt main-node-pt">●</span>
     </div>
@@ -15,7 +18,7 @@
                 @if ($pkg->imgShop->ogp !== null)
                     <div>
                         <a href="{{ $pkg->imgShop->url }}">
-                            <img src="{{ $pkg->imgShop->ogp->image }}" style="max-width: 100%;height: auto;">
+                            <img src="{{ $pkg->imgShop->ogp->image }}" class="pkg-img">
                         </a>
                     </div>
 
@@ -28,23 +31,21 @@
                     </div>
 
                     <div class="shop-title">
-                        画像提供元 <a href="{{ $pkg->imgShop->url }}" class="external-link" target="_blank" rel="sponsored"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
+                        画像提供元 <a href="{{ $pkg->imgShop->url }}" target="_blank" rel="sponsored"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
                     </div>
                 @endif
             @else
-                <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
+                
             @endif
 
-            <div style="margin-top: 10px;">
-                {{ $pkg->release_at }}
-            </div>
     
             @if ($pkg->shops->count() > 0)
                 <div class="shop-link">
                     @foreach($pkg->shops as $shop)
                         <div>
-                            <a href="{{ $shop->url }}" class="external-link" target="_blank" rel="sponsored">
-                                <i class="bi bi-shop"></i><span class="shop-name">{{ $shop->shop()?->name() ?? '--' }}</span>
+                            <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
+                                <i class="bi bi-shop"></i>
+                                <span class="shop-name">{{ $shop->shop()?->name() ?? '--' }}</span>
                             </a>
                         </div>
                     @endforeach

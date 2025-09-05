@@ -4,6 +4,7 @@ import { Tree } from "../common/tree";
 import { FreePoint } from "../common/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
+import { TreeOwnNodeType } from "../common/type";
 
 export class SubTreeNode extends MainNodeBase
 {
@@ -13,7 +14,7 @@ export class SubTreeNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 

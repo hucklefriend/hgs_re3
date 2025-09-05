@@ -279,8 +279,9 @@ class GameController extends Controller
         }
 
         $ratingCheck = $title->rating != Rating::None;
+        $franchise = $title->getFranchise();
 
-        return $this->tree(view('game.title_detail', compact('title', 'packages', 'makers', 'ratingCheck')), $ratingCheck);
+        return $this->tree(view('game.title_detail', compact('title', 'packages', 'makers', 'ratingCheck', 'franchise')), $ratingCheck);
     }
 
     /**
