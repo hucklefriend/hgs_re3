@@ -3,6 +3,7 @@ import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { NodePoint } from "./parts/node-point";
 import { Tree } from "../common/tree";
+import { TreeOwnNodeType } from "../common/type";
 
 export class TerminalNode extends MainNodeBase
 {
@@ -13,7 +14,7 @@ export class TerminalNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 
@@ -22,59 +23,11 @@ export class TerminalNode extends MainNodeBase
         
         // デバッグ用：ターミナルノードコンテナが存在するか確認
         const terminalContainer = nodeElement.querySelector('.terminal-node-container');
-        if (terminalContainer) {
-            console.log('TerminalNode: terminal-node-container found');
-            // 追加のイベントリスナーを設定
-            terminalContainer.addEventListener('mouseenter', () => {
-                console.log('TerminalNode: mouseenter event fired');
-                this.terminalNodeHover();
-            });
-            terminalContainer.addEventListener('mouseleave', () => {
-                console.log('TerminalNode: mouseleave event fired');
-                this.terminalNodeUnhover();
-            });
-        } else {
-            console.log('TerminalNode: terminal-node-container not found');
-        }
     }
 
     public get title(): string
     {
         return this._title.innerHTML;
-    }
-
-    /**
-     * ホバー開始時のグラデーションα値を更新
-     */
-    private updateGradientEndAlphaOnHover(): void
-    {
-        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        if (this._gradientEndAlpha >= 1.0) {
-            this._gradientEndAlpha = 1.0;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
-
-    /**
-     * ホバー終了時のグラデーションα値を更新
-     */
-    private updateGradientEndAlphaOnUnhover(): void
-    {
-        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        if (this._gradientEndAlpha <= 0.3) {
-            this._gradientEndAlpha = 0.3;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
-
-    /**
-     * アニメーションの更新処理
-     */
-    public update(): void
-    {
-        super.update();
     }
 
     protected isHover(): boolean
@@ -83,35 +36,11 @@ export class TerminalNode extends MainNodeBase
     }
 
     /**
-     * ホバー時の処理
+     * アニメーションの更新処理
      */
-    protected hover(): void
+    public update(): void
     {
-        this._title.classList.add('hover');
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
-        super.terminalNodeHover();
-    }
-
-    /**
-     * ホバー解除時の処理
-     */
-    protected unhover(): void
-    {
-        this._title.classList.remove('hover');
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
-        super.terminalNodeUnhover();
-    }
-
-    protected terminalNodeHover(): void
-    {
-        this.hover();
-    }
-    
-    protected terminalNodeUnhover(): void
-    {
-        this.unhover();
+        super.update();
     }
     
     /**
@@ -134,5 +63,14 @@ export class TerminalNode extends MainNodeBase
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2
         };
+    }
+
+    public appearAnimation(): void
+    {
+        super.appearAnimation();
+
+        if (this._curveAppearProgress === 1) {
+            this._gradientEndAlpha = 1;
+        }
     }
 }
