@@ -89,4 +89,11 @@ export class HeaderNode extends NodeBase
     {
         this._title.innerHTML = title;
     }
+
+    public set content(content: string)
+    {
+        if (this._content) {
+            this._content.innerHTML = content;
+        }
+    }
 } 

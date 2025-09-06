@@ -34,7 +34,10 @@
                         <h1 class="header-node-text header-fade-mask">@yield('tree-header-title')</h1>
                         <span class="node-pt main-node-pt">●</span>
                     </div>
-                    @yield('tree-header-content')
+                    
+                    <div class="header-node-content header-fade-mask" id="tree-header-content">
+                        @yield('tree-header-content')
+                    </div>
                 </header>
                 <div class="node-container">
                     @yield('tree-nodes')

@@ -8,6 +8,7 @@ import { SubTreeNode } from "./node/sub-tree-node";
 import { AppearStatus } from "./enum/appear-status";
 import { AccordionTreeNode } from "./node/accordion-tree-node";
 import { TreeOwnNodeType, DisappearRouteNodeType } from "./common/type";
+import { NextTreeCache } from "./common/next-tree-cache";
 
 export class TreeView
 {
@@ -29,13 +30,7 @@ export class TreeView
     public isForceResize: boolean;
 
     private _isChanging: boolean;
-    private _nextTreeCache: {
-        title: string;
-        treeHeaderTitle: string;
-        treeNodes: string;
-        popup: string;
-        ratingCheck: boolean;
-    } | null;
+    private _nextTreeCache: NextTreeCache | null;
 
     /**
      * コンストラクタ
@@ -276,6 +271,7 @@ export class TreeView
             this.disposeNodes();
 
             this._tree.headerNode.title = this._nextTreeCache.treeHeaderTitle;
+            this._tree.headerNode.content = this._nextTreeCache.treeHeaderContent;
             this._treeNodes.innerHTML = this._nextTreeCache.treeNodes;
 
             this.loadNodes();
@@ -300,7 +296,7 @@ export class TreeView
         return this._freePt;
     }
 
-    public set nextTreeCache(cache: { title: string; treeHeaderTitle: string; treeNodes: string; popup: string; ratingCheck: boolean; })
+    public set nextTreeCache(cache: NextTreeCache)
     {
         this._nextTreeCache = cache;
     }

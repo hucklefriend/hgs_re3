@@ -64,12 +64,13 @@ abstract class Controller
         if (self::isAjax()) {
             $rendered = $view->renderSections();
             return response()->json([
-                'title'           => $rendered['title'],
-                'treeHeaderTitle' => $rendered['tree-header-title'],
-                'treeNodes'       => $rendered['tree-nodes'],
-                'popup'           => $rendered['popup'] ?? '',
-                'ratingCheck'     => $ratingCheck,
-                'components'      => $components,
+                'title'             => $rendered['title'],
+                'treeHeaderTitle'   => $rendered['tree-header-title'],
+                'treeHeaderContent' => $rendered['tree-header-content'] ?? '',
+                'treeNodes'         => $rendered['tree-nodes'],
+                'popup'             => $rendered['popup'] ?? '',
+                'ratingCheck'       => $ratingCheck,
+                'components'        => $components,
             ]);
         }
 
