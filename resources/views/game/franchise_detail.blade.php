@@ -5,9 +5,7 @@
 
 
 @section('tree-header-content')
-    <div class="header-node-content header-fade-mask">
-        {!! nl2br($franchise->description) !!}
-    </div>
+    {!! nl2br($franchise->description) !!}
 @endsection
 
 @section('tree-nodes')

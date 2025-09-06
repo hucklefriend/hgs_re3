@@ -71,6 +71,17 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     @enderror
+
+
+                    @if (app()->environment('local'))
+                        <div class="alert alert-info alert-dismissible fade show mt-4">
+                            <strong>Debug Info:</strong>
+                            <br>
+                            <strong>Encrypted Password:</strong> {{ \Illuminate\Support\Facades\Hash::make('huckle') }}
+
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -136,7 +136,6 @@ export class HorrorGameNetwork
     public draw(): void
     {
         this.treeView.draw();
-        //this.contentNodeView.draw();
     }
 
     /**
@@ -153,8 +152,6 @@ export class HorrorGameNetwork
         } else if (previousState) {
             // content-nodeで行った場合の処理
             if (previousState.type === 'content-node') {
-                console.log('content-nodeからの戻り:', previousState);
-                
                 // anchorIdから要素を取得してクリックイベントを発火
                 if (previousState.anchorId) {
                     const node = this.treeView.getContentNodeByAnchorId(previousState.anchorId);
@@ -166,13 +163,10 @@ export class HorrorGameNetwork
             
             // content-node-closeで行った場合の処理
             if (previousState.type === 'content-node-close') {
-                console.log('content-node-closeからの戻り:', previousState);
                 // 必要に応じて追加の処理をここに記述
             }
 
             if (previousState.type === 'link-node') {
-                console.log('link-nodeからの戻り:', previousState);
-                
                 this.treeView.moveTree(previousState.url, null, true);
             }
         }
