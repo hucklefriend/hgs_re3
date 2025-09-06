@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <th>key</th>
-                    <td><a href="{{ route('Game.TitleDetailNetwork', ['titleKey' => $model->key]) }}">{{ $model->key }}</a></td>
+                    <td><a href="{{ route('Game.TitleDetail', ['titleKey' => $model->key]) }}">{{ $model->key }}</a></td>
                 </tr>
                 <tr>
                     <th>よみがな</th>

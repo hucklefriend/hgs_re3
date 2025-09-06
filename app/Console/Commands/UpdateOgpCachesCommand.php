@@ -26,10 +26,12 @@ class UpdateOgpCachesCommand extends Command
      */
     public function handle()
     {
-        $ogps = OgpCache::orderBy('updated_at', 'desc')->take(10)->get();
+        $ogps = OgpCache::orderBy('updated_at', 'asc')->take(10)->get();
 
         foreach ($ogps as $ogp) {
             $ogp->fetch()->saveOrDelete();
+
+            sleep(1);
         }
     }
 }

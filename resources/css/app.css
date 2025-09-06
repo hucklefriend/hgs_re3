@@ -72,8 +72,10 @@ img.default-img {
     width: 20px;
 }
 
-img.pkg-img {
+img.pkg-img, img.ogp-img {
     max-width: 100%;
+    width: auto;
+    height: auto;
 }
 
 

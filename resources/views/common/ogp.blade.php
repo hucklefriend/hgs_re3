@@ -2,7 +2,7 @@
     <div class="ogp-info">
         <div style="display:flex;justify-content: center;align-items: center;">
             <a href="{{ $model->ogp->url }}" target="_blank" class="external-link">
-                <img src="{{ $model->ogp->image }}" alt="{{ $model->name }}">
+                <img src="{{ $model->ogp->image }}" width="{{ $model->ogp->image_width }}" height="{{ $model->ogp->image_height }}" alt="{{ $model->name }}" class="ogp-img">
             </a>
         </div>
 

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class OgpCache extends \Eloquent
 {
-    protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'type'];
+    protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'image_width', 'image_height', 'type'];
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
@@ -33,12 +33,14 @@ class OgpCache extends \Eloquent
     public function fetch(): self
     {
         $ogpData = array_merge([
-            'base_url'    => null,
-            'title'       => null,
-            'description' => null,
-            'url'         => null,
-            'image'       => null,
-            'type'        => null,
+            'base_url'     => null,
+            'title'        => null,
+            'description'  => null,
+            'url'          => null,
+            'image'        => null,
+            'image_width'  => null,
+            'image_height' => null,
+            'type'         => null,
         ], self::getOGPInfo($this->base_url));
 
         $this->fill($ogpData);
@@ -90,7 +92,7 @@ class OgpCache extends \Eloquent
         // ブラウザのUser-Agentを設定
         $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
             . 'AppleWebKit/537.36 (KHTML, like Gecko) '
-            . 'Chrome/85.0.4183.83 Safari/537.36';
+            . 'Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0';
 
         // Fetch the HTML content
         // 日本からのアクセスとしてリクエストを送信する
@@ -178,6 +180,23 @@ class OgpCache extends \Eloquent
         // imageがhttp(s)で始まっていない場合は、絶対URLに変換
         if (isset($ogpData['image']) && !preg_match('/^https?:\/\//', $ogpData['image'])) {
             $ogpData['image'] = $ogpData['url'] . $ogpData['image'];
+        }
+
+        if (isset($ogpData['image'])) {
+            // 60秒のタイムアウトを設定して画像サイズを取得
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 60
+                ]
+            ]);
+            $imageSize = @getimagesize($ogpData['image'], $context);
+            if ($imageSize !== false) {
+                $ogpData['image_width'] = $imageSize[0];
+                $ogpData['image_height'] = $imageSize[1];
+            } else {
+                // 画像サイズが取れないならimageもnullにする
+                $ogpData['image'] = null;
+            }
         }
 
         // Restore error handling

@@ -18,7 +18,7 @@
                 @if ($pkg->imgShop->ogp !== null)
                     <div>
                         <a href="{{ $pkg->imgShop->url }}">
-                            <img src="{{ $pkg->imgShop->ogp->image }}" class="pkg-img">
+                            <img src="{{ $pkg->imgShop->ogp->image }}" width="{{ $pkg->imgShop->ogp->image_width }}" height="{{ $pkg->imgShop->ogp->image_height }}" class="pkg-img">
                         </a>
                     </div>
 
