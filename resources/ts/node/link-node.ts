@@ -6,6 +6,7 @@ import { TreeView } from "../tree-view";
 import { FreePoint } from "../common/free-point";
 import { Util } from "../common/util";
 import { Tree } from "../common/tree";
+import { TreeOwnNodeType } from "../common/type";
 
 export class LinkNode extends MainNodeBase
 {
@@ -16,7 +17,7 @@ export class LinkNode extends MainNodeBase
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: MainNodeBase | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
     {
         super(nodeElement, parentNode, parentTree);
 
@@ -196,7 +197,6 @@ export class LinkNode extends MainNodeBase
         const connectionPoint = this.getConnectionPoint();
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
-        const treeView = hgn.treeView as TreeView as TreeView;
         const freePt = hgn.treeView.freePt as FreePoint;
 
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);

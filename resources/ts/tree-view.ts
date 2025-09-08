@@ -4,7 +4,7 @@ import { MainNodeBase } from "./node/main-node-base";
 import { Util } from "./common/util";
 import { Tree } from "./common/tree";
 import { FreePoint } from "./common/free-point";
-import { SubTreeNode } from "./node/sub-tree-node";
+import { ChildTreeNode } from "./node/child-tree-node";
 import { AppearStatus } from "./enum/appear-status";
 import { AccordionTreeNode } from "./node/accordion-tree-node";
 import { TreeOwnNodeType, DisappearRouteNodeType } from "./common/type";
@@ -333,7 +333,7 @@ export class TreeView
     public disappear2(): void
     {
         const node = this._disappearRouteNodes.shift();
-        if (node instanceof SubTreeNode || node instanceof AccordionTreeNode) {
+        if (node instanceof ChildTreeNode || node instanceof AccordionTreeNode) {
             node.disappear2();
         } else if (node instanceof TreeView) {
             this._tree.disappearConnectionLine(true);

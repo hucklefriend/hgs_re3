@@ -243,7 +243,7 @@ header.main-header-node {
     }
 }
 
-.node-container, .sub-tree-node-container, .accordion-tree-node-container {
+.node-container, .child-tree-node-container, .accordion-tree-node-container {
     display: inline-flex;
     flex-direction: column;
     gap: 20px;
@@ -434,7 +434,7 @@ a.network-link, .header-node-text {
     }
 }
 
-.sub-tree-node {
+.child-tree-node {
     transition: opacity 0.3s ease;
 }
 

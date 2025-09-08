@@ -9,23 +9,23 @@
 @endsection
 
 @section('tree-nodes')
-    <section class="node sub-tree-node" id="title-lineup-tree-node">
+    <section class="node child-tree-node" id="title-lineup-tree-node">
         <header class="node header-node" id="title-lineup-header-node">
             <div class="node-head invisible">
                 <h2 class="header-node-text active">タイトルラインナップ</h2>
                 <span class="node-pt">●</span>
             </div>
         </header>
-        <div class="sub-tree-node-container tree-container">
+        <div class="child-tree-node-container tree-container">
             @foreach ($franchise->series as $series)
-                <section class="node sub-tree-node" id="{{ $series->key }}-tree-node">
+                <section class="node child-tree-node" id="{{ $series->key }}-tree-node">
                     <header class="node header-node" id="biohazard-series-header-node">
                         <div class="node-head invisible">
                             <h2 class="header-node-text active">{{ $series->name }}シリーズ</h2>
                             <span class="node-pt">●</span>
                         </div>
                     </header>
-                    <div class="sub-tree-node-container tree-container">
+                    <div class="child-tree-node-container tree-container">
                         @foreach ($series->titles as $title)
                         <section class="node link-node" id="biohazard-link-node">
                             <div class="node-head invisible">
@@ -67,23 +67,23 @@
 
     @if ($franchise->mediaMixGroups->isNotEmpty())
 
-    <section class="node sub-tree-node" id="media-mix-tree-node">
+    <section class="node child-tree-node" id="media-mix-tree-node">
         <header class="node header-node" id="media-mix-header-node">
             <div class="node-head invisible">
                 <h2 class="header-node-text active">メディアミックス</h2>
                 <span class="node-pt">●</span>
             </div>
         </header>
-        <div class="sub-tree-node-container tree-container">
+        <div class="child-tree-node-container tree-container">
         @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
-        <section class="node sub-tree-node" id="media-mix-tree-node">
+        <section class="node child-tree-node" id="media-mix-tree-node">
             <header class="node header-node" id="media-mix-header-node">
                 <div class="node-head invisible">
                     <h2 class="header-node-text active">{{ $mediaMixGroup->name }}</h2>
                     <span class="node-pt">●</span>
                 </div>
             </header>
-            <div class="sub-tree-node-container tree-container">
+            <div class="child-tree-node-container tree-container">
                     @if ($franchise->mediaMixGroups->isNotEmpty())
                         @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
                         <section class="node link-node" id="biohazard-link-node">

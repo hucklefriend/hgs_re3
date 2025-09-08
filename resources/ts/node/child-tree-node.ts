@@ -6,7 +6,7 @@ import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
 import { TreeOwnNodeType } from "../common/type";
 
-export class SubTreeNode extends MainNodeBase
+export class ChildTreeNode extends MainNodeBase
 {
     private _tree: Tree;
 
@@ -24,7 +24,7 @@ export class SubTreeNode extends MainNodeBase
             nodeElement.querySelector(':scope > .connection-line') as HTMLDivElement
         );
 
-        this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .sub-tree-node-container > section.node'), this);
+        this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .child-tree-node-container > section.node'), this);
     }
 
     public get tree(): Tree | null
@@ -262,5 +262,13 @@ export class SubTreeNode extends MainNodeBase
     public getAbsoluteConnectionPoint(): {x: number, y: number}
     {
         return this._tree.headerNode.getAbsoluteConnectionPoint();
+    }
+
+    public hoverByChildTree(): void
+    {
+    }
+
+    public unhoverByChildTree(): void
+    {
     }
 }

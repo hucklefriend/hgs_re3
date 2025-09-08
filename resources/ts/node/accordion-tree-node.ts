@@ -7,7 +7,6 @@ import { FreePoint } from "../common/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
 import { AccordionNode } from "./accordion-node";
-import { SubTreeNode } from "./sub-tree-node";
 import { AccordionNodeGroup } from "./accordion-node-group";
 import { TreeOwnNodeType } from "../common/type";
 

@@ -4,14 +4,14 @@
 @section('tree-header-title', 'Horror Game Network')
 
 @section('tree-nodes')
-    <section class="node sub-tree-node" id="horror-games-tree-node">
+    <section class="node child-tree-node" id="horror-games-tree-node">
         <header class="node header-node" id="horror-games-header-node">
             <div class="node-head invisible">
                 <h2 class="header-node-text active">Horror Games</h2>
                 <span class="node-pt">●</span>
             </div>
         </header>
-        <div class="sub-tree-node-container tree-container">
+        <div class="child-tree-node-container tree-container">
             <section class="node link-node" id="search-link-node">
                 <div class="node-head invisible">
                     <a href="#" class="network-link">Search</a>
