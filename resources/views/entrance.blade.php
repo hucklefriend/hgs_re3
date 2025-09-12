@@ -1,96 +1,50 @@
 @extends('layout')
 
 @section('title', 'Entrance | ホラーゲームネットワーク')
-@section('tree-header-title', 'Horror Game Network')
+@section('current-node-title', 'Horror Game Network')
 
-@section('tree-nodes')
-    <section class="node child-tree-node" id="horror-games-tree-node">
-        <header class="node header-node" id="horror-games-header-node">
-            <div class="node-head invisible">
-                <h2 class="header-node-text active">Horror Games</h2>
-                <span class="node-pt">●</span>
-            </div>
-        </header>
-        <div class="child-tree-node-container tree-container">
+@section('nodes')
+
+    <section class="node tree-node" id="horror-games-tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">Horror Games</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
             <section class="node link-node" id="search-link-node">
-                <div class="node-head invisible">
-                    <a href="#" class="network-link">Search</a>
+                <div class="node-head">
+                    <a href="#" class="node-head-text">Search</a>
                     <span class="node-pt main-node-pt">●</span>
-                </div>
-                <div class="behind-node-container">
                 </div>
                 <canvas class="node-canvas"></canvas>
             </section>
 
             <section class="node link-node" id="franchises-link-node">
-                <div class="node-head invisible">
-                    <a href="{{ route('Game.Franchises') }}" class="network-link">Franchises</a>
-                    <span class="node-pt main-node-pt">●</span>
+                <div class="node-head">
+                    <a href="{{ route('Game.Franchises') }}" class="node-head-text">Franchises</a>
+                    <span class="node-pt">●</span>
                 </div>
                 <div class="behind-node-container">
-                    <div class="behind-node behind-link-node invisible">
+                    <div class="behind-node behind-link-node">
                         <span class="node-pt">●</span><span>アカイイト</span>
                     </div>
-                    <div class="behind-node behind-link-node invisible">
+                    <div class="behind-node behind-link-node">
                         <span class="node-pt">●</span><span>アオイシロ</span>
                     </div>
-                    <div class="behind-node behind-link-node invisible">
+                    <div class="behind-node behind-link-node">
                         <span class="node-pt">●</span><span>バイオハザード</span>
-                    </div>
-                </div>
-                <canvas class="node-canvas">
-                </canvas>
-            </section>
-            <section class="node link-node" id="makers-link-node">
-                <div class="node-head invisible">
-                    <a href="{{ route('Entrance') }}" class="network-link">Makers</a>
-                    <span class="node-pt main-node-pt">●</span>
-                </div>
-                <div class="behind-node-container">
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>コナミ</span>
-                    </div>
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>カプコン</span>
-                    </div>
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>エニックス</span>
-                    </div>
-                </div>
-                <canvas class="node-canvas">
-                </canvas>
-            </section>
-            <section class="node link-node" id="platforms-link-node">
-                <div class="node-head invisible">
-                    <a href="#" class="network-link">Platforms</a>
-                    <span class="node-pt main-node-pt">●</span>
-                </div>
-                <div class="behind-node-container">
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>PC</span>
-                    </div>
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>PS5</span>
-                    </div>
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>Xbox Series X</span>
-                    </div>
-                    <div class="behind-node behind-link-node invisible">
-                        <span class="node-pt">●</span><span>Nintendo Switch</span>
                     </div>
                 </div>
                 <canvas class="node-canvas"></canvas>
             </section>
         </div>
         <canvas class="node-canvas"></canvas>
-        <div class="connection-line"></div>
     </section>
 
-
     <section class="node link-node" id="information-node">
-        <div class="node-head invisible">
-            <a href="#" class="network-link">Informations</a>
-            <span class="node-pt main-node-pt">●</span>
+        <div class="node-head">
+            <a href="#" class="node-head-text">Informations</a>
+            <span class="node-pt">●</span>
         </div>
         <div class="behind-node-container">
             <div class="behind-node behind-link-node invisible">
@@ -105,15 +59,17 @@
         </div>
         <canvas class="node-canvas"></canvas>
     </section>
-    <section class="node content-node" id="about-node">
-        <div class="node-head invisible">
-            <a href="{{ route('About') }}" class="content-link" id="about-a">About</a>
+    <section class="node link-node" id="about-node">
+        <div class="node-head">
+            <a href="{{ route('About') }}" class="node-head-text" id="about-a">About</a>
+            <span class="node-pt">●</span>
         </div>
         <canvas class="node-canvas"></canvas>
     </section>
-    <section class="node content-node" id="privacy-policy-node">
-        <div class="node-head invisible">
-            <a href="{{ route('PrivacyPolicy') }}" class="content-link" id="privacy-policy-a">Privacy Policy</a>
+    <section class="node link-node" id="privacy-policy-node">
+        <div class="node-head">
+            <a href="{{ route('PrivacyPolicy') }}" class="node-head-text" id="privacy-policy-a">Privacy Policy</a>
+            <span class="node-pt">●</span>
         </div>
         <canvas class="node-canvas"></canvas>
     </section>

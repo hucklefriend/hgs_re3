@@ -1,18 +1,21 @@
+import { LinkNode } from "./link-node";
+import { NodeHead } from "./parts/node-head";
+import { NodeHeadType, NodeContentType } from "../common/type";
+import { NodeContent } from "./parts/node-content";
+import { AppearStatus } from "../enum/appear-status";
+
 export abstract class NodeBase
 {
     private _id: string;
+
     protected _nodeElement: HTMLElement;
-    protected _isDraw: boolean;
+    protected _nodeHead: NodeHeadType;
+    protected _nodeContents: { [key: string]: NodeContentType };
+    protected _appearStatus: AppearStatus;
+    protected _appearAnimationFunc: (() => void) | null;
+    protected _treeContentElement: HTMLElement | null;
     
-    /**
-     * コンストラクタ
-     */
-    public constructor(nodeElement: HTMLElement)
-    {
-        this._id = nodeElement.id;
-        this._nodeElement = nodeElement;
-        this._isDraw = false;
-    }
+    protected _isDraw: boolean;
 
     /**
      * ノードのIDを取得する
@@ -22,17 +25,95 @@ export abstract class NodeBase
         return this._id;
     }
 
-    public get element(): HTMLElement
+    /**
+     * ノードのHTML要素を取得する
+     */
+    public get nodeElement(): HTMLElement
     {
         return this._nodeElement;
     }
 
     /**
-     * ノードの要素を取得する
+     * ノードのヘッダを取得する
      */
-    public getNodeElement(): HTMLElement
+    public get nodeHead(): NodeHeadType
     {
-        return this._nodeElement;
+        return this._nodeHead;
+    }
+
+    /**
+     * ノードの出現状態を取得する
+     */
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
+    }
+    
+    /**
+     * コンストラクタ
+     */
+    public constructor(nodeElement: HTMLElement)
+    {
+        this._id = nodeElement.id;
+
+        this._nodeElement = nodeElement;
+        this._treeContentElement = null;
+
+        this._nodeHead = this.loadHead();
+        this._nodeContents = this.loadContents();
+
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this._appearAnimationFunc = null;
+        this._isDraw = false;
+    }
+
+    /**
+     * ノードのヘッダを読み込む
+     * 
+     * @returns 
+     */
+    private loadHead(): NodeHeadType
+    {
+        return new NodeHead(this._nodeElement.querySelector(':scope > .node-head') as HTMLElement);
+    }
+
+    /**
+     * ノードのコンテンツを読み込む
+     * 
+     * @returns 
+     */
+    private loadContents(): { [key: string]: NodeContentType }
+    {
+        const nodeContents: { [key: string]: NodeContentType } = {};
+        const contentElements = this._nodeElement.querySelectorAll(':scope > .node-content');
+        contentElements.forEach(contentElement => {
+            if (contentElement.classList.contains('tree')) {
+                // 循環参照を起こしてしまうので、ここではTreeコンテンツはHTMLのみ保持する
+                // ツリーは1つしか持たない、2つ目以降は無視する
+                if (this._treeContentElement === null) {
+                    this._treeContentElement = contentElement as HTMLElement;
+                }
+            } else {
+                nodeContents[contentElement.id] = new NodeContent(contentElement as HTMLElement);
+            }
+        });
+        return nodeContents;
+    }
+
+    public dispose(): void
+    {
+        
+    }
+
+    /**
+     * ノードのコンテンツをIDから取得する
+     * 
+     * @param id コンテンツのID
+     * @returns コンテンツ
+     */
+    public getContentById(id: string): NodeContentType | undefined
+    {
+        return this._nodeContents[id];
     }
 
     /**
@@ -44,17 +125,11 @@ export abstract class NodeBase
     }
 
     /**
-     * 開始処理
-     */
-    public start(): void
-    {
-    }
-
-    /**
      * リサイズ処理
      */
     public resize(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.resize());
     }
 
     /**
@@ -62,6 +137,7 @@ export abstract class NodeBase
      */
     public update(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.update(this._nodeHead.getConnectionPoint()));
     }
 
     /**
@@ -69,13 +145,17 @@ export abstract class NodeBase
      */
     public appear(): void
     {
+        this._nodeHead.appear();
+        Object.values(this._nodeContents).forEach(content => content?.appear(this._nodeHead.getConnectionPoint()));
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappear(selectedLinkNode: LinkNode | null = null): void
     {
+        this._nodeHead.disappear();
+        Object.values(this._nodeContents).forEach(content => content?.disappear(this._nodeHead.getConnectionPoint()));
     }
 
     /**
@@ -83,15 +163,6 @@ export abstract class NodeBase
      */
     public draw(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.draw());
     }
-
-    /**
-     * 接続点を取得する
-     */
-    protected abstract getConnectionPoint(): {x: number, y: number};
-
-    /**
-     * HTML上の絶対座標で接続点を取得する
-     */
-    protected abstract getAbsoluteConnectionPoint(): {x: number, y: number};
 } 

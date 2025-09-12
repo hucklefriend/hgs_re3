@@ -1,6 +1,6 @@
 import { AccordionNode } from "./accordion-node";
 import { AccordionTreeNode } from "./accordion-tree-node";
-import { Tree } from "../common/tree";
+import { Tree } from "./parts/node-content-tree";
 
 export class AccordionNodeGroup
 {

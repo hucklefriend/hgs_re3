@@ -1,8 +1,8 @@
-import { MainNodeBase } from "./main-node-base";
+import { MainNodeBase } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { NodePoint } from "./parts/node-point";
-import { Tree } from "../common/tree";
+import { Tree } from "./parts/node-content-tree";
 import { TreeOwnNodeType } from "../common/type";
 
 export class TerminalNode extends MainNodeBase

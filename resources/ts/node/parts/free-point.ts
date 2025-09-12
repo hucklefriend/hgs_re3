@@ -1,24 +1,24 @@
-import { AppearStatus } from "../enum/appear-status";
-import { MainNodeBase } from "../node/main-node-base";
-import { Util } from "./util";
+import { Util } from "../../common/util";
+import { DisappearRouteNodeType } from "../../common/type";
 
 export class FreePoint
 {
+    private static _instance: FreePoint | null = null;
+    
     private _element: HTMLDivElement;
     public pos: {x: number, y: number};
-    private routeNodes: MainNodeBase[];
+    private routeNodes: DisappearRouteNodeType[];
 
     private _animationFunc: (() => void) | null;
     private _animationGoalPos: {x: number, y: number};    
     private _animationStartTime: number;
 
     /**
-     * コンストラクタ
-     * @param element 接続線の要素
+     * プライベートコンストラクタ（シングルトンパターン）
      */
-    public constructor(element: HTMLDivElement)
+    private constructor()
     {
-        this._element = element;
+        this._element = document.querySelector('div#free-pt') as HTMLDivElement;
         this.pos = {x: 0, y: 0};
         this.routeNodes = [];
         this._animationGoalPos = {x: 0, y: 0};
@@ -26,7 +26,19 @@ export class FreePoint
         this._animationStartTime = 0;
     }
 
-    public addRouteNode(node: MainNodeBase): void
+    /**
+     * シングルトンインスタンスを取得
+     * @returns FreePointのインスタンス
+     */
+    public static getInstance(): FreePoint
+    {
+        if (FreePoint._instance === null) {
+            FreePoint._instance = new FreePoint();
+        }
+        return FreePoint._instance;
+    }
+
+    public addRouteNode(node: DisappearRouteNodeType): void
     {
         this.routeNodes.push(node);
     }
@@ -75,10 +87,11 @@ export class FreePoint
         this._element.classList.remove('visible');
     }
 
-    public update(): void
+    public static update(): void
     {
-        if (this._animationFunc !== null) {
-            this._animationFunc();
+        const freePoint = FreePoint.getInstance();
+        if (freePoint._animationFunc !== null) {
+            freePoint._animationFunc();
         }
     }
 

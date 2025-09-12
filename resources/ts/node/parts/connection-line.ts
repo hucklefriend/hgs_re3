@@ -1,5 +1,4 @@
-import { AppearStatus } from "../enum/appear-status";
-import { Tree } from "./tree";
+import { AppearStatus } from "../../enum/appear-status";
 
 export class ConnectionLine
 {
@@ -10,22 +9,25 @@ export class ConnectionLine
     private _appearAnimationFunc: (() => void) | null;
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
-    private _parentTree: Tree;
+
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
+    }
 
     /**
      * コンストラクタ
      * @param element 接続線の要素
      */
-    public constructor(element: HTMLDivElement, parentTree: Tree)
+    public constructor(element: HTMLDivElement)
     {
         this._element = element;
         this._height = 0;
         this._animationHeight = 0;
         this._animationStartTime = 0;
         this._appearAnimationFunc = null;
-        this._appearStatus = AppearStatus.NONE;
+        this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
-        this._parentTree = parentTree;
     }
 
     public setPosition(x: number, y: number): void
@@ -132,45 +134,16 @@ export class ConnectionLine
         this._element.style.height = `${this._animationHeight}px`;
     }
 
-    /**
-     * 出現しきったかどうかを取得する
-     * @returns 出現しきったかどうか
-     */
-    public isAppeared(): boolean
-    {
-        return this._appearStatus === AppearStatus.APPEARED;
-    }
-
-    /**
-     * 出現中かどうかを取得する
-     * @returns 出現中かどうか
-     */
-    public isAppearing(): boolean
-    {
-        return this._appearStatus === AppearStatus.APPEARING;
-    }
-
-    /**
-     * 消滅中かどうかを取得する
-     * @returns 消滾中かどうか
-     */
-    public isDisappearing(): boolean
-    {
-        return this._appearStatus === AppearStatus.DISAPPEARING;
-    }
-
-    /**
-     * 消滅しきったかどうかを取得する
-     * @returns 消滅しきったかどうか
-     */
-    public isDisappeared(): boolean
-    {
-        return this._appearStatus === AppearStatus.DISAPPEARED;
-    }
-
     public changeHeight(height: number): void
     {
         this._height = height;
         this._element.style.height = `${this._height}px`;
+    }
+
+    public static createElement(): HTMLDivElement
+    {
+        const element = document.createElement('div');
+        element.classList.add('connection-line');
+        return element;
     }
 } 

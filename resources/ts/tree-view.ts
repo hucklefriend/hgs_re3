@@ -1,14 +1,14 @@
 import { LinkNode } from "./node/link-node";
 import { ContentNode } from "./node/content-node";
-import { MainNodeBase } from "./node/main-node-base";
 import { Util } from "./common/util";
-import { Tree } from "./common/tree";
-import { FreePoint } from "./common/free-point";
+import { Tree } from "./node/parts/node-content-tree";
+import { FreePoint } from "./node/parts/free-point";
 import { ChildTreeNode } from "./node/child-tree-node";
 import { AppearStatus } from "./enum/appear-status";
 import { AccordionTreeNode } from "./node/accordion-tree-node";
 import { TreeOwnNodeType, DisappearRouteNodeType } from "./common/type";
-import { NextTreeCache } from "./common/next-tree-cache";
+import { NextTreeCache } from "./node/parts/next-node-cache";
+import { ChildTreeLinkNode } from "./node/child-tree-link-node";
 
 export class TreeView
 {
@@ -189,7 +189,7 @@ export class TreeView
     /**
      * 消滅アニメーション開始
      */
-    public disappear(selectedLinkNode: LinkNode | null): void
+    public disappear(selectedLinkNode: LinkNode | ChildTreeLinkNode | null): void
     {
         if (selectedLinkNode) {
             let node = selectedLinkNode.parentNode;
@@ -301,7 +301,7 @@ export class TreeView
         this._nextTreeCache = cache;
     }
 
-    public moveTree(url: string, linkNode: LinkNode | null, isFromPopState: boolean): void
+    public moveTree(url: string, linkNode: LinkNode | ChildTreeLinkNode | null, isFromPopState: boolean): void
     {
         this.disappear(linkNode);
 

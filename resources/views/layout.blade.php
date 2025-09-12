@@ -27,41 +27,28 @@
 </head>
 <body>
     <main>
-        <div class="tree-view">
-            <div id="tree-nodes">
-                <header class="node header-node main-header-node">
-                    <div class="node-head">
-                        <h1 class="header-node-text header-fade-mask">@yield('tree-header-title')</h1>
-                        <span class="node-pt main-node-pt">●</span>
-                    </div>
-                    
-                    <div class="header-node-content header-fade-mask" id="tree-header-content">
-                        @yield('tree-header-content')
-                    </div>
-                </header>
-                <div class="node-container">
-                    @yield('tree-nodes')
-                </div>
+        <section class="node" id="current-node">
+            <div class="node-head">
+                <h1 class="node-head-text head-fade-mask">@yield('current-node-title')</h1>
+                <span class="node-pt current-node-pt">●</span>
             </div>
-            <div id="main-line" class="connection-line"></div>
+            
+            <div class="node-content head-fade-mask" id="current-node-content">
+                @hasSection('current-node-content')
+                    @yield('current-node-content')
+                @endif
+            </div>
+
+            <div class="node-content tree" id="current-tree-nodes">
+                @yield('nodes')
+            </div>
+            
             <div id="free-pt">●</div>
-        </div>
-        <div id="content-node-view">
-            <div id="content-node-view-header">
-                <div></div>
-                <header>
-                    <h1></h1>
-                    <span id="content-node-view-close">×</span>
-                </header>
-            </div>
-            <div id="content-node-view-content">
-            </div>
-            <footer>
-            </footer>
-        </div>
+        </section>
     </main>
 
-    <footer style="margin-top: 40px;height: 100px;">
+    <footer>
+        &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
     </footer>
 </body>
 </html>

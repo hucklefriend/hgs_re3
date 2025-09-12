@@ -3,7 +3,6 @@
 @section('title', $franchise->name . 'フランチャイズ | ホラーゲームネットワーク')
 @section('tree-header-title', $franchise->name . 'フランチャイズ')
 
-
 @section('tree-header-content')
     {!! nl2br($franchise->description) !!}
 @endsection
@@ -124,4 +123,39 @@
     @endforeach
     @endif
 
+    <section class="node child-tree-node" id="footer-tree-node">
+        <header class="node header-node" id="title-lineup-header-node">
+            <div class="node-head invisible">
+                <h2 class="header-node-text active">Quick Links</h2>
+                <span class="node-pt">●</span>
+            </div>
+        </header>
+        <div class="child-tree-node-container tree-container">
+            <section class="node child-tree-link-node" id="back-to-franchises-node">
+                <header class="node header-node" id="title-lineup-header-node">
+                    <div class="node-head invisible">
+                        <a href="{{ route('Game.Franchises') }}" class="network-link">Franchises</a>
+                        <span class="node-pt">●</span>
+                    </div>
+                </header>
+                <div class="behind-node-container">
+                </div>
+                <div class="child-tree-node-container tree-container">
+                    <section class="node link-node" id="back-to-entrance-node">
+                        <div class="node-head invisible">
+                            <a href="{{ route('Entrance') }}" class="network-link">Entrance</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                        <div class="behind-node-container">
+                        </div>
+                        <canvas class="node-canvas"></canvas>
+                    </section>
+                </div>
+                <canvas class="node-canvas"></canvas>
+                <div class="connection-line"></div>
+            </section>
+        </div>
+        <canvas class="node-canvas"></canvas>
+        <div class="connection-line"></div>
+    </section>
 @endsection

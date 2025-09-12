@@ -1,41 +1,56 @@
-import { MainNodeBase } from "./main-node-base";
+import { BasicNode } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
-import { Tree } from "../common/tree";
-import { FreePoint } from "../common/free-point";
+import { NodeContentTree } from "./parts/node-content-tree";
+import { FreePoint } from "./parts/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
-import { TreeOwnNodeType } from "../common/type";
+import { NodeType } from "../common/type";
+import { TreeNodeInterface } from "./interface/tree-node-interface";
 
-export class ChildTreeNode extends MainNodeBase
+export class ChildTreeNode extends BasicNode implements TreeNodeInterface
 {
-    private _tree: Tree;
+    private _nodeContentTree: NodeContentTree;
 
     /**
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeNodeInterface)
     {
-        super(nodeElement, parentNode, parentTree);
+        super(nodeElement, parentNode);
 
-        this._tree = new Tree(
-            this.id,
-            nodeElement.querySelector('.header-node') as HTMLElement,
-            nodeElement.querySelector(':scope > .connection-line') as HTMLDivElement
-        );
-
-        this._tree.loadNodes(nodeElement.querySelectorAll(':scope > .child-tree-node-container > section.node'), this);
+        this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
+        this._nodeContentTree.loadNodes(this);
     }
 
-    public get tree(): Tree | null
+    /**
+     * ノードコンテンツツリーを取得
+     */
+    public get nodeContentTree(): NodeContentTree
     {
-        return this._tree;
+        return this._nodeContentTree;
+    }
+
+    /**
+     * 出現したノード数を増加
+     */
+    public increaseAppearedNodeCount(): void
+    {
+        this._nodeContentTree.increaseAppearedNodeCount();
+    }
+
+    /**
+     * 消滅したノード数を増加
+     */
+    public increaseDisappearedNodeCount(): void
+    {
+        this._nodeContentTree.increaseDisappearedNodeCount();
     }
 
     /**
      * ホバー開始時のグラデーションα値を更新
      */
-    private updateGradientEndAlphaOnHover(): void
+    protected updateGradientEndAlphaOnHover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
         if (this._gradientEndAlpha >= 1.0) {
@@ -48,7 +63,7 @@ export class ChildTreeNode extends MainNodeBase
     /**
      * ホバー終了時のグラデーションα値を更新
      */
-    private updateGradientEndAlphaOnUnhover(): void
+    protected updateGradientEndAlphaOnUnhover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
         if (this._gradientEndAlpha <= 0.3) {
@@ -61,7 +76,7 @@ export class ChildTreeNode extends MainNodeBase
     public resize(): void
     {
         super.resize();
-        this._tree.resize();
+        this._nodeContentTree.resize();
     }
 
     /**
@@ -71,59 +86,37 @@ export class ChildTreeNode extends MainNodeBase
     {
         super.update();
 
-        this._tree.update();
+        this._nodeContentTree.update(this.nodeHead.getConnectionPoint());
     }
 
-    
-
-    protected isHover(): boolean
+    public appear(): void
     {
-        return this._appearStatus === AppearStatus.APPEARED;
-    }
-
-    /**
-     * ホバー時の処理
-     */
-    protected hover(): void
-    {
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
-        super.terminalNodeHover();
-    }
-
-    /**
-     * ホバー解除時の処理
-     */
-    protected unhover(): void
-    {
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
-        super.terminalNodeUnhover();
-    }
-
-    protected terminalNodeHover(): void
-    {
-        this.hover();
-    }
-    
-    protected terminalNodeUnhover(): void
-    {
-        this.unhover();
+        if (AppearStatus.isDisappeared(this._appearStatus)) {
+            super.appear();
+            this._appearAnimationFunc = this.appearAnimation;
+        }
     }
 
     public appearAnimation(): void
     {
         super.appearAnimation();
-
+        
         if (this._curveAppearProgress === 1) {
-            this._tree.appear();
+            this._nodeContentTree.appear(this.nodeHead.getConnectionPoint());
             this._gradientEndAlpha = 1;
-            //this._appearAnimationFunc = this.appearAnimation2;
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._appearAnimationFunc = this.appearAnimation2;
+        }
+    }
+
+    public appearAnimation2(): void
+    {
+        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
+            this._appearAnimationFunc = null;
         }
     }
 
     
-
     /**
      * サブノードの出現アニメーション
      */
@@ -241,34 +234,6 @@ export class ChildTreeNode extends MainNodeBase
     public draw(): void
     {
         super.draw();
-        this._tree.draw();
-    }
-    
-    /**
-     * 接続点を取得する
-     * @returns 接続点の座標
-     */
-    public getConnectionPoint(): {x: number, y: number}
-    {
-        let connectionPoint = this._tree.headerNode.getConnectionPoint();
-        //connectionPoint.x += this._tree.headerNode.element.offsetLeft;
-        return connectionPoint;
-    }
-
-    /**
-     * HTML上の絶対座標で接続点を取得する
-     * @returns 絶対座標の接続点
-     */
-    public getAbsoluteConnectionPoint(): {x: number, y: number}
-    {
-        return this._tree.headerNode.getAbsoluteConnectionPoint();
-    }
-
-    public hoverByChildTree(): void
-    {
-    }
-
-    public unhoverByChildTree(): void
-    {
+        this._nodeContentTree.draw();
     }
 }

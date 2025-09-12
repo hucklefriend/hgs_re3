@@ -1,6 +1,6 @@
-import { MainNodeBase } from "./main-node-base";
+import { MainNodeBase } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
-import { Tree } from "../common/tree";
+import { Tree } from "./parts/node-content-tree";
 import { TreeView } from "../tree-view";
 import { AccordionNodeGroup } from "./accordion-node-group";
 import { HeaderNode } from "./header-node";

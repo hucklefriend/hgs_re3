@@ -43,17 +43,26 @@ body {
     */
 }
 
-main {
+main, footer {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
     max-width: 767px;
+}
 
+main {
     position: relative;
 
-    .tree-view {
+    > #current-node {
         position: relative;
     }
+}
+
+footer {
+    text-align: center;
+    color: #283028;
+    margin: 50px 0;
+    font-size: 11px;
 }
 
 a {
@@ -115,54 +124,23 @@ div.connection-line {
     transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.2s ease;
 }
 
+.current-node-pt {
+    font-size: 13px !important;
+    width: 25px !important;
+    min-width: 25px !important;
+    color: var(--node-pt-light) !important;
+    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+}
+
+#current-node-content {
+    min-height: 100px;
+}
+
 .invisible {
     opacity: 0;
 }
 
-
-header.header-node {
-    margin-top: 0;
-    margin-bottom: 20px;
-
-    .node-head {
-        white-space: nowrap;
-        position: relative;
-        margin-bottom: 10px;
-
-        > h1 {
-            font-size: 1.2rem;
-            font-weight: normal;
-        }
-
-        > h2 {
-            font-size: 1.0rem;
-            font-weight: normal;
-        }
-
-        .node-pt {
-            text-shadow: 0 0 20px var(--node-pt-dark-shadow), 0 0 30px var(--node-pt-dark-shadow), 0 0 60px var(--node-pt-light-shadow);
-            color: var(--node-pt-dark);
-            width: 30px;
-            min-width: 30px;
-
-            &.fade-out {
-                opacity: 0;
-            }
-        }
-    }
-
-    .header-node-content {
-        margin-top: 20px;
-        margin-left: 30px;
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    }
-}
-
-.header-fade-mask {
+.head-fade-mask {
     mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -177,13 +155,13 @@ header.header-node {
 }
 
 /* 右側から透明になるアニメーション用のクラス */
-.header-fade-out-right {
+.head-fade-out {
     mask-position: 0% 0;
     -webkit-mask-position: 0% 0;
 
     animation: header-fadeout-mask 1s forwards;
 }
-.header-fade-in-left {
+.head-fade-in {
     mask-position: 200% 0;
     -webkit-mask-position: 200% 0;
 
@@ -230,38 +208,32 @@ header.main-header-node {
     contain: layout;
 
     > .node-head {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         flex-direction: row-reverse;
         justify-content: flex-end;
+        min-height: 40px;
 
         transition: all 0.3s ease-out;
+        margin-bottom: 20px;
     }
 
     > .node-content {
-        margin-left: 25px;
+        
     }
 }
 
-.node-container, .child-tree-node-container, .accordion-tree-node-container {
+.tree {
     display: inline-flex;
     flex-direction: column;
     gap: 20px;
 
-    > section.node, > .accordion-node-content > section.node {
+    > section.node {
         padding-left: 30px;
         margin-bottom: 40px;
 
         &:last-child {
             margin-bottom: 0;
-        }
-
-        .terminal-node-container, 
-        .accordion-node-container
-        {
-            position: relative;
-            padding-left: 30px;
-            font-size: 13px;
         }
 
         .accordion-node-container
@@ -409,7 +381,7 @@ a.network-link, .terminal-title, button.accordion-expand-button {
     transition: all 0.3s ease;
 }
 
-a.network-link, .header-node-text {
+.node-head-text {
     & + .node-pt {
         color: var(--node-pt-dark) !important;
     }
