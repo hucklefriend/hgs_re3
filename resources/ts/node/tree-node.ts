@@ -3,6 +3,7 @@ import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
 import { NodeType } from "../common/type";
 import { NodeContentTree } from "./parts/node-content-tree";
+import { TreeNodeInterface } from "./interface/tree-node-interface";
 
 
 export class TreeNode extends BasicNode
@@ -26,7 +27,7 @@ export class TreeNode extends BasicNode
     /**
      * コンストラクタ
      */
-    public constructor(nodeElement: HTMLElement, parentNode: NodeType)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeNodeInterface)
     {
         super(nodeElement, parentNode);
 
@@ -258,8 +259,7 @@ export class TreeNode extends BasicNode
         this._canvasCtx.lineWidth = 2;
         this._canvasCtx.lineCap = 'butt';
 
-        const connectionPoint = this.getConnectionPoint();
-
+        const connectionPoint = this._nodeHead.getConnectionPoint();
         if (this._curveAppearProgress > 0) {
             this.drawCurvedLine(
                 15,

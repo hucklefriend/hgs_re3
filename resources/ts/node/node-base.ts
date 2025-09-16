@@ -14,7 +14,7 @@ export abstract class NodeBase
     protected _appearStatus: AppearStatus;
     protected _appearAnimationFunc: (() => void) | null;
     protected _treeContentElement: HTMLElement | null;
-    
+    protected _behindContentElement: HTMLElement | null;
     protected _isDraw: boolean;
 
     /**
@@ -58,7 +58,7 @@ export abstract class NodeBase
 
         this._nodeElement = nodeElement;
         this._treeContentElement = null;
-
+        this._behindContentElement = null;
         this._nodeHead = this.loadHead();
         this._nodeContents = this.loadContents();
 
@@ -88,10 +88,16 @@ export abstract class NodeBase
         const contentElements = this._nodeElement.querySelectorAll(':scope > .node-content');
         contentElements.forEach(contentElement => {
             if (contentElement.classList.contains('tree')) {
-                // 循環参照を起こしてしまうので、ここではTreeコンテンツはHTMLのみ保持する
-                // ツリーは1つしか持たない、2つ目以降は無視する
+                // 循環参照を起こしてしまうので、TreeコンテンツはHTMLのみ保持する
+                // Treeは1つしか持たない、2つ目以降は無視する
                 if (this._treeContentElement === null) {
                     this._treeContentElement = contentElement as HTMLElement;
+                }
+            } else if (contentElement.classList.contains('behind')) {
+                // 循環参照を起こしてしまうので、BehindコンテンツはHTMLのみ保持する
+                // Behindも1つしか持たない、2つ目以降は無視する
+                if (this._behindContentElement === null) {
+                    this._behindContentElement = contentElement as HTMLElement;
                 }
             } else {
                 nodeContents[contentElement.id] = new NodeContent(contentElement as HTMLElement);
@@ -137,7 +143,7 @@ export abstract class NodeBase
      */
     public update(): void
     {
-        Object.values(this._nodeContents).forEach(content => content?.update(this._nodeHead.getConnectionPoint()));
+        Object.values(this._nodeContents).forEach(content => content?.update());
     }
 
     /**
@@ -146,7 +152,7 @@ export abstract class NodeBase
     public appear(): void
     {
         this._nodeHead.appear();
-        Object.values(this._nodeContents).forEach(content => content?.appear(this._nodeHead.getConnectionPoint()));
+        Object.values(this._nodeContents).forEach(content => content?.appear());
     }
 
     /**
@@ -155,7 +161,7 @@ export abstract class NodeBase
     public disappear(selectedLinkNode: LinkNode | null = null): void
     {
         this._nodeHead.disappear();
-        Object.values(this._nodeContents).forEach(content => content?.disappear(this._nodeHead.getConnectionPoint()));
+        Object.values(this._nodeContents).forEach(content => content?.disappear());
     }
 
     /**
@@ -163,6 +169,6 @@ export abstract class NodeBase
      */
     public draw(): void
     {
-        Object.values(this._nodeContents).forEach(content => content?.draw());
+        
     }
 } 

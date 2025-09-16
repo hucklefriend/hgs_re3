@@ -5,6 +5,7 @@ import { AppearStatus } from "../../enum/appear-status";
 import { DisappearRouteNodeType, NodeType } from "../../common/type";
 import { NodeContent } from "./node-content";
 import { ChildTreeNode } from "../child-tree-node";
+import { TreeNodeInterface } from "../interface/tree-node-interface";
 
 export class NodeContentTree extends NodeContent
 {
@@ -14,7 +15,7 @@ export class NodeContentTree extends NodeContent
 
     protected _appearStatus: AppearStatus;
     public disappearRouteNode: DisappearRouteNodeType | null;
-    public appearAnimationFunc: ((headerPosition: Point) => void) | null;
+    public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
     protected _appearedNodeCount: number;
 
@@ -60,12 +61,12 @@ export class NodeContentTree extends NodeContent
     /**
      * ノードの読み込み
      */
-    public loadNodes(parentNode: NodeType): void
+    public loadNodes(parentNode: TreeNodeInterface): void
     {
         this._nodeCount = 0;
         this._appearedNodeCount = 0;
         this.disappearRouteNode = null;
-        this._htmlElement.querySelectorAll(':scope > section.node').forEach(nodeElement => {
+        this._contentElement.querySelectorAll(':scope > section.node').forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
@@ -168,18 +169,19 @@ export class NodeContentTree extends NodeContent
     }
 
 
-    public update(headerPosition: Point): void
+    public update(): void
     {
         this._connectionLine.update();
         this._nodes.forEach(node => node.update());
 
         if (this.appearAnimationFunc !== null) {
-            this.appearAnimationFunc(headerPosition);
+            this.appearAnimationFunc();
         }
     }
 
-    public appear(headerPosition: Point): void
+    public appear(): void
     {
+        const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         this._connectionLine.setPosition(headerPosition.x - 1, headerPosition.y);
         const conLineHeight = this.lastNode.nodeElement.offsetTop - headerPosition.y + 2;
         this._connectionLine.changeHeight(conLineHeight);
@@ -192,8 +194,9 @@ export class NodeContentTree extends NodeContent
     /**
      * 出現アニメーション
      */
-    public appearAnimation(headerPosition: Point): void
+    public appearAnimation(): void
     {
+        const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         const conLineHeight = this._connectionLine.getAnimationHeight();
         
         this._nodes.forEach(node => {
@@ -208,7 +211,7 @@ export class NodeContentTree extends NodeContent
         }
     }
 
-    public appearAnimation2(headerPosition: Point): void
+    public appearAnimation2(): void
     {
         if (this.lastNode.appearStatus === AppearStatus.APPEARED) {
             this._appearStatus = AppearStatus.APPEARED;

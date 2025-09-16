@@ -258,97 +258,6 @@ header.main-header-node {
                 height: 0 !important;
             }
         }
-
-        .behind-node-container
-        {
-            position: relative;
-            padding-left: 40px;
-            height: 0px;
-            font-size: 13px;
-            z-index: -10;
-            pointer-events: none;
-
-            > .behind-node {
-                filter: blur(2px);
-                display: flex;
-                padding: 20px 0;
-                transition: all 0.3s ease;
-
-                > .node-pt {
-                    transition: all 0.3s ease;
-                }
-
-                &:nth-child(1) {
-                    color: rgb(100, 100, 100);
-
-                    > .node-pt {
-                        color: #003000;
-                    }
-                }
-
-                &:nth-child(2) {
-                    color: rgba(80, 80, 80, 0.6);
-
-                    > .node-pt {
-                        color: #002000;
-                    }
-                }
-
-                &:nth-child(3) {
-                    color: rgba(80, 80, 80, 0.4);
-
-                    > .node-pt {
-                        color: #001500;
-                    }
-                }
-
-                &:nth-child(4) {
-                    color: rgba(80, 80, 80, 0.3);
-
-                    > .node-pt {
-                        color: #001000;
-                    }
-                }
-            }
-
-            &.hover {
-                > .sub-node {
-                    filter: blur(1px);
-
-                    &:nth-child(1) {
-                        color: rgb(120, 120, 120);
-
-                        > .node-pt {
-                            color: #005000;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        color: rgba(100, 100, 100, 0.6);
-
-                        > .node-pt {
-                            color: #004000;
-                        }
-                    }
-
-                    &:nth-child(3) {
-                        color: rgba(100, 100, 100, 0.4);
-
-                        > .node-pt {
-                            color: #002500;
-                        }
-                    }
-
-                    &:nth-child(4) {
-                        color: rgba(100, 100, 100, 0.3);
-
-                        > .node-pt {
-                            color: #001500;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     > section.content-node {
@@ -356,6 +265,96 @@ header.main-header-node {
     }
 }
 
+.behind
+{
+    position: relative;
+    padding-left: 40px;
+    height: 0px;
+    font-size: 13px;
+    z-index: -10;
+    pointer-events: none;
+
+    > .behind-node {
+        filter: blur(2px);
+        display: flex;
+        padding: 20px 0;
+        transition: all 0.3s ease;
+
+        > .node-pt {
+            transition: all 0.3s ease;
+        }
+
+        &:nth-child(1) {
+            color: rgb(100, 100, 100);
+
+            > .node-pt {
+                color: #003000;
+            }
+        }
+
+        &:nth-child(2) {
+            color: rgba(80, 80, 80, 0.6);
+
+            > .node-pt {
+                color: #002000;
+            }
+        }
+
+        &:nth-child(3) {
+            color: rgba(80, 80, 80, 0.4);
+
+            > .node-pt {
+                color: #001500;
+            }
+        }
+
+        &:nth-child(4) {
+            color: rgba(80, 80, 80, 0.3);
+
+            > .node-pt {
+                color: #001000;
+            }
+        }
+    }
+
+    &.hover {
+        > .sub-node {
+            filter: blur(1px);
+
+            &:nth-child(1) {
+                color: rgb(120, 120, 120);
+
+                > .node-pt {
+                    color: #005000;
+                }
+            }
+
+            &:nth-child(2) {
+                color: rgba(100, 100, 100, 0.6);
+
+                > .node-pt {
+                    color: #004000;
+                }
+            }
+
+            &:nth-child(3) {
+                color: rgba(100, 100, 100, 0.4);
+
+                > .node-pt {
+                    color: #002500;
+                }
+            }
+
+            &:nth-child(4) {
+                color: rgba(100, 100, 100, 0.3);
+
+                > .node-pt {
+                    color: #001500;
+                }
+            }
+        }
+    }
+}
 
 
 button.accordion-expand-button {

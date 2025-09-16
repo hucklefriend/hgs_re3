@@ -1,8 +1,8 @@
 import { NodeBase } from "./node-base";
 import { AppearStatus } from "../enum/appear-status";
 import { Util } from "../common/util";
-import { NodeType } from "../common/type";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
+import { NodeContentBehind } from "./parts/node-content-behind";
 
 export class BasicNode extends NodeBase
 {
@@ -10,21 +10,13 @@ export class BasicNode extends NodeBase
 
     protected _canvas: HTMLCanvasElement;
     protected _canvasCtx: CanvasRenderingContext2D;
-    //protected _behindLinkNodes: BehindLinkNode[] = [];
-    //protected _behindNodeContainer: HTMLElement;
     protected _gradientEndAlpha: number;
     protected _animationStartTime: number;
-    // protected _behindGradientStartAlpha: number;
-    // protected _maxBehindEndOpacity: number;
-    // protected _minBehindEndOpacity: number;
     protected _curveAppearProgress: number;
-    //protected _behindCurveAppearProgress: number[];
     protected _updateGradientEndAlphaFunc: (() => void) | null;
-    //protected _isDrawBehind: boolean;
     protected _parentNode: TreeNodeInterface;
+    protected _nodeContentBehind: NodeContentBehind | null;
 
-
-    
 
     public get parentNode(): TreeNodeInterface
     {
@@ -41,25 +33,30 @@ export class BasicNode extends NodeBase
         this._parentNode = parentNode;
         this.isSelectedDisappear = false;
 
-        this._canvas = nodeElement.querySelector(':scope > .node-canvas') as HTMLCanvasElement;
+        this._canvas = this.createCanvas();
+        nodeElement.appendChild(this._canvas);
         this._canvasCtx = this._canvas.getContext('2d') as CanvasRenderingContext2D;
         this.setCanvasSize();
 
         this._gradientEndAlpha = 0;
         this._animationStartTime = 0;
-        // this._behindGradientStartAlpha = 0;
-        // this._maxBehindEndOpacity = 0.3;
-        // this._minBehindEndOpacity = 0.1;
         this._appearAnimationFunc = null;
-        //this._behindNodeContainer = nodeElement.querySelector('.node > .behind-node-container') as HTMLElement;
         this._curveAppearProgress = 0;
-        //this._behindCurveAppearProgress = [0, 0, 0, 0];
         this._updateGradientEndAlphaFunc = null;
-        //this._isDrawBehind = true;
 
-        // const behindLinkNodeElements = this._behindNodeContainer?.querySelectorAll('.node > .behind-node-container > .behind-link-node') || [];
-        // this._behindLinkNodes = Array.from(behindLinkNodeElements)
-        //     .map(node => new BehindLinkNode(node as HTMLElement));
+
+        this._nodeContentBehind = null;
+        if (this._behindContentElement) {
+            this._nodeContentBehind = new NodeContentBehind(this._behindContentElement as HTMLElement);
+            this._nodeContentBehind.loadNodes();
+        }
+    }
+
+    private createCanvas(): HTMLCanvasElement
+    {
+        const canvas = document.createElement('canvas');
+        canvas.classList.add('node-canvas');
+        return canvas;
     }
 
     /**
@@ -102,6 +99,8 @@ export class BasicNode extends NodeBase
     {
         super.update();
 
+        this._nodeContentBehind?.update();
+
         if (this._appearAnimationFunc) {
             this._appearAnimationFunc();
         }
@@ -134,9 +133,14 @@ export class BasicNode extends NodeBase
         if (this._curveAppearProgress >= 1) {
             this._curveAppearProgress = 1;
             this._gradientEndAlpha = 0.3;//this.isHover() ? 1 : 0.3;
-            this._appearAnimationFunc = this.appearSubNodesAnimation;
             this._nodeHead.appear();
-            this._animationStartTime = (window as any).hgn.timestamp;
+
+            if (this._nodeContentBehind) {
+                this._nodeContentBehind.appear();
+                this._appearAnimationFunc = this.appearBehindAnimation;
+            } else {
+                this._appearAnimationFunc = null;
+            }
 
             // if (this.getNodeElement().matches(':hover')) {
             //     this.hover();
@@ -146,57 +150,12 @@ export class BasicNode extends NodeBase
         this._isDraw = true;
     }
 
-    /**
-     * サブノードの出現アニメーション
-     */
-    protected appearSubNodesAnimation(): void
+    protected appearBehindAnimation(): void
     {
-        if (this.getAnimationProgress(200) >= 1) {
-            this._appearAnimationFunc = null;
-            this._parentNode.increaseAppearedNodeCount();
-        }
-
-        /*
-        const progress = this.getAnimationProgress(1000);
-        if (progress >= 1) {
-            this._behindCurveAppearProgress = [1, 1, 1, 1];
-            this._appearStatus = AppearStatus.APPEARED;
-
+        if (this._nodeContentBehind && AppearStatus.isAppeared(this._nodeContentBehind.appearStatus)) {
             this._appearAnimationFunc = null;
         }
 
-        this._behindCurveAppearProgress[0] = progress * 2;
-        if (this._behindCurveAppearProgress[0] > 1) {
-            this._behindCurveAppearProgress[0] = 1;
-
-            if (this._behindLinkNodes.length > 0) {
-                this._behindLinkNodes[0].element.classList.remove('invisible');
-            }
-        }
-        this._behindCurveAppearProgress[1] = progress * 1.5;
-        if (this._behindCurveAppearProgress[1] > 1) {
-            this._behindCurveAppearProgress[1] = 1;
-            if (this._behindLinkNodes.length > 1) {
-                this._behindLinkNodes[1].element.classList.remove('invisible');
-            }
-        }
-        this._behindCurveAppearProgress[2] = progress * 1.2;
-        if (this._behindCurveAppearProgress[2] > 1) {
-            this._behindCurveAppearProgress[2] = 1;
-            if (this._behindLinkNodes.length > 2) {
-                this._behindLinkNodes[2].element.classList.remove('invisible');
-            }
-        }
-
-        this._behindCurveAppearProgress[3] = progress;
-        if (this._behindCurveAppearProgress[3] >= 1) {
-            this._behindCurveAppearProgress[3] = 1;
-            if (this._behindLinkNodes.length > 3) {
-                this._behindLinkNodes[3].element.classList.remove('invisible');
-            }
-        }
-            */
-        
         this._isDraw = true;
     }
 
@@ -210,7 +169,7 @@ export class BasicNode extends NodeBase
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._updateGradientEndAlphaFunc = null;
 
-        //this.disappearBehind();
+        this._nodeContentBehind?.disappear();
 
         this._isDraw = true;
 
@@ -286,19 +245,7 @@ export class BasicNode extends NodeBase
             );
         }
 
-        // if (this._isDrawBehind && this._behindCurveAppearProgress[0] > 0) {
-        //     const canvasRect = this._canvas.getBoundingClientRect();
-        //     this._behindLinkNodes.forEach((behindLinkNode, index) => {
-        //         if (index >= 4) return; // 4回を超えたら処理をスキップ
-        //         this.drawChildCurvedLine(
-        //             connectionPoint.x,
-        //             connectionPoint.y,
-        //             behindLinkNode.getConnectionPoint().x - canvasRect.left,
-        //             behindLinkNode.getConnectionPoint().y - canvasRect.top,
-        //             index
-        //         );
-        //     });
-        // }
+        this._nodeContentBehind?.draw(this._canvas, this._canvasCtx, connectionPoint);
     
         this._isDraw = false;
     }
@@ -337,43 +284,6 @@ export class BasicNode extends NodeBase
         this._canvasCtx.quadraticCurveTo(controlX, controlY, endX, endY);
         this._canvasCtx.stroke();
     }
-
-    /**
-     * 子要素へのカーブ線を描画する
-     * @param startX 開始点のX座標
-     * @param startY 開始点のY座標
-     * @param endX 終了点のX座標
-     * @param endY 終了点のY座標
-     * @param loopCount ループ回数（0-3）
-     */
-    // private drawChildCurvedLine(startX: number, startY: number, endX: number, endY: number, loopCount: number): void
-    // {
-    //     // ループ回数に応じて透明度を調整（maxSubEndOpacityからminSubEndOpacityまで徐々に減少）
-    //     const opacity = this._maxBehindEndOpacity - (loopCount * 0.1);
-    //     let endOpacity = Math.max(this._minBehindEndOpacity, opacity - this._minBehindEndOpacity);
-
-    //     let currentEndX = endX;
-    //     let currentEndY = endY;
-
-    //     // 進行度に応じてグラデーションの終了点を調整
-    //     if (this._behindCurveAppearProgress[loopCount] < 1) {
-    //         currentEndX = startX + (endX - startX) * this._behindCurveAppearProgress[loopCount];
-    //         currentEndY = startY + (endY - startY) * this._behindCurveAppearProgress[loopCount];
-
-    //         endOpacity = endOpacity * this._behindCurveAppearProgress[loopCount];
-    //     }
-
-    //     const gradient = this._canvasCtx.createLinearGradient(startX, startY, currentEndX, currentEndY);
-    //     gradient.addColorStop(0, `rgba(100, 200, 100, ${endOpacity})`);   // 開始点の透明度
-    //     gradient.addColorStop(1, `rgba(20, 80, 20, ${endOpacity})`);   // 終了点の透明度
-
-    //     this._canvasCtx.beginPath();
-    //     this._canvasCtx.strokeStyle = gradient;
-    //     this._canvasCtx.lineWidth = 2;  // 開始点の太さ
-    //     this._canvasCtx.moveTo(startX, startY);
-    //     this._canvasCtx.quadraticCurveTo(startX + (endX - startX) * 0.1, endY, endX, endY);
-    //     this._canvasCtx.stroke();
-    // }
 
     /**
      * 二次ベジェ曲線上の座標を計算する
@@ -426,17 +336,23 @@ export class BasicNode extends NodeBase
         return Util.getAnimationProgress(this._animationStartTime, duration);
     }
 
-    // public invisibleBehind(): void
-    // {
-    //     this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.invisible());
-    //     this._isDrawBehind = false;
-    //     this._isDraw = true;
-    // }
+    
 
-    // public visibleBehind(): void
-    // {
-    //     this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.visible());
-    //     this._isDrawBehind = true;
-    //     this._isDraw = true;
-    // }
+    
+
+    public invisibleBehind(): void
+    {
+        if (this._nodeContentBehind) {
+            this._nodeContentBehind.invisible();
+            this._isDraw = true;
+        }
+    }
+
+    public visibleBehind(): void
+    {
+        if (this._nodeContentBehind) {
+            this._nodeContentBehind.visible();
+            this._isDraw = true;
+        }
+    }
 } 

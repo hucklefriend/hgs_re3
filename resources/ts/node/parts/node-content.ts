@@ -2,27 +2,27 @@ import { Point } from "../../common/point";
 
 export class NodeContent
 {
-    protected _htmlElement: HTMLElement;
+    protected _contentElement: HTMLElement;
 
     /**
      * コンストラクタ
      */
     public constructor(nodeElement: HTMLElement)
     {
-        this._htmlElement = nodeElement;
+        this._contentElement = nodeElement;
     }
 
 
-    public appear(headerPosition: Point): void
+    public appear(): void
     {
-        this._htmlElement.classList.remove('head-fade-out');
-        this._htmlElement.classList.add('head-fade-in');
+        this._contentElement.classList.remove('head-fade-out');
+        this._contentElement.classList.add('head-fade-in');
     }
 
-    public disappear(headerPosition: Point): void
+    public disappear(): void
     {
-        this._htmlElement.classList.remove('head-fade-in');
-        this._htmlElement.classList.add('head-fade-out');
+        this._contentElement.classList.remove('head-fade-in');
+        this._contentElement.classList.add('head-fade-out');
     }
 
     public resize(): void
@@ -30,12 +30,7 @@ export class NodeContent
         
     }
 
-    public update(headerPosition: Point): void
-    {
-        
-    }
-
-    public draw(): void
+    public update(): void
     {
         
     }

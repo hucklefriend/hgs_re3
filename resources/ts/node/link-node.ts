@@ -4,6 +4,7 @@ import { AppearStatus } from "../enum/appear-status";
 import { FreePoint } from "./parts/free-point";
 import { NodeType } from "../common/type";
 import { CurrentNode } from "./current-node";
+import { TreeNodeInterface } from "./interface/tree-node-interface";
 
 export class LinkNode extends BasicNode
 {
@@ -11,7 +12,7 @@ export class LinkNode extends BasicNode
      * コンストラクタ
      * @param nodeElement ノードの要素
      */
-    public constructor(nodeElement: HTMLElement, parentNode: NodeType)
+    public constructor(nodeElement: HTMLElement, parentNode: TreeNodeInterface)
     {
         super(nodeElement, parentNode);
     }
