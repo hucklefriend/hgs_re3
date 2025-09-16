@@ -2,12 +2,13 @@ import { HorrorGameNetwork } from "../horror-game-network";
 import { BasicNode } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
 import { FreePoint } from "./parts/free-point";
-import { NodeType } from "../common/type";
 import { CurrentNode } from "./current-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 
 export class LinkNode extends BasicNode
 {
+    private _anchor: HTMLAnchorElement;
+
     /**
      * コンストラクタ
      * @param nodeElement ノードの要素
@@ -15,6 +16,11 @@ export class LinkNode extends BasicNode
     public constructor(nodeElement: HTMLElement, parentNode: TreeNodeInterface)
     {
         super(nodeElement, parentNode);
+
+        this._anchor = this._nodeHead.titleElement as HTMLAnchorElement;
+        this._anchor.addEventListener('click', this.click.bind(this));
+        this._anchor.addEventListener('mouseenter', this.hover.bind(this));
+        this._anchor.addEventListener('mouseleave', this.unhover.bind(this));
     }
 
     /**
@@ -23,8 +29,6 @@ export class LinkNode extends BasicNode
     private updateGradientEndAlphaOnHover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        // this._maxBehindEndOpacity = this.getAnimationValue(0.3, 0.5, 200);
-        // this._minBehindEndOpacity = this.getAnimationValue(0.1, 0.2, 200);
         if (this._gradientEndAlpha >= 1.0) {
             this._gradientEndAlpha = 1.0;
             this._updateGradientEndAlphaFunc = null;
@@ -38,8 +42,6 @@ export class LinkNode extends BasicNode
     private updateGradientEndAlphaOnUnhover(): void
     {
         this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        // this._maxBehindEndOpacity = this.getAnimationValue(0.5, 0.3, 200);
-        // this._minBehindEndOpacity = this.getAnimationValue(0.2, 0.1, 200);
         if (this._gradientEndAlpha <= 0.3) {
             this._gradientEndAlpha = 0.3;
             this._updateGradientEndAlphaFunc = null;
@@ -61,41 +63,38 @@ export class LinkNode extends BasicNode
 
     protected isHover(): boolean
     {
-        return false;
-        //return this._appearStatus === AppearStatus.APPEARED && this._anchor.classList.contains('hover');
+        return this._appearStatus === AppearStatus.APPEARED && this._anchor.classList.contains('hover');
     }
 
     /**
      * ホバー時の処理
      */
-    protected hover(isCurveAnimation: boolean = true): void
+    protected hover(): void
     {
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
-        // this._anchor.classList.add('hover');
-        // this._behindNodeContainer.classList.add('hover');
-        if (isCurveAnimation) {
-            this._animationStartTime = (window as any).hgn.timestamp;
-            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
-        }
-        //super.terminalNodeHover();
+
+        this._anchor.classList.add('hover');
+        this._nodeContentBehind?.hover();;
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
     }
 
     /**
      * ホバー解除時の処理
      */
-    protected unhover(isCurveAnimation: boolean = true): void
+    protected unhover(): void
     {
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
-        // this._anchor.classList.remove('hover');
+        this._anchor.classList.remove('hover');
         // this._behindNodeContainer.classList.remove('hover');
-        if (isCurveAnimation) {
+
             this._animationStartTime = (window as any).hgn.timestamp;
             this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
-        }
+
         //super.terminalNodeUnhover();
     }
 
@@ -110,6 +109,8 @@ export class LinkNode extends BasicNode
         if (this._appearStatus !== AppearStatus.APPEARED) {
             return;
         }
+
+        alert('click');
 
         // const treeView = (window as any).hgn.treeView as TreeView;
         // treeView.moveTree(this._anchor.href, this, false);

@@ -7,6 +7,16 @@ export class NodeHead
     private _nodeElement: HTMLElement;
     private _titleElement: HTMLElement;
 
+    public get nodePoint(): NodePoint
+    {
+        return this._nodePoint;
+    }
+
+    public get titleElement(): HTMLElement
+    {
+        return this._titleElement;
+    }
+
     /**
      * コンストラクタ
      */
@@ -15,11 +25,6 @@ export class NodeHead
         this._nodeElement = nodeElement;
         this._nodePoint = new NodePoint(nodeElement.querySelector(':scope > .node-pt') as HTMLSpanElement);
         this._titleElement = this._nodeElement.querySelector(':scope > .node-head-text') as HTMLElement;
-    }
-
-    public get nodePoint(): NodePoint
-    {
-        return this._nodePoint;
     }
 
     /**

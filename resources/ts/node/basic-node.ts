@@ -141,6 +141,7 @@ export class BasicNode extends NodeBase
             } else {
                 this._appearAnimationFunc = null;
             }
+            this._appearStatus = AppearStatus.APPEARED;
 
             // if (this.getNodeElement().matches(':hover')) {
             //     this.hover();
@@ -154,6 +155,7 @@ export class BasicNode extends NodeBase
     {
         if (this._nodeContentBehind && AppearStatus.isAppeared(this._nodeContentBehind.appearStatus)) {
             this._appearAnimationFunc = null;
+            this._appearStatus = AppearStatus.APPEARED;
         }
 
         this._isDraw = true;
@@ -238,7 +240,7 @@ export class BasicNode extends NodeBase
 
         if (this._curveAppearProgress > 0) {
             this.drawCurvedLine(
-                this._parentNode.nodeHead.getNodePtWidth() / 2,
+                Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2),
                 0,
                 connectionPoint.x,
                 connectionPoint.y

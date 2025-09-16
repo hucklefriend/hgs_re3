@@ -84,6 +84,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             }
 
             super.update();
+            this._nodeContentTree.update();
             FreePoint.update();
         }
     }
@@ -103,7 +104,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public appear(): void
     {
         super.appear();
-        this._nodeContentTree.appear(this.nodeHead.getConnectionPoint());
+        this._nodeContentTree.appear();
 
         this._appearAnimationFunc = this.appearAnimation;
     }
@@ -113,8 +114,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     private appearAnimation(): void
     {
-        super.update();
-        this._nodeContentTree.update(this.nodeHead.getConnectionPoint());
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
         }

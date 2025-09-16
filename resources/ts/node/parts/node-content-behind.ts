@@ -61,7 +61,6 @@ export class NodeContentBehind extends NodeContent
         if (progress >= 1) {
             this._curveAppearProgress = [1, 1, 1, 1];
             this._appearStatus = AppearStatus.APPEARED;
-
             this._appearAnimationFunc = null;
         }
 
@@ -94,8 +93,6 @@ export class NodeContentBehind extends NodeContent
             this._curveAppearProgress[3] = 1;
             if (this._behindNodes.length > 3) {
                 this._behindNodes[3].nodeElement.classList.remove('invisible');
-                this._appearAnimationFunc = null;
-                this._appearStatus = AppearStatus.APPEARED;
             }
         }
     }
@@ -173,5 +170,16 @@ export class NodeContentBehind extends NodeContent
     public visible(): void
     {
         this._behindNodes.forEach(behindNode => behindNode.visible());
+    }
+
+    public hover(): void
+    {
+        console.log('hover');
+        this._contentElement.classList.add('hover');
+    }
+
+    public unhover(): void
+    {
+        this._contentElement.classList.remove('hover');
     }
 }
