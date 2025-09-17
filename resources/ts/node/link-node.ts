@@ -76,7 +76,7 @@ export class LinkNode extends BasicNode
         }
 
         this._anchor.classList.add('hover');
-        this._nodeContentBehind?.hover();;
+        this._nodeContentBehind?.hover();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
     }
@@ -90,12 +90,10 @@ export class LinkNode extends BasicNode
             return;
         }
         this._anchor.classList.remove('hover');
-        // this._behindNodeContainer.classList.remove('hover');
+        this._nodeContentBehind?.unhover();
 
-            this._animationStartTime = (window as any).hgn.timestamp;
-            this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
-
-        //super.terminalNodeUnhover();
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
     }
 
     /**
@@ -110,7 +108,8 @@ export class LinkNode extends BasicNode
             return;
         }
 
-        alert('click');
+        this.isSelectedDisappear = true;
+        this.parentNode.prepareDisappear(this);
 
         // const treeView = (window as any).hgn.treeView as TreeView;
         // treeView.moveTree(this._anchor.href, this, false);

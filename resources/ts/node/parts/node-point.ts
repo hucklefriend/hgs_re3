@@ -20,6 +20,7 @@ export class NodePoint
 
     public appear(): void
     {
+        this._htmlElement.classList.add('visible');
         this._htmlElement.classList.remove('fade-out');
     }
 

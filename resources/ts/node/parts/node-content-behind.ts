@@ -69,7 +69,7 @@ export class NodeContentBehind extends NodeContent
             this._curveAppearProgress[0] = 1;
 
             if (this._behindNodes.length > 0) {
-                this._behindNodes[0].nodeElement.classList.remove('invisible');
+                this._behindNodes[0].visible();
             }
         }
         
@@ -77,14 +77,14 @@ export class NodeContentBehind extends NodeContent
         if (this._curveAppearProgress[1] > 1) {
             this._curveAppearProgress[1] = 1;
             if (this._behindNodes.length > 1) {
-                this._behindNodes[1].nodeElement.classList.remove('invisible');
+                this._behindNodes[1].visible();
             }
         }
         this._curveAppearProgress[2] = progress * 1.2;
         if (this._curveAppearProgress[2] > 1) {
             this._curveAppearProgress[2] = 1;
             if (this._behindNodes.length > 2) {
-                this._behindNodes[2].nodeElement.classList.remove('invisible');
+                this._behindNodes[2].visible();
             }
         }
 
@@ -92,7 +92,7 @@ export class NodeContentBehind extends NodeContent
         if (this._curveAppearProgress[3] >= 1) {
             this._curveAppearProgress[3] = 1;
             if (this._behindNodes.length > 3) {
-                this._behindNodes[3].nodeElement.classList.remove('invisible');
+                this._behindNodes[3].visible();
             }
         }
     }

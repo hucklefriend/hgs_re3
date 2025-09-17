@@ -13,7 +13,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public isSelectedDisappear: boolean;
 
     private _nodeContentTree: NodeContentTree;
-    private _disappearRouteNodes: DisappearRouteNodeType[];
+    private _disappearRouteNodes: TreeNodeInterface[];
 
     private _isChanging: boolean;
     private _nextNodeCache: NextNodeCache | null;
@@ -117,6 +117,16 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
         }
+    }
+
+    public addDisappearRouteNode(node: TreeNodeInterface): void
+    {
+        this._disappearRouteNodes.push(node);
+    }
+
+    public prepareDisappear(selectedLinkNode: LinkNode | null): void
+    {
+        this.disappear(selectedLinkNode);
     }
 
     /**

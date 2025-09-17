@@ -43,14 +43,11 @@ body {
     */
 }
 
-main, footer {
+main {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
     max-width: 767px;
-}
-
-main {
     position: relative;
 
     > #current-node {
@@ -59,6 +56,7 @@ main {
 }
 
 footer {
+    width: 100%;
     text-align: center;
     color: #334433;
     margin: 50px 0;
@@ -103,6 +101,7 @@ div.connection-line {
 
     &.visible {
         visibility: visible;
+        opacity: 1;
     }
 
     &.fade-out {
@@ -124,6 +123,13 @@ div.connection-line {
     width: 20px;
     min-width: 20px;
     transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.2s ease;
+    visibility: hidden;
+    opacity: 0;
+
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+    }
 }
 
 .current-node-pt {
@@ -132,6 +138,7 @@ div.connection-line {
     min-width: 25px !important;
     color: var(--node-pt-light) !important;
     text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+    visibility: visible !important;
 }
 
 #current-node-content {
@@ -142,7 +149,7 @@ div.connection-line {
     opacity: 0;
 }
 
-.head-fade-mask {
+.head-fade-mask, .node-head-text {
     mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -270,6 +277,11 @@ div.connection-line {
         display: flex;
         padding: 20px 0;
         transition: all 0.3s ease;
+        visibility: hidden;
+
+        &.visible {
+            visibility: visible;
+        }
 
         > .node-pt {
             transition: all 0.3s ease;

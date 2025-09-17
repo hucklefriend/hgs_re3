@@ -4,8 +4,9 @@ import { NodeContentTree } from "./parts/node-content-tree";
 import { FreePoint } from "./parts/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
-import { NodeType } from "../common/type";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
+import { LinkNode } from "./link-node";
+import { CurrentNode } from "./current-node";
 
 export class ChildTreeNode extends BasicNode implements TreeNodeInterface
 {
@@ -86,7 +87,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
     {
         super.update();
 
-        this._nodeContentTree.update(this.nodeHead.getConnectionPoint());
+        this._nodeContentTree.update();
     }
 
     public appear(): void
@@ -102,7 +103,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         super.appearAnimation();
         
         if (this._curveAppearProgress === 1) {
-            this._nodeContentTree.appear(this.nodeHead.getConnectionPoint());
+            this._nodeContentTree.appear();
             this._gradientEndAlpha = 1;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.appearAnimation2;
@@ -125,16 +126,27 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         
     }
 
+    public prepareDisappear(selectedLinkNode: LinkNode | null): void
+    {
+        this.isSelectedDisappear = true;
+        const currentNode = (window as any).hgn.currentNode as CurrentNode;
+        currentNode.addDisappearRouteNode(this);
+        this._parentNode.prepareDisappear(selectedLinkNode);
+    }
+
     public disappear(): void
     {
-        this._tree.disappear();
-        super.disappear(false);
+        super.disappear();
 
-        if (!this.isSelectedDisappear) {
-            this._nodeElement.classList.add('invisible');
-        } else {
-            this._gradientEndAlpha = 1;
-        }
+
+        //this._tree.disappear();
+        //super.disappear(false);
+
+        // if (!this.isSelectedDisappear) {
+        //     this._nodeElement.classList.add('invisible');
+        // } else {
+        //     this._gradientEndAlpha = 1;
+        // }
     }
 
     public disappearAnimation(): void

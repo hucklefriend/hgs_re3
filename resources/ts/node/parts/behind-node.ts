@@ -39,11 +39,11 @@ export class BehindNode
 
     public invisible(): void
     {
-        this._nodeElement.classList.add('invisible');
+        this._nodeElement.classList.remove('visible');
     }
 
     public visible(): void
     {
-        this._nodeElement.classList.remove('invisible');
+        this._nodeElement.classList.add('visible');
     }
 } 
