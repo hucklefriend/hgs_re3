@@ -1,6 +1,6 @@
 import { NodeContentTree } from "../parts/node-content-tree";
 import { NodeHeadType } from "../../common/type";
-import { LinkNode } from "../link-node";
+import { NodeType } from "../../common/type";
 
 /**
  * ツリー構造を持つノードのインターフェース
@@ -18,6 +18,11 @@ export interface TreeNodeInterface
     readonly nodeHead: NodeHeadType;
 
     /**
+     * 帰路ノード
+     */
+    readonly homewardNode: NodeType | null;
+
+    /**
      * 出現したノード数を増加
      */
     increaseAppearedNodeCount(): void;
@@ -29,7 +34,12 @@ export interface TreeNodeInterface
 
     /**
      * 消滅アニメーション準備
-     * @param selectedLinkNode 選択されたリンクノード
+     * @param homewardNode 帰路ノード
      */
-    prepareDisappear(selectedLinkNode: LinkNode | null): void;
+    prepareDisappear(homewardNode: NodeType): void;
+
+    /**
+     * 帰路消滅アニメーション開始
+     */
+    homewardDisappear(): void;
 }

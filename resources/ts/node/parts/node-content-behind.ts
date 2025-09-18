@@ -100,7 +100,10 @@ export class NodeContentBehind extends NodeContent
     public disappear(): void
     {
         this._curveAppearProgress = [0, 0, 0, 0];
-        this._appearStatus = AppearStatus.DISAPPEARING;
+
+        this._behindNodes.forEach(behindNode => behindNode.invisible());
+
+        this._appearStatus = AppearStatus.DISAPPEARED;
         this._appearAnimationFunc = null;
     }
 

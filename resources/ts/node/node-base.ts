@@ -1,6 +1,5 @@
-import { LinkNode } from "./link-node";
 import { NodeHead } from "./parts/node-head";
-import { NodeHeadType, NodeContentType } from "../common/type";
+import { NodeContentType } from "../common/type";
 import { NodeContent } from "./parts/node-content";
 import { AppearStatus } from "../enum/appear-status";
 
@@ -9,7 +8,7 @@ export abstract class NodeBase
     private _id: string;
 
     protected _nodeElement: HTMLElement;
-    protected _nodeHead: NodeHeadType;
+    protected _nodeHead: NodeHead;
     protected _nodeContents: { [key: string]: NodeContentType };
     protected _appearStatus: AppearStatus;
     protected _appearAnimationFunc: (() => void) | null;
@@ -36,7 +35,7 @@ export abstract class NodeBase
     /**
      * ノードのヘッダを取得する
      */
-    public get nodeHead(): NodeHeadType
+    public get nodeHead(): NodeHead
     {
         return this._nodeHead;
     }
@@ -72,9 +71,10 @@ export abstract class NodeBase
      * 
      * @returns 
      */
-    private loadHead(): NodeHeadType
+    private loadHead(): NodeHead
     {
-        return new NodeHead(this._nodeElement.querySelector(':scope > .node-head') as HTMLElement);
+        const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
+        return new NodeHead(nodeHead);
     }
 
     /**
@@ -158,9 +158,9 @@ export abstract class NodeBase
     /**
      * 消滅アニメーション開始
      */
-    public disappear(selectedLinkNode: LinkNode | null = null): void
+    public disappear(): void
     {
-        this._nodeHead.disappear();
+        this._nodeHead.disappearFadeOut();
         Object.values(this._nodeContents).forEach(content => content?.disappear());
     }
 

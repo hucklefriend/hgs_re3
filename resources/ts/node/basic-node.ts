@@ -6,8 +6,6 @@ import { NodeContentBehind } from "./parts/node-content-behind";
 
 export class BasicNode extends NodeBase
 {
-    public isSelectedDisappear: boolean;
-
     protected _canvas: HTMLCanvasElement;
     protected _canvasCtx: CanvasRenderingContext2D;
     protected _gradientEndAlpha: number;
@@ -16,7 +14,6 @@ export class BasicNode extends NodeBase
     protected _updateGradientEndAlphaFunc: (() => void) | null;
     protected _parentNode: TreeNodeInterface;
     protected _nodeContentBehind: NodeContentBehind | null;
-
 
     public get parentNode(): TreeNodeInterface
     {
@@ -31,8 +28,7 @@ export class BasicNode extends NodeBase
         super(nodeElement);
 
         this._parentNode = parentNode;
-        this.isSelectedDisappear = false;
-
+        
         this._canvas = this.createCanvas();
         nodeElement.appendChild(this._canvas);
         this._canvasCtx = this._canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -166,6 +162,7 @@ export class BasicNode extends NodeBase
      */
     public disappear(): void
     {
+        super.disappear();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
@@ -175,7 +172,7 @@ export class BasicNode extends NodeBase
 
         this._isDraw = true;
 
-        this._appearAnimationFunc = this.disappearAnimation;
+        //this._appearAnimationFunc = this.disappearAnimation;
     }
 
     // protected disappearBehind(): void
@@ -198,7 +195,6 @@ export class BasicNode extends NodeBase
             this._appearAnimationFunc = null;
             this._nodeHead.disappear();
             this._appearStatus = AppearStatus.DISAPPEARED;
-            //this._parentTree.increaseDisappearedNodeCount();
         }
         
         this._isDraw = true;

@@ -5,12 +5,29 @@ import { FreePoint } from "./parts/free-point";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { TreeView } from "../tree-view";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
-import { LinkNode } from "./link-node";
 import { CurrentNode } from "./current-node";
+import { NodeType } from "../common/type";
 
 export class ChildTreeNode extends BasicNode implements TreeNodeInterface
 {
     private _nodeContentTree: NodeContentTree;
+    private _homewardNode: NodeType | null;
+
+    /**
+     * ノードコンテンツツリーを取得
+     */
+    public get nodeContentTree(): NodeContentTree
+    {
+        return this._nodeContentTree;
+    }
+
+    /**
+     * 帰路ノードを取得
+     */
+    public get homewardNode(): NodeType | null
+    {
+        return this._homewardNode;
+    }
 
     /**
      * コンストラクタ
@@ -22,14 +39,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
 
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
         this._nodeContentTree.loadNodes(this);
-    }
-
-    /**
-     * ノードコンテンツツリーを取得
-     */
-    public get nodeContentTree(): NodeContentTree
-    {
-        return this._nodeContentTree;
+        this._homewardNode = null;
     }
 
     /**
@@ -126,27 +136,20 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         
     }
 
-    public prepareDisappear(selectedLinkNode: LinkNode | null): void
+    public prepareDisappear(homewardNode: NodeType): void
     {
-        this.isSelectedDisappear = true;
+        this._homewardNode = homewardNode;
         const currentNode = (window as any).hgn.currentNode as CurrentNode;
         currentNode.addDisappearRouteNode(this);
-        this._parentNode.prepareDisappear(selectedLinkNode);
+        this._parentNode.prepareDisappear(this);
     }
 
     public disappear(): void
     {
         super.disappear();
 
-
-        //this._tree.disappear();
-        //super.disappear(false);
-
-        // if (!this.isSelectedDisappear) {
-        //     this._nodeElement.classList.add('invisible');
-        // } else {
-        //     this._gradientEndAlpha = 1;
-        // }
+        this._nodeContentTree.homewardNode = this._homewardNode;
+        this._nodeContentTree.disappear();
     }
 
     public disappearAnimation(): void
@@ -177,50 +180,34 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         }
     }
 
-    public disappear2(): void
+    public homewardDisappear(): void
     {
-        //this._tree.connectionLine.setHeight(0);
-        this._tree.connectionLine.disappear(0, true);
-        this._appearAnimationFunc = this.disappear2Animation;
+        this._nodeContentTree.disappearConnectionLine(true);
+        this._appearAnimationFunc = this.homewardDisappearAnimation;
         this._animationStartTime = (window as any).hgn.timestamp;
-
-        const freePt = (window as any).hgn.treeView.freePt as FreePoint;
-        freePt.moveTo(this.getAbsoluteConnectionPoint());
     }
 
-    public disappear2Animation(): void
+    public homewardDisappearAnimation(): void
     {
-        const treeView = (window as any).hgn.treeView as TreeView;
-        const freePt = treeView.freePt as FreePoint;
-        const progress = 1 - this.getAnimationProgress(300);
-        if (progress <= 0) {
-            this._gradientEndAlpha = 0;
-            this._appearAnimationFunc = this.disappear2Animation2;
-            this._animationStartTime = (window as any).hgn.timestamp;
-            this.invisibleNodeHead();
-        } else {
-            freePt.moveOffset(0, 0);
+        if (this._nodeContentTree.appearStatus === AppearStatus.DISAPPEARED) {
+            this._appearAnimationFunc = this.homewardDisappearAnimation2;
         }
     }
 
-    public disappear2Animation2(): void
+    public homewardDisappearAnimation2(): void
     {
-        const connectionPoint = this.getConnectionPoint();
-
-        const hgn = (window as any).hgn as HorrorGameNetwork;
-        const treeView = hgn.treeView as TreeView as TreeView;
+        const connectionPoint = this._nodeHead.getConnectionPoint();
 
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
         if (this._curveAppearProgress <= 0) {
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
             this._appearAnimationFunc = null;
-            this._parentTree.increaseDisappearedNodeCount();
+            this._parentNode.increaseDisappearedNodeCount();
             this._appearStatus = AppearStatus.DISAPPEARED;
 
-            const freePt = treeView.freePt as FreePoint;
-            freePt.fixOffset();
-            treeView.disappear2();
+            FreePoint.getInstance().fixOffset();
+            this.parentNode.homewardDisappear();
         } else {
             this.drawCurvedLine(
                 15,
@@ -230,7 +217,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
             );
         }
 
-        const freePt = hgn.treeView.freePt as FreePoint;
+        const freePt = FreePoint.getInstance();
         const pos = this.getQuadraticBezierPoint(
             0, 0,
             0, connectionPoint.y,
@@ -238,7 +225,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
             this._curveAppearProgress
         );
 
-        freePt.moveOffset(pos.x- this._tree.headerNode.point.element.offsetWidth, pos.y - connectionPoint.y);
+        freePt.moveOffset(pos.x- this._nodeHead.nodePoint.htmlElement.offsetWidth, pos.y - connectionPoint.y);
         
         this._isDraw = true;
     }

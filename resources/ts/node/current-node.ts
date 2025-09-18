@@ -1,22 +1,26 @@
 import { Util } from "../common/util";
 import { FreePoint } from "./parts/free-point";
 import { AppearStatus } from "../enum/appear-status";
-import { DisappearRouteNodeType } from "../common/type";
 import { NextNodeCache } from "./parts/next-node-cache";
 import { NodeContentTree } from "./parts/node-content-tree";
 import { NodeBase } from "./node-base";
 import { LinkNode } from "./link-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
+import { NodeType } from "../common/type";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {   
-    public isSelectedDisappear: boolean;
-
     private _nodeContentTree: NodeContentTree;
     private _disappearRouteNodes: TreeNodeInterface[];
 
     private _isChanging: boolean;
     private _nextNodeCache: NextNodeCache | null;
+    private _homewardNode: NodeType | null;
+
+    public get homewardNode(): NodeType | null
+    {
+        return this._homewardNode;
+    }
 
     /**
      * コンストラクタ
@@ -27,11 +31,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         super(htmlElement);
 
-        this.isSelectedDisappear = true;    // CurrentNodeは常にtrue
-
         this._nextNodeCache = null;
         this._isChanging = false;
         this._disappearRouteNodes = [];
+        this._homewardNode = null;
 
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
         this._nodeContentTree.loadNodes(this);
@@ -124,72 +127,47 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._disappearRouteNodes.push(node);
     }
 
-    public prepareDisappear(selectedLinkNode: LinkNode | null): void
+    /**
+     * 消滅アニメーション準備
+     * 
+     * @param selectedLinkNode クリックしたリンクノード
+     */
+    public prepareDisappear(homewardNode: NodeType): void
     {
-        this.disappear(selectedLinkNode);
+        // クリックしたリンクノードから親をたどってCurrentNodeにたどり着く
+        // ここに来たらdisappearを呼ぶ
+        this._homewardNode = homewardNode;
+        this.disappear();
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappear(selectedLinkNode: LinkNode | null = null): void
+    public disappear(): void
     {
-        if (selectedLinkNode) {
-            let node = selectedLinkNode.parentNode;
-            if (node === null) {
-                this._tree.disappearRouteNode = selectedLinkNode;
-            } else {
-                let child = selectedLinkNode as DisappearRouteNodeType;
-                while (node) {
-                    node.isSelectedDisappear = true;
-    
-                    this._disappearRouteNodes.push(node as TreeOwnNodeType);
-
-                    if (node.tree) {
-                        node.tree.disappearRouteNode = child;
-                    }
-
-                    child = node;
-                    node = node.parentNode;
-                    if (node === null) {
-                        this._tree.disappearRouteNode = child;
-                    }
-                }
-            }
-
-            this._disappearRouteNodes.push(this);
-            selectedLinkNode.isSelectedDisappear = true;
-        }
-
-        this._tree.disappear();
-
+        this._nodeContentTree.disappear();
         this._appearAnimationFunc = this.disappearAnimation;
     }
 
+    /**
+     * 消滾アニメーション
+     */
     private disappearAnimation(): void
     {
-        if (this._tree.lastNode === null) {
-            this._tree.disappearConnectionLine();
-            if (this._disappearRouteNodes.length === 0) {
-                this._appearAnimationFunc = this.disappearAnimation2;
-            } else {
-                this._appearAnimationFunc = null;
-            }
+        if (this._nodeContentTree.lastNode === null) {
+            this._nodeHead.disappear();
+            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
         } else {
-            if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
-                this._tree.disappearConnectionLine();
-                if (this._disappearRouteNodes.length === 0) {
-                    this._appearAnimationFunc = this.disappearAnimation2;
-                } else {
-                    this._appearAnimationFunc = null;
-                }
+            if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
+                this._nodeContentTree.disappearConnectionLine();
+                this._appearAnimationFunc = this.disappearAnimationWaitFinished;
             }
         }
     }
 
-    private disappearAnimation2(): void
+    private disappearAnimationWaitFinished(): void
     {
-        if (this._tree.isDisappeared()) {
+        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)) {
             this._appearAnimationFunc = null;
             this.disappeared();
         }
@@ -201,8 +179,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public disappeared(): void
     {
         window.scrollTo(0, 0);
-        this._freePt.hide();
-        this._tree.headerNode.point.disappear();
+        FreePoint.getInstance().hide();
 
         this._isChanging = true;
         this._appearStatus = AppearStatus.DISAPPEARED;
@@ -243,14 +220,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public moveNode(url: string, linkNode: LinkNode | null, isFromPopState: boolean): void
     {
-        this.disappear(linkNode);
-
         if (!isFromPopState) {
             // pushStateで履歴に追加
             const stateData = {
                 type: 'link-node',
                 url: url,
-                anchorId: linkNode?.getAnchorId() || ''
+                anchorId: linkNode?.anchor.id || ''
             };
             history.pushState(stateData, '', url);
         }
@@ -270,17 +245,11 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             });
     }
 
-    public disappear2(): void
+    public homewardDisappear(): void
     {
-        const node = this._disappearRouteNodes.shift();
-        if (node instanceof ChildTreeNode || node instanceof AccordionTreeNode) {
-            node.disappear2();
-        } else if (node instanceof TreeView) {
-            this._tree.disappearConnectionLine(true);
-            const connectionPoint = this._tree.headerNode.getAbsoluteConnectionPoint();
-            this._freePt.moveTo(connectionPoint);
-            this._appearAnimationFunc = this.disappearAnimation2;
-        }
+        this._nodeContentTree.disappearConnectionLine(true);
+        const connectionPoint = this._nodeHead.getAbsoluteConnectionPoint();
+        FreePoint.getInstance().moveTo(connectionPoint);
     }
 }
 

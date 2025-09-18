@@ -1,4 +1,5 @@
 import { AppearStatus } from "../../enum/appear-status";
+import { FreePoint } from "./free-point";
 
 export class ConnectionLine
 {
@@ -9,6 +10,7 @@ export class ConnectionLine
     private _appearAnimationFunc: (() => void) | null;
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
+    private _withFreePt: boolean;
 
     public get appearStatus(): AppearStatus
     {
@@ -28,6 +30,7 @@ export class ConnectionLine
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
+        this._withFreePt = false;
     }
 
     public setPosition(x: number, y: number): void
@@ -94,7 +97,7 @@ export class ConnectionLine
     /**
      * 消滅アニメーション開始
      */
-    public disappear(disappearHeight: number, isFadeOut: boolean = false): void
+    public disappear(disappearHeight: number, withFreePt: boolean = false): void
     {
         this._disappearHeight = disappearHeight - this._element.offsetTop;
         if (this._disappearHeight < 0) {
@@ -105,9 +108,7 @@ export class ConnectionLine
             this._appearStatus = AppearStatus.DISAPPEARING;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
-            if (isFadeOut) {
-                //this._element.classList.add('fade-out');
-            }
+            this._withFreePt = withFreePt;
         }
     }
 
@@ -132,6 +133,14 @@ export class ConnectionLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
+
+        if (this._withFreePt) {
+            const rect = this._element.getBoundingClientRect();
+            const x = rect.left + window.scrollX;
+            const y = rect.top + window.scrollY;
+
+            FreePoint.getInstance().setPos(x, y);
+        }
     }
 
     public changeHeight(height: number): void

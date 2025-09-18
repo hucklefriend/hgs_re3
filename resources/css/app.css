@@ -122,12 +122,10 @@ div.connection-line {
     font-size: 10px;
     width: 20px;
     min-width: 20px;
-    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.2s ease;
-    visibility: hidden;
+    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.5s ease-in;
     opacity: 0;
 
     &.visible {
-        visibility: visible;
         opacity: 1;
     }
 }
@@ -139,6 +137,7 @@ div.connection-line {
     color: var(--node-pt-light) !important;
     text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
     visibility: visible !important;
+    opacity: 1 !important;
 }
 
 #current-node-content {
@@ -149,7 +148,7 @@ div.connection-line {
     opacity: 0;
 }
 
-.head-fade-mask, .node-head-text {
+.node-head-text {
     mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -161,24 +160,26 @@ div.connection-line {
 
     mask-repeat: no-repeat;
     -webkit-mask-repeat: no-repeat;
+
+    opacity: 1;
 }
 
 /* 右側から透明になるアニメーション用のクラス */
-.head-fade-out {
+.head-reveal-out {
     mask-position: 0% 0;
     -webkit-mask-position: 0% 0;
 
-    animation: header-fadeout-mask 1s forwards;
+    animation: head-reveal-out-mask 1s forwards;
 }
-.head-fade-in {
+.head-reveal-in {
     mask-position: 200% 0;
     -webkit-mask-position: 200% 0;
 
-    animation: header-fadein-mask 1s forwards;
+    animation: head-reveal-in-mask 1s forwards;
 }
 
 /* 右側から透明になるアニメーション */
-@keyframes header-fadeout-mask {
+@keyframes head-reveal-out-mask {
     0% {
         mask-position: 0% 0;
         -webkit-mask-position: 0% 0;
@@ -190,7 +191,7 @@ div.connection-line {
 }
 
 /* 右側から透明になるアニメーション */
-@keyframes header-fadein-mask {
+@keyframes head-reveal-in-mask {
     0% {
         mask-position: 200% 0;
         -webkit-mask-position: 200% 0;
@@ -200,6 +201,15 @@ div.connection-line {
         -webkit-mask-position: 0% 0;
       }
 }
+
+.head-fade-out {
+    transition: opacity 0.5s ease-in;
+    opacity: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+}
+
+
 
 .node {
     position: relative;

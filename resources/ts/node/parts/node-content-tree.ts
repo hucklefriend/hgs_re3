@@ -2,7 +2,7 @@ import { Point } from "../../common/point";
 import { ConnectionLine } from "./connection-line";
 import { LinkNode } from "../link-node";
 import { AppearStatus } from "../../enum/appear-status";
-import { DisappearRouteNodeType, NodeType } from "../../common/type";
+import { NodeType } from "../../common/type";
 import { NodeContent } from "./node-content";
 import { ChildTreeNode } from "../child-tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
@@ -14,7 +14,7 @@ export class NodeContentTree extends NodeContent
     protected _connectionLine: ConnectionLine;
 
     protected _appearStatus: AppearStatus;
-    public disappearRouteNode: DisappearRouteNodeType | null;
+    public homewardNode: NodeType | null;
     public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
     protected _appearedNodeCount: number;
@@ -52,7 +52,7 @@ export class NodeContentTree extends NodeContent
         this._nodes = [];
 
         this._appearStatus = AppearStatus.DISAPPEARED;
-        this.disappearRouteNode = null;
+        this.homewardNode = null;
         this.appearAnimationFunc = null;
         this._nodeCount = 0;
         this._appearedNodeCount = 0;
@@ -65,7 +65,7 @@ export class NodeContentTree extends NodeContent
     {
         this._nodeCount = 0;
         this._appearedNodeCount = 0;
-        this.disappearRouteNode = null;
+        this.homewardNode = null;
         this._contentElement.querySelectorAll(':scope > section.node').forEach(nodeElement => {
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
@@ -79,47 +79,6 @@ export class NodeContentTree extends NodeContent
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             }
-
-            /*
-            // content-nodeクラスがあればContentNodeを作成
-            if (nodeElement.classList.contains('content-node')) {
-                this._contentNodes.push(new ContentNode(nodeElement as HTMLElement, parentNode, this));
-                this._lastNode = this._contentNodes[this._contentNodes.length - 1];
-                this._nodeCount++;
-            }
-
-            // terminal-nodeクラスがあればTerminalNodeを作成
-            if (nodeElement.classList.contains('terminal-node')) {
-                this._terminalNodes.push(new TerminalNode(nodeElement as HTMLElement, parentNode, this));
-                this._lastNode = this._terminalNodes[this._terminalNodes.length - 1];
-                this._nodeCount++;
-            }
-
-            if (nodeElement.classList.contains('child-tree-node')) {
-                this._childTreeNodes.push(new ChildTreeNode(nodeElement as HTMLElement, parentNode, this));
-                this._lastNode = this._childTreeNodes[this._childTreeNodes.length - 1];
-                this._nodeCount++;
-            }
-
-            if (nodeElement.classList.contains('child-tree-link-node')) {
-                this._childTreeNodes.push(new ChildTreeLinkNode(nodeElement as HTMLElement, parentNode, this));
-                this._lastNode = this._childTreeNodes[this._childTreeNodes.length - 1];
-                this._nodeCount++;
-            }
-
-            if (nodeElement.classList.contains('accordion-node')) {
-                const accordionNode = new AccordionNode(nodeElement as HTMLElement, parentNode, this);
-                this.addAccordionNode(accordionNode);
-                this._lastNode = accordionNode;
-                this._nodeCount++;
-            }
-
-            if (nodeElement.classList.contains('accordion-tree-node')) {
-                const accordionTreeNode = new AccordionTreeNode(nodeElement as HTMLElement, parentNode, this);
-                this.addAccordionNode(accordionTreeNode);
-                this._lastNode = accordionTreeNode;
-                this._nodeCount++;
-            }*/
         });
     }
 
@@ -151,12 +110,7 @@ export class NodeContentTree extends NodeContent
      */
     public disposeNodes(): void
     {
-        // LinkNodeの開放
-        this._nodes.forEach(node => {
-            if (node) {
-                node.dispose();
-            }
-        });
+        this._nodes.forEach(node => node.dispose());
         this._nodes = [];
     }
 
@@ -223,6 +177,12 @@ export class NodeContentTree extends NodeContent
     {
         this._nodes.forEach(node => node.disappear());
 
+        if (this.homewardNode) {
+            
+        } else {
+            
+        }
+
         this._appearStatus = AppearStatus.DISAPPEARING;
     }
 
@@ -231,15 +191,10 @@ export class NodeContentTree extends NodeContent
 
     }
 
-    public disappearConnectionLine(force0: boolean = false, isFadeOut: boolean = false): void
+    public disappearConnectionLine(withFreePt: boolean = false): void
     {
         if (!AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
-            if (!force0 && this.disappearRouteNode) {
-                const top = this.disappearRouteNode.nodeElement.offsetTop;
-                this.connectionLine.disappear(top, isFadeOut);   
-            } else {
-                this.connectionLine.disappear(0, isFadeOut);
-            }
+            this.connectionLine.disappear(0, withFreePt);
         }
     }
 

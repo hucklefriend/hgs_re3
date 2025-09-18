@@ -8,6 +8,12 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 export class LinkNode extends BasicNode
 {
     private _anchor: HTMLAnchorElement;
+    private _isHomewardDisappear: boolean;
+
+    public get anchor(): HTMLAnchorElement
+    {
+        return this._anchor;
+    }
 
     /**
      * コンストラクタ
@@ -21,6 +27,7 @@ export class LinkNode extends BasicNode
         this._anchor.addEventListener('click', this.click.bind(this));
         this._anchor.addEventListener('mouseenter', this.hover.bind(this));
         this._anchor.addEventListener('mouseleave', this.unhover.bind(this));
+        this._isHomewardDisappear = false;
     }
 
     /**
@@ -108,22 +115,24 @@ export class LinkNode extends BasicNode
             return;
         }
 
-        this.isSelectedDisappear = true;
-        this.parentNode.prepareDisappear(this);
+        this._isHomewardDisappear = true;
 
-        // const treeView = (window as any).hgn.treeView as TreeView;
-        // treeView.moveTree(this._anchor.href, this, false);
+        // const hgn = (window as any).hgn as HorrorGameNetwork;
+        // const currentNode = hgn.currentNode as CurrentNode;
+        // currentNode.moveNode(this._anchor.href, this, false);
+
+        this.parentNode.prepareDisappear(this);
     }
 
 
     public disappear(): void
     {
-        if (!this.isSelectedDisappear) {
+        if (!this._isHomewardDisappear) {
             super.disappear();
         } else {
             const hgn = (window as any).hgn as HorrorGameNetwork;
             const freePt = FreePoint.getInstance();
-            const connectionPoint = this.getConnectionPoint();
+            const connectionPoint = this._nodeHead.getConnectionPoint();
             this._updateGradientEndAlphaFunc = null;
     
             const pos = this.getQuadraticBezierPoint(
@@ -141,7 +150,7 @@ export class LinkNode extends BasicNode
             freePt.moveOffset(pos.x, pos.y);
             freePt.show();
             
-            //this.disappearBehind();
+            this._nodeContentBehind?.disappear();
 
             this._animationStartTime = hgn.timestamp;
             this._appearStatus = AppearStatus.DISAPPEARING;
@@ -158,7 +167,7 @@ export class LinkNode extends BasicNode
      */
     protected selectedDisappearAnimation(): void
     {
-        const connectionPoint = this.getConnectionPoint();
+        const connectionPoint = this._nodeHead.getConnectionPoint();
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = FreePoint.getInstance();
@@ -167,7 +176,7 @@ export class LinkNode extends BasicNode
         if (this._curveAppearProgress <= 0) {
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
-            this._appearAnimationFunc = this.disappearAnimation2;
+            this._appearAnimationFunc = this.selectedDisappearAnimation2;
 
             this._animationStartTime = hgn.timestamp;
         } else {
@@ -191,24 +200,13 @@ export class LinkNode extends BasicNode
         this._isDraw = true;
     }
 
-    public disappearAnimation2(): void
+    public selectedDisappearAnimation2(): void
     {
-        const hgn = (window as any).hgn as HorrorGameNetwork;
-        const currentNode = hgn.currentNode as CurrentNode;
         const freePt = FreePoint.getInstance();
         freePt.fixOffset();
-        currentNode.disappear2();
         this._appearAnimationFunc = null;
-        //this._parentTree.increaseDisappearedNodeCount();
-    }
+        this._appearStatus = AppearStatus.DISAPPEARED;
 
-    protected terminalNodeHover(): void
-    {
-        this.hover();
-    }
-    
-    protected terminalNodeUnhover(): void
-    {
-        this.unhover();
+        this._parentNode.homewardDisappear();
     }
 } 

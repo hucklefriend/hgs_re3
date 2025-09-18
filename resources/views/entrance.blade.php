@@ -4,7 +4,7 @@
 @section('current-node-title', 'Horror Game Network')
 
 @section('nodes')
-
+    {{-- 
     <section class="node tree-node" id="horror-games-tree-node">
         <div class="node-head">
             <h2 class="node-head-text">Horror Games</h2>
@@ -37,7 +37,7 @@
             </section>
         </div>
     </section>
-
+ --}}
     <section class="node link-node" id="information-node">
         <div class="node-head">
             <a href="#" class="node-head-text">Informations</a>

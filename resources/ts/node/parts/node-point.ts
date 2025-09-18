@@ -21,12 +21,11 @@ export class NodePoint
     public appear(): void
     {
         this._htmlElement.classList.add('visible');
-        this._htmlElement.classList.remove('fade-out');
     }
 
     public disappear(): void
     {
-        this._htmlElement.classList.add('fade-out');
+        this._htmlElement.classList.remove('visible');
     }
 
     /**

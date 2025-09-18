@@ -1,7 +1,6 @@
 import { CurrentNode } from "../node/current-node";
 import { LinkNode } from "../node/link-node";
 import { BasicNode } from "../node/basic-node";
-import { NodeHead } from "../node/parts/node-head";
 import { NodeContent } from "../node/parts/node-content";
 import { NodeContentTree } from "../node/parts/node-content-tree";
 import { ChildTreeNode } from "../node/child-tree-node";
@@ -10,5 +9,4 @@ import { ChildTreeNode } from "../node/child-tree-node";
 export type NodeType = CurrentNode | BasicNode | LinkNode;
 export type TreeNodeType = CurrentNode | ChildTreeNode;
 export type DisappearRouteNodeType = CurrentNode | LinkNode/* | AccordionTreeNode | ChildTreeLinkNode | ChildTreeNode*/;
-export type NodeHeadType = NodeHead;
 export type NodeContentType = NodeContent | NodeContentTree | null;
