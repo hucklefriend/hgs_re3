@@ -2,8 +2,6 @@ import { BasicNode } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
 import { NodeContentTree } from "./parts/node-content-tree";
 import { FreePoint } from "./parts/free-point";
-import { HorrorGameNetwork } from "../horror-game-network";
-import { TreeView } from "../tree-view";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { CurrentNode } from "./current-node";
 import { NodeType } from "../common/type";
@@ -152,29 +150,24 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         this._nodeContentTree.disappear();
     }
 
-    public disappearAnimation(): void
+    /**
+     * 消滾アニメーション
+     */
+    protected disappearAnimation(): void
     {
-        //super.disappearAnimation();
-
-        if (this._tree.lastNode === null) {
-            this._tree.disappearConnectionLine();
-            this._appearAnimationFunc = null;
+        if (this._nodeContentTree.lastNode === null) {
+            this._nodeHead.disappear();
+            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
         } else {
-            if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
-                this._tree.disappearConnectionLine();
-                if (this.isSelectedDisappear) {
-                    this._appearAnimationFunc = null;
-                } else {
-                    this._appearAnimationFunc = this.disappearAnimation2;
-                }
+            if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
+                this._appearAnimationFunc = this.disappearAnimationWaitFinished;
             }
         }
     }
 
-    public disappearAnimation2(): void
+    protected disappearAnimationWaitFinished(): void
     {
-        if (this._tree.connectionLine.isDisappeared()) {
-            this._parentTree.increaseDisappearedNodeCount();
+        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)) {
             this._appearAnimationFunc = null;
             this._appearStatus = AppearStatus.DISAPPEARED;
         }
@@ -185,18 +178,39 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         this._nodeContentTree.disappearConnectionLine(true);
         this._appearAnimationFunc = this.homewardDisappearAnimation;
         this._animationStartTime = (window as any).hgn.timestamp;
+        this._nodeHead.disappear();
     }
 
     public homewardDisappearAnimation(): void
     {
         if (this._nodeContentTree.appearStatus === AppearStatus.DISAPPEARED) {
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._curveAppearProgress = 1;
             this._appearAnimationFunc = this.homewardDisappearAnimation2;
+
+            const freePt = FreePoint.getInstance();
+    
+            const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
+            const rect = this._nodeElement.getBoundingClientRect();
+            const y = rect.top - window.scrollY;
+            freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
+
+            const connectionPoint = this._nodeHead.getConnectionPoint();
+            const pos = this.getQuadraticBezierPoint(
+                0, 0,
+                connectionPoint.x - 15, connectionPoint.y,
+                this._curveAppearProgress
+            );
+    
+            freePt.moveOffset(pos.x, pos.y);
+            this._nodeHead.nodePoint.hidden();
         }
     }
 
     public homewardDisappearAnimation2(): void
     {
         const connectionPoint = this._nodeHead.getConnectionPoint();
+        const freePt = FreePoint.getInstance();
 
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
         if (this._curveAppearProgress <= 0) {
@@ -206,7 +220,7 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
             this._parentNode.increaseDisappearedNodeCount();
             this._appearStatus = AppearStatus.DISAPPEARED;
 
-            FreePoint.getInstance().fixOffset();
+            freePt.fixOffset();
             this.parentNode.homewardDisappear();
         } else {
             this.drawCurvedLine(
@@ -215,17 +229,15 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
                 connectionPoint.x,
                 connectionPoint.y
             );
+
+            const pos = this.getQuadraticBezierPoint(
+                0, 0,
+                connectionPoint.x - 15, connectionPoint.y,
+                this._curveAppearProgress
+            );
+    
+            freePt.moveOffset(pos.x, pos.y);
         }
-
-        const freePt = FreePoint.getInstance();
-        const pos = this.getQuadraticBezierPoint(
-            0, 0,
-            0, connectionPoint.y,
-            connectionPoint.x - freePt.clientWidth/2, connectionPoint.y,
-            this._curveAppearProgress
-        );
-
-        freePt.moveOffset(pos.x- this._nodeHead.nodePoint.htmlElement.offsetWidth, pos.y - connectionPoint.y);
         
         this._isDraw = true;
     }

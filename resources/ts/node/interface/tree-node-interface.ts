@@ -1,6 +1,6 @@
 import { NodeContentTree } from "../parts/node-content-tree";
-import { NodeHeadType } from "../../common/type";
 import { NodeType } from "../../common/type";
+import { NodeHead } from "../parts/node-head";
 
 /**
  * ツリー構造を持つノードのインターフェース
@@ -15,7 +15,7 @@ export interface TreeNodeInterface
     /**
      * ノードヘッド
      */
-    readonly nodeHead: NodeHeadType;
+    readonly nodeHead: NodeHead;
 
     /**
      * 帰路ノード

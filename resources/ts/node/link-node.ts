@@ -137,22 +137,17 @@ export class LinkNode extends BasicNode
     
             const pos = this.getQuadraticBezierPoint(
                 0, 0,
-                0, connectionPoint.y,
-                connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
+                connectionPoint.x - 15, connectionPoint.y,
                 1
             );
     
+            const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
             const rect = this._nodeElement.getBoundingClientRect();
-            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // this._elementのドキュメント座標を取得
-            const elementDocX = rect.left + scrollX;
-            const elementDocY = rect.top + scrollY;
-
-            freePt.setPos(elementDocX -1, elementDocY - freePt.clientHeight / 2);
+            const y = rect.top + window.scrollY;
+            freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
             freePt.moveOffset(pos.x, pos.y);
             freePt.show();
+            this._nodeHead.nodePoint.hidden();
             
             this._nodeContentBehind?.disappear();
 
@@ -190,24 +185,21 @@ export class LinkNode extends BasicNode
                 connectionPoint.x,
                 connectionPoint.y
             );
+
+            const pos = this.getQuadraticBezierPoint(
+                0, 0,
+                connectionPoint.x - 15, connectionPoint.y,
+                this._curveAppearProgress
+            );
+    
+            freePt.moveOffset(pos.x, pos.y);
         }
-
-        const pos = this.getQuadraticBezierPoint(
-            0, 0,
-            0, connectionPoint.y,
-            connectionPoint.x - freePt.clientWidth / 2, connectionPoint.y,
-            this._curveAppearProgress
-        );
-
-        freePt.moveOffset(pos.x, pos.y);
         
         this._isDraw = true;
     }
 
     public selectedDisappearAnimation2(): void
     {
-        const freePt = FreePoint.getInstance();
-        freePt.fixOffset();
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.DISAPPEARED;
 

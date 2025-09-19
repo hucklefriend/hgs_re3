@@ -160,7 +160,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             this._appearAnimationFunc = this.disappearAnimationWaitFinished;
         } else {
             if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
-                //this._nodeContentTree.disappearConnectionLine();
                 this._appearAnimationFunc = this.disappearAnimationWaitFinished;
             }
         }

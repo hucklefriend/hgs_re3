@@ -164,7 +164,7 @@ export class BasicNode extends NodeBase
      */
     public disappear(): void
     {
-        super.disappear();
+        this.disappearContents();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
@@ -185,6 +185,7 @@ export class BasicNode extends NodeBase
         if (this.curveDisappearAnimation()) {
             this._appearAnimationFunc = null;
             this._appearStatus = AppearStatus.DISAPPEARED;
+            this._nodeHead.disappearFadeOut();
         }
         
         this._isDraw = true;
@@ -290,16 +291,16 @@ export class BasicNode extends NodeBase
     protected getQuadraticBezierPoint(
         startX: number, 
         startY: number, 
-        controlX: number, 
-        controlY: number, 
         endX: number, 
         endY: number, 
         t: number
     ): {x: number, y: number}
     {
+        const controlX = startX;
+        const controlY = endY;
         // 二次ベジェ曲線の数式: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
-        const x = Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * controlX + Math.pow(t, 2) * endX;
-        const y = Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * controlY + Math.pow(t, 2) * endY;
+        const x = Math.floor(Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * controlX + Math.pow(t, 2) * endX);
+        const y = Math.floor(Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * controlY + Math.pow(t, 2) * endY);
         
         return {x, y};
     }

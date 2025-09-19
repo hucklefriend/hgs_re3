@@ -128,19 +128,10 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        const progress = (window as any).hgn.timestamp - this._animationStartTime;
-        this._animationHeight -= 15;
+        this._animationHeight -= 5;
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
-            this._appearAnimationFunc = null;
-            this.setHeight(this._disappearHeight);
-            this._element.classList.remove('fade-out');
-
-            if (this._height === 0) {
-                this._appearStatus = AppearStatus.DISAPPEARED;
-                this._element.classList.remove('visible');
-            }
         }
 
         this._element.style.height = `${this._animationHeight}px`;
@@ -156,16 +147,49 @@ export class ConnectionLine
             const elementDocY = rect.top + scrollY;
             
             // freePtをthis._elementと同じ位置に配置
-            const x = elementDocX - freePt.clientWidth / 2;
+            const x = elementDocX - freePt.clientWidth / 2 + 2;
             const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
 
+            console.log('disappearAnimation');
             freePt.setPos(x, y).setElementPos();
+        }
+
+        if (this._animationHeight === this._disappearHeight) {
+            this._appearAnimationFunc = null;
+            this.setHeight(this._disappearHeight);
+            this._element.classList.remove('fade-out');
+
+            if (this._height === 0) {
+                this._appearStatus = AppearStatus.DISAPPEARED;
+                this._element.classList.remove('visible');
+            }
         }
     }
 
     public disappearFadeOut(): void
     {
         this._element.classList.add('fade-out');
+        
+        // transitionendイベントをリッスン
+        const handleTransitionEnd = (event: TransitionEvent) => {
+            // backgroundとbox-shadowのアニメーションが完了したかチェック
+            if (event.propertyName === 'background' || event.propertyName === 'box-shadow') {                
+                // イベントリスナーを削除（一度だけ実行したい場合）
+                this._element.removeEventListener('transitionend', handleTransitionEnd);
+                
+                // 完了後の処理
+                this.onFadeOutComplete();
+            }
+        };
+        
+        this._element.addEventListener('transitionend', handleTransitionEnd);
+    }
+
+    private onFadeOutComplete(): void
+    {
+        // アニメーション完了後の処理
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this._element.classList.remove('visible');
     }
 
     public changeHeight(height: number): void

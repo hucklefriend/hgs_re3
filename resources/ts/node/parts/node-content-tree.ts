@@ -191,16 +191,22 @@ export class NodeContentTree extends NodeContent
             this._connectionLineFadeOut.changeHeight(orgHeight - height);
             this._connectionLineFadeOut.visible();
             this._connectionLineFadeOut.disappearFadeOut();
+
+            this._appearStatus = AppearStatus.DISAPPEARING;
+            this.appearAnimationFunc = this.disappearAnimation;
         } else {
             this._connectionLine.disappearFadeOut();
+            this._appearStatus = AppearStatus.DISAPPEARED;
+            this.appearAnimationFunc = null;
         }
-
-        this._appearStatus = AppearStatus.DISAPPEARING;
     }
 
     public disappearAnimation(): void
     {
-
+        if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
+            this._appearStatus = AppearStatus.DISAPPEARED;
+            this.appearAnimationFunc = null;
+        }
     }
 
     public disappearConnectionLine(withFreePt: boolean = false): void

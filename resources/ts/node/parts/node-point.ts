@@ -53,8 +53,8 @@ export class NodePoint
         const hgn = (window as any).hgn as HorrorGameNetwork;
 
         return new Point(
-            Math.floor((rect.left + rect.width / 2) + window.scrollX - hgn.mainElement.offsetLeft),
-            Math.floor((rect.top + rect.height / 2) + window.scrollY - hgn.mainElement.offsetTop)
+            Math.floor((rect.left + rect.width / 2) + window.scrollX),
+            Math.floor((rect.top + rect.height / 2) + window.scrollY)
         );
     }
 } 

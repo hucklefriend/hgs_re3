@@ -158,9 +158,8 @@ export abstract class NodeBase
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappearContents(): void
     {
-        this._nodeHead.disappearFadeOut();
         Object.values(this._nodeContents).forEach(content => content?.disappear());
     }
 

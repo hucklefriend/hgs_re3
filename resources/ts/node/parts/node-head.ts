@@ -95,7 +95,7 @@ export class NodeHead
         
         this._titleElement.classList.remove('head-reveal-in');
         this._titleElement.classList.add('head-reveal-out');
-        this._nodePoint.hidden();
+        //this._nodePoint.hidden();
         
         this._currentAbortController = new AbortController();
         return this.waitForAnimationEnd('head-reveal-out-mask', this._currentAbortController.signal).then(() => {
