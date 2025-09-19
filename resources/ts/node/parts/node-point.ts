@@ -21,12 +21,18 @@ export class NodePoint
 
     public appear(): void
     {
+        this.show();
         this._htmlElement.classList.add('visible');
     }
 
     public disappear(): void
     {
         this._htmlElement.classList.remove('visible');
+    }
+
+    public show(): void
+    {
+        this._htmlElement.classList.remove('hidden');
     }
 
     public hidden(): void

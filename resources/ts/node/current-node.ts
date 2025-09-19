@@ -167,7 +167,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
     private disappearAnimationWaitFinished(): void
     {
-        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)) {
+        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)
+            && AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
             this.disappeared();
         }
@@ -181,8 +182,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         window.scrollTo(0, 0);
         FreePoint.getInstance().hide();
 
-        this._isChanging = true;
         this._appearStatus = AppearStatus.DISAPPEARED;
+
+        //this._isChanging = true;
+        this.appear();
     }
 
     /**

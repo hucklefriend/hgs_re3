@@ -74,6 +74,7 @@ export class ConnectionLine
     public visible(): void
     {
         this._element.classList.add('visible');
+        this._element.classList.remove('fade-out');
     }
 
     /**
@@ -128,7 +129,7 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        this._animationHeight -= 5;
+        this._animationHeight -= 15;
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
@@ -143,14 +144,13 @@ export class ConnectionLine
             const scrollY = window.pageYOffset || document.documentElement.scrollTop;
             
             // this._elementのドキュメント座標を取得
-            const elementDocX = rect.left + scrollX;
-            const elementDocY = rect.top + scrollY;
+            const elementDocX = rect.left;// + window.scrollX;
+            const elementDocY = rect.top;// - window.scrollY;
             
             // freePtをthis._elementと同じ位置に配置
-            const x = elementDocX - freePt.clientWidth / 2 + 2;
+            const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;
             const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
 
-            console.log('disappearAnimation');
             freePt.setPos(x, y).setElementPos();
         }
 

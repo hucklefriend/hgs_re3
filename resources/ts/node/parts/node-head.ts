@@ -75,6 +75,7 @@ export class NodeHead
         this.cancelCurrentAnimation();
         
         this._nodePoint.appear();
+        this._titleElement.classList.remove('head-fade-out');
         this._titleElement.classList.remove('head-reveal-out');
         this._titleElement.classList.add('head-reveal-in');
         

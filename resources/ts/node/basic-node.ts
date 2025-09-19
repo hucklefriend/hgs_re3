@@ -118,6 +118,7 @@ export class BasicNode extends NodeBase
             this._appearAnimationFunc = this.appearAnimation;
             this._curveAppearProgress = 0;
             this._animationStartTime = (window as any).hgn.timestamp;
+            this._gradientStartAlpha = 1;
             this._gradientEndAlpha = 0;
         }
     }

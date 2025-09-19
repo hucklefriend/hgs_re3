@@ -143,7 +143,7 @@ export class LinkNode extends BasicNode
     
             const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
             const rect = this._nodeElement.getBoundingClientRect();
-            const y = rect.top + window.scrollY;
+            const y = rect.top;// + window.scrollY;
             freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
             freePt.moveOffset(pos.x, pos.y);
             freePt.show();
@@ -156,7 +156,7 @@ export class LinkNode extends BasicNode
             this._gradientEndAlpha = 0;
             this._nodeHead.disappear();
             this._isDraw = true;
-    
+
             this._appearAnimationFunc = this.selectedDisappearAnimation;
         }
     }
@@ -180,10 +180,8 @@ export class LinkNode extends BasicNode
             this._animationStartTime = hgn.timestamp;
         } else {
             this.drawCurvedLine(
-                15,
-                0,
-                connectionPoint.x,
-                connectionPoint.y
+                15, 0,
+                connectionPoint.x, connectionPoint.y
             );
 
             const pos = this.getQuadraticBezierPoint(
@@ -200,6 +198,7 @@ export class LinkNode extends BasicNode
 
     public selectedDisappearAnimation2(): void
     {
+        this._isHomewardDisappear = false;
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.DISAPPEARED;
 

@@ -144,33 +144,12 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
 
     public disappear(): void
     {
-        super.disappear();
+        if (this._homewardNode === null) {
+            super.disappear();
+        }
 
         this._nodeContentTree.homewardNode = this._homewardNode;
         this._nodeContentTree.disappear();
-    }
-
-    /**
-     * 消滾アニメーション
-     */
-    protected disappearAnimation(): void
-    {
-        if (this._nodeContentTree.lastNode === null) {
-            this._nodeHead.disappear();
-            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
-        } else {
-            if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
-                this._appearAnimationFunc = this.disappearAnimationWaitFinished;
-            }
-        }
-    }
-
-    protected disappearAnimationWaitFinished(): void
-    {
-        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)) {
-            this._appearAnimationFunc = null;
-            this._appearStatus = AppearStatus.DISAPPEARED;
-        }
     }
 
     public homewardDisappear(): void
@@ -213,9 +192,12 @@ export class ChildTreeNode extends BasicNode implements TreeNodeInterface
         const freePt = FreePoint.getInstance();
 
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
+        this._gradientStartAlpha = this._curveAppearProgress;
+        this._gradientEndAlpha = this._curveAppearProgress / 3;
         if (this._curveAppearProgress <= 0) {
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
+            this._homewardNode = null;
             this._appearAnimationFunc = null;
             this._parentNode.increaseDisappearedNodeCount();
             this._appearStatus = AppearStatus.DISAPPEARED;

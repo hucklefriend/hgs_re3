@@ -7,7 +7,6 @@ export class FreePoint
     
     private _element: HTMLDivElement;
     public pos: {x: number, y: number};
-    private routeNodes: DisappearRouteNodeType[];
 
     private _animationFunc: (() => void) | null;
     private _animationGoalPos: {x: number, y: number};    
@@ -20,7 +19,6 @@ export class FreePoint
     {
         this._element = document.querySelector('div#free-pt') as HTMLDivElement;
         this.pos = {x: 0, y: 0};
-        this.routeNodes = [];
         this._animationGoalPos = {x: 0, y: 0};
         this._animationFunc = null;
         this._animationStartTime = 0;
@@ -36,11 +34,6 @@ export class FreePoint
             FreePoint._instance = new FreePoint();
         }
         return FreePoint._instance;
-    }
-
-    public addRouteNode(node: DisappearRouteNodeType): void
-    {
-        this.routeNodes.push(node);
     }
 
     public get clientWidth(): number
