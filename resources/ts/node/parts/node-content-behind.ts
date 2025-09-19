@@ -177,7 +177,6 @@ export class NodeContentBehind extends NodeContent
 
     public hover(): void
     {
-        console.log('hover');
         this._contentElement.classList.add('hover');
     }
 

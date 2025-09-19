@@ -12,6 +12,7 @@ export class NodeContentTree extends NodeContent
     protected _parentNode: NodeType;
     protected _nodes: NodeType[];
     protected _connectionLine: ConnectionLine;
+    protected _connectionLineFadeOut: ConnectionLine;
 
     protected _appearStatus: AppearStatus;
     public homewardNode: NodeType | null;
@@ -48,6 +49,10 @@ export class NodeContentTree extends NodeContent
         const connectionLineElement = ConnectionLine.createElement();
         nodeElement.parentNode?.append(connectionLineElement);
         this._connectionLine = new ConnectionLine(connectionLineElement);
+
+        const connectionLineFadeOutElement = ConnectionLine.createElement();
+        nodeElement.parentNode?.append(connectionLineFadeOutElement);
+        this._connectionLineFadeOut = new ConnectionLine(connectionLineFadeOutElement);
 
         this._nodes = [];
 
@@ -178,9 +183,16 @@ export class NodeContentTree extends NodeContent
         this._nodes.forEach(node => node.disappear());
 
         if (this.homewardNode) {
-            
+            const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
+            const height = this.homewardNode.nodeElement.offsetTop - headerPosition.y + 2;
+            const orgHeight = this._connectionLine.height;
+            this._connectionLine.changeHeight(height);
+            this._connectionLineFadeOut.setPosition(headerPosition.x - 1, headerPosition.y + height);
+            this._connectionLineFadeOut.changeHeight(orgHeight - height);
+            this._connectionLineFadeOut.visible();
+            this._connectionLineFadeOut.disappearFadeOut();
         } else {
-            
+            this._connectionLine.disappearFadeOut();
         }
 
         this._appearStatus = AppearStatus.DISAPPEARING;

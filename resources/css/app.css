@@ -128,6 +128,11 @@ div.connection-line {
     &.visible {
         opacity: 1;
     }
+
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 
 .current-node-pt {
@@ -166,7 +171,7 @@ div.connection-line {
 
 /* 右側から透明になるアニメーション用のクラス */
 .head-reveal-out {
-    mask-position: 0% 0;
+    mask-position: 100% 0;
     -webkit-mask-position: 0% 0;
 
     animation: head-reveal-out-mask 1s forwards;
@@ -181,7 +186,7 @@ div.connection-line {
 /* 右側から透明になるアニメーション */
 @keyframes head-reveal-out-mask {
     0% {
-        mask-position: 0% 0;
+        mask-position: 100% 0;
         -webkit-mask-position: 0% 0;
       }
       100% {
@@ -555,7 +560,7 @@ canvas.node-canvas {
 
 #free-pt {
     display: inline;
-    position: absolute;
+    position: fixed;
     font-size: 10px;
     text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
     color: var(--node-pt-light);

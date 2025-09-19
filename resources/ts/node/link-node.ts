@@ -143,10 +143,14 @@ export class LinkNode extends BasicNode
             );
     
             const rect = this._nodeElement.getBoundingClientRect();
-            const x = rect.left + window.scrollX - hgn.mainElement.offsetLeft;
-            const y = rect.top + window.scrollY;
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // this._elementのドキュメント座標を取得
+            const elementDocX = rect.left + scrollX;
+            const elementDocY = rect.top + scrollY;
 
-            freePt.setPos(x, y - freePt.clientHeight / 2);
+            freePt.setPos(elementDocX -1, elementDocY - freePt.clientHeight / 2);
             freePt.moveOffset(pos.x, pos.y);
             freePt.show();
             

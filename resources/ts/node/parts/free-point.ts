@@ -53,19 +53,28 @@ export class FreePoint
         return this._element.clientHeight;
     }
 
-    public setPos(x: number, y: number): void
+    public setPos(x: number, y: number): FreePoint
     {
         this.pos.x = x;
         this.pos.y = y;
+        return this;
     }
 
-    public fixOffset(): void
+    public setElementPos(): FreePoint
+    {
+        this._element.style.left = this.pos.x + 'px';
+        this._element.style.top = this.pos.y + 'px';
+        return this;
+    }
+
+    public fixOffset(): FreePoint
     {
         this.pos.x = parseInt(this._element.style.left);
         this.pos.y = parseInt(this._element.style.top);
+        return this;
     }
 
-    public moveOffset(x: number, y: number): void
+    public moveOffset(x: number, y: number): FreePoint
     {
         this._element.style.left = this.pos.x + x + 'px';
         this._element.style.top = this.pos.y + y + 'px';
@@ -75,6 +84,7 @@ export class FreePoint
         if (this.pos.y < scrollY) {
             window.scrollTo(0, this.pos.y);
         }
+        return this;
     }
 
     public show(): void

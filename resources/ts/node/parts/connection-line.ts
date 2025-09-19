@@ -17,6 +17,11 @@ export class ConnectionLine
         return this._appearStatus;
     }
 
+    public get height(): number
+    {
+        return this._height;
+    }
+
     /**
      * コンストラクタ
      * @param element 接続線の要素
@@ -66,6 +71,11 @@ export class ConnectionLine
         }
     }
 
+    public visible(): void
+    {
+        this._element.classList.add('visible');
+    }
+
     /**
      * 出現アニメーション開始
      */
@@ -75,6 +85,7 @@ export class ConnectionLine
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
         this._animationHeight = 0;
+        this.visible();
     }
 
     /**
@@ -91,7 +102,6 @@ export class ConnectionLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
-        this._element.classList.add('visible');
     }
 
     /**
@@ -109,6 +119,7 @@ export class ConnectionLine
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
             this._withFreePt = withFreePt;
+            this._animationHeight = this._height;
         }
     }
 
@@ -135,12 +146,26 @@ export class ConnectionLine
         this._element.style.height = `${this._animationHeight}px`;
 
         if (this._withFreePt) {
+            const freePt = FreePoint.getInstance();
             const rect = this._element.getBoundingClientRect();
-            const x = rect.left + window.scrollX;
-            const y = rect.top + window.scrollY;
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // this._elementのドキュメント座標を取得
+            const elementDocX = rect.left + scrollX;
+            const elementDocY = rect.top + scrollY;
+            
+            // freePtをthis._elementと同じ位置に配置
+            const x = elementDocX - freePt.clientWidth / 2;
+            const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
 
-            FreePoint.getInstance().setPos(x, y);
+            freePt.setPos(x, y).setElementPos();
         }
+    }
+
+    public disappearFadeOut(): void
+    {
+        this._element.classList.add('fade-out');
     }
 
     public changeHeight(height: number): void

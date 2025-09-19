@@ -51,6 +51,11 @@ export class NodeHead
         return this._nodePoint.htmlElement.offsetWidth;
     }
 
+    public getNodeHeight(): number
+    {
+        return this._nodeElement.offsetHeight;
+    }
+
     /**
      * HTML上の絶対座標で接続点を取得する
      * 
@@ -90,6 +95,7 @@ export class NodeHead
         
         this._titleElement.classList.remove('head-reveal-in');
         this._titleElement.classList.add('head-reveal-out');
+        this._nodePoint.hidden();
         
         this._currentAbortController = new AbortController();
         return this.waitForAnimationEnd('head-reveal-out-mask', this._currentAbortController.signal).then(() => {

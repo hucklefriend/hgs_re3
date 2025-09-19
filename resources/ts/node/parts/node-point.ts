@@ -1,4 +1,5 @@
 import { Point } from "../../common/point";
+import { HorrorGameNetwork } from "../../horror-game-network";
 
 export class NodePoint
 {
@@ -28,6 +29,11 @@ export class NodePoint
         this._htmlElement.classList.remove('visible');
     }
 
+    public hidden(): void
+    {
+        this._htmlElement.classList.add('hidden');
+    }
+
     /**
      * 中心位置を取得
      * 
@@ -44,10 +50,11 @@ export class NodePoint
     public getAbsoluteCenterPosition(): Point
     {
         const rect = this._htmlElement.getBoundingClientRect();
+        const hgn = (window as any).hgn as HorrorGameNetwork;
 
         return new Point(
-            Math.floor((rect.left + rect.width / 2) + window.scrollX - (window as any).hgn.main.offsetLeft),
-            Math.floor((rect.top + rect.height / 2) + window.scrollY - (window as any).hgn.main.offsetTop)
+            Math.floor((rect.left + rect.width / 2) + window.scrollX - hgn.mainElement.offsetLeft),
+            Math.floor((rect.top + rect.height / 2) + window.scrollY - hgn.mainElement.offsetTop)
         );
     }
 } 

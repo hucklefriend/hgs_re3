@@ -42,13 +42,12 @@
             <div class="node-content tree" id="current-tree-nodes">
                 @yield('nodes')
             </div>
-            
-            <div id="free-pt">●</div>
         </section>
     </main>
 
     <footer>
         &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
     </footer>
+    <div id="free-pt">●</div>
 </body>
 </html>

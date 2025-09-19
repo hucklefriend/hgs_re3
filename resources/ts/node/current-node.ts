@@ -137,6 +137,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         // クリックしたリンクノードから親をたどってCurrentNodeにたどり着く
         // ここに来たらdisappearを呼ぶ
         this._homewardNode = homewardNode;
+        this._nodeContentTree.homewardNode = homewardNode;
         this.disappear();
     }
 
@@ -159,7 +160,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             this._appearAnimationFunc = this.disappearAnimationWaitFinished;
         } else {
             if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
-                this._nodeContentTree.disappearConnectionLine();
+                //this._nodeContentTree.disappearConnectionLine();
                 this._appearAnimationFunc = this.disappearAnimationWaitFinished;
             }
         }
@@ -247,9 +248,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
     public homewardDisappear(): void
     {
+        this._nodeHead.disappear();
         this._nodeContentTree.disappearConnectionLine(true);
-        const connectionPoint = this._nodeHead.getAbsoluteConnectionPoint();
-        FreePoint.getInstance().moveTo(connectionPoint);
     }
 }
 

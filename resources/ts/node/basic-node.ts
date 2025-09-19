@@ -8,6 +8,7 @@ export class BasicNode extends NodeBase
 {
     protected _canvas: HTMLCanvasElement;
     protected _canvasCtx: CanvasRenderingContext2D;
+    protected _gradientStartAlpha: number;
     protected _gradientEndAlpha: number;
     protected _animationStartTime: number;
     protected _curveAppearProgress: number;
@@ -34,6 +35,7 @@ export class BasicNode extends NodeBase
         this._canvasCtx = this._canvas.getContext('2d') as CanvasRenderingContext2D;
         this.setCanvasSize();
 
+        this._gradientStartAlpha = 1;
         this._gradientEndAlpha = 0;
         this._animationStartTime = 0;
         this._appearAnimationFunc = null;
@@ -172,18 +174,7 @@ export class BasicNode extends NodeBase
 
         this._isDraw = true;
 
-        //this._appearAnimationFunc = this.disappearAnimation;
-    }
-
-    // protected disappearBehind(): void
-    // {
-    //     this._behindLinkNodes.forEach(behindLinkNode => behindLinkNode.element.classList.add('invisible'));
-    //     this._behindCurveAppearProgress = [0,0,0,0];
-    // }
-
-    protected invisibleNodeHead(): void
-    {
-        this._nodeHead.disappear();
+        this._appearAnimationFunc = this.disappearAnimation;
     }
 
     /**
@@ -193,7 +184,6 @@ export class BasicNode extends NodeBase
     {
         if (this.curveDisappearAnimation()) {
             this._appearAnimationFunc = null;
-            this._nodeHead.disappear();
             this._appearStatus = AppearStatus.DISAPPEARED;
         }
         
@@ -202,10 +192,13 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
+        this._gradientStartAlpha = this.getAnimationProgress(200);
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
+        this._gradientStartAlpha = this._curveAppearProgress;
         if (this._curveAppearProgress <= 0) {
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
+            this._gradientStartAlpha = 0;
             return true;
         }
 
@@ -270,7 +263,7 @@ export class BasicNode extends NodeBase
 
         // カーブに沿ったグラデーションを作成
         const gradient = this._canvasCtx.createLinearGradient(startX, startY, currentEndX, currentEndY);
-        gradient.addColorStop(0, 'rgba(144, 255, 144, 1)');    // 開始点（明るい緑）
+        gradient.addColorStop(0, `rgba(144, 255, 144, ${this._gradientStartAlpha})`);    // 開始点（明るい緑）
         gradient.addColorStop(1, `rgba(144, 255, 144, ${this._gradientEndAlpha})`);   // 終了点
 
         this._canvasCtx.strokeStyle = gradient;

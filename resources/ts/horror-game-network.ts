@@ -17,22 +17,6 @@ export class HorrorGameNetwork
     public isForceResize: boolean;
 
     /**
-     * コンストラクタ
-     */
-    private constructor()
-    {
-        this._mainElement = document.querySelector('main') as HTMLElement;
-        this._currentNode = new CurrentNode(this._mainElement.querySelector('#current-node') as HTMLElement);
-
-        this._timestamp = 0;
-
-        this.isForceResize = false;
-
-        // フリーポイントのインスタンスを作っておくだけ
-        FreePoint.getInstance();
-    }
-
-    /**
      * インスタンスを返す
      */
     public static getInstance(): HorrorGameNetwork
@@ -65,6 +49,22 @@ export class HorrorGameNetwork
     public get currentNode(): CurrentNode
     {
         return this._currentNode;
+    }
+
+    /**
+     * コンストラクタ
+     */
+    private constructor()
+    {
+        this._mainElement = document.querySelector('main') as HTMLElement;
+        this._currentNode = new CurrentNode(this._mainElement.querySelector('#current-node') as HTMLElement);
+
+        this._timestamp = 0;
+
+        this.isForceResize = false;
+
+        // フリーポイントのインスタンスを作っておくだけ
+        FreePoint.getInstance();
     }
 
     /**
