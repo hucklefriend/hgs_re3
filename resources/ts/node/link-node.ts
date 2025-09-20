@@ -2,8 +2,8 @@ import { HorrorGameNetwork } from "../horror-game-network";
 import { BasicNode } from "./basic-node";
 import { AppearStatus } from "../enum/appear-status";
 import { FreePoint } from "./parts/free-point";
-import { CurrentNode } from "./current-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
+import { CurrentNode } from "./current-node";
 
 export class LinkNode extends BasicNode
 {
@@ -117,9 +117,9 @@ export class LinkNode extends BasicNode
 
         this._isHomewardDisappear = true;
 
-        // const hgn = (window as any).hgn as HorrorGameNetwork;
-        // const currentNode = hgn.currentNode as CurrentNode;
-        // currentNode.moveNode(this._anchor.href, this, false);
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        const currentNode = hgn.currentNode as CurrentNode;
+        currentNode.moveNode(this._anchor.href, this, false);
 
         this.parentNode.prepareDisappear(this);
     }

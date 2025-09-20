@@ -15,14 +15,14 @@ export class NodeContent
 
     public appear(): void
     {
-        this._contentElement.classList.remove('head-fade-out');
-        this._contentElement.classList.add('head-fade-in');
+        this._contentElement.classList.remove('content-fade-out');
+        this._contentElement.classList.add('content-fade-in');
     }
 
     public disappear(): void
     {
-        this._contentElement.classList.remove('head-fade-in');
-        this._contentElement.classList.add('head-fade-out');
+        this._contentElement.classList.remove('content-fade-in');
+        this._contentElement.classList.add('content-fade-out');
     }
 
     public resize(): void

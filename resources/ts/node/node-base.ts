@@ -149,9 +149,8 @@ export abstract class NodeBase
     /**
      * 出現アニメーション開始
      */
-    public appear(): void
+    public appearContents(): void
     {
-        this._nodeHead.appear();
         Object.values(this._nodeContents).forEach(content => content?.appear());
     }
 

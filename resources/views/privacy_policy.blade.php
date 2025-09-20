@@ -1,40 +1,62 @@
-@section('content-node-title', 'Privacy Policy')
+@extends('layout')
 
-@section('link-node-id', 'privacy-policy-node')
+@section('title', 'Privacy Policy | ホラーゲームネットワーク')
+@section('current-node-title', 'Privacy Policy')
 
-@section('content-node-body')
-    <section>
-        <h2><i class="bi bi-octagon"></i>Intended for users in Japan only</h2>
-        <p>
-            当サイトは日本国内向けです。<br>
-            日本国内の法律に従い、日本語以外でのサービス提供やサポートは行っておりせん。
-        </p>
-        <p>
-            This website is intended for users in Japan.<br>
-            I do not provide services or support in languages other than Japanese.<br>
-            I comply with the laws of Japan.
-        </p>
+@section('nodes')
+
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">Intended for users in Japan only</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトは日本国内向けです。<br>
+                日本国内の法律に従い、日本語以外でのサービス提供やサポートは行っておりせん。
+            </p>
+            <p>
+                This website is intended for users in Japan.<br>
+                I do not provide services or support in languages other than Japanese.<br>
+                I comply with the laws of Japan.
+            </p>
+        </div>
     </section>
-    <section>
-        <h2><i class="bi bi-octagon"></i>Cookieの利用</h2>
-        <p>
-            当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
-            Cookieを第三者へ送信することはありません。
-        </p>
-        <p>
-            Cookieについて詳しくはこちら<br>
-            <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
-        </p>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">Cookieの利用</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
+                Cookieを第三者へ送信することはありません。
+            </p>
+            <p>
+                Cookieについて詳しくはこちら<br>
+                <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
+            </p>
+        </div>
     </section>
-    <section>
-        <h2><i class="bi bi-octagon"></i>個人情報の取得</h2>
-        <p>
-            現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
-            休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、<br>
-            ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
-            データ削除の依頼は<a href="https://x.com/huckle_friend" target="_blank">X(Twitter)</a>までお願いします。
-        </p>
+
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の取得</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
+                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、<br>
+                ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
+                データ削除の依頼は<a href="https://x.com/huckle_friend" target="_blank">X(Twitter)</a>までお願いします。
+            </p>
+        </div>
     </section>
+
     {{--
     <section>
     <h2><i class="bi bi-octagon"></i>メールアドレスの取得</h2>
@@ -83,30 +105,43 @@
     </section>
     --}}
 
-    <section>
-        <h2><i class="bi bi-octagon"></i>アフィリエイト</h2>
-        <p>
-            下記のアフィリエイトに参加しています。<br>
-            当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクを行っている部分があります。
-        </p>
-        <ul>
-            <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
-            <li>
-                <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a>
-            </li>
-        </ul>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">アフィリエイト</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                下記のアフィリエイトに参加しています。<br>
+                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクを行っている部分があります。
+            </p>
+            <ul>
+                <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
+                <li>
+                    <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a>
+                </li>
+            </ul>
+        </div>
     </section>
-    <section>
-        <h2><i class="bi bi-octagon"></i>アフィリエイト画像について</h2>
-        <p>
-            アフィリエイトサイトから取得・直リンクで表示している画像は、右下に取得元を表記しています。<br>
-            また、画像の利用については各サイトの規約に則り下記の通りに運用しています。
-        </p>
-        <h3>・DMM アフィリエイト</h3>
-        <p>
-            <a href="https://support.dmm.com/affiliate/article/47112" target="_blank">画像は直リンクしていいですか？それともダウンロードして使った方がいいのでしょうか？</a>に則り、ダウンロードして利用しています。
-        </p>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">アフィリエイト画像について</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                アフィリエイトサイトから取得・直リンクで表示している画像は、右下に取得元を表記しています。<br>
+                また、画像の利用については各サイトの規約に則り下記の通りに運用しています。
+            </p>
+            <h3>・DMM アフィリエイト</h3>
+            <p>
+                <a href="https://support.dmm.com/affiliate/article/47112" target="_blank">画像は直リンクしていいですか？それともダウンロードして使った方がいいのでしょうか？</a>に則り、ダウンロードして利用しています。
+            </p>
+        </div>
     </section>
+
 
     {{--
     <section>
@@ -140,15 +175,35 @@
 
 
 
-    <section>
-        <h2><i class="bi bi-octagon"></i>免責事項</h2>
 
-        <p>
-            当サイトで掲載している画像等の著作権等は権利所有者のものです。<br>
-            また生成AIで生成した画像の著作権については日本国の法律に従います。
-        </p>
-        <p>
-            当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
-        </p>
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">免責事項</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトで掲載している画像等の著作権等は権利所有者のものです。<br>
+                また生成AIで生成した画像の著作権については日本国の法律に従います。
+            </p>
+            <p>
+                当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
+            </p>
+        </div>
+    </section>
+
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">Quick Links</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
     </section>
 @endsection

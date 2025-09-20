@@ -4,8 +4,9 @@ import { LinkNode } from "../link-node";
 import { AppearStatus } from "../../enum/appear-status";
 import { NodeType } from "../../common/type";
 import { NodeContent } from "./node-content";
-import { ChildTreeNode } from "../child-tree-node";
+import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
+import { BasicNode } from "../basic-node";
 
 export class NodeContentTree extends NodeContent
 {
@@ -77,11 +78,11 @@ export class NodeContentTree extends NodeContent
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             } else if (nodeElement.classList.contains('tree-node')) {
-                this._nodes.push(new ChildTreeNode(nodeElement as HTMLElement, parentNode));
+                this._nodes.push(new TreeNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             } else {
                 // どれにも当てはまらないものはベーシックノード
-                this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
+                this._nodes.push(new BasicNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             }
         });

@@ -189,6 +189,7 @@ export class ConnectionLine
     {
         // アニメーション完了後の処理
         this._appearStatus = AppearStatus.DISAPPEARED;
+        this.changeHeight(0);
         this._element.classList.remove('visible');
     }
 

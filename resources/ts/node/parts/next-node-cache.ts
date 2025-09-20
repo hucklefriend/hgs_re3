@@ -2,8 +2,8 @@
 export class NextNodeCache
 {
     public title: string;
-    public currentTitle: string;
-    public currentContent: string;
+    public currentNodeTitle: string;
+    public currentNodeContent: string;
     public nodes: string;
     public popup: string;
     public ratingCheck: boolean;
@@ -11,8 +11,8 @@ export class NextNodeCache
     public constructor()
     {
         this.title = '';
-        this.currentTitle = '';
-        this.currentContent = '';
+        this.currentNodeTitle = '';
+        this.currentNodeContent = '';
         this.nodes = '';
         this.popup = '';
         this.ratingCheck = false;

@@ -11,11 +11,11 @@ import { NodeType } from "../common/type";
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {   
     private _nodeContentTree: NodeContentTree;
-    private _disappearRouteNodes: TreeNodeInterface[];
 
     private _isChanging: boolean;
     private _nextNodeCache: NextNodeCache | null;
     private _homewardNode: NodeType | null;
+    private _currentNodeContentElement: HTMLElement | null;
 
     public get homewardNode(): NodeType | null
     {
@@ -33,8 +33,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
         this._nextNodeCache = null;
         this._isChanging = false;
-        this._disappearRouteNodes = [];
         this._homewardNode = null;
+        this._currentNodeContentElement = document.getElementById('current-node-content');
 
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
         this._nodeContentTree.loadNodes(this);
@@ -45,7 +45,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public dispose(): void
     {
-        this._disappearRouteNodes = [];
         this._nodeContentTree.disposeNodes();
     }
 
@@ -106,7 +105,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public appear(): void
     {
-        super.appear();
+        this._nodeHead.appear();
+        this.appearContents();
         this._nodeContentTree.appear();
 
         this._appearAnimationFunc = this.appearAnimation;
@@ -120,11 +120,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
         }
-    }
-
-    public addDisappearRouteNode(node: TreeNodeInterface): void
-    {
-        this._disappearRouteNodes.push(node);
     }
 
     /**
@@ -184,8 +179,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
         this._appearStatus = AppearStatus.DISAPPEARED;
 
-        //this._isChanging = true;
-        this.appear();
+        this._isChanging = true;
     }
 
     /**
@@ -194,12 +188,18 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private changeNode(): void
     {
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
-            this.disposeNodes();
+            this.dispose();
 
-            this._tree.headerNode.title = this._nextNodeCache.title;
-            this._treeNodes.innerHTML = this._nextNodeCache.nodes;
+            document.title = this._nextNodeCache.title;
+            this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
+            if (this._currentNodeContentElement) {
+                this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
+            }
+            if (this._treeContentElement) {
+                this._treeContentElement.innerHTML = this._nextNodeCache.nodes;
+            }
 
-            this.loadNodes();
+            this._nodeContentTree.loadNodes(this);
             this.resize();
             this._nextNodeCache = null;
             this._isChanging = false;

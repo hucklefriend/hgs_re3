@@ -133,6 +133,7 @@ export class BasicNode extends NodeBase
             this._curveAppearProgress = 1;
             this._gradientEndAlpha = 0.3;//this.isHover() ? 1 : 0.3;
             this._nodeHead.appear();
+            this.appearContents();
 
             if (this._nodeContentBehind) {
                 this._nodeContentBehind.appear();

@@ -25,6 +25,11 @@ export class NodeHead
         return this._appearStatus;
     }
 
+    public set title(title: string)
+    {
+        this._titleElement.innerHTML = title;
+    }
+
     /**
      * コンストラクタ
      */

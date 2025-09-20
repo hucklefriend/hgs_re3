@@ -232,7 +232,20 @@ div.connection-line {
     }
 
     > .node-content {
-        
+    }
+}
+
+.node-content.basic {
+    margin-left: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+
+    &.content-fade-in {
+        opacity: 1;
+    }
+
+    &.content-fade-out {
+        opacity: 0;
     }
 }
 
