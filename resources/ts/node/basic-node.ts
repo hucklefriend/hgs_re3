@@ -194,9 +194,8 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
-        this._gradientStartAlpha = this.getAnimationProgress(200);
         this._curveAppearProgress = 1 - this.getAnimationProgress(200);
-        this._gradientStartAlpha = this._curveAppearProgress;
+        this._gradientStartAlpha = this._curveAppearProgress * 0.7;
         if (this._curveAppearProgress <= 0) {
             this._curveAppearProgress = 0;
             this._gradientEndAlpha = 0;
