@@ -1,0 +1,187 @@
+import { NodeContent } from "./node-content";
+import { BehindNode } from "./behind-node";
+import { AppearStatus } from "../../enum/appear-status";
+import { Util } from "../../common/util";
+import { Point } from "../../common/point";
+
+export class NodeContentBehind extends NodeContent
+{
+    private _behindNodes: BehindNode[];
+    private _animationStartTime: number;
+    private _curveAppearProgress: number[];
+    private _appearStatus: AppearStatus;
+    private _appearAnimationFunc: (() => void) | null;
+    public _maxEndOpacity: number;
+    public _minEndOpacity: number;
+
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
+    }
+
+    public constructor(nodeElement: HTMLElement)
+    {
+        super(nodeElement);
+        this._behindNodes = [];
+        this._animationStartTime = 0;
+        this._curveAppearProgress = [0, 0, 0, 0];
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this._appearAnimationFunc = null;
+        this._maxEndOpacity = 0.3;
+        this._minEndOpacity = 0.1;
+    }
+
+    public loadNodes(): void
+    {
+        this._behindNodes = Array.from(this._contentElement.querySelectorAll(':scope > .behind-node'))
+            .map(node => new BehindNode(node as HTMLElement));
+    }
+
+    public update(): void
+    {
+        if (this._appearAnimationFunc !== null) {
+            this._appearAnimationFunc();
+        }
+    }
+
+    public appear(): void
+    {
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._curveAppearProgress = [0, 0, 0, 0];
+        this._appearStatus = AppearStatus.APPEARING;
+        this._appearAnimationFunc = this.appearAnimation;
+    }
+    
+    /**
+     * 出現アニメーション
+     */
+    protected appearAnimation(): void
+    {
+        const progress = Util.getAnimationProgress(this._animationStartTime, 1000);
+        if (progress >= 1) {
+            this._curveAppearProgress = [1, 1, 1, 1];
+            this._appearStatus = AppearStatus.APPEARED;
+            this._appearAnimationFunc = null;
+        }
+
+        this._curveAppearProgress[0] = progress * 2;
+        if (this._curveAppearProgress[0] > 1) {
+            this._curveAppearProgress[0] = 1;
+
+            if (this._behindNodes.length > 0) {
+                this._behindNodes[0].visible();
+            }
+        }
+        
+        this._curveAppearProgress[1] = progress * 1.5;
+        if (this._curveAppearProgress[1] > 1) {
+            this._curveAppearProgress[1] = 1;
+            if (this._behindNodes.length > 1) {
+                this._behindNodes[1].visible();
+            }
+        }
+        this._curveAppearProgress[2] = progress * 1.2;
+        if (this._curveAppearProgress[2] > 1) {
+            this._curveAppearProgress[2] = 1;
+            if (this._behindNodes.length > 2) {
+                this._behindNodes[2].visible();
+            }
+        }
+
+        this._curveAppearProgress[3] = progress;
+        if (this._curveAppearProgress[3] >= 1) {
+            this._curveAppearProgress[3] = 1;
+            if (this._behindNodes.length > 3) {
+                this._behindNodes[3].visible();
+            }
+        }
+    }
+
+    public disappear(): void
+    {
+        this._curveAppearProgress = [0, 0, 0, 0];
+
+        this._behindNodes.forEach(behindNode => behindNode.invisible());
+
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this._appearAnimationFunc = null;
+    }
+
+    public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, connectionPoint: Point): void
+    {
+        if (this._curveAppearProgress[0] > 0) {
+            const canvasRect = canvas.getBoundingClientRect();
+            this._behindNodes.forEach((behindNode, index) => {
+                if (index >= 4) return; // 4つ以上は描画しない
+                this.drawCurvedLine(
+                    ctx,
+                    connectionPoint.x,
+                    connectionPoint.y,
+                    behindNode.getConnectionPoint().x - canvasRect.left,
+                    behindNode.getConnectionPoint().y - canvasRect.top,
+                    index
+                );
+            });
+        }
+    }
+
+
+    /**
+     * 子要素へのカーブ線を描画する
+     * 
+     * @param ctx コンテキスト
+     * @param startX 開始点のX座標
+     * @param startY 開始点のY座標
+     * @param endX 終了点のX座標
+     * @param endY 終了点のY座標
+     * @param loopCount ループ回数（0-3）
+     */
+    private drawCurvedLine(ctx: CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number, loopCount: number): void
+    {
+        // ループ回数に応じて透明度を調整（maxEndOpacityからminEndOpacityまで徐々に減少）
+        const opacity = this._maxEndOpacity - (loopCount * 0.1);
+        let endOpacity = Math.max(this._minEndOpacity, opacity - this._minEndOpacity);
+
+        let currentEndX = endX;
+        let currentEndY = endY;
+
+        // 進行度に応じてグラデーションの終了点を調整
+        if (this._curveAppearProgress[loopCount] < 1) {
+            currentEndX = startX + (endX - startX) * this._curveAppearProgress[loopCount];
+            currentEndY = startY + (endY - startY) * this._curveAppearProgress[loopCount];
+
+            endOpacity = endOpacity * this._curveAppearProgress[loopCount];
+        }
+
+        const gradient = ctx.createLinearGradient(startX, startY, currentEndX, currentEndY);
+        gradient.addColorStop(0, `rgba(100, 200, 100, ${endOpacity})`);   // 開始点の透明度
+        gradient.addColorStop(1, `rgba(20, 80, 20, ${endOpacity})`);   // 終了点の透明度
+
+        ctx.beginPath();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;  // 開始点の太さ
+        ctx.moveTo(startX, startY);
+        ctx.quadraticCurveTo(startX + (endX - startX) * 0.1, endY, endX, endY);
+        ctx.stroke();
+    }
+
+    public invisible(): void
+    {
+        this._behindNodes.forEach(behindNode => behindNode.invisible());
+    }
+
+    public visible(): void
+    {
+        this._behindNodes.forEach(behindNode => behindNode.visible());
+    }
+
+    public hover(): void
+    {
+        this._contentElement.classList.add('hover');
+    }
+
+    public unhover(): void
+    {
+        this._contentElement.classList.remove('hover');
+    }
+}

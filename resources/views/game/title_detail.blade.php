@@ -12,24 +12,24 @@
 @section('tree-nodes')
 
     @if ($title->packageGroups()->exists() || $title->packages()->exists())
-        <section class="node sub-tree-node" id="title-lineup-tree-node">
+        <section class="node child-tree-node" id="title-lineup-tree-node">
             <header class="node header-node" id="title-lineup-header-node">
                 <div class="node-head invisible">
                     <h2 class="header-node-text active">パッケージラインナップ</h2>
                     <span class="node-pt">●</span>
                 </div>
             </header>
-            <div class="sub-tree-node-container tree-container">
+            <div class="child-tree-node-container tree-container">
                 @if ($title->packageGroups()->exists())
                     @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                        <section class="node sub-tree-node" id="ああ-tree-node">
+                        <section class="node child-tree-node" id="ああ-tree-node">
                             <header class="node header-node" id="biohazard-series-header-node">
                                 <div class="node-head invisible">
                                     <h2 class="header-node-text active">{{ $pkgGroup->name }}</h2>
                                     <span class="node-pt">●</span>
                                 </div>
                             </header>
-                            <div class="sub-tree-node-container tree-container">
+                            <div class="child-tree-node-container tree-container">
                                 @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
                                     @include('common.package', ['pkg' => $pkg])
                                 @endforeach
@@ -52,14 +52,14 @@
 
 
     @if ($title->series)
-        <section class="node sub-tree-node" id="footer-tree-node">
+        <section class="node child-tree-node" id="footer-tree-node">
             <header class="node header-node" id="title-lineup-header-node">
                 <div class="node-head invisible">
                     <h2 class="header-node-text active">同一シリーズのタイトル</h2>
                     <span class="node-pt">●</span>
                 </div>
             </header>
-            <div class="sub-tree-node-container tree-container">
+            <div class="child-tree-node-container tree-container">
                 @foreach ($title->series->titles as $sameSeriesTitle)
                 @if ($sameSeriesTitle->id === $title->id)
                     @continue
@@ -84,14 +84,14 @@
 
 
 
-    <section class="node sub-tree-node" id="footer-tree-node">
+    <section class="node child-tree-node" id="footer-tree-node">
         <header class="node header-node" id="title-lineup-header-node">
             <div class="node-head invisible">
                 <h2 class="header-node-text active">Quick Links</h2>
                 <span class="node-pt">●</span>
             </div>
         </header>
-        <div class="sub-tree-node-container tree-container">
+        <div class="child-tree-node-container tree-container">
 
             <section class="node link-node" id="admin-link-node">
                 <div class="node-head invisible">

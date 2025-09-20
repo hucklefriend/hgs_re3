@@ -1,5 +1,5 @@
-import { AppearStatus } from "../enum/appear-status";
-import { Tree } from "./tree";
+import { AppearStatus } from "../../enum/appear-status";
+import { FreePoint } from "./free-point";
 
 export class ConnectionLine
 {
@@ -10,22 +10,32 @@ export class ConnectionLine
     private _appearAnimationFunc: (() => void) | null;
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
-    private _parentTree: Tree;
+    private _withFreePt: boolean;
+
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
+    }
+
+    public get height(): number
+    {
+        return this._height;
+    }
 
     /**
      * コンストラクタ
      * @param element 接続線の要素
      */
-    public constructor(element: HTMLDivElement, parentTree: Tree)
+    public constructor(element: HTMLDivElement)
     {
         this._element = element;
         this._height = 0;
         this._animationHeight = 0;
         this._animationStartTime = 0;
         this._appearAnimationFunc = null;
-        this._appearStatus = AppearStatus.NONE;
+        this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
-        this._parentTree = parentTree;
+        this._withFreePt = false;
     }
 
     public setPosition(x: number, y: number): void
@@ -61,6 +71,12 @@ export class ConnectionLine
         }
     }
 
+    public visible(): void
+    {
+        this._element.classList.add('visible');
+        this._element.classList.remove('fade-out');
+    }
+
     /**
      * 出現アニメーション開始
      */
@@ -70,6 +86,8 @@ export class ConnectionLine
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
         this._animationHeight = 0;
+        this._element.style.height = `${this._animationHeight}px`;
+        this.visible();
     }
 
     /**
@@ -86,13 +104,12 @@ export class ConnectionLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
-        this._element.classList.add('visible');
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappear(disappearHeight: number, isFadeOut: boolean = false): void
+    public disappear(disappearHeight: number, withFreePt: boolean = false): void
     {
         this._disappearHeight = disappearHeight - this._element.offsetTop;
         if (this._disappearHeight < 0) {
@@ -103,9 +120,8 @@ export class ConnectionLine
             this._appearStatus = AppearStatus.DISAPPEARING;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
-            if (isFadeOut) {
-                //this._element.classList.add('fade-out');
-            }
+            this._withFreePt = withFreePt;
+            this._animationHeight = this._height;
         }
     }
 
@@ -114,11 +130,30 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        const progress = (window as any).hgn.timestamp - this._animationStartTime;
         this._animationHeight -= 15;
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
+        }
+
+        this._element.style.height = `${this._animationHeight}px`;
+
+        if (this._withFreePt) {
+            const freePt = FreePoint.getInstance();
+            const rect = this._element.getBoundingClientRect();
+            
+            // this._elementのドキュメント座標を取得
+            const elementDocX = rect.left;
+            const elementDocY = rect.top;
+            
+            // freePtをthis._elementと同じ位置に配置
+            const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;
+            const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
+
+            freePt.setPos(x, y).setElementPos();
+        }
+
+        if (this._animationHeight === this._disappearHeight) {
             this._appearAnimationFunc = null;
             this.setHeight(this._disappearHeight);
             this._element.classList.remove('fade-out');
@@ -128,49 +163,45 @@ export class ConnectionLine
                 this._element.classList.remove('visible');
             }
         }
-
-        this._element.style.height = `${this._animationHeight}px`;
     }
 
-    /**
-     * 出現しきったかどうかを取得する
-     * @returns 出現しきったかどうか
-     */
-    public isAppeared(): boolean
+    public disappearFadeOut(): void
     {
-        return this._appearStatus === AppearStatus.APPEARED;
+        this._element.classList.add('fade-out');
+        
+        // transitionendイベントをリッスン
+        const handleTransitionEnd = (event: TransitionEvent) => {
+            // backgroundとbox-shadowのアニメーションが完了したかチェック
+            if (event.propertyName === 'background' || event.propertyName === 'box-shadow') {                
+                // イベントリスナーを削除（一度だけ実行したい場合）
+                this._element.removeEventListener('transitionend', handleTransitionEnd);
+                
+                // 完了後の処理
+                this.onFadeOutComplete();
+            }
+        };
+        
+        this._element.addEventListener('transitionend', handleTransitionEnd);
     }
 
-    /**
-     * 出現中かどうかを取得する
-     * @returns 出現中かどうか
-     */
-    public isAppearing(): boolean
+    private onFadeOutComplete(): void
     {
-        return this._appearStatus === AppearStatus.APPEARING;
-    }
-
-    /**
-     * 消滅中かどうかを取得する
-     * @returns 消滾中かどうか
-     */
-    public isDisappearing(): boolean
-    {
-        return this._appearStatus === AppearStatus.DISAPPEARING;
-    }
-
-    /**
-     * 消滅しきったかどうかを取得する
-     * @returns 消滅しきったかどうか
-     */
-    public isDisappeared(): boolean
-    {
-        return this._appearStatus === AppearStatus.DISAPPEARED;
+        // アニメーション完了後の処理
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this.changeHeight(0);
+        this._element.classList.remove('visible');
     }
 
     public changeHeight(height: number): void
     {
         this._height = height;
         this._element.style.height = `${this._height}px`;
+    }
+
+    public static createElement(): HTMLDivElement
+    {
+        const element = document.createElement('div');
+        element.classList.add('connection-line');
+        return element;
     }
 } 

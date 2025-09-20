@@ -1,25 +1,20 @@
-import { TreeView } from "./tree-view";
-import { ContentNodeView } from "./content-node-view";
+import { CurrentNode } from "./node/current-node";
+import { FreePoint } from "./node/parts/free-point";
 
+/**
+ * ホラーゲームネットワーク
+ * インターネット全体で見たら、ここも一つのノードと言えるでしょう。
+ */
 export class HorrorGameNetwork
 {
     private static _instance: HorrorGameNetwork;
     private _timestamp: number;
-    private _main: HTMLElement;
-    private _treeView: TreeView;
-    private _contentNodeView: ContentNodeView;
+    private _mainElement: HTMLElement;
 
-    /**
-     * コンストラクタ
-     */
-    private constructor()
-    {
-        this._main = document.querySelector('main') as HTMLElement;
-        this._treeView = new TreeView(document.querySelector('div.tree-view') as HTMLElement);
-        this._contentNodeView = new ContentNodeView(document.querySelector('div#content-node-view') as HTMLDivElement);
+    private _currentNode: CurrentNode;
+    //private _contentNodeView: ContentNodeView;
 
-        this._timestamp = 0;
-    }
+    public isForceResize: boolean;
 
     /**
      * インスタンスを返す
@@ -43,25 +38,33 @@ export class HorrorGameNetwork
     /**
      * main要素を取得
      */
-    public get main(): HTMLElement
+    public get mainElement(): HTMLElement
     {
-        return this._main;
+        return this._mainElement;
     }
 
     /**
-     * ツリービューを取得
+     * カレントノードを取得
      */
-    public get treeView(): TreeView
+    public get currentNode(): CurrentNode
     {
-        return this._treeView;
+        return this._currentNode;
     }
 
     /**
-     * コンテンツノードビューを取得
+     * コンストラクタ
      */
-    public get contentNodeView(): ContentNodeView
+    private constructor()
     {
-        return this._contentNodeView;
+        this._mainElement = document.querySelector('main') as HTMLElement;
+        this._currentNode = new CurrentNode(this._mainElement.querySelector('#current-node') as HTMLElement);
+
+        this._timestamp = 0;
+
+        this.isForceResize = false;
+
+        // フリーポイントのインスタンスを作っておくだけ
+        FreePoint.getInstance();
     }
 
     /**
@@ -70,7 +73,9 @@ export class HorrorGameNetwork
     public start(): void
     {
         // リサイズイベントの登録
-        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('resize', () => {
+            this.isForceResize = true;
+        });
 
         // ページ遷移前のイベント登録
         window.addEventListener('beforeunload', () => {
@@ -89,12 +94,10 @@ export class HorrorGameNetwork
 
         // popstateイベントの登録
         window.addEventListener('popstate', (event) => {this.popState(event)});
-
-        this.treeView.loadNodes();
         
         this.resize();
 
-        this.treeView.appear();
+        this._currentNode.appear();
 
         // 初期状態の履歴を設定
         const initialState = {
@@ -112,7 +115,7 @@ export class HorrorGameNetwork
      */
     private resize(): void
     {
-        this._treeView.resize();
+        this._currentNode.resize();
     }
 
     /**
@@ -122,8 +125,13 @@ export class HorrorGameNetwork
     {
         this._timestamp = timestamp;
 
-        this.treeView.update();
-        this.contentNodeView.update();
+        if (this.isForceResize) {
+            this.resize();
+            this.isForceResize = false;
+        }
+
+        this._currentNode.update();
+        //this.contentNodeView.update();
         
         this.draw();
 
@@ -135,7 +143,7 @@ export class HorrorGameNetwork
      */
     public draw(): void
     {
-        this.treeView.draw();
+        this._currentNode.draw();
     }
 
     /**
@@ -146,28 +154,9 @@ export class HorrorGameNetwork
         // popstateイベントの引数から移動前のstateを取得
         const previousState = event?.state;
         
-        // content-node-viewが表示中だったら閉じる
-        if (this.contentNodeView.isOpen) {
-            this.contentNodeView.close(true);
-        } else if (previousState) {
-            // content-nodeで行った場合の処理
-            if (previousState.type === 'content-node') {
-                // anchorIdから要素を取得してクリックイベントを発火
-                if (previousState.anchorId) {
-                    const node = this.treeView.getContentNodeByAnchorId(previousState.anchorId);
-                    if (node) {
-                        node.openContentNodeView(true);
-                    }
-                }
-            }
-            
-            // content-node-closeで行った場合の処理
-            if (previousState.type === 'content-node-close') {
-                // 必要に応じて追加の処理をここに記述
-            }
-
+        if (previousState) {
             if (previousState.type === 'link-node') {
-                this.treeView.moveTree(previousState.url, null, true);
+                this._currentNode.moveNode(previousState.url, null, true);
             }
         }
         

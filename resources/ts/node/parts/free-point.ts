@@ -1,34 +1,39 @@
-import { AppearStatus } from "../enum/appear-status";
-import { MainNodeBase } from "../node/main-node-base";
-import { Util } from "./util";
+import { Util } from "../../common/util";
+import { DisappearRouteNodeType } from "../../common/type";
 
 export class FreePoint
 {
+    private static _instance: FreePoint | null = null;
+    
     private _element: HTMLDivElement;
     public pos: {x: number, y: number};
-    private routeNodes: MainNodeBase[];
 
     private _animationFunc: (() => void) | null;
     private _animationGoalPos: {x: number, y: number};    
     private _animationStartTime: number;
 
     /**
-     * コンストラクタ
-     * @param element 接続線の要素
+     * プライベートコンストラクタ（シングルトンパターン）
      */
-    public constructor(element: HTMLDivElement)
+    private constructor()
     {
-        this._element = element;
+        this._element = document.querySelector('div#free-pt') as HTMLDivElement;
         this.pos = {x: 0, y: 0};
-        this.routeNodes = [];
         this._animationGoalPos = {x: 0, y: 0};
         this._animationFunc = null;
         this._animationStartTime = 0;
     }
 
-    public addRouteNode(node: MainNodeBase): void
+    /**
+     * シングルトンインスタンスを取得
+     * @returns FreePointのインスタンス
+     */
+    public static getInstance(): FreePoint
     {
-        this.routeNodes.push(node);
+        if (FreePoint._instance === null) {
+            FreePoint._instance = new FreePoint();
+        }
+        return FreePoint._instance;
     }
 
     public get clientWidth(): number
@@ -41,19 +46,28 @@ export class FreePoint
         return this._element.clientHeight;
     }
 
-    public setPos(x: number, y: number): void
+    public setPos(x: number, y: number): FreePoint
     {
         this.pos.x = x;
         this.pos.y = y;
+        return this;
     }
 
-    public fixOffset(): void
+    public setElementPos(): FreePoint
+    {
+        this._element.style.left = this.pos.x + 'px';
+        this._element.style.top = this.pos.y + 'px';
+        return this;
+    }
+
+    public fixOffset(): FreePoint
     {
         this.pos.x = parseInt(this._element.style.left);
         this.pos.y = parseInt(this._element.style.top);
+        return this;
     }
 
-    public moveOffset(x: number, y: number): void
+    public moveOffset(x: number, y: number): FreePoint
     {
         this._element.style.left = this.pos.x + x + 'px';
         this._element.style.top = this.pos.y + y + 'px';
@@ -63,6 +77,7 @@ export class FreePoint
         if (this.pos.y < scrollY) {
             window.scrollTo(0, this.pos.y);
         }
+        return this;
     }
 
     public show(): void
@@ -75,10 +90,11 @@ export class FreePoint
         this._element.classList.remove('visible');
     }
 
-    public update(): void
+    public static update(): void
     {
-        if (this._animationFunc !== null) {
-            this._animationFunc();
+        const freePoint = FreePoint.getInstance();
+        if (freePoint._animationFunc !== null) {
+            freePoint._animationFunc();
         }
     }
 

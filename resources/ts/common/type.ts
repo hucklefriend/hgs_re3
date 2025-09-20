@@ -1,8 +1,12 @@
-import { TreeView } from "../tree-view";
-import { SubTreeNode } from "../node/sub-tree-node";
-import { AccordionTreeNode } from "../node/accordion-tree-node";
+import { CurrentNode } from "../node/current-node";
 import { LinkNode } from "../node/link-node";
+import { BasicNode } from "../node/basic-node";
+import { NodeContent } from "../node/parts/node-content";
+import { NodeContentTree } from "../node/parts/node-content-tree";
+import { TreeNode } from "../node/tree-node";
 
 // 複数のノード型を組み合わせた型エイリアス
-export type TreeOwnNodeType = SubTreeNode | AccordionTreeNode;
-export type DisappearRouteNodeType = LinkNode | SubTreeNode | AccordionTreeNode;
+export type NodeType = CurrentNode | BasicNode | LinkNode | TreeNode;
+export type TreeNodeType = CurrentNode | TreeNode;
+export type DisappearRouteNodeType = CurrentNode | LinkNode/* | AccordionTreeNode | ChildTreeLinkNode | ChildTreeNode*/;
+export type NodeContentType = NodeContent | NodeContentTree | null;

@@ -48,22 +48,29 @@ main {
     margin-right: auto;
     width: 100%;
     max-width: 767px;
-
     position: relative;
 
-    .tree-view {
+    > #current-node {
         position: relative;
     }
 }
 
+footer {
+    width: 100%;
+    text-align: center;
+    color: #334433;
+    margin: 50px 0;
+    font-size: 11px;
+}
+
 a {
     text-decoration: none;
-    color: var(--node-pt-dark) !important;
+    color: lightgray;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
     
     &:hover {
-        color: var(--node-pt-light) !important;
+        color: white;
         text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
     }
 }
@@ -90,9 +97,11 @@ div.connection-line {
     box-shadow: 0 0 10px #66ff66;
     transition: background 0.25s ease, box-shadow 0.1s ease;
     visibility: hidden;
+    z-index: -1;
 
     &.visible {
         visibility: visible;
+        opacity: 1;
     }
 
     &.fade-out {
@@ -102,7 +111,8 @@ div.connection-line {
 }
 
 .node-pt {
-    color: var(--node-pt-dark);
+    color: var(--node-pt-light);
+    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
     display: inline-block;
     line-height: 1;
     text-align: center;
@@ -112,57 +122,38 @@ div.connection-line {
     font-size: 10px;
     width: 20px;
     min-width: 20px;
-    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.2s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+
+    &.visible {
+        opacity: 1;
+    }
+
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.current-node-pt {
+    font-size: 13px !important;
+    width: 25px !important;
+    min-width: 25px !important;
+    color: var(--node-pt-light) !important;
+    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#current-node-content {
+    min-height: 100px;
 }
 
 .invisible {
     opacity: 0;
 }
 
-
-header.header-node {
-    margin-top: 0;
-    margin-bottom: 20px;
-
-    .node-head {
-        white-space: nowrap;
-        position: relative;
-        margin-bottom: 10px;
-
-        > h1 {
-            font-size: 1.2rem;
-            font-weight: normal;
-        }
-
-        > h2 {
-            font-size: 1.0rem;
-            font-weight: normal;
-        }
-
-        .node-pt {
-            text-shadow: 0 0 20px var(--node-pt-dark-shadow), 0 0 30px var(--node-pt-dark-shadow), 0 0 60px var(--node-pt-light-shadow);
-            color: var(--node-pt-dark);
-            width: 30px;
-            min-width: 30px;
-
-            &.fade-out {
-                opacity: 0;
-            }
-        }
-    }
-
-    .header-node-content {
-        margin-top: 20px;
-        margin-left: 30px;
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    }
-}
-
-.header-fade-mask {
+.node-head-text {
     mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
 
@@ -174,26 +165,28 @@ header.header-node {
 
     mask-repeat: no-repeat;
     -webkit-mask-repeat: no-repeat;
+
+    opacity: 1;
 }
 
 /* 右側から透明になるアニメーション用のクラス */
-.header-fade-out-right {
-    mask-position: 0% 0;
+.head-reveal-out {
+    mask-position: 100% 0;
     -webkit-mask-position: 0% 0;
 
-    animation: header-fadeout-mask 1s forwards;
+    animation: head-reveal-out-mask 1s forwards;
 }
-.header-fade-in-left {
+.head-reveal-in {
     mask-position: 200% 0;
     -webkit-mask-position: 200% 0;
 
-    animation: header-fadein-mask 1s forwards;
+    animation: head-reveal-in-mask 1s forwards;
 }
 
 /* 右側から透明になるアニメーション */
-@keyframes header-fadeout-mask {
+@keyframes head-reveal-out-mask {
     0% {
-        mask-position: 0% 0;
+        mask-position: 100% 0;
         -webkit-mask-position: 0% 0;
       }
       100% {
@@ -203,7 +196,7 @@ header.header-node {
 }
 
 /* 右側から透明になるアニメーション */
-@keyframes header-fadein-mask {
+@keyframes head-reveal-in-mask {
     0% {
         mask-position: 200% 0;
         -webkit-mask-position: 200% 0;
@@ -214,54 +207,59 @@ header.header-node {
       }
 }
 
-header.main-header-node {
-    margin-bottom: 50px !important;
-
-    .node-head {
-        .main-node-pt {
-            text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow) !important;
-            color: var(--node-pt-light) !important;
-        }
-    }
+.head-fade-out {
+    transition: opacity 0.5s ease-in;
+    opacity: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
 }
+
+
 
 .node {
     position: relative;
     contain: layout;
 
     > .node-head {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         flex-direction: row-reverse;
         justify-content: flex-end;
+        min-height: 40px;
 
         transition: all 0.3s ease-out;
+        margin-bottom: 20px;
     }
 
     > .node-content {
-        margin-left: 25px;
     }
 }
 
-.node-container, .sub-tree-node-container, .accordion-tree-node-container {
+.node-content.basic {
+    margin-left: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+
+    &.content-fade-in {
+        opacity: 1;
+    }
+
+    &.content-fade-out {
+        opacity: 0;
+    }
+}
+
+.tree {
     display: inline-flex;
     flex-direction: column;
     gap: 20px;
 
-    > section.node, > .accordion-node-content > section.node {
+    > section.node {
         padding-left: 30px;
         margin-bottom: 40px;
 
         &:last-child {
             margin-bottom: 0;
-        }
-
-        .terminal-node-container, 
-        .accordion-node-container
-        {
-            position: relative;
-            padding-left: 30px;
-            font-size: 13px;
         }
 
         .accordion-node-container
@@ -286,97 +284,6 @@ header.main-header-node {
                 height: 0 !important;
             }
         }
-
-        .behind-node-container
-        {
-            position: relative;
-            padding-left: 40px;
-            height: 0px;
-            font-size: 13px;
-            z-index: -10;
-            pointer-events: none;
-
-            > .behind-node {
-                filter: blur(2px);
-                display: flex;
-                padding: 20px 0;
-                transition: all 0.3s ease;
-
-                > .node-pt {
-                    transition: all 0.3s ease;
-                }
-
-                &:nth-child(1) {
-                    color: rgb(100, 100, 100);
-
-                    > .node-pt {
-                        color: #003000;
-                    }
-                }
-
-                &:nth-child(2) {
-                    color: rgba(80, 80, 80, 0.6);
-
-                    > .node-pt {
-                        color: #002000;
-                    }
-                }
-
-                &:nth-child(3) {
-                    color: rgba(80, 80, 80, 0.4);
-
-                    > .node-pt {
-                        color: #001500;
-                    }
-                }
-
-                &:nth-child(4) {
-                    color: rgba(80, 80, 80, 0.3);
-
-                    > .node-pt {
-                        color: #001000;
-                    }
-                }
-            }
-
-            &.hover {
-                > .sub-node {
-                    filter: blur(1px);
-
-                    &:nth-child(1) {
-                        color: rgb(120, 120, 120);
-
-                        > .node-pt {
-                            color: #005000;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        color: rgba(100, 100, 100, 0.6);
-
-                        > .node-pt {
-                            color: #004000;
-                        }
-                    }
-
-                    &:nth-child(3) {
-                        color: rgba(100, 100, 100, 0.4);
-
-                        > .node-pt {
-                            color: #002500;
-                        }
-                    }
-
-                    &:nth-child(4) {
-                        color: rgba(100, 100, 100, 0.3);
-
-                        > .node-pt {
-                            color: #001500;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     > section.content-node {
@@ -384,6 +291,102 @@ header.main-header-node {
     }
 }
 
+.behind
+{
+    position: relative;
+    padding-left: 40px;
+    height: 0px;
+    font-size: 13px;
+    z-index: -10;
+    pointer-events: none;
+
+    > .behind-node {
+        filter: blur(2px);
+        display: flex;
+        padding: 20px 0;
+        transition: all 0.3s ease;
+        visibility: hidden;
+
+        &.visible {
+            visibility: visible;
+        }
+
+        > .node-pt {
+            transition: all 0.3s ease;
+            text-shadow: none;
+        }
+
+        &:nth-child(1) {
+            color: rgb(100, 100, 100);
+
+            > .node-pt {
+                color: #003000;
+            }
+        }
+
+        &:nth-child(2) {
+            color: rgba(80, 80, 80, 0.6);
+
+            > .node-pt {
+                color: #002000;
+            }
+        }
+
+        &:nth-child(3) {
+            color: rgba(80, 80, 80, 0.4);
+
+            > .node-pt {
+                color: #001500;
+            }
+        }
+
+        &:nth-child(4) {
+            color: rgba(80, 80, 80, 0.3);
+
+            > .node-pt {
+                color: #001000;
+            }
+        }
+    }
+
+    &.hover {
+        > .behind-node {
+            filter: blur(1px);
+
+            &:nth-child(1) {
+                color: rgb(120, 120, 120);
+
+                > .node-pt {
+                    color: #005000;
+                }
+            }
+
+            &:nth-child(2) {
+                color: rgba(100, 100, 100, 0.6);
+
+                > .node-pt {
+                    color: #004000;
+                }
+            }
+
+            &:nth-child(3) {
+                color: rgba(100, 100, 100, 0.4);
+
+                > .node-pt {
+                    color: #002500;
+                }
+            }
+
+            &:nth-child(4) {
+                color: rgba(100, 100, 100, 0.3);
+
+                > .node-pt {
+                    color: #001500;
+                }
+            }
+        }
+    }
+}
 
 
 button.accordion-expand-button {
@@ -401,40 +404,22 @@ button.accordion-expand-button {
     vertical-align: baseline;
 }
 
-a.network-link, .terminal-title, button.accordion-expand-button {
-    color: lightgray !important;
-    background-color: transparent;
-    margin-left: 4px;
-    padding: 12px 0;
-    transition: all 0.3s ease;
-}
-
-a.network-link, .header-node-text {
-    & + .node-pt {
-        color: var(--node-pt-dark) !important;
-    }
-
-    &.hover, &.active {
-        color: white !important;
-        cursor: pointer;
-
+.link-node {
+    .node-head-text {
         & + .node-pt {
-            color: var(--node-pt-light) !important;
-            text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+            color: var(--node-pt-dark);
+        }
+
+        &.hover, &.active {
+            & + .node-pt {
+                color: var(--node-pt-light);
+                text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+            }
         }
     }
 }
 
-.terminal-title {
-    color: white !important;
-
-    & + .node-pt {
-        color: var(--node-pt-light) !important;
-        text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
-    }
-}
-
-.sub-tree-node {
+.child-tree-node {
     transition: opacity 0.3s ease;
 }
 
@@ -588,7 +573,7 @@ canvas.node-canvas {
 
 #free-pt {
     display: inline;
-    position: absolute;
+    position: fixed;
     font-size: 10px;
     text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
     color: var(--node-pt-light);

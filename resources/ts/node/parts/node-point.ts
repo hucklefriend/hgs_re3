@@ -1,16 +1,43 @@
 import { Point } from "../../common/point";
+import { HorrorGameNetwork } from "../../horror-game-network";
 
 export class NodePoint
 {
-    public element: HTMLSpanElement;
+    protected _htmlElement: HTMLSpanElement;
+
+    public get htmlElement(): HTMLSpanElement
+    {
+        return this._htmlElement;
+    }
 
     /**
      * コンストラクタ
      * @param element ポイントの要素
      */
-    constructor(element: HTMLSpanElement)
+    constructor(htmlElement: HTMLSpanElement)
     {
-        this.element = element;
+        this._htmlElement = htmlElement;
+    }
+
+    public appear(): void
+    {
+        this.show();
+        this._htmlElement.classList.add('visible');
+    }
+
+    public disappear(): void
+    {
+        this._htmlElement.classList.remove('visible');
+    }
+
+    public show(): void
+    {
+        this._htmlElement.classList.remove('hidden');
+    }
+
+    public hidden(): void
+    {
+        this._htmlElement.classList.add('hidden');
     }
 
     /**
@@ -21,18 +48,19 @@ export class NodePoint
     public getCenterPosition(): Point
     {
         return new Point(
-            this.element.offsetLeft + this.element.offsetWidth / 2,
-            this.element.offsetTop + this.element.offsetHeight / 2
+            Math.floor(this._htmlElement.offsetLeft + this._htmlElement.offsetWidth / 2),
+            Math.floor(this._htmlElement.offsetTop + this._htmlElement.offsetHeight / 2)
         );
     }
 
     public getAbsoluteCenterPosition(): Point
     {
-        const rect = this.element.getBoundingClientRect();
+        const rect = this._htmlElement.getBoundingClientRect();
+        const hgn = (window as any).hgn as HorrorGameNetwork;
 
         return new Point(
-            (rect.left + rect.width / 2) + window.scrollX - (window as any).hgn.main.offsetLeft,
-            (rect.top + rect.height / 2) + window.scrollY - (window as any).hgn.main.offsetTop
+            Math.floor((rect.left + rect.width / 2) + window.scrollX),
+            Math.floor((rect.top + rect.height / 2) + window.scrollY)
         );
     }
 } 

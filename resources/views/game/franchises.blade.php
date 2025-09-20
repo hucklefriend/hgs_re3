@@ -46,9 +46,38 @@
     @endforeach
 
 
-    @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
-        <div class="admin-edit">
-            <a href="{{ route('Admin.Game.Franchise') }}">管理</a>
-        </div>
-    @endif
+    <section class="node child-tree-node" id="footer-tree-node">
+        <header class="node header-node" id="title-lineup-header-node">
+            <div class="node-head invisible">
+                <h2 class="header-node-text active">Quick Links</h2>
+                <span class="node-pt">●</span>
+            </div>
+        </header>
+        <div class="child-tree-node-container tree-container">
+
+        <section class="node link-node" id="back-to-entrance-node">
+            <div class="node-head invisible">
+                <a href="{{ route('Entrance') }}" class="network-link">Entrance</a>
+                <span class="node-pt main-node-pt">●</span>
+            </div>
+            <div class="behind-node-container">
+            </div>
+            <canvas class="node-canvas"></canvas>
+        </section>
+
+        @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+            <section class="node link-node" id="information-node">
+                <div class="node-head invisible">
+                    <a href="{{ route('Admin.Game.Franchise') }}" class="network-link">管理</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+                <div class="behind-node-container">
+                </div>
+                <canvas class="node-canvas"></canvas>
+            </section>
+        @endif
+    </div>
+    <canvas class="node-canvas"></canvas>
+    <div class="connection-line"></div>
+</section>
 @endsection

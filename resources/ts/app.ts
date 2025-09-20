@@ -6,8 +6,7 @@ declare global {
     }
 }
 
-window.hgn = HorrorGameNetwork.getInstance();
-
 window.addEventListener('load', () => {
+    window.hgn = HorrorGameNetwork.getInstance();
     window.hgn.start();
 });

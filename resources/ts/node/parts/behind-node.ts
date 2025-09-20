@@ -1,9 +1,9 @@
-import { NodePoint } from "./parts/node-point";
+import { NodePoint } from "./node-point";
 
-export class BehindLinkNode
+export class BehindNode
 {
     private _point: NodePoint;
-    private _element: HTMLElement;
+    private _nodeElement: HTMLElement;
 
     /**
      * コンストラクタ
@@ -11,17 +11,17 @@ export class BehindLinkNode
     public constructor(nodeElement: HTMLElement)
     {
         this._point = new NodePoint(nodeElement.querySelector('.node-pt') as HTMLSpanElement);
-        this._element = nodeElement;
+        this._nodeElement = nodeElement;
     }
 
-    public get element(): HTMLElement
+    public get nodeElement(): HTMLElement
     {
-        return this._element;
+        return this._nodeElement;
     }
 
     public getConnectionPoint(): {x: number, y: number}
     {
-        const rect = this._point.element.getBoundingClientRect();
+        const rect = this._point.htmlElement.getBoundingClientRect();
         return {
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2
@@ -39,11 +39,11 @@ export class BehindLinkNode
 
     public invisible(): void
     {
-        this._element.classList.add('invisible');
+        this._nodeElement.classList.remove('visible');
     }
 
     public visible(): void
     {
-        this._element.classList.remove('invisible');
+        this._nodeElement.classList.add('visible');
     }
 } 

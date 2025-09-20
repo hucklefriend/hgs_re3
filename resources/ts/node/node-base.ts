@@ -1,18 +1,20 @@
+import { NodeHead } from "./parts/node-head";
+import { NodeContentType } from "../common/type";
+import { NodeContent } from "./parts/node-content";
+import { AppearStatus } from "../enum/appear-status";
+
 export abstract class NodeBase
 {
     private _id: string;
+
     protected _nodeElement: HTMLElement;
+    protected _nodeHead: NodeHead;
+    protected _nodeContents: { [key: string]: NodeContentType };
+    protected _appearStatus: AppearStatus;
+    protected _appearAnimationFunc: (() => void) | null;
+    protected _treeContentElement: HTMLElement | null;
+    protected _behindContentElement: HTMLElement | null;
     protected _isDraw: boolean;
-    
-    /**
-     * コンストラクタ
-     */
-    public constructor(nodeElement: HTMLElement)
-    {
-        this._id = nodeElement.id;
-        this._nodeElement = nodeElement;
-        this._isDraw = false;
-    }
 
     /**
      * ノードのIDを取得する
@@ -22,17 +24,102 @@ export abstract class NodeBase
         return this._id;
     }
 
-    public get element(): HTMLElement
+    /**
+     * ノードのHTML要素を取得する
+     */
+    public get nodeElement(): HTMLElement
     {
         return this._nodeElement;
     }
 
     /**
-     * ノードの要素を取得する
+     * ノードのヘッダを取得する
      */
-    public getNodeElement(): HTMLElement
+    public get nodeHead(): NodeHead
     {
-        return this._nodeElement;
+        return this._nodeHead;
+    }
+
+    /**
+     * ノードの出現状態を取得する
+     */
+    public get appearStatus(): AppearStatus
+    {
+        return this._appearStatus;
+    }
+    
+    /**
+     * コンストラクタ
+     */
+    public constructor(nodeElement: HTMLElement)
+    {
+        this._id = nodeElement.id;
+
+        this._nodeElement = nodeElement;
+        this._treeContentElement = null;
+        this._behindContentElement = null;
+        this._nodeHead = this.loadHead();
+        this._nodeContents = this.loadContents();
+
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this._appearAnimationFunc = null;
+        this._isDraw = false;
+    }
+
+    /**
+     * ノードのヘッダを読み込む
+     * 
+     * @returns 
+     */
+    private loadHead(): NodeHead
+    {
+        const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
+        return new NodeHead(nodeHead);
+    }
+
+    /**
+     * ノードのコンテンツを読み込む
+     * 
+     * @returns 
+     */
+    private loadContents(): { [key: string]: NodeContentType }
+    {
+        const nodeContents: { [key: string]: NodeContentType } = {};
+        const contentElements = this._nodeElement.querySelectorAll(':scope > .node-content');
+        contentElements.forEach(contentElement => {
+            if (contentElement.classList.contains('tree')) {
+                // 循環参照を起こしてしまうので、TreeコンテンツはHTMLのみ保持する
+                // Treeは1つしか持たない、2つ目以降は無視する
+                if (this._treeContentElement === null) {
+                    this._treeContentElement = contentElement as HTMLElement;
+                }
+            } else if (contentElement.classList.contains('behind')) {
+                // 循環参照を起こしてしまうので、BehindコンテンツはHTMLのみ保持する
+                // Behindも1つしか持たない、2つ目以降は無視する
+                if (this._behindContentElement === null) {
+                    this._behindContentElement = contentElement as HTMLElement;
+                }
+            } else {
+                nodeContents[contentElement.id] = new NodeContent(contentElement as HTMLElement);
+            }
+        });
+        return nodeContents;
+    }
+
+    public dispose(): void
+    {
+        
+    }
+
+    /**
+     * ノードのコンテンツをIDから取得する
+     * 
+     * @param id コンテンツのID
+     * @returns コンテンツ
+     */
+    public getContentById(id: string): NodeContentType | undefined
+    {
+        return this._nodeContents[id];
     }
 
     /**
@@ -44,17 +131,11 @@ export abstract class NodeBase
     }
 
     /**
-     * 開始処理
-     */
-    public start(): void
-    {
-    }
-
-    /**
      * リサイズ処理
      */
     public resize(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.resize());
     }
 
     /**
@@ -62,20 +143,23 @@ export abstract class NodeBase
      */
     public update(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.update());
     }
 
     /**
      * 出現アニメーション開始
      */
-    public appear(): void
+    public appearContents(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.appear());
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappearContents(): void
     {
+        Object.values(this._nodeContents).forEach(content => content?.disappear());
     }
 
     /**
@@ -83,15 +167,6 @@ export abstract class NodeBase
      */
     public draw(): void
     {
+        
     }
-
-    /**
-     * 接続点を取得する
-     */
-    protected abstract getConnectionPoint(): {x: number, y: number};
-
-    /**
-     * HTML上の絶対座標で接続点を取得する
-     */
-    protected abstract getAbsoluteConnectionPoint(): {x: number, y: number};
 } 

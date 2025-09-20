@@ -71,9 +71,7 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('about'), function() {
-            return $this->entrance();
-        });
+        return $this->tree(view('about'));
     }
 
     /**
@@ -84,9 +82,7 @@ class HgnController extends Controller
      */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('privacy_policy'), function() {
-            return $this->entrance();
-        });
+        return $this->tree(view('privacy_policy'));
     }
 
     /**
