@@ -86,6 +86,7 @@ export class ConnectionLine
         this._appearAnimationFunc = this.appearAnimation;
         this._appearStatus = AppearStatus.APPEARING;
         this._animationHeight = 0;
+        this._element.style.height = `${this._animationHeight}px`;
         this.visible();
     }
 
@@ -140,12 +141,10 @@ export class ConnectionLine
         if (this._withFreePt) {
             const freePt = FreePoint.getInstance();
             const rect = this._element.getBoundingClientRect();
-            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
             
             // this._elementのドキュメント座標を取得
-            const elementDocX = rect.left;// + window.scrollX;
-            const elementDocY = rect.top;// - window.scrollY;
+            const elementDocX = rect.left;
+            const elementDocY = rect.top;
             
             // freePtをthis._elementと同じ位置に配置
             const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;

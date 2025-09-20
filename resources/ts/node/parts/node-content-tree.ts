@@ -124,7 +124,7 @@ export class NodeContentTree extends NodeContent
     {
         if (this._connectionLine && !AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
             this._connectionLine.setPosition(headerPosition.x - 1, headerPosition.y);
-            this._connectionLine.changeHeight(this.lastNode.nodeElement.offsetTop - headerPosition.y + 2);
+            //this._connectionLine.changeHeight(this.lastNode.nodeElement.offsetTop - headerPosition.y + 2);
         }
     }
 
