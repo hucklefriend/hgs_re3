@@ -143,7 +143,7 @@ export class LinkNode extends BasicNode
     
             const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
             const rect = this._nodeElement.getBoundingClientRect();
-            const y = rect.top;// + window.scrollY;
+            const y = rect.top + window.scrollY;
             freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
             freePt.moveOffset(pos.x, pos.y);
             freePt.show();

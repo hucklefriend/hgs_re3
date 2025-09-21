@@ -143,8 +143,8 @@ export class ConnectionLine
             const rect = this._element.getBoundingClientRect();
             
             // this._elementのドキュメント座標を取得
-            const elementDocX = rect.left;
-            const elementDocY = rect.top;
+            const elementDocX = rect.left + window.scrollX;
+            const elementDocY = rect.top + window.scrollY;
             
             // freePtをthis._elementと同じ位置に配置
             const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;

@@ -168,7 +168,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
     
             const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
             const rect = this._nodeElement.getBoundingClientRect();
-            const y = rect.top - window.scrollY;
+            const y = rect.top + window.scrollY;
             freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
 
             const connectionPoint = this._nodeHead.getConnectionPoint();

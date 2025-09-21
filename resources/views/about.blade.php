@@ -80,15 +80,14 @@
                 "零～紅い蝶～"を例に紹介します。<br>
                 "零～紅い蝶～"はPS2版以外にも、XBOX移植版の"FATAL FRAME2"というパッケージがあります。<br>
                 "FATAL FRAME2"は移植なので、レビュー等は"零～紅い蝶～"として扱います。<br>
-                リメイクの"零～真紅の蝶～"は別のタイトルとして扱います。<br>
+                リメイクの"零～真紅の蝶～"及び"零～紅い蝶～ REMAKE"は別のタイトルとして扱います。<br>
                 <br>
                 もう一つ、"BIOHAZARD"を例に紹介します。<br>
                 初代"BIOHAZARD"と、そのリメイク"biohazard"は別のタイトルとして扱います。<br>
-                "biohazard HDリマスター"は"biohazard"として扱います。
+                リマスターの"biohazard HDリマスター"は"biohazard"として扱います。
             </p>
         </div>
     </section>
-
     <section class="node">
         <div class="node-head">
             <span class="node-head-text">問い合わせ先</span>
@@ -154,7 +153,7 @@
         <div class="node-content tree">
             <section class="node link-node">
                 <div class="node-head">
-                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                    <a href="{{ route('About') }}" class="node-head-text">Entrance</a>
                     <span class="node-pt main-node-pt">●</span>
                 </div>
             </section>

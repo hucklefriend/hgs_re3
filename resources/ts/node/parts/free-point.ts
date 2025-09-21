@@ -75,7 +75,7 @@ export class FreePoint
         // スクロール位置より上に来たら、スクロールYを調整
         const scrollY = window.scrollY;
         if (this.pos.y < scrollY) {
-            window.scrollTo(0, this.pos.y);
+            //window.scrollTo(0, this.pos.y);
         }
         return this;
     }

@@ -53,6 +53,7 @@
             </div>
         </div>
     </section>
+    
     <section class="node link-node" id="about-node">
         <div class="node-head">
             <a href="{{ route('About') }}" class="node-head-text" id="about-a">About</a>
