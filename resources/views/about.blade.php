@@ -153,7 +153,7 @@
         <div class="node-content tree">
             <section class="node link-node">
                 <div class="node-head">
-                    <a href="{{ route('About') }}" class="node-head-text">Entrance</a>
+                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
                     <span class="node-pt main-node-pt">●</span>
                 </div>
             </section>
