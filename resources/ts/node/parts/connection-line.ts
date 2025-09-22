@@ -1,5 +1,6 @@
 import { AppearStatus } from "../../enum/appear-status";
 import { FreePoint } from "./free-point";
+import { Util } from "../../common/util";
 
 export class ConnectionLine
 {
@@ -11,6 +12,7 @@ export class ConnectionLine
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
     private _withFreePt: boolean;
+    private _appearType: number;
 
     public get appearStatus(): AppearStatus
     {
@@ -36,6 +38,7 @@ export class ConnectionLine
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
         this._withFreePt = false;
+        this._appearType = 0;
     }
 
     public setPosition(x: number, y: number): void
@@ -88,6 +91,7 @@ export class ConnectionLine
         this._animationHeight = 0;
         this._element.style.height = `${this._animationHeight}px`;
         this.visible();
+        this._appearType = this._height > 1000 ? 1 : 0;
     }
 
     /**
@@ -95,8 +99,12 @@ export class ConnectionLine
      */
     private appearAnimation(): void
     {
-        const progress = (window as any).hgn.timestamp - this._animationStartTime;
-        this._animationHeight += 15;
+        if (this._appearType === 0) {
+            this._animationHeight += 15;
+        } else {
+            const progress = Util.getAnimationProgress(this._animationStartTime, 1000);
+            this._animationHeight = this._height * progress;
+        }
         if (this._animationHeight >= this._height) {
             this._animationHeight = this._height;
             this._appearAnimationFunc = null;
@@ -130,7 +138,12 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        this._animationHeight -= 15;
+        if (this._appearType === 0) {
+            this._animationHeight -= 15;
+        } else {
+            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, 1000);
+            this._animationHeight = this._height * progress;
+        }
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
