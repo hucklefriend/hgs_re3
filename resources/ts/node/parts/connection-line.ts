@@ -39,6 +39,7 @@ export class ConnectionLine
         this._disappearHeight = 0;
         this._withFreePt = false;
         this._appearType = 0;
+        this.setHeight(0);
     }
 
     public setPosition(x: number, y: number): void

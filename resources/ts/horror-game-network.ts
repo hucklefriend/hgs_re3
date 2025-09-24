@@ -1,5 +1,6 @@
 import { CurrentNode } from "./node/current-node";
 import { FreePoint } from "./node/parts/free-point";
+import { Util } from "./common/util";
 
 /**
  * ホラーゲームネットワーク
@@ -95,8 +96,8 @@ export class HorrorGameNetwork
         // popstateイベントの登録
         window.addEventListener('popstate', (event) => {this.popState(event)});
         
+        this._currentNode.start();
         this.resize();
-
         this._currentNode.appear();
 
         // 初期状態の履歴を設定

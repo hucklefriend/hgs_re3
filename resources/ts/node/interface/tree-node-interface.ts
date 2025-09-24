@@ -42,4 +42,6 @@ export interface TreeNodeInterface
      * 帰路消滅アニメーション開始
      */
     homewardDisappear(): void;
+
+    resizeConnectionLine(): void;
 }

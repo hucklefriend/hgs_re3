@@ -7,8 +7,8 @@ import { NodeType } from "../common/type";
 
 export class TreeNode extends BasicNode implements TreeNodeInterface
 {
-    private _nodeContentTree: NodeContentTree;
-    private _homewardNode: NodeType | null;
+    protected _nodeContentTree: NodeContentTree;
+    protected _homewardNode: NodeType | null;
 
     /**
      * ノードコンテンツツリーを取得
@@ -44,41 +44,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
      */
     public increaseAppearedNodeCount(): void
     {
-        this._nodeContentTree.increaseAppearedNodeCount();
-    }
-
-    /**
-     * 消滅したノード数を増加
-     */
-    public increaseDisappearedNodeCount(): void
-    {
-        this._nodeContentTree.increaseDisappearedNodeCount();
-    }
-
-    /**
-     * ホバー開始時のグラデーションα値を更新
-     */
-    protected updateGradientEndAlphaOnHover(): void
-    {
-        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        if (this._gradientEndAlpha >= 1.0) {
-            this._gradientEndAlpha = 1.0;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
-
-    /**
-     * ホバー終了時のグラデーションα値を更新
-     */
-    protected updateGradientEndAlphaOnUnhover(): void
-    {
-        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        if (this._gradientEndAlpha <= 0.3) {
-            this._gradientEndAlpha = 0.3;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
+        this._nodeContentTree.increaseAppearedNodeCount();is.setDraw();
     }
 
     public resize(): void
@@ -225,5 +191,12 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
     {
         super.draw();
         this._nodeContentTree.draw();
+    }
+
+    public resizeConnectionLine(): void
+    {
+        this._nodeContentTree.resizeConnectionLine(this._nodeHead.getConnectionPoint());
+        // 親にも伝播させる
+        this._parentNode.resizeConnectionLine();
     }
 }

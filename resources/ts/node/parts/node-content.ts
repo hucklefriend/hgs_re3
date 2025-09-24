@@ -4,6 +4,11 @@ export class NodeContent
 {
     protected _contentElement: HTMLElement;
 
+    public get contentElement(): HTMLElement
+    {
+        return this._contentElement;
+    }
+
     /**
      * コンストラクタ
      */

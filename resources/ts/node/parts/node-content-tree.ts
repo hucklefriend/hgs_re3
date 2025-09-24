@@ -7,6 +7,7 @@ import { NodeContent } from "./node-content";
 import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
+import { AccordionTreeNode } from "../accordion-tree-node";
 
 export class NodeContentTree extends NodeContent
 {
@@ -78,7 +79,11 @@ export class NodeContentTree extends NodeContent
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             } else if (nodeElement.classList.contains('tree-node')) {
-                this._nodes.push(new TreeNode(nodeElement as HTMLElement, parentNode));
+                if (nodeElement.classList.contains('accordion')) {
+                    this._nodes.push(new AccordionTreeNode(nodeElement as HTMLElement, parentNode));
+                } else {
+                    this._nodes.push(new TreeNode(nodeElement as HTMLElement, parentNode));
+                }
                 this._nodeCount++;
             } else {
                 // どれにも当てはまらないものはベーシックノード
@@ -124,7 +129,7 @@ export class NodeContentTree extends NodeContent
     {
         if (this._connectionLine && !AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
             this._connectionLine.setPosition(headerPosition.x - 1, headerPosition.y);
-            //this._connectionLine.changeHeight(this.lastNode.nodeElement.offsetTop - headerPosition.y + 2);
+            this._connectionLine.changeHeight(this.lastNode.nodeElement.offsetTop - headerPosition.y + 2);
         }
     }
 
@@ -139,7 +144,7 @@ export class NodeContentTree extends NodeContent
         }
     }
 
-    public appear(): void
+    public appear(force: boolean = false): void
     {
         const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         this._connectionLine.setPosition(headerPosition.x - 1, headerPosition.y);
@@ -174,9 +179,14 @@ export class NodeContentTree extends NodeContent
     public appearAnimation2(): void
     {
         if (this.lastNode.appearStatus === AppearStatus.APPEARED) {
-            this._appearStatus = AppearStatus.APPEARED;
-            this.appearAnimationFunc = null;
+            this.appeared();
         }
+    }
+
+    public appeared(): void
+    {
+        this._appearStatus = AppearStatus.APPEARED;
+        this.appearAnimationFunc = null;
     }
 
     public disappear(): void
@@ -205,9 +215,14 @@ export class NodeContentTree extends NodeContent
     public disappearAnimation(): void
     {
         if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
-            this._appearStatus = AppearStatus.DISAPPEARED;
-            this.appearAnimationFunc = null;
+            this.disappeared();
         }
+    }
+
+    public disappeared(): void
+    {
+        this._appearStatus = AppearStatus.DISAPPEARED;
+        this.appearAnimationFunc = null;
     }
 
     public disappearConnectionLine(withFreePt: boolean = false): void

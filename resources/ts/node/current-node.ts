@@ -7,6 +7,7 @@ import { NodeBase } from "./node-base";
 import { LinkNode } from "./link-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
+import { AccordionTreeNode } from "./accordion-tree-node";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {   
@@ -16,6 +17,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private _nextNodeCache: NextNodeCache | null;
     private _homewardNode: NodeType | null;
     private _currentNodeContentElement: HTMLElement | null;
+    private _accordionGroups: { [key: string]: AccordionTreeNode[] };
 
     public get homewardNode(): NodeType | null
     {
@@ -37,6 +39,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._currentNodeContentElement = document.getElementById('current-node-content');
 
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
+
+        this._accordionGroups = {};
+    }
+
+    public start(): void
+    {
         this._nodeContentTree.loadNodes(this);
     }
 
@@ -46,6 +54,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public dispose(): void
     {
         this._nodeContentTree.disposeNodes();
+        this._accordionGroups = {};
     }
 
     /**
@@ -252,6 +261,24 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         this._nodeHead.disappear();
         this._nodeContentTree.disappearConnectionLine(true);
+    }
+
+    public resizeConnectionLine(): void
+    {
+        this._nodeContentTree.resizeConnectionLine(this._nodeHead.getConnectionPoint());
+    }
+
+    public addAccordionGroup(groupId: string, node: AccordionTreeNode): void
+    {
+        if (!this._accordionGroups[groupId]) {
+            this._accordionGroups[groupId] = [];
+        }
+        this._accordionGroups[groupId].push(node);
+    }
+
+    public getAccordionGroup(groupId: string): AccordionTreeNode[]
+    {
+        return this._accordionGroups[groupId];
     }
 }
 
