@@ -1,195 +1,208 @@
-import { MainNodeBase } from "./basic-node";
+import { TreeNode } from "./tree-node";
+import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { AppearStatus } from "../enum/appear-status";
-import { NodePoint } from "./parts/node-point";
-import { Tree } from "./parts/node-content-tree";
-import { LinkNode } from "./link-node";
-import { FreePoint } from "../common/free-point";
+import { BasicNode } from "./basic-node";
+import { CurrentNode } from "./current-node";
 import { HorrorGameNetwork } from "../horror-game-network";
-import { TreeView } from "../tree-view";
-import { AccordionNode } from "./accordion-node";
-import { AccordionNodeGroup } from "./accordion-node-group";
-import { TreeOwnNodeType } from "../common/type";
 
-export class AccordionTreeNode extends AccordionNode
+export class AccordionTreeNode extends TreeNode
 {
-    private _tree: Tree;
+    private _groupId: string;
+    private _btn: HTMLButtonElement;
+    private _isHomewardDisappear: boolean;
+    private _isOpen: boolean;
+    private _startScrollY: number;
+    private _startPosY: number;
 
-    public constructor(nodeElement: HTMLElement, parentNode: TreeOwnNodeType | null, parentTree: Tree)
+    public get btn(): HTMLButtonElement
     {
-        super(nodeElement, parentNode, parentTree);
-
-        this._tree = new Tree(
-            this.id,
-            nodeElement.querySelector('.header-node') as HTMLElement,
-            nodeElement.querySelector('.connection-line') as HTMLDivElement
-        );
-
-        this._tree.loadNodes(this._content.querySelectorAll('section.node'), this);
-        this._tree.resize();
+        return this._btn;
     }
 
-    public get tree(): Tree | null
+
+    public constructor(nodeElement: HTMLElement, parentNode: TreeNodeInterface)
     {
-        return this._tree;
+        super(nodeElement, parentNode);
+
+        this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
+        this._btn = this._nodeHead.titleElement as HTMLButtonElement;
+        this._btn.addEventListener('click', this.click.bind(this));
+        this._btn.addEventListener('mouseenter', this.hover.bind(this));
+        this._btn.addEventListener('mouseleave', this.unhover.bind(this));
+        this._isHomewardDisappear = false;
+        this._isOpen = false;
+        this._startScrollY = 0;
+        this._startPosY = 0;
+
+        const currentNode = window.hgn.currentNode as CurrentNode;
+        if (currentNode) {
+            currentNode.addAccordionGroup(this._groupId, this);
+        }
     }
 
-    public open(): void
+    public appear(): void
     {
-        super.open();
-        
-        this._tree.appear(false);
+        BasicNode.prototype.appear.call(this);
+    }
 
+    public appearAnimation(): void
+    {
+        BasicNode.prototype.appearAnimation.call(this);
+    }
+
+    public open(toggleOtherNodes: boolean = false): void
+    {
+        if (this._isOpen) {
+            return;
+        }
+        this._nodeContentTree.contentElement.classList.add('open');
+        this._nodeContentTree.appear();
         this._appearAnimationFunc = this.openAnimation;
+        this._isOpen = true;
+        this._nodeContentBehind?.invisible();
+
+        if (toggleOtherNodes) {
+            this._toggleOtherNodesInGroup('close');
+        }
     }
 
     public openAnimation(): void
     {
-        if (this._tree.isAppeared()) {
-            this._appearAnimationFunc = null;
+        this.parentNode.resizeConnectionLine();
+        const nodeRect = this._nodeElement.getBoundingClientRect();
+        const posY = nodeRect.top + window.scrollY;
+        if (posY !== this._startPosY) {
+            //window.scrollTo(0, this._startScrollY - (this._startPosY - posY));
         }
-
-        this._parentTree.resizeConnectionLine();
-
-        let parentNode = this.parentNode;
-        while (parentNode) {
-            parentNode.parentTree.resizeConnectionLine();
-            parentNode = parentNode.parentNode;
+        
+        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus) ||
+            AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+            this._appearAnimationFunc = null;
+            console.log('opened/closed');
         }
     }
 
     public close(): void
     {
-        super.close();
-        this._tree.disappear(false);
-        this._tree.disappearConnectionLine(true, true);
+        if (!this._isOpen) {
+            return;
+        }
+        
+        this._nodeContentTree.contentElement.classList.remove('open');
+        this._nodeContentTree.disappear();
+        const nodeRect = this._nodeElement.getBoundingClientRect();
+        this._startPosY = nodeRect.top + window.scrollY;
+        this._startScrollY = window.scrollY;
 
         this._appearAnimationFunc = this.openAnimation;
+        this._isOpen = false;
+        this._nodeContentBehind?.visible();
     }
 
-    public update(): void
+    public toggle(): void
     {
-        super.update();
-        this._tree.update();
-    }
-
-    public resize(): void
-    {
-        super.resize();
-        this._tree.resize();
-    }
-
-    public draw(): void
-    {
-        super.draw();
-        this._tree.draw();
-    }
-
-    
-
-    public disappear(): void
-    {
-        this._tree.disappear();
-        super.disappear(false);
-
-        if (!this.isSelectedDisappear) {
-            this._nodeElement.classList.add('invisible');
+        if (this._isOpen) {
+            this.close();
         } else {
-            this._gradientEndAlpha = 1;
+            this.open(true);
         }
     }
 
-    public disappearAnimation(): void
+    /**
+     * 同じアコーディオングループ内の他のノードを指定された状態に切り替える
+     * @param action 実行するアクション（'open' または 'close'）
+     */
+    private _toggleOtherNodesInGroup(action: 'open' | 'close'): void
     {
-        //super.disappearAnimation();
-
-        if (this._tree.lastNode === null) {
-            this._tree.disappearConnectionLine();
-            this._appearAnimationFunc = null;
-        } else {
-            if (this._tree.lastNode.appearStatus === AppearStatus.DISAPPEARED) {
-                this._tree.disappearConnectionLine();
-
-                if (this.isSelectedDisappear) {
-                    this._appearAnimationFunc = null;
-                } else {
-                    this._appearAnimationFunc = this.disappearAnimation2;
+        const currentNode = (window as any).hgn.currentNode as CurrentNode;
+        if (currentNode) {
+            const group = currentNode.getAccordionGroup(this._groupId);
+            for (const node of group) {
+                if (node.id !== this.id) {
+                    if (action === 'open') {
+                        node.open();
+                    } else {
+                        node.close();
+                    }
                 }
             }
         }
     }
 
-    public disappearAnimation2(): void
+    /**
+     * ホバー開始時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnHover(): void
     {
-        if (this._tree.connectionLine.isDisappeared()) {
-            this._appearAnimationFunc = null;
-            this._parentTree.increaseDisappearedNodeCount();
-            this._appearStatus = AppearStatus.DISAPPEARED;
+        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
+        if (this._gradientEndAlpha >= 1.0) {
+            this._gradientEndAlpha = 1.0;
+            this._updateGradientEndAlphaFunc = null;
         }
+
+        this.setDraw();
     }
 
-    public disappear2(): void
+    /**
+     * ホバー終了時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnUnhover(): void
     {
-        //this._tree.connectionLine.setHeight(0);
-        this._tree.connectionLine.disappear(0, true);
-        this._appearAnimationFunc = this.disappear2Animation;
+        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
+        if (this._gradientEndAlpha <= 0.3) {
+            this._gradientEndAlpha = 0.3;
+            this._updateGradientEndAlphaFunc = null;
+        }
+        this.setDraw();
+    }
+
+    protected isHover(): boolean
+    {
+        return this._appearStatus === AppearStatus.APPEARED && this._btn.classList.contains('hover');
+    }
+
+    /**
+     * ホバー時の処理
+     */
+    protected hover(): void
+    {
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
+        }
+
+        this._btn.classList.add('hover');
+        this._nodeContentBehind?.hover();
         this._animationStartTime = (window as any).hgn.timestamp;
-
-        const freePt = (window as any).hgn.treeView.freePt as FreePoint;
-        freePt.moveTo(this.getAbsoluteConnectionPoint());
+        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
     }
 
-    public disappear2Animation(): void
+    /**
+     * ホバー解除時の処理
+     */
+    protected unhover(): void
     {
-        const treeView = (window as any).hgn.treeView as TreeView;
-        const freePt = treeView.freePt as FreePoint;
-        const progress = 1 - this.getAnimationProgress(300);
-        if (progress <= 0) {
-            this._gradientEndAlpha = 0;
-            this._appearAnimationFunc = this.disappear2Animation2;
-            this._animationStartTime = (window as any).hgn.timestamp;
-            this.invisibleNodeHead();
-        } else {
-            freePt.moveOffset(0, 0);
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
         }
+        this._btn.classList.remove('hover');
+        this._nodeContentBehind?.unhover();
+
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
     }
 
-    public disappear2Animation2(): void
+    /**
+     * クリック時の処理
+     * @param e クリックイベント
+     */
+    protected click(e: MouseEvent): void
     {
-        const connectionPoint = this.getConnectionPoint();
+        e.preventDefault();
 
-        const hgn = (window as any).hgn as HorrorGameNetwork;
-        const treeView = hgn.treeView as TreeView as TreeView;
-
-        this._curveAppearProgress = 1 - this.getAnimationProgress(200);
-        if (this._curveAppearProgress <= 0) {
-            this._curveAppearProgress = 0;
-            this._gradientEndAlpha = 0;
-            this._appearAnimationFunc = null;
-            this._parentTree.increaseDisappearedNodeCount();
-            this._appearStatus = AppearStatus.DISAPPEARED;
-
-            const freePt = treeView.freePt as FreePoint;
-            freePt.fixOffset();
-            treeView.disappear2();
-        } else {
-            this.drawCurvedLine(
-                15,
-                0,
-                connectionPoint.x,
-                connectionPoint.y
-            );
+        if (this._appearStatus !== AppearStatus.APPEARED) {
+            return;
         }
 
-        const freePt = hgn.treeView.freePt as FreePoint;
-        const pos = this.getQuadraticBezierPoint(
-            0, 0,
-            0, connectionPoint.y,
-            connectionPoint.x - freePt.clientWidth/2, connectionPoint.y,
-            this._curveAppearProgress
-        );
-
-        freePt.moveOffset(pos.x- this._tree.headerNode.point.element.offsetWidth, pos.y - connectionPoint.y);
-        
-        this._isDraw = true;
+        this.toggle();
     }
 }

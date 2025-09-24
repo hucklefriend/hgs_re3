@@ -42,7 +42,6 @@ export class BasicNode extends NodeBase
         this._curveAppearProgress = 0;
         this._updateGradientEndAlphaFunc = null;
 
-
         this._nodeContentBehind = null;
         if (this._behindContentElement) {
             this._nodeContentBehind = new NodeContentBehind(this._behindContentElement as HTMLElement);
@@ -114,19 +113,24 @@ export class BasicNode extends NodeBase
     public appear(): void
     {
         if (AppearStatus.isDisappeared(this._appearStatus)) {
-            this._appearStatus = AppearStatus.APPEARING;
-            this._appearAnimationFunc = this.appearAnimation;
-            this._curveAppearProgress = 0;
-            this._animationStartTime = (window as any).hgn.timestamp;
-            this._gradientStartAlpha = 1;
-            this._gradientEndAlpha = 0;
+            this.startAppear();
         }
+    }
+
+    protected startAppear(): void
+    {
+        this._appearStatus = AppearStatus.APPEARING;
+        this._appearAnimationFunc = this.appearAnimation;
+        this._curveAppearProgress = 0;
+        this._animationStartTime = (window as any).hgn.timestamp;
+        this._gradientStartAlpha = 1;
+        this._gradientEndAlpha = 0;
     }
 
     /**
      * 出現アニメーション
      */
-    protected appearAnimation(): void
+    public appearAnimation(): void
     {
         this._curveAppearProgress = this.getAnimationProgress(200);
         if (this._curveAppearProgress >= 1) {
