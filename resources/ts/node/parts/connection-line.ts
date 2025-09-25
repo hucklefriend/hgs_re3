@@ -131,6 +131,8 @@ export class ConnectionLine
             this._appearAnimationFunc = this.disappearAnimation;
             this._withFreePt = withFreePt;
             this._animationHeight = this._height;
+
+            this._appearType = this._height > 1000 ? 1 : 0;
         }
     }
 
