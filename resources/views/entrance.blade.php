@@ -13,7 +13,7 @@
             <section class="node link-node" id="search-link-node">
                 <div class="node-head">
                     <a href="#" class="node-head-text">Search</a>
-                    <span class="node-pt main-node-pt">●</span>
+                    <span class="node-pt">●</span>
                 </div>
             </section>
 
@@ -24,13 +24,13 @@
                 </div>
                 <div class="node-content behind">
                     <div class="behind-node">
-                        <span class="node-pt">●</span><span>アカイイト</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>アオイシロ</span>
-                    </div>
-                    <div class="behind-node">
                         <span class="node-pt">●</span><span>バイオハザード</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>サイレントヒル</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>零</span>
                     </div>
                 </div>
             </section>

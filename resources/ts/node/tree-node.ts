@@ -39,14 +39,6 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         this._homewardNode = null;
     }
 
-    /**
-     * 出現したノード数を増加
-     */
-    public increaseAppearedNodeCount(): void
-    {
-        this._nodeContentTree.increaseAppearedNodeCount();is.setDraw();
-    }
-
     public resize(): void
     {
         super.resize();
@@ -162,7 +154,6 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             this._gradientEndAlpha = 0;
             this._homewardNode = null;
             this._appearAnimationFunc = null;
-            this._parentNode.increaseDisappearedNodeCount();
             this._appearStatus = AppearStatus.DISAPPEARED;
 
             freePt.fixOffset();

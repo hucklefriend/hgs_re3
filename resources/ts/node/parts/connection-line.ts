@@ -182,6 +182,7 @@ export class ConnectionLine
     public disappearFadeOut(): void
     {
         this._element.classList.add('fade-out');
+        this._animationHeight = 0;
         
         // transitionendイベントをリッスン
         const handleTransitionEnd = (event: TransitionEvent) => {
