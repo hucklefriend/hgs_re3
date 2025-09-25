@@ -186,13 +186,13 @@ div.connection-line {
     mask-position: 100% 0;
     -webkit-mask-position: 0% 0;
 
-    animation: head-reveal-out-mask 1s forwards;
+    animation: head-reveal-out-mask 0.5s forwards;
 }
 .head-reveal-in {
     mask-position: 200% 0;
     -webkit-mask-position: 200% 0;
 
-    animation: head-reveal-in-mask 1s forwards;
+    animation: head-reveal-in-mask 0.5s forwards;
 }
 
 /* 右側から透明になるアニメーション */
@@ -220,7 +220,7 @@ div.connection-line {
 }
 
 .head-fade-out {
-    transition: opacity 0.5s ease-in;
+    transition: opacity 0.2s ease-in;
     opacity: 0;
     mask-image: none;
     -webkit-mask-image: none;
@@ -251,7 +251,7 @@ div.connection-line {
 .node-content.basic {
     margin-left: 20px;
     opacity: 0;
-    transition: opacity 0.5s ease-in;
+    transition: opacity 0.2s ease-in;
 
     &.content-fade-in {
         opacity: 1;
