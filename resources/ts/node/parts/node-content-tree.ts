@@ -8,6 +8,7 @@ import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
 import { AccordionTreeNode } from "../accordion-tree-node";
+import { Util } from "../../common/util";
 
 export class NodeContentTree extends NodeContent
 {
@@ -172,8 +173,6 @@ export class NodeContentTree extends NodeContent
 
     public disappear(): void
     {
-        this._nodes.forEach(node => node.disappear());
-
         if (this.homewardNode) {
             const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const height = this.homewardNode.nodeElement.offsetTop - headerPosition.y + 2;
@@ -183,16 +182,29 @@ export class NodeContentTree extends NodeContent
             this._connectionLineFadeOut.changeHeight(orgHeight - height);
             this._connectionLineFadeOut.visible();
             this._connectionLineFadeOut.disappearFadeOut();
+            this.disappeareUnderLine(height, headerPosition);
+            this.homewardNode.disappear();
 
             this._appearStatus = AppearStatus.DISAPPEARING;
-            this.appearAnimationFunc = this.disappearAnimation2;
+            this.appearAnimationFunc = this.disappearAnimation;
         } else {
             this._connectionLine.disappearFadeOut();
-            this._appearStatus = AppearStatus.DISAPPEARED;
-            this.appearAnimationFunc = null;//this.disappearAnimation;
+            this._appearStatus = AppearStatus.DISAPPEARING;
+            this.appearAnimationFunc = this.disappearAnimation2;
+            this._nodes.forEach(node => node.disappear());
         }
+    }
 
-        //this.disappearAnimation();
+    private disappeareUnderLine(conLineHeight: number, headerPosition: Point): void
+    {
+        this._nodes.forEach(node => {
+            if (AppearStatus.isAppeared(node.appearStatus)) {
+                const top = node.nodeElement.offsetTop - headerPosition.y;
+                if (top >= conLineHeight) {
+                    node.disappear();
+                }
+            }
+        });
     }
 
     /**
@@ -200,21 +212,13 @@ export class NodeContentTree extends NodeContent
      */
     public disappearAnimation(): void
     {
-        console.log('disappearAnimation');
-        const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
-        const conLineHeight = this._connectionLine.getAnimationHeight();
+        if (AppearStatus.isDisappearing(this._connectionLine.appearStatus)) {
+            const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
+            const conLineHeight = this._connectionLine.getAnimationHeight();
+            this.disappeareUnderLine(conLineHeight - 100, headerPosition);
+        }
         
-        this._nodes.forEach(node => {
-            if (AppearStatus.isAppeared(node.appearStatus)) {
-                const top = node.nodeElement.offsetTop - headerPosition.y;
-                if (top >= conLineHeight - 150) {
-                    node.disappear();
-                }
-            }
-        });
-
-        if (AppearStatus.isAppeared(this._connectionLine.appearStatus)) {
-            console.log('disappeared');
+        if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
             this.disappeared();
         }
     }

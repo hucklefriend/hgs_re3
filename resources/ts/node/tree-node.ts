@@ -103,8 +103,11 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             super.disappear();
         }
 
+        this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.homewardNode = this._homewardNode;
         this._nodeContentTree.disappear();
+
+        this._nodeContentBehind?.disappear();
     }
 
     public homewardDisappear(): void
