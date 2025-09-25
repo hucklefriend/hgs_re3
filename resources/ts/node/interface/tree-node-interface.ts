@@ -23,16 +23,6 @@ export interface TreeNodeInterface
     readonly homewardNode: NodeType | null;
 
     /**
-     * 出現したノード数を増加
-     */
-    increaseAppearedNodeCount(): void;
-
-    /**
-     * 消滅したノード数を増加
-     */
-    increaseDisappearedNodeCount(): void;
-
-    /**
      * 消滅アニメーション準備
      * @param homewardNode 帰路ノード
      */

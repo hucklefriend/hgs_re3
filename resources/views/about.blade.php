@@ -7,7 +7,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">ホラーゲームネットワークとは？</span>
+            <h2 class="node-head-text">ホラーゲームネットワークとは？</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -20,7 +20,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">ホラーゲームの定義</span>
+            <h2 class="node-head-text">ホラーゲームの定義</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -50,7 +50,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">タイトル</span>
+            <h2 class="node-head-text">タイトル</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -69,7 +69,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">リメイクと移植とリマスター</span>
+            <h2 class="node-head-text">リメイクと移植とリマスター</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -90,7 +90,7 @@
     </section>
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">問い合わせ先</span>
+            <h2 class="node-head-text">問い合わせ先</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -112,7 +112,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">画像生成AIの利用</span>
+            <h2 class="node-head-text">画像生成AIの利用</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -131,7 +131,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">利用画像</span>
+            <h2 class="node-head-text">利用画像</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">

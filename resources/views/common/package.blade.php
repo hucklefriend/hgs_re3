@@ -1,6 +1,6 @@
-<section class="node terminal-node" id="biohazard-link-node">
-    <div class="node-head invisible">
-        <span class="terminal-title">
+<section class="node" id="biohazard-link-node">
+    <div class="node-head">
+        <span class="node-head-text">
             {{ $pkg->platform->acronym }}
             &nbsp;<img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
             @empty($pkg->node_name)
@@ -8,11 +8,10 @@
                 &nbsp;{!! $pkg->node_name !!}
             @endif
             &nbsp;{{ $pkg->release_at }}
-
         </span>
-        <span class="node-pt main-node-pt">●</span>
+        <span class="node-pt">●</span>
     </div>
-    <div class="terminal-node-container">
+    <div class="node-content basic">
         <div class="pkg-img">
             @if ($pkg->imgShop)
                 @if ($pkg->imgShop->ogp !== null)
@@ -53,9 +52,6 @@
             @endif
         </div>
     </div>
-    <div class="behind-node-container">
-    </div>
-    <canvas class="node-canvas"></canvas>
 </section>
 
 {{--

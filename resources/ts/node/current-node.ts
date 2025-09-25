@@ -66,22 +66,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     }
 
     /**
-     * 出現したノード数を増加
-     */
-    public increaseAppearedNodeCount(): void
-    {
-        this._nodeContentTree.increaseAppearedNodeCount();
-    }
-
-    /**
-     * 消滅したノード数を増加
-     */
-    public increaseDisappearedNodeCount(): void
-    {
-        this._nodeContentTree.increaseDisappearedNodeCount();
-    }
-
-    /**
      * 更新
      */
     public update(): void
