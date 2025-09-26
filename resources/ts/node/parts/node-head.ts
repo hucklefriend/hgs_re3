@@ -30,6 +30,11 @@ export class NodeHead
         this._titleElement.innerHTML = title;
     }
 
+    public get nodeElement(): HTMLElement
+    {
+        return this._nodeElement;
+    }
+
     /**
      * コンストラクタ
      */

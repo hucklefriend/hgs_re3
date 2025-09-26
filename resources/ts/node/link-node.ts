@@ -7,15 +7,21 @@ import { CurrentNode } from "./current-node";
 import { Util } from "../common/util";
 import { Point } from "../common/point";
 import { CurveCanvas } from "./parts/curve-canvas";
+import { ClickableNodeInterface } from "./interface/clickable-node-interface";
+import { NodeHeadClickable } from "./parts/node-head-clickable";
 
-export class LinkNode extends BasicNode
+export class LinkNode extends BasicNode implements ClickableNodeInterface
 {
-    private _anchor: HTMLAnchorElement;
     private _isHomewardDisappear: boolean;
 
     public get anchor(): HTMLAnchorElement
     {
-        return this._anchor;
+        return this.nodeHead.titleElement as HTMLAnchorElement;
+    }
+
+    public get nodeHead(): NodeHeadClickable
+    {
+        return this._nodeHead as NodeHeadClickable;
     }
 
     /**
@@ -26,37 +32,9 @@ export class LinkNode extends BasicNode
     {
         super(nodeElement, parentNode);
 
-        this._anchor = this._nodeHead.titleElement as HTMLAnchorElement;
-        this._anchor.addEventListener('click', this.click.bind(this));
-        this._anchor.addEventListener('mouseenter', this.hover.bind(this));
-        this._anchor.addEventListener('mouseleave', this.unhover.bind(this));
         this._isHomewardDisappear = false;
     }
 
-    /**
-     * ホバー開始時のグラデーションα値を更新
-     */
-    private updateGradientEndAlphaOnHover(): void
-    {
-        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
-        if (this._curveCanvas.gradientEndAlpha === 1) {
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
-
-    /**
-     * ホバー終了時のグラデーションα値を更新
-     */
-    private updateGradientEndAlphaOnUnhover(): void
-    {
-        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
-        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
-            this._curveCanvas.gradientEndAlpha = 0.3;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
 
     /**
      * アニメーションの更新処理
@@ -64,27 +42,13 @@ export class LinkNode extends BasicNode
     public update(): void
     {
         super.update();
-
-        if (this._updateGradientEndAlphaFunc !== null) {
-            this._updateGradientEndAlphaFunc();
-        }
-    }
-
-    protected isHover(): boolean
-    {
-        return this._appearStatus === AppearStatus.APPEARED && this._anchor.classList.contains('hover');
     }
 
     /**
      * ホバー時の処理
      */
-    protected hover(): void
+    public hover(): void
     {
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-
-        this._anchor.classList.add('hover');
         this._nodeContentBehind?.hover();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
@@ -93,12 +57,8 @@ export class LinkNode extends BasicNode
     /**
      * ホバー解除時の処理
      */
-    protected unhover(): void
+    public unhover(): void
     {
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-        this._anchor.classList.remove('hover');
         this._nodeContentBehind?.unhover();
 
         this._animationStartTime = (window as any).hgn.timestamp;
@@ -109,19 +69,14 @@ export class LinkNode extends BasicNode
      * クリック時の処理
      * @param e クリックイベント
      */
-    protected click(e: MouseEvent): void
+    public click(e: MouseEvent): void
     {
-        e.preventDefault();
-
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-
         this._isHomewardDisappear = true;
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const currentNode = hgn.currentNode as CurrentNode;
-        currentNode.moveNode(this._anchor.href, this, false);
+        console.log(this.anchor);
+        currentNode.moveNode(this.anchor.href, this, false);
 
         this.parentNode.prepareDisappear(this);
     }

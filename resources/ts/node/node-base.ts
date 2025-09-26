@@ -2,13 +2,14 @@ import { NodeHead } from "./parts/node-head";
 import { NodeContentType } from "../common/type";
 import { NodeContent } from "./parts/node-content";
 import { AppearStatus } from "../enum/appear-status";
+import { NodeHeadType } from "../common/type";
 
 export abstract class NodeBase
 {
     private _id: string;
 
     protected _nodeElement: HTMLElement;
-    protected _nodeHead: NodeHead;
+    protected _nodeHead: NodeHeadType;
     protected _nodeContents: { [key: string]: NodeContentType };
     protected _appearStatus: AppearStatus;
     protected _appearAnimationFunc: (() => void) | null;
@@ -71,7 +72,7 @@ export abstract class NodeBase
      * 
      * @returns 
      */
-    protected loadHead(): NodeHead
+    protected loadHead(): NodeHeadType
     {
         const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
         return new NodeHead(nodeHead);

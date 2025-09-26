@@ -5,9 +5,10 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeContentBehind } from "./parts/node-content-behind";
 import { NodeHead } from "./parts/node-head";
 import { NodeHeadType } from "../common/type";
-import { NodeHeadLink } from "./parts/node-head-link";
+import { NodeHeadClickable } from "./parts/node-head-clickable";
 import { CurveCanvas } from "./parts/curve-canvas";
 import { Point } from "../common/point";
+import { ClickableNodeInterface } from "./interface/clickable-node-interface";
 
 export class BasicNode extends NodeBase
 {
@@ -53,6 +54,23 @@ export class BasicNode extends NodeBase
             this._nodeContentBehind = new NodeContentBehind(this._behindContentElement as HTMLElement);
             this._nodeContentBehind.loadNodes();
         }
+    }
+
+    
+
+    /**
+     * ノードのヘッダを読み込む
+     * 
+     * @returns 
+     */
+    protected loadHead(): NodeHeadType
+    {
+        // 自身の継承先がClickableNodeInterfaceを実装しているかをチェック
+        const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
+        if (Util.isClickableNode(this)) {
+            return new NodeHeadClickable(nodeHead, this as ClickableNodeInterface);
+        }
+        return new NodeHead(nodeHead);
     }
 
     /**
@@ -185,6 +203,31 @@ export class BasicNode extends NodeBase
         }
 
         return false;
+    }
+
+    /**
+     * ホバー開始時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnHover(): void
+    {
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha === 1) {
+            this._updateGradientEndAlphaFunc = null;
+        }
+        this.setDraw();
+    }
+
+    /**
+     * ホバー終了時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnUnhover(): void
+    {
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
+            this._curveCanvas.gradientEndAlpha = 0.3;
+            this._updateGradientEndAlphaFunc = null;
+        }
+        this.setDraw();
     }
 
     /**

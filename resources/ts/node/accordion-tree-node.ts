@@ -5,19 +5,24 @@ import { BasicNode } from "./basic-node";
 import { CurrentNode } from "./current-node";
 import { HorrorGameNetwork } from "../horror-game-network";
 import { Util } from "../common/util";
+import { ClickableNodeInterface } from "./interface/clickable-node-interface";
+import { NodeHeadClickable } from "./parts/node-head-clickable";
+import { NodeHeadType } from "../common/type";
 
-export class AccordionTreeNode extends TreeNode
+export class AccordionTreeNode extends TreeNode implements ClickableNodeInterface
 {
     private _groupId: string;
-    private _btn: HTMLButtonElement;
     private _isHomewardDisappear: boolean;
     private _isOpen: boolean;
     private _startScrollY: number;
     private _startPosY: number;
 
-    public get btn(): HTMLButtonElement
+    /**
+     * クリック可能なノードヘッダを取得
+     */
+    public get nodeHead(): NodeHeadClickable
     {
-        return this._btn;
+        return this._nodeHead as NodeHeadClickable;
     }
 
 
@@ -26,10 +31,6 @@ export class AccordionTreeNode extends TreeNode
         super(nodeElement, parentNode);
 
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
-        this._btn = this._nodeHead.titleElement as HTMLButtonElement;
-        this._btn.addEventListener('click', this.click.bind(this));
-        this._btn.addEventListener('mouseenter', this.hover.bind(this));
-        this._btn.addEventListener('mouseleave', this.unhover.bind(this));
         this._isHomewardDisappear = false;
         this._isOpen = false;
         this._startScrollY = 0;
@@ -131,46 +132,10 @@ export class AccordionTreeNode extends TreeNode
     }
 
     /**
-     * ホバー開始時のグラデーションα値を更新
-     */
-    protected updateGradientEndAlphaOnHover(): void
-    {
-        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
-        if (this._curveCanvas.gradientEndAlpha === 1) {
-            this._updateGradientEndAlphaFunc = null;
-        }
-
-        this.setDraw();
-    }
-
-    /**
-     * ホバー終了時のグラデーションα値を更新
-     */
-    protected updateGradientEndAlphaOnUnhover(): void
-    {
-        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
-        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
-            this._curveCanvas.gradientEndAlpha = 0.3;
-            this._updateGradientEndAlphaFunc = null;
-        }
-        this.setDraw();
-    }
-
-    protected isHover(): boolean
-    {
-        return this._appearStatus === AppearStatus.APPEARED && this._btn.classList.contains('hover');
-    }
-
-    /**
      * ホバー時の処理
      */
-    protected hover(): void
+    public hover(): void
     {
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-
-        this._btn.classList.add('hover');
         this._nodeContentBehind?.hover();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnHover;
@@ -179,14 +144,9 @@ export class AccordionTreeNode extends TreeNode
     /**
      * ホバー解除時の処理
      */
-    protected unhover(): void
+    public unhover(): void
     {
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-        this._btn.classList.remove('hover');
         this._nodeContentBehind?.unhover();
-
         this._animationStartTime = (window as any).hgn.timestamp;
         this._updateGradientEndAlphaFunc = this.updateGradientEndAlphaOnUnhover;
     }
@@ -195,14 +155,8 @@ export class AccordionTreeNode extends TreeNode
      * クリック時の処理
      * @param e クリックイベント
      */
-    protected click(e: MouseEvent): void
+    public click(e: MouseEvent): void
     {
-        e.preventDefault();
-
-        if (this._appearStatus !== AppearStatus.APPEARED) {
-            return;
-        }
-
         this.toggle();
     }
 }
