@@ -71,7 +71,7 @@ export abstract class NodeBase
      * 
      * @returns 
      */
-    private loadHead(): NodeHead
+    protected loadHead(): NodeHead
     {
         const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
         return new NodeHead(nodeHead);
@@ -92,12 +92,18 @@ export abstract class NodeBase
                 // Treeは1つしか持たない、2つ目以降は無視する
                 if (this._treeContentElement === null) {
                     this._treeContentElement = contentElement as HTMLElement;
+                } else {
+                    // 2つ目以降は削除する
+                    contentElement.remove();
                 }
             } else if (contentElement.classList.contains('behind')) {
                 // 循環参照を起こしてしまうので、BehindコンテンツはHTMLのみ保持する
                 // Behindも1つしか持たない、2つ目以降は無視する
                 if (this._behindContentElement === null) {
                     this._behindContentElement = contentElement as HTMLElement;
+                } else {
+                    // 2つ目以降は削除する
+                    contentElement.remove();
                 }
             } else {
                 nodeContents[contentElement.id] = new NodeContent(contentElement as HTMLElement);

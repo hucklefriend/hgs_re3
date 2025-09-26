@@ -4,9 +4,12 @@ import { BasicNode } from "../node/basic-node";
 import { NodeContent } from "../node/parts/node-content";
 import { NodeContentTree } from "../node/parts/node-content-tree";
 import { TreeNode } from "../node/tree-node";
+import { NodeHead } from "../node/parts/node-head";
+import { NodeHeadLink } from "../node/parts/node-head-link";
 
 // 複数のノード型を組み合わせた型エイリアス
 export type NodeType = CurrentNode | BasicNode | LinkNode | TreeNode;
+export type NodeHeadType = NodeHead | NodeHeadLink;
 export type TreeNodeType = CurrentNode | TreeNode;
 export type DisappearRouteNodeType = CurrentNode | LinkNode/* | AccordionTreeNode | ChildTreeLinkNode | ChildTreeNode*/;
 export type NodeContentType = NodeContent | NodeContentTree | null;

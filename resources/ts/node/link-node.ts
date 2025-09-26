@@ -4,6 +4,9 @@ import { AppearStatus } from "../enum/appear-status";
 import { FreePoint } from "./parts/free-point";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { CurrentNode } from "./current-node";
+import { Util } from "../common/util";
+import { Point } from "../common/point";
+import { CurveCanvas } from "./parts/curve-canvas";
 
 export class LinkNode extends BasicNode
 {
@@ -35,9 +38,8 @@ export class LinkNode extends BasicNode
      */
     private updateGradientEndAlphaOnHover(): void
     {
-        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        if (this._gradientEndAlpha >= 1.0) {
-            this._gradientEndAlpha = 1.0;
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha === 1) {
             this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -48,9 +50,9 @@ export class LinkNode extends BasicNode
      */
     private updateGradientEndAlphaOnUnhover(): void
     {
-        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        if (this._gradientEndAlpha <= 0.3) {
-            this._gradientEndAlpha = 0.3;
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
+            this._curveCanvas.gradientEndAlpha = 0.3;
             this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
@@ -135,7 +137,7 @@ export class LinkNode extends BasicNode
             const connectionPoint = this._nodeHead.getConnectionPoint();
             this._updateGradientEndAlphaFunc = null;
     
-            const pos = this.getQuadraticBezierPoint(
+            const pos = Util.getQuadraticBezierPoint(
                 0, 0,
                 connectionPoint.x - 15, connectionPoint.y,
                 1
@@ -153,7 +155,7 @@ export class LinkNode extends BasicNode
 
             this._animationStartTime = hgn.timestamp;
             this._appearStatus = AppearStatus.DISAPPEARING;
-            this._gradientEndAlpha = 0;
+            this._curveCanvas.gradientEndAlpha = 0;
             this._nodeHead.disappear();
             this._isDraw = true;
 
@@ -171,23 +173,19 @@ export class LinkNode extends BasicNode
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = FreePoint.getInstance();
 
-        this._curveAppearProgress = 1 - this.getAnimationProgress(200);
-        if (this._curveAppearProgress <= 0) {
-            this._curveAppearProgress = 0;
-            this._gradientEndAlpha = 0;
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 200);
+        if (this._curveCanvas.appearProgress === 0) {
+            this._curveCanvas.gradientEndAlpha = 0;
             this._appearAnimationFunc = this.selectedDisappearAnimation2;
 
             this._animationStartTime = hgn.timestamp;
         } else {
-            this.drawCurvedLine(
-                15, 0,
-                connectionPoint.x, connectionPoint.y
-            );
+            this._curveCanvas.drawCurvedLine(new Point(15, 0), connectionPoint );
 
-            const pos = this.getQuadraticBezierPoint(
+            const pos = Util.getQuadraticBezierPoint(
                 0, 0,
                 connectionPoint.x - 15, connectionPoint.y,
-                this._curveAppearProgress
+                this._curveCanvas.appearProgress
             );
     
             freePt.moveOffset(pos.x, pos.y);

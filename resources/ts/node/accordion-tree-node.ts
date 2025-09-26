@@ -4,6 +4,7 @@ import { AppearStatus } from "../enum/appear-status";
 import { BasicNode } from "./basic-node";
 import { CurrentNode } from "./current-node";
 import { HorrorGameNetwork } from "../horror-game-network";
+import { Util } from "../common/util";
 
 export class AccordionTreeNode extends TreeNode
 {
@@ -134,9 +135,8 @@ export class AccordionTreeNode extends TreeNode
      */
     protected updateGradientEndAlphaOnHover(): void
     {
-        this._gradientEndAlpha = this.getAnimationValue(0.3, 1.0, 300);
-        if (this._gradientEndAlpha >= 1.0) {
-            this._gradientEndAlpha = 1.0;
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha === 1) {
             this._updateGradientEndAlphaFunc = null;
         }
 
@@ -148,9 +148,9 @@ export class AccordionTreeNode extends TreeNode
      */
     protected updateGradientEndAlphaOnUnhover(): void
     {
-        this._gradientEndAlpha = this.getAnimationValue(1.0, 0.3, 300);
-        if (this._gradientEndAlpha <= 0.3) {
-            this._gradientEndAlpha = 0.3;
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
+            this._curveCanvas.gradientEndAlpha = 0.3;
             this._updateGradientEndAlphaFunc = null;
         }
         this.setDraw();
