@@ -3,6 +3,7 @@ import { BehindNode } from "./behind-node";
 import { AppearStatus } from "../../enum/appear-status";
 import { Util } from "../../common/util";
 import { Point } from "../../common/point";
+import { CurveCanvas } from "./curve-canvas";
 
 export class NodeContentBehind extends NodeContent
 {
@@ -107,63 +108,24 @@ export class NodeContentBehind extends NodeContent
         this._appearAnimationFunc = null;
     }
 
-    public draw(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, connectionPoint: Point): void
+    public draw(curveCanvas: CurveCanvas, connectionPoint: Point): void
     {
         if (this._curveAppearProgress[0] > 0) {
-            const canvasRect = canvas.getBoundingClientRect();
+            const canvasRect = curveCanvas.canvas.getBoundingClientRect();
             this._behindNodes.forEach((behindNode, index) => {
                 if (index >= 4) return; // 4つ以上は描画しない
-                this.drawCurvedLine(
-                    ctx,
+                curveCanvas.drawBehindCurvedLine(
                     connectionPoint.x,
                     connectionPoint.y,
                     behindNode.getConnectionPoint().x - canvasRect.left,
                     behindNode.getConnectionPoint().y - canvasRect.top,
-                    index
+                    index,
+                    this._curveAppearProgress[index]
                 );
             });
         }
     }
 
-
-    /**
-     * 子要素へのカーブ線を描画する
-     * 
-     * @param ctx コンテキスト
-     * @param startX 開始点のX座標
-     * @param startY 開始点のY座標
-     * @param endX 終了点のX座標
-     * @param endY 終了点のY座標
-     * @param loopCount ループ回数（0-3）
-     */
-    private drawCurvedLine(ctx: CanvasRenderingContext2D, startX: number, startY: number, endX: number, endY: number, loopCount: number): void
-    {
-        // ループ回数に応じて透明度を調整（maxEndOpacityからminEndOpacityまで徐々に減少）
-        const opacity = this._maxEndOpacity - (loopCount * 0.1);
-        let endOpacity = Math.max(this._minEndOpacity, opacity - this._minEndOpacity);
-
-        let currentEndX = endX;
-        let currentEndY = endY;
-
-        // 進行度に応じてグラデーションの終了点を調整
-        if (this._curveAppearProgress[loopCount] < 1) {
-            currentEndX = startX + (endX - startX) * this._curveAppearProgress[loopCount];
-            currentEndY = startY + (endY - startY) * this._curveAppearProgress[loopCount];
-
-            endOpacity = endOpacity * this._curveAppearProgress[loopCount];
-        }
-
-        const gradient = ctx.createLinearGradient(startX, startY, currentEndX, currentEndY);
-        gradient.addColorStop(0, `rgba(100, 200, 100, ${endOpacity})`);   // 開始点の透明度
-        gradient.addColorStop(1, `rgba(20, 80, 20, ${endOpacity})`);   // 終了点の透明度
-
-        ctx.beginPath();
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;  // 開始点の太さ
-        ctx.moveTo(startX, startY);
-        ctx.quadraticCurveTo(startX + (endX - startX) * 0.1, endY, endX, endY);
-        ctx.stroke();
-    }
 
     public invisible(): void
     {

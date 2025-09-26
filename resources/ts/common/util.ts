@@ -1,3 +1,5 @@
+import { Point } from "./point";
+
 export class Util
 {
     /**
@@ -18,6 +20,26 @@ export class Util
         }
     }
 
+    /**
+     * アニメーションの値を計算
+     * @param startValue 開始値
+     * @param endValue 終了値
+     * @param startTime アニメーションの開始時間
+     * @param duration アニメーションの持続時間（ミリ秒）
+     * @returns 現在の値
+     */
+    public static getAnimationValue(startValue: number, endValue: number, startTime: number, duration: number): number
+    {
+        const progress = Util.getAnimationProgress(startTime, duration);
+        return startValue + (endValue - startValue) * progress;
+    }
+
+    /**
+     * アニメーションの進行度を計算（0.0～1.0）
+     * @param startTime アニメーションの開始時間
+     * @param duration 
+     * @returns 進行度（0.0～1.0）
+     */
     public static getAnimationProgress(startTime: number, duration: number): number
     {
         const currentTime = (window as any).hgn.timestamp;
@@ -29,6 +51,31 @@ export class Util
         return 1.0;
     }
 
+    /**
+     * 二次ベジェ曲線上の座標を計算する
+     * @param startX 開始点のX座標
+     * @param startY 開始点のY座標
+     * @param endX 終了点のX座標
+     * @param endY 終了点のY座標
+     * @param t 進行度（0.0～1.0）
+     * @returns 指定された進行度での座標
+     */
+    public static getQuadraticBezierPoint(
+        startX: number, 
+        startY: number, 
+        endX: number, 
+        endY: number, 
+        t: number
+        ): Point
+    {
+        const controlX = startX;
+        const controlY = endY;
+        // 二次ベジェ曲線の数式: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
+        const x = Math.floor(Math.pow(1 - t, 2) * startX + 2 * (1 - t) * t * controlX + Math.pow(t, 2) * endX);
+        const y = Math.floor(Math.pow(1 - t, 2) * startY + 2 * (1 - t) * t * controlY + Math.pow(t, 2) * endY);
+        
+        return new Point(x, y);
+    }
     
 
     /**

@@ -8,7 +8,6 @@ import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
 import { AccordionTreeNode } from "../accordion-tree-node";
-import { Util } from "../../common/util";
 
 export class NodeContentTree extends NodeContent
 {
