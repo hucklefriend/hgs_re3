@@ -1,5 +1,4 @@
 import { AppearStatus } from "../../enum/appear-status";
-import { FreePoint } from "./free-point";
 import { Util } from "../../common/util";
 
 export class ConnectionLine
@@ -13,16 +12,28 @@ export class ConnectionLine
     private _disappearHeight: number;
     private _appearType: number;
 
+    /**
+     * 出現状態を取得
+     * @returns 出現状態
+     */
     public get appearStatus(): AppearStatus
     {
         return this._appearStatus;
     }
 
+    /**
+     * 高さを取得
+     * @returns 高さ
+     */
     public get height(): number
     {
         return this._height;
     }
 
+    /**
+     * 要素を取得
+     * @returns HTMLDivElement
+     */
     public get element(): HTMLDivElement
     {
         return this._element;
@@ -45,6 +56,11 @@ export class ConnectionLine
         this.setHeight(0);
     }
 
+    /**
+     * 位置を設定
+     * @param x X座標
+     * @param y Y座標
+     */
     public setPosition(x: number, y: number): void
     {
         this._element.style.left = `${x}px`;
@@ -78,6 +94,9 @@ export class ConnectionLine
         }
     }
 
+    /**
+     * 要素を表示状態にする
+     */
     public visible(): void
     {
         this._element.classList.add('visible');
@@ -104,9 +123,9 @@ export class ConnectionLine
     private appearAnimation(): void
     {
         if (this._appearType === 0) {
-            this._animationHeight += 15;
+            this._animationHeight += 15;        // TODO: Configで設定できるようにする
         } else {
-            const progress = Util.getAnimationProgress(this._animationStartTime, 1000);
+            const progress = Util.getAnimationProgress(this._animationStartTime, 1000); // TODO: Configで設定できるようにする
             this._animationHeight = this._height * progress;
         }
         if (this._animationHeight >= this._height) {
@@ -134,7 +153,7 @@ export class ConnectionLine
             this._appearAnimationFunc = this.disappearAnimation;
             this._animationHeight = this._height;
 
-            this._appearType = this._height > 1000 ? 1 : 0;
+            this._appearType = this._height > 1000 ? 1 : 0; // TODO: Configで設定できるようにする
         }
     }
 
@@ -144,9 +163,9 @@ export class ConnectionLine
     private disappearAnimation(): void
     {
         if (this._appearType === 0) {
-            this._animationHeight -= 15;
+            this._animationHeight -= 15; // TODO: Configで設定できるようにする
         } else {
-            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, 1000);
+            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, 1000); // TODO: Configで設定できるようにする
             this._animationHeight = this._height * progress;
         }
 
@@ -155,21 +174,6 @@ export class ConnectionLine
         }
 
         this._element.style.height = `${this._animationHeight}px`;
-
-        //if (this._withFreePt) {
-            // const freePt = this.
-            // const rect = this._element.getBoundingClientRect();
-            
-            // // this._elementのドキュメント座標を取得
-            // const elementDocX = rect.left + window.scrollX;
-            // const elementDocY = rect.top + window.scrollY;
-            
-            // // freePtをthis._elementと同じ位置に配置
-            // const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;
-            // const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
-
-            // freePt.setPos(x, y).setElementPos();
-        //}
 
         if (this._animationHeight === this._disappearHeight) {
             this._appearAnimationFunc = null;
@@ -183,6 +187,9 @@ export class ConnectionLine
         }
     }
 
+    /**
+     * フェードアウトアニメーション開始
+     */
     public disappearFadeOut(): void
     {
         this._element.classList.add('fade-out');
@@ -203,6 +210,9 @@ export class ConnectionLine
         this._element.addEventListener('transitionend', handleTransitionEnd);
     }
 
+    /**
+     * フェードアウト完了時の処理
+     */
     private onFadeOutComplete(): void
     {
         // アニメーション完了後の処理
@@ -211,12 +221,20 @@ export class ConnectionLine
         this._element.classList.remove('visible');
     }
 
+    /**
+     * 高さを変更
+     * @param height 新しい高さ
+     */
     public changeHeight(height: number): void
     {
         this._height = height;
         this._element.style.height = `${this._height}px`;
     }
 
+    /**
+     * 接続線の要素を作成
+     * @returns 作成されたHTMLDivElement
+     */
     public static createElement(): HTMLDivElement
     {
         const element = document.createElement('div');
