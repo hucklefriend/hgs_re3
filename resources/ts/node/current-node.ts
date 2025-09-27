@@ -56,6 +56,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
+        this._homewardNode = null;
     }
 
     /**
@@ -96,6 +97,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public appear(): void
     {
+        this._appearStatus = AppearStatus.APPEARING;
         this._nodeHead.appear();
         this.appearContents();
         this._nodeContentTree.appear();
@@ -105,6 +107,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this.freePt.show();
 
         this._appearAnimationFunc = this.appearAnimation;
+
     }
 
     /**
@@ -114,6 +117,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
+            this._appearStatus = AppearStatus.APPEARED;
         }
     }
 
@@ -136,8 +140,14 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public disappear(): void
     {
+        this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.disappear();
-        this._appearAnimationFunc = this.disappearAnimation;
+        if (this._homewardNode !== null) {
+            this._appearAnimationFunc = this.disappearAnimation;
+        } else {
+            this._nodeHead.disappear();
+            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
+        }
     }
 
     /**
