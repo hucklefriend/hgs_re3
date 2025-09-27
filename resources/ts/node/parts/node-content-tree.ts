@@ -226,11 +226,29 @@ export class NodeContentTree extends NodeContent
             const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const conLineHeight = this._connectionLine.getAnimationHeight();
             this.disappeareUnderLine(conLineHeight - 100, headerPosition);
+            if (conLineHeight <= 70) {
+                this._parentNode.nodeHead.disappear();
+            }
 
             freePt.moveOffset(0, conLineHeight);
+            this.disappearScroll();
         } else if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
             this.disappeared();
             freePt.hide();
+        }
+    }
+
+    private disappearScroll(): void
+    {
+        const rect = this._connectionLine.element.getBoundingClientRect();
+        const elementTop = rect.top + window.scrollY + this._connectionLine.getAnimationHeight();
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const screenCenter = scrollY + windowHeight / 2;
+        
+        // 要素が画面中央より上にある場合、スクロール位置を調整
+        if (elementTop < screenCenter) {
+            window.scrollTo(0, elementTop - windowHeight / 2);
         }
     }
 

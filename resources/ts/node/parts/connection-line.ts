@@ -23,6 +23,11 @@ export class ConnectionLine
         return this._height;
     }
 
+    public get element(): HTMLDivElement
+    {
+        return this._element;
+    }
+
     /**
      * コンストラクタ
      * @param element 接続線の要素

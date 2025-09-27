@@ -11,7 +11,7 @@ import { AccordionTreeNode } from "./accordion-tree-node";
 import { LinkTreeNode } from "./link-tree-node";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
-{   
+{
     private _nodeContentTree: NodeContentTree;
 
     private _isChanging: boolean;
@@ -244,7 +244,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
     public homewardDisappear(): void
     {
-        this._nodeHead.disappear();
         this._nodeContentTree.disappearConnectionLine();
     }
 
