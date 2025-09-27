@@ -101,6 +101,10 @@ export class NodeHead
 
     public disappear(): Promise<void>
     {
+        if (!AppearStatus.isAppeared(this._appearStatus)) {
+            return Promise.resolve();
+        }
+
         // 既存のアニメーションをキャンセル
         this.cancelCurrentAnimation();
         

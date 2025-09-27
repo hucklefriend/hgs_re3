@@ -21,6 +21,7 @@ export class NodeContentTree extends NodeContent
     public homewardNode: NodeType | null;
     public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
+    protected _isFast: boolean;
 
     public get appearStatus(): AppearStatus
     {
@@ -62,6 +63,7 @@ export class NodeContentTree extends NodeContent
         this.homewardNode = null;
         this.appearAnimationFunc = null;
         this._nodeCount = 0;
+        this._isFast = false;
     }
 
     /**
@@ -137,6 +139,13 @@ export class NodeContentTree extends NodeContent
 
         this._appearStatus = AppearStatus.APPEARING;
         this.appearAnimationFunc = this.appearAnimation;
+        this._isFast = false;
+    }
+
+    public fastAppear(): void
+    {
+        this.appear();
+        this._isFast = true;
     }
 
     /**
@@ -226,11 +235,33 @@ export class NodeContentTree extends NodeContent
             const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const conLineHeight = this._connectionLine.getAnimationHeight();
             this.disappeareUnderLine(conLineHeight - 100, headerPosition);
+            if (conLineHeight <= 70) {
+                this._parentNode.nodeHead.disappear();
+            }
 
             freePt.moveOffset(0, conLineHeight);
+            this.disappearScroll();
         } else if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
+            // ヘッダーが出現中だったら消す
+            if (AppearStatus.isAppeared(this._parentNode.nodeHead.appearStatus)) {
+                this._parentNode.nodeHead.disappear();
+            }
             this.disappeared();
             freePt.hide();
+        }
+    }
+
+    private disappearScroll(): void
+    {
+        const rect = this._connectionLine.element.getBoundingClientRect();
+        const elementTop = rect.top + window.scrollY + this._connectionLine.getAnimationHeight();
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const screenCenter = scrollY + windowHeight / 2;
+        
+        // 要素が画面中央より上にある場合、スクロール位置を調整
+        if (elementTop < screenCenter) {
+            window.scrollTo(0, elementTop - windowHeight / 2);
         }
     }
 

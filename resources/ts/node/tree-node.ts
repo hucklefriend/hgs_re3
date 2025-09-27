@@ -82,6 +82,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
     {
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
+            this._appearStatus = AppearStatus.APPEARED;
         }
     }
 

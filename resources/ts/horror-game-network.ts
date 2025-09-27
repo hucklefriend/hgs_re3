@@ -1,5 +1,6 @@
 import { CurrentNode } from "./node/current-node";
 import { Util } from "./common/util";
+import { AppearStatus } from "./enum/appear-status";
 
 /**
  * ホラーゲームネットワーク
@@ -152,12 +153,14 @@ export class HorrorGameNetwork
         const previousState = event?.state;
         
         if (previousState) {
-            if (previousState.type === 'link-node') {
-                this._currentNode.moveNode(previousState.url, null, true);
-            }
+            this._currentNode.moveNode(previousState.url, null, true);
         }
-        
-        this.resize();
-        this.draw();
+
+        if (AppearStatus.isAppeared(this._currentNode.appearStatus)) {
+            this._currentNode.disappear();
+        } else {
+            // アニメーション中だったら強制遷移
+            location.href = previousState.url;
+        }
     }
 } 

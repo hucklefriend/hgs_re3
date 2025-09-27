@@ -55,7 +55,6 @@ export class FreePoint
         this._element.style.left = this.pos.x - this._halfWidth + 'px';
         this._element.style.top = this.pos.y - this._halfHeight + 'px';
 
-        this.scroll();
         return this;
     }
 
@@ -71,21 +70,7 @@ export class FreePoint
         this._element.style.left = this.pos.x + x - this._halfWidth + 'px';
         this._element.style.top = this.pos.y + y - this._halfHeight + 'px';
 
-        this.scroll();
         return this;
-    }
-
-    private scroll(): void
-    {
-        const elementTop = parseInt(this._element.style.top) + this._halfHeight;
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const screenCenter = scrollY + windowHeight / 2;
-        
-        // 要素が画面中央より上にある場合、スクロール位置を調整
-        if (elementTop < screenCenter) {
-            window.scrollTo(0, elementTop - windowHeight / 2);
-        }
     }
 
     public show(): void
