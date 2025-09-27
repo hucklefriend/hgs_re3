@@ -74,6 +74,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             this._curveCanvas.gradientEndAlpha = 1;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.appearAnimation2;
+            this.freePt.show();
         }
     }
 
@@ -114,7 +115,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
 
     public homewardDisappear(): void
     {
-        this._nodeContentTree.disappearConnectionLine(true);
+        this._nodeContentTree.disappearConnectionLine();
         this._appearAnimationFunc = this.homewardDisappearAnimation;
         this._animationStartTime = (window as any).hgn.timestamp;
         this._nodeHead.disappear();
@@ -127,12 +128,11 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             this._curveCanvas.appearProgress = 1;
             this._appearAnimationFunc = this.homewardDisappearAnimation2;
 
-            const freePt = FreePoint.getInstance();
+            const freePt = this.freePt;
     
-            const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
-            const rect = this._nodeElement.getBoundingClientRect();
-            const y = rect.top + window.scrollY;
-            freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
+            // TODO: 12を計算で出す
+            freePt.setPos(12, 0).setElementPos();
+            freePt.show();
 
             const connectionPoint = this._nodeHead.getConnectionPoint();
             const pos = Util.getQuadraticBezierPoint(
@@ -149,7 +149,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
     public homewardDisappearAnimation2(): void
     {
         const connectionPoint = this._nodeHead.getConnectionPoint();
-        const freePt = FreePoint.getInstance();
+        const freePt = this.freePt;
 
         this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 200);
         this._curveCanvas.gradientStartAlpha = this._curveCanvas.appearProgress;
@@ -160,10 +160,11 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             this._appearAnimationFunc = null;
             this._appearStatus = AppearStatus.DISAPPEARED;
 
-            freePt.fixOffset();
+            freePt.hide();
             this.parentNode.homewardDisappear();
         } else { 
-            this._curveCanvas.drawCurvedLine(new Point(15, 0), connectionPoint);
+            // TODO: 12を計算で出す
+            this._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
 
             const pos = Util.getQuadraticBezierPoint(
                 0, 0,

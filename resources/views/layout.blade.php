@@ -48,6 +48,5 @@
     <footer>
         &copy; 2003-{{ date('Y') }} ホラーゲームネットワーク
     </footer>
-    <div id="free-pt">●</div>
 </body>
 </html>

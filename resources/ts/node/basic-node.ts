@@ -81,10 +81,6 @@ export class BasicNode extends NodeBase
         this.setDraw();
     }
 
-    protected hover(): void {}
-
-    protected unhover(): void {}
-
     /**
      * アニメーションの更新処理
      */
@@ -94,13 +90,8 @@ export class BasicNode extends NodeBase
 
         this._nodeContentBehind?.update();
 
-        if (this._appearAnimationFunc) {
-            this._appearAnimationFunc();
-        }
-
-        if (this._updateGradientEndAlphaFunc) {
-            this._updateGradientEndAlphaFunc();
-        }
+        this._appearAnimationFunc?.();
+        this._updateGradientEndAlphaFunc?.();
     }
 
     /**
@@ -121,6 +112,9 @@ export class BasicNode extends NodeBase
         this._curveCanvas.appearProgress = 0;
         this._curveCanvas.gradientStartAlpha = 1;
         this._curveCanvas.gradientEndAlpha = 0;
+
+        this.freePt.setPos(Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2), 0).setElementPos();
+        this.freePt.show();
     }
 
     /**
@@ -129,9 +123,20 @@ export class BasicNode extends NodeBase
     public appearAnimation(): void
     {
         this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, 200);
+        
+        const connectionPoint = this._nodeHead.getConnectionPoint();
+        const pos = Util.getQuadraticBezierPoint(
+            Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2), 0,
+            connectionPoint.x, connectionPoint.y,
+            this._curveCanvas.appearProgress
+        );
+
+        this.freePt.moveOffset(pos.x-10, pos.y);
         if (this._curveCanvas.appearProgress === 1) {
             this._curveCanvas.gradientEndAlpha = 0.3;//this.isHover() ? 1 : 0.3;
             this._nodeHead.appear();
+            this.freePt.hide();
+            this.freePt.setPos(connectionPoint.x, connectionPoint.y).setElementPos();
             this.appearContents();
 
             if (this._nodeContentBehind) {

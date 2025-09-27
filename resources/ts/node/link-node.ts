@@ -75,7 +75,6 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const currentNode = hgn.currentNode as CurrentNode;
-        console.log(this.anchor);
         currentNode.moveNode(this.anchor.href, this, false);
 
         this.parentNode.prepareDisappear(this);
@@ -88,21 +87,11 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
             super.disappear();
         } else {
             const hgn = (window as any).hgn as HorrorGameNetwork;
-            const freePt = FreePoint.getInstance();
+            const freePt = this.freePt;
             const connectionPoint = this._nodeHead.getConnectionPoint();
             this._updateGradientEndAlphaFunc = null;
     
-            const pos = Util.getQuadraticBezierPoint(
-                0, 0,
-                connectionPoint.x - 15, connectionPoint.y,
-                1
-            );
-    
-            const parentConnectionPoint = this._parentNode.nodeHead.getAbsoluteConnectionPoint();
-            const rect = this._nodeElement.getBoundingClientRect();
-            const y = rect.top + window.scrollY;
-            freePt.setPos(parentConnectionPoint.x - freePt.clientWidth / 2+1, y - freePt.clientHeight / 2);
-            freePt.moveOffset(pos.x, pos.y);
+            freePt.setPos(12, 0).setElementPos();
             freePt.show();
             this._nodeHead.nodePoint.hidden();
             
@@ -126,7 +115,7 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
         const connectionPoint = this._nodeHead.getConnectionPoint();
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
-        const freePt = FreePoint.getInstance();
+        const freePt = this.freePt;
 
         this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 200);
         if (this._curveCanvas.appearProgress === 0) {
@@ -135,11 +124,12 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
 
             this._animationStartTime = hgn.timestamp;
         } else {
-            this._curveCanvas.drawCurvedLine(new Point(15, 0), connectionPoint );
+            // TODO: 12を計算で出す
+            this._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
 
             const pos = Util.getQuadraticBezierPoint(
                 0, 0,
-                connectionPoint.x - 15, connectionPoint.y,
+                connectionPoint.x, connectionPoint.y,
                 this._curveCanvas.appearProgress
             );
     
@@ -155,6 +145,7 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.DISAPPEARED;
 
+        this.freePt.hide();
         this._parentNode.homewardDisappear();
     }
 } 

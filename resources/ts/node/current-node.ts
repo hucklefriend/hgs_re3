@@ -74,13 +74,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             // ノード切り替え待ち
             this.changeNode();
         } else {
-            if (this._appearAnimationFunc !== null) {
-                this._appearAnimationFunc();
-            }
+            this._appearAnimationFunc?.();
 
             super.update();
             this._nodeContentTree.update();
-            FreePoint.update();
         }
     }
 
@@ -101,6 +98,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeHead.appear();
         this.appearContents();
         this._nodeContentTree.appear();
+
+        const connectionPoint = this._nodeHead.getConnectionPoint();
+        this.freePt.setPos(connectionPoint.x, connectionPoint.y).setElementPos();
+        this.freePt.show();
 
         this._appearAnimationFunc = this.appearAnimation;
     }
@@ -155,8 +156,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
     private disappearAnimationWaitFinished(): void
     {
-        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus)
-            && AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus) &&
+            AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
             this.disappeared();
         }
@@ -168,7 +169,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public disappeared(): void
     {
         window.scrollTo(0, 0);
-        FreePoint.getInstance().hide();
 
         this._appearStatus = AppearStatus.DISAPPEARED;
 
@@ -244,7 +244,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public homewardDisappear(): void
     {
         this._nodeHead.disappear();
-        this._nodeContentTree.disappearConnectionLine(true);
+        this._nodeContentTree.disappearConnectionLine();
     }
 
     public resizeConnectionLine(): void

@@ -134,7 +134,7 @@ div.connection-line {
     font-size: 10px;
     width: 20px;
     min-width: 20px;
-    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+    /*transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;*/
     opacity: 0;
 
     &.visible {
@@ -429,17 +429,6 @@ div.connection-line {
     pointer-events: none;
 }
 
-#canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-}
-
-
 canvas.node-canvas {
     position: absolute;
     top: 0;
@@ -462,14 +451,12 @@ canvas.node-canvas {
     backdrop-filter: blur(2px);
 }
 
-#free-pt {
+div.free-pt {
     display: inline;
     position: absolute;
     font-size: 10px;
     text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
     color: var(--node-pt-light);
-    width: 30px;
-    min-width: 30px;
     text-align: center;
     line-height: 1;
     visibility: hidden;

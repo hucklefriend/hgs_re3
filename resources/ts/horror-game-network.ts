@@ -1,5 +1,4 @@
 import { CurrentNode } from "./node/current-node";
-import { FreePoint } from "./node/parts/free-point";
 import { Util } from "./common/util";
 
 /**
@@ -63,9 +62,6 @@ export class HorrorGameNetwork
         this._timestamp = 0;
 
         this.isForceResize = false;
-
-        // フリーポイントのインスタンスを作っておくだけ
-        FreePoint.getInstance();
     }
 
     /**

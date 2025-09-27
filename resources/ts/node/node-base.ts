@@ -3,6 +3,7 @@ import { NodeContentType } from "../common/type";
 import { NodeContent } from "./parts/node-content";
 import { AppearStatus } from "../enum/appear-status";
 import { NodeHeadType } from "../common/type";
+import { FreePoint } from "./parts/free-point";
 
 export abstract class NodeBase
 {
@@ -16,6 +17,7 @@ export abstract class NodeBase
     protected _treeContentElement: HTMLElement | null;
     protected _behindContentElement: HTMLElement | null;
     protected _isDraw: boolean;
+    protected _freePt: FreePoint;
 
     /**
      * ノードのIDを取得する
@@ -48,7 +50,14 @@ export abstract class NodeBase
     {
         return this._appearStatus;
     }
-    
+
+    /**
+     * フリーポイントを取得する
+     */
+    public get freePt(): FreePoint
+    {
+        return this._freePt;
+    }
     /**
      * コンストラクタ
      */
@@ -61,6 +70,8 @@ export abstract class NodeBase
         this._behindContentElement = null;
         this._nodeHead = this.loadHead();
         this._nodeContents = this.loadContents();
+
+        this._freePt = new FreePoint(this._nodeElement);
 
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._appearAnimationFunc = null;
@@ -150,6 +161,7 @@ export abstract class NodeBase
      */
     public update(): void
     {
+        this._freePt.update();
         Object.values(this._nodeContents).forEach(content => content?.update());
     }
 
