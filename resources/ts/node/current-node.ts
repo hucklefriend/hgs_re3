@@ -155,13 +155,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     private disappearAnimation(): void
     {
-        if (this._nodeContentTree.lastNode === null) {
-            this._nodeHead.disappear();
+        if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
             this._appearAnimationFunc = this.disappearAnimationWaitFinished;
-        } else {
-            if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
-                this._appearAnimationFunc = this.disappearAnimationWaitFinished;
-            }
         }
     }
 

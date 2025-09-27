@@ -21,6 +21,7 @@ export class NodeContentTree extends NodeContent
     public homewardNode: NodeType | null;
     public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
+    protected _isFast: boolean;
 
     public get appearStatus(): AppearStatus
     {
@@ -62,6 +63,7 @@ export class NodeContentTree extends NodeContent
         this.homewardNode = null;
         this.appearAnimationFunc = null;
         this._nodeCount = 0;
+        this._isFast = false;
     }
 
     /**
@@ -137,6 +139,13 @@ export class NodeContentTree extends NodeContent
 
         this._appearStatus = AppearStatus.APPEARING;
         this.appearAnimationFunc = this.appearAnimation;
+        this._isFast = false;
+    }
+
+    public fastAppear(): void
+    {
+        this.appear();
+        this._isFast = true;
     }
 
     /**
@@ -233,6 +242,10 @@ export class NodeContentTree extends NodeContent
             freePt.moveOffset(0, conLineHeight);
             this.disappearScroll();
         } else if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
+            // ヘッダーが出現中だったら消す
+            if (AppearStatus.isAppeared(this._parentNode.nodeHead.appearStatus)) {
+                this._parentNode.nodeHead.disappear();
+            }
             this.disappeared();
             freePt.hide();
         }

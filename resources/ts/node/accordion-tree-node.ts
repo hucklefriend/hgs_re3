@@ -80,7 +80,6 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
         if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus) ||
             AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
-            console.log('opened/closed');
         }
     }
 
