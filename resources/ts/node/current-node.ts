@@ -8,6 +8,7 @@ import { LinkNode } from "./link-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
 import { AccordionTreeNode } from "./accordion-tree-node";
+import { LinkTreeNode } from "./link-tree-node";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {   
@@ -214,7 +215,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      * @param linkNode 
      * @param isFromPopState 
      */
-    public moveNode(url: string, linkNode: LinkNode | null, isFromPopState: boolean): void
+    public moveNode(url: string, linkNode: LinkNode | LinkTreeNode | null, isFromPopState: boolean): void
     {
         if (!isFromPopState) {
             // pushStateで履歴に追加

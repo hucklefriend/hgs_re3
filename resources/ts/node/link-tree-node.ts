@@ -9,8 +9,9 @@ import { Point } from "../common/point";
 import { CurveCanvas } from "./parts/curve-canvas";
 import { ClickableNodeInterface } from "./interface/clickable-node-interface";
 import { NodeHeadClickable } from "./parts/node-head-clickable";
+import { TreeNode } from "./tree-node";
 
-export class LinkNode extends BasicNode implements ClickableNodeInterface
+export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
 {
     private _isHomewardDisappear: boolean;
 
@@ -96,6 +97,7 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
             this._nodeHead.nodePoint.hidden();
             
             this._nodeContentBehind?.disappear();
+            this._nodeContentTree?.disappear();
 
             this._animationStartTime = hgn.timestamp;
             this._appearStatus = AppearStatus.DISAPPEARING;

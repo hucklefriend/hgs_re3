@@ -8,6 +8,7 @@ import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
 import { AccordionTreeNode } from "../accordion-tree-node";
+import { LinkTreeNode } from "../link-tree-node";
 
 export class NodeContentTree extends NodeContent
 {
@@ -74,6 +75,9 @@ export class NodeContentTree extends NodeContent
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
+                this._nodeCount++;
+            } else if (nodeElement.classList.contains('link-tree-node')) {
+                this._nodes.push(new LinkTreeNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             } else if (nodeElement.classList.contains('tree-node')) {
                 if (nodeElement.classList.contains('accordion')) {
