@@ -1,9 +1,9 @@
-import { BasicNode } from "./basic-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { ClickableNodeInterface } from "./interface/clickable-node-interface";
 import { LinkNodeMixin } from "./mixins/link-node-mixin";
+import { TreeNode } from "./tree-node";
 
-export class LinkNode extends BasicNode implements ClickableNodeInterface
+export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
 {
     /**
      * コンストラクタ

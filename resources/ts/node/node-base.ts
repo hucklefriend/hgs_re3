@@ -2,19 +2,22 @@ import { NodeHead } from "./parts/node-head";
 import { NodeContentType } from "../common/type";
 import { NodeContent } from "./parts/node-content";
 import { AppearStatus } from "../enum/appear-status";
+import { NodeHeadType } from "../common/type";
+import { FreePoint } from "./parts/free-point";
 
 export abstract class NodeBase
 {
     private _id: string;
 
     protected _nodeElement: HTMLElement;
-    protected _nodeHead: NodeHead;
+    protected _nodeHead: NodeHeadType;
     protected _nodeContents: { [key: string]: NodeContentType };
     protected _appearStatus: AppearStatus;
     protected _appearAnimationFunc: (() => void) | null;
     protected _treeContentElement: HTMLElement | null;
     protected _behindContentElement: HTMLElement | null;
     protected _isDraw: boolean;
+    protected _freePt: FreePoint;
 
     /**
      * ノードのIDを取得する
@@ -47,7 +50,14 @@ export abstract class NodeBase
     {
         return this._appearStatus;
     }
-    
+
+    /**
+     * フリーポイントを取得する
+     */
+    public get freePt(): FreePoint
+    {
+        return this._freePt;
+    }
     /**
      * コンストラクタ
      */
@@ -61,6 +71,8 @@ export abstract class NodeBase
         this._nodeHead = this.loadHead();
         this._nodeContents = this.loadContents();
 
+        this._freePt = new FreePoint(this._nodeElement);
+
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._appearAnimationFunc = null;
         this._isDraw = false;
@@ -71,7 +83,7 @@ export abstract class NodeBase
      * 
      * @returns 
      */
-    protected loadHead(): NodeHead
+    protected loadHead(): NodeHeadType
     {
         const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
         return new NodeHead(nodeHead);
@@ -149,6 +161,7 @@ export abstract class NodeBase
      */
     public update(): void
     {
+        this._freePt.update();
         Object.values(this._nodeContents).forEach(content => content?.update());
     }
 

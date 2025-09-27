@@ -1,4 +1,5 @@
 import { Point } from "./point";
+import { ClickableNodeInterface } from "../node/interface/clickable-node-interface";
 
 export class Util
 {
@@ -99,5 +100,17 @@ export class Util
         } catch (e) {
             console.log('スタックトレースの取得に失敗しました:', e);
         }
+    }
+
+    /**
+     * クリック可能なノードかどうかを判定する型ガード
+     * @param node チェック対象のオブジェクト
+     * @returns ClickableNodeInterfaceを実装しているかどうか
+     */
+    public static isClickableNode(node: any): node is ClickableNodeInterface
+    {
+        return typeof node.click === 'function' && 
+               typeof node.hover === 'function' && 
+               typeof node.unhover === 'function';
     }
 } 

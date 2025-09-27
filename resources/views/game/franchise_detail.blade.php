@@ -101,7 +101,7 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
-            <section class="node link-node" id="back-to-franchises-node">
+            <section class="node link-tree-node" id="back-to-franchises-node">
                 <div class="node-head">
                     <a href="{{ route('Game.Franchises') }}" class="node-head-text">Franchises</a>
                     <span class="node-pt">●</span>

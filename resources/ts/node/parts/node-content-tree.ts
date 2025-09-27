@@ -8,6 +8,7 @@ import { TreeNode } from "../tree-node";
 import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
 import { AccordionTreeNode } from "../accordion-tree-node";
+import { LinkTreeNode } from "../link-tree-node";
 
 export class NodeContentTree extends NodeContent
 {
@@ -74,6 +75,9 @@ export class NodeContentTree extends NodeContent
             // link-nodeクラスがあればLinkNodeを作成
             if (nodeElement.classList.contains('link-node')) {
                 this._nodes.push(new LinkNode(nodeElement as HTMLElement, parentNode));
+                this._nodeCount++;
+            } else if (nodeElement.classList.contains('link-tree-node')) {
+                this._nodes.push(new LinkTreeNode(nodeElement as HTMLElement, parentNode));
                 this._nodeCount++;
             } else if (nodeElement.classList.contains('tree-node')) {
                 if (nodeElement.classList.contains('accordion')) {
@@ -142,6 +146,8 @@ export class NodeContentTree extends NodeContent
     {
         const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         const conLineHeight = this._connectionLine.getAnimationHeight();
+        const freePt = this._parentNode.freePt;
+        freePt.moveOffset(0, conLineHeight);
         
         this._nodes.forEach(node => {
             if (AppearStatus.isDisappeared(node.appearStatus)) {
@@ -153,6 +159,7 @@ export class NodeContentTree extends NodeContent
         });
 
         if (AppearStatus.isAppeared(this._connectionLine.appearStatus)) {
+            freePt.hide();
             this.appearAnimationFunc = this.appearAnimation2;
         }
     }
@@ -186,6 +193,9 @@ export class NodeContentTree extends NodeContent
 
             this._appearStatus = AppearStatus.DISAPPEARING;
             this.appearAnimationFunc = this.disappearAnimation;
+            const freePt = this._parentNode.freePt;
+            freePt.setPos(headerPosition.x, headerPosition.y);
+            freePt.moveOffset(0, height);
         } else {
             this._connectionLine.disappearFadeOut();
             this._appearStatus = AppearStatus.DISAPPEARING;
@@ -211,14 +221,16 @@ export class NodeContentTree extends NodeContent
      */
     public disappearAnimation(): void
     {
+        const freePt = this._parentNode.freePt;
         if (AppearStatus.isDisappearing(this._connectionLine.appearStatus)) {
             const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const conLineHeight = this._connectionLine.getAnimationHeight();
             this.disappeareUnderLine(conLineHeight - 100, headerPosition);
-        }
-        
-        if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
+
+            freePt.moveOffset(0, conLineHeight);
+        } else if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
             this.disappeared();
+            freePt.hide();
         }
     }
 
@@ -235,10 +247,11 @@ export class NodeContentTree extends NodeContent
         this.appearAnimationFunc = null;
     }
 
-    public disappearConnectionLine(withFreePt: boolean = false): void
+    public disappearConnectionLine(): void
     {
         if (!AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
-            this.connectionLine.disappear(0, withFreePt);
+            this._parentNode.freePt.show();
+            this.connectionLine.disappear(0);
         }
     }
 

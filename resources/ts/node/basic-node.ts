@@ -5,9 +5,10 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeContentBehind } from "./parts/node-content-behind";
 import { NodeHead } from "./parts/node-head";
 import { NodeHeadType } from "../common/type";
-import { NodeHeadLink } from "./parts/node-head-link";
+import { NodeHeadClickable } from "./parts/node-head-clickable";
 import { CurveCanvas } from "./parts/curve-canvas";
 import { Point } from "../common/point";
+import { ClickableNodeInterface } from "./interface/clickable-node-interface";
 
 export class BasicNode extends NodeBase
 {
@@ -55,6 +56,23 @@ export class BasicNode extends NodeBase
         }
     }
 
+    
+
+    /**
+     * ノードのヘッダを読み込む
+     * 
+     * @returns 
+     */
+    protected loadHead(): NodeHeadType
+    {
+        // 自身の継承先がClickableNodeInterfaceを実装しているかをチェック
+        const nodeHead = this._nodeElement.querySelector(':scope > .node-head') as HTMLElement;
+        if (Util.isClickableNode(this)) {
+            return new NodeHeadClickable(nodeHead, this as ClickableNodeInterface);
+        }
+        return new NodeHead(nodeHead);
+    }
+
     /**
      * リサイズ時の処理
      */
@@ -62,10 +80,6 @@ export class BasicNode extends NodeBase
     {
         this.setDraw();
     }
-
-    protected hover(): void {}
-
-    protected unhover(): void {}
 
     /**
      * アニメーションの更新処理
@@ -76,13 +90,8 @@ export class BasicNode extends NodeBase
 
         this._nodeContentBehind?.update();
 
-        if (this._appearAnimationFunc) {
-            this._appearAnimationFunc();
-        }
-
-        if (this._updateGradientEndAlphaFunc) {
-            this._updateGradientEndAlphaFunc();
-        }
+        this._appearAnimationFunc?.();
+        this._updateGradientEndAlphaFunc?.();
     }
 
     /**
@@ -103,6 +112,9 @@ export class BasicNode extends NodeBase
         this._curveCanvas.appearProgress = 0;
         this._curveCanvas.gradientStartAlpha = 1;
         this._curveCanvas.gradientEndAlpha = 0;
+
+        this.freePt.setPos(Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2), 0).setElementPos();
+        this.freePt.show();
     }
 
     /**
@@ -111,9 +123,20 @@ export class BasicNode extends NodeBase
     public appearAnimation(): void
     {
         this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, 200);
+        
+        const connectionPoint = this._nodeHead.getConnectionPoint();
+        const pos = Util.getQuadraticBezierPoint(
+            Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2), 0,
+            connectionPoint.x, connectionPoint.y,
+            this._curveCanvas.appearProgress
+        );
+
+        this.freePt.moveOffset(pos.x-10, pos.y);
         if (this._curveCanvas.appearProgress === 1) {
             this._curveCanvas.gradientEndAlpha = 0.3;//this.isHover() ? 1 : 0.3;
             this._nodeHead.appear();
+            this.freePt.hide();
+            this.freePt.setPos(connectionPoint.x, connectionPoint.y).setElementPos();
             this.appearContents();
 
             if (this._nodeContentBehind) {
@@ -185,6 +208,31 @@ export class BasicNode extends NodeBase
         }
 
         return false;
+    }
+
+    /**
+     * ホバー開始時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnHover(): void
+    {
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(0.3, 1.0, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha === 1) {
+            this._updateGradientEndAlphaFunc = null;
+        }
+        this.setDraw();
+    }
+
+    /**
+     * ホバー終了時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnUnhover(): void
+    {
+        this._curveCanvas.gradientEndAlpha = Util.getAnimationValue(1.0, 0.3, this._animationStartTime, 300);
+        if (this._curveCanvas.gradientEndAlpha <= 0.3) {
+            this._curveCanvas.gradientEndAlpha = 0.3;
+            this._updateGradientEndAlphaFunc = null;
+        }
+        this.setDraw();
     }
 
     /**

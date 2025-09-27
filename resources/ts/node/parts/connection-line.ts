@@ -11,7 +11,6 @@ export class ConnectionLine
     private _appearAnimationFunc: (() => void) | null;
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
-    private _withFreePt: boolean;
     private _appearType: number;
 
     public get appearStatus(): AppearStatus
@@ -37,7 +36,6 @@ export class ConnectionLine
         this._appearAnimationFunc = null;
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
-        this._withFreePt = false;
         this._appearType = 0;
         this.setHeight(0);
     }
@@ -118,7 +116,7 @@ export class ConnectionLine
     /**
      * 消滅アニメーション開始
      */
-    public disappear(disappearHeight: number, withFreePt: boolean = false): void
+    public disappear(disappearHeight: number): void
     {
         this._disappearHeight = disappearHeight - this._element.offsetTop;
         if (this._disappearHeight < 0) {
@@ -129,7 +127,6 @@ export class ConnectionLine
             this._appearStatus = AppearStatus.DISAPPEARING;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
-            this._withFreePt = withFreePt;
             this._animationHeight = this._height;
 
             this._appearType = this._height > 1000 ? 1 : 0;
@@ -154,20 +151,20 @@ export class ConnectionLine
 
         this._element.style.height = `${this._animationHeight}px`;
 
-        if (this._withFreePt) {
-            const freePt = FreePoint.getInstance();
-            const rect = this._element.getBoundingClientRect();
+        //if (this._withFreePt) {
+            // const freePt = this.
+            // const rect = this._element.getBoundingClientRect();
             
-            // this._elementのドキュメント座標を取得
-            const elementDocX = rect.left + window.scrollX;
-            const elementDocY = rect.top + window.scrollY;
+            // // this._elementのドキュメント座標を取得
+            // const elementDocX = rect.left + window.scrollX;
+            // const elementDocY = rect.top + window.scrollY;
             
-            // freePtをthis._elementと同じ位置に配置
-            const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;
-            const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
+            // // freePtをthis._elementと同じ位置に配置
+            // const x = elementDocX - Math.floor(freePt.clientWidth / 2) + 1;
+            // const y = elementDocY + this._animationHeight - Math.floor(freePt.clientHeight / 2);
 
-            freePt.setPos(x, y).setElementPos();
-        }
+            // freePt.setPos(x, y).setElementPos();
+        //}
 
         if (this._animationHeight === this._disappearHeight) {
             this._appearAnimationFunc = null;
