@@ -56,6 +56,13 @@ export class LinkNodeMixin
      */
     public click(e: MouseEvent): void
     {
+        const nodeContentTree = this._parentInstance.parentNode.nodeContentTree;
+        if (!AppearStatus.isAppeared(nodeContentTree.appearStatus)) {
+            return;
+        }
+
+
+
         this._isHomewardDisappear = true;
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
