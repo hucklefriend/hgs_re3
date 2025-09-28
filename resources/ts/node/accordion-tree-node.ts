@@ -12,7 +12,7 @@ import { NodeHeadType } from "../common/type";
 export class AccordionTreeNode extends TreeNode implements ClickableNodeInterface
 {
     private _groupId: string;
-    private _isOpen: boolean;
+    private _openStatus: AppearStatus;
     private _startScrollY: number;
     private _startPosY: number;
 
@@ -30,7 +30,7 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
         super(nodeElement, parentNode);
 
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
-        this._isOpen = false;
+        this._openStatus = AppearStatus.DISAPPEARED;
         this._startScrollY = 0;
         this._startPosY = 0;
 
@@ -52,14 +52,14 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
 
     public open(toggleOtherNodes: boolean = false): void
     {
-        if (this._isOpen) {
+        if (!AppearStatus.isDisappeared(this._openStatus)) {
             return;
         }
+        this._openStatus = AppearStatus.APPEARING;
         this._nodeContentTree.contentElement.classList.add('open');
-        this._nodeContentTree.appear();
+        this._nodeContentTree.appear(true, true);
         this._appearAnimationFunc = this.openAnimation;
-        this._isOpen = true;
-        this._nodeContentBehind?.invisible();
+        this._nodeContentBehind?.disappear();
         this._startScrollY = window.scrollY;
         this._startPosY = window.scrollY + this._nodeElement.getBoundingClientRect().top;
 
@@ -76,32 +76,32 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
             window.scrollTo(0, this._startScrollY + (posY - this._startPosY));
         }
         
-        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus) ||
-            AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
+            this._openStatus = AppearStatus.APPEARED;
         }
         this.parentNode.resizeConnectionLine();
     }
 
     public close(): void
     {
-        if (!this._isOpen) {
+        if (!AppearStatus.isAppeared(this._openStatus)) {
             return;
         }
+        this._openStatus = AppearStatus.DISAPPEARING;
         
-        this._nodeContentTree.disappear();
+        this._nodeContentTree.disappear(true, true);
         this._appearAnimationFunc = this.closeAnimation;
-        this._isOpen = false;
-        this._nodeContentBehind?.visible();
+        this._nodeContentBehind?.appear();
     }
 
 
     public closeAnimation(): void
     {
-        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus) ||
-            AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+        if (AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
             this._nodeContentTree.contentElement.classList.remove('open');
+            this._openStatus = AppearStatus.DISAPPEARED;
         }
         this.parentNode.resizeConnectionLine();
     }
@@ -109,9 +109,9 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
 
     public toggle(): void
     {
-        if (this._isOpen) {
+        if (AppearStatus.isAppeared(this._openStatus)) {
             this.close();
-        } else {
+        } else if (AppearStatus.isDisappeared(this._openStatus)) {
             this.open(true);
         }
     }

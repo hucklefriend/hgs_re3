@@ -116,9 +116,13 @@ div.connection-line {
         opacity: 1;
     }
 
-    &.fade-out {
+    &.fade-out, &.fade-out-fast {
         background: transparent;
         box-shadow: 0 0 0;
+    }
+
+    &.fade-out-fast {
+        transition: background 0.1s ease, box-shadow 0.05s ease;
     }
 }
 

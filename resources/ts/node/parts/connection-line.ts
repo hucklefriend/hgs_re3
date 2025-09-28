@@ -1,5 +1,6 @@
 import { AppearStatus } from "../../enum/appear-status";
 import { Util } from "../../common/util";
+import { Config } from "../../common/config";
 
 export class ConnectionLine
 {
@@ -11,6 +12,7 @@ export class ConnectionLine
     private _appearStatus: AppearStatus;
     private _disappearHeight: number;
     private _appearType: number;
+    private _isFast: boolean;
 
     /**
      * 出現状態を取得
@@ -53,6 +55,7 @@ export class ConnectionLine
         this._appearStatus = AppearStatus.DISAPPEARED;
         this._disappearHeight = 0;
         this._appearType = 0;
+        this._isFast = false;
         this.setHeight(0);
     }
 
@@ -100,13 +103,18 @@ export class ConnectionLine
     public visible(): void
     {
         this._element.classList.add('visible');
-        this._element.classList.remove('fade-out');
+        this._element.classList.remove('fade-out', 'fade-out-fast');
+    }
+
+    private setAppearType(): void
+    {
+        this._appearType = this._height > Config.getInstance().CONNECTION_LINE_TYPE_THRESHOLD ? 1 : 0;
     }
 
     /**
      * 出現アニメーション開始
      */
-    public appear(): void
+    public appear(isFast: boolean = false): void
     {
         this._animationStartTime = (window as any).hgn.timestamp;
         this._appearAnimationFunc = this.appearAnimation;
@@ -114,7 +122,18 @@ export class ConnectionLine
         this._animationHeight = 0;
         this._element.style.height = `${this._animationHeight}px`;
         this.visible();
-        this._appearType = this._height > 1000 ? 1 : 0;
+        this.setAppearType();
+        this._isFast = isFast;
+    }
+
+    private getShortAppearSpeed(): number
+    {
+        return this._isFast ? Config.getInstance().CONNECTION_LINE_FAST_SHORT_APPEAR_SPEED : Config.getInstance().CONNECTION_LINE_SHORT_APPEAR_SPEED;
+    }
+
+    private getLongAppearTime(): number
+    {
+        return this._isFast ? Config.getInstance().CONNECTION_LINE_FAST_LONG_APPEAR_TIME : Config.getInstance().CONNECTION_LINE_LONG_APPEAR_TIME;
     }
 
     /**
@@ -123,9 +142,9 @@ export class ConnectionLine
     private appearAnimation(): void
     {
         if (this._appearType === 0) {
-            this._animationHeight += 15;        // TODO: Configで設定できるようにする
+            this._animationHeight += this.getShortAppearSpeed();
         } else {
-            const progress = Util.getAnimationProgress(this._animationStartTime, 1000); // TODO: Configで設定できるようにする
+            const progress = Util.getAnimationProgress(this._animationStartTime, this.getLongAppearTime());
             this._animationHeight = this._height * progress;
         }
         if (this._animationHeight >= this._height) {
@@ -137,10 +156,20 @@ export class ConnectionLine
         this._element.style.height = `${this._animationHeight}px`;
     }
 
+    private getShortDisappearSpeed(): number
+    {
+        return this._isFast ? Config.getInstance().CONNECTION_LINE_FAST_SHORT_DISAPPEAR_SPEED : Config.getInstance().CONNECTION_LINE_SHORT_DISAPPEAR_SPEED;
+    }
+
+    private getLongDisappearTime(): number
+    {
+        return this._isFast ? Config.getInstance().CONNECTION_LINE_FAST_LONG_DISAPPEAR_TIME : Config.getInstance().CONNECTION_LINE_LONG_DISAPPEAR_TIME;
+    }
+
     /**
      * 消滅アニメーション開始
      */
-    public disappear(disappearHeight: number): void
+    public disappear(disappearHeight: number, isFast: boolean = false): void
     {
         this._disappearHeight = disappearHeight - this._element.offsetTop;
         if (this._disappearHeight < 0) {
@@ -152,8 +181,8 @@ export class ConnectionLine
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.disappearAnimation;
             this._animationHeight = this._height;
-
-            this._appearType = this._height > 1000 ? 1 : 0; // TODO: Configで設定できるようにする
+            this._isFast = isFast;
+            this.setAppearType();
         }
     }
 
@@ -163,9 +192,9 @@ export class ConnectionLine
     private disappearAnimation(): void
     {
         if (this._appearType === 0) {
-            this._animationHeight -= 15; // TODO: Configで設定できるようにする
+            this._animationHeight -= this.getShortDisappearSpeed();
         } else {
-            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, 1000); // TODO: Configで設定できるようにする
+            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, this.getLongDisappearTime());
             this._animationHeight = this._height * progress;
         }
 
@@ -178,7 +207,7 @@ export class ConnectionLine
         if (this._animationHeight === this._disappearHeight) {
             this._appearAnimationFunc = null;
             this.setHeight(this._disappearHeight);
-            this._element.classList.remove('fade-out');
+            this._element.classList.remove('fade-out', 'fade-out-fast');
 
             if (this._height === 0) {
                 this._appearStatus = AppearStatus.DISAPPEARED;
@@ -190,10 +219,11 @@ export class ConnectionLine
     /**
      * フェードアウトアニメーション開始
      */
-    public disappearFadeOut(): void
+    public disappearFadeOut(isFast: boolean = false): void
     {
-        this._element.classList.add('fade-out');
+        this._element.classList.add(isFast ? 'fade-out-fast' : 'fade-out');
         this._animationHeight = 0;
+        this._isFast = isFast;
         
         // transitionendイベントをリッスン
         const handleTransitionEnd = (event: TransitionEvent) => {

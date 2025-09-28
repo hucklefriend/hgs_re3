@@ -22,6 +22,7 @@ export class NodeContentTree extends NodeContent
     public appearAnimationFunc: (() => void) | null;
     protected _nodeCount: number;
     protected _isFast: boolean;
+    protected _doNotAppearBehind: boolean;
 
     public get appearStatus(): AppearStatus
     {
@@ -64,6 +65,7 @@ export class NodeContentTree extends NodeContent
         this.appearAnimationFunc = null;
         this._nodeCount = 0;
         this._isFast = false;
+        this._doNotAppearBehind = false;
     }
 
     /**
@@ -129,23 +131,17 @@ export class NodeContentTree extends NodeContent
         }
     }
 
-    public appear(): void
+    public appear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
         const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         this._connectionLine.setPosition(headerPosition.x - 1, headerPosition.y);
         const conLineHeight = this.lastNode.nodeElement.offsetTop - headerPosition.y + 2;
         this._connectionLine.changeHeight(conLineHeight);
-        this._connectionLine.appear();
+        this._connectionLine.appear(isFast);
 
         this._appearStatus = AppearStatus.APPEARING;
         this.appearAnimationFunc = this.appearAnimation;
-        this._isFast = false;
-    }
-
-    public fastAppear(): void
-    {
-        this.appear();
-        this._isFast = true;
+        this._isFast = isFast;
     }
 
     /**
@@ -162,7 +158,7 @@ export class NodeContentTree extends NodeContent
             if (AppearStatus.isDisappeared(node.appearStatus)) {
                 const top = node.nodeElement.offsetTop - headerPosition.y;
                 if (top <= conLineHeight) {
-                    node.appear();
+                    node.appear(this._isFast, this._doNotAppearBehind);
                 }
             }
         });
@@ -186,8 +182,10 @@ export class NodeContentTree extends NodeContent
         this.appearAnimationFunc = null;
     }
 
-    public disappear(): void
+    public disappear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
+        this._isFast = isFast;
+        this._doNotAppearBehind = doNotAppearBehind;
         if (this.homewardNode) {
             const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const height = this.homewardNode.nodeElement.offsetTop - headerPosition.y + 2;
@@ -206,10 +204,10 @@ export class NodeContentTree extends NodeContent
             freePt.setPos(headerPosition.x, headerPosition.y);
             freePt.moveOffset(0, height);
         } else {
-            this._connectionLine.disappearFadeOut();
+            this._connectionLine.disappearFadeOut(isFast);
             this._appearStatus = AppearStatus.DISAPPEARING;
             this.appearAnimationFunc = this.disappearAnimation2;
-            this._nodes.forEach(node => node.disappear());
+            this._nodes.forEach(node => node.disappear(this._isFast, this._doNotAppearBehind));
         }
     }
 
@@ -219,7 +217,7 @@ export class NodeContentTree extends NodeContent
             if (AppearStatus.isAppeared(node.appearStatus)) {
                 const top = node.nodeElement.offsetTop - headerPosition.y;
                 if (top >= conLineHeight) {
-                    node.disappear();
+                    node.disappear(this._isFast, this._doNotAppearBehind);
                 }
             }
         });

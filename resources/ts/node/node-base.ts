@@ -168,17 +168,17 @@ export abstract class NodeBase
     /**
      * 出現アニメーション開始
      */
-    public appearContents(): void
+    public appearContents(isFast: boolean = false): void
     {
-        Object.values(this._nodeContents).forEach(content => content?.appear());
+        Object.values(this._nodeContents).forEach(content => content?.appear(isFast));
     }
 
     /**
      * 消滅アニメーション開始
      */
-    public disappearContents(): void
+    public disappearContents(isFast: boolean = false): void
     {
-        Object.values(this._nodeContents).forEach(content => content?.disappear());
+        Object.values(this._nodeContents).forEach(content => content?.disappear(isFast));
     }
 
     /**
