@@ -57,10 +57,10 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         this._nodeContentTree.update();
     }
 
-    public appear(): void
+    public appear(isFast: boolean = false): void
     {
         if (AppearStatus.isDisappeared(this._appearStatus)) {
-            super.appear();
+            super.appear(isFast);
             this._appearAnimationFunc = this.appearAnimation;
         }
     }
@@ -70,7 +70,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         super.appearAnimation();
         
         if (this._curveCanvas.appearProgress === 1) {
-            this._nodeContentTree.appear();
+            this._nodeContentTree.appear(this._isFast);
             this._curveCanvas.gradientEndAlpha = 1;
             this._animationStartTime = (window as any).hgn.timestamp;
             this._appearAnimationFunc = this.appearAnimation2;
@@ -101,15 +101,15 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         this._parentNode.prepareDisappear(this);
     }
 
-    public disappear(): void
+    public disappear(isFast: boolean = false): void
     {
         if (this._homewardNode === null) {
-            super.disappear();
+            super.disappear(isFast);
         }
 
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.homewardNode = this._homewardNode;
-        this._nodeContentTree.disappear();
+        this._nodeContentTree.disappear(isFast);
 
         this._nodeContentBehind?.disappear();
     }

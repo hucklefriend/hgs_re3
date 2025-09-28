@@ -12,8 +12,7 @@ import { NodeHeadType } from "../common/type";
 export class AccordionTreeNode extends TreeNode implements ClickableNodeInterface
 {
     private _groupId: string;
-    private _isHomewardDisappear: boolean;
-    private _isOpen: boolean;
+    private _openStatus: AppearStatus;
     private _startScrollY: number;
     private _startPosY: number;
 
@@ -31,8 +30,7 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
         super(nodeElement, parentNode);
 
         this._groupId = nodeElement.getAttribute('data-accordion-group') || '';
-        this._isHomewardDisappear = false;
-        this._isOpen = false;
+        this._openStatus = AppearStatus.DISAPPEARED;
         this._startScrollY = 0;
         this._startPosY = 0;
 
@@ -54,14 +52,16 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
 
     public open(toggleOtherNodes: boolean = false): void
     {
-        if (this._isOpen) {
+        if (!AppearStatus.isDisappeared(this._openStatus)) {
             return;
         }
+        this._openStatus = AppearStatus.APPEARING;
         this._nodeContentTree.contentElement.classList.add('open');
-        this._nodeContentTree.appear();
+        this._nodeContentTree.appear(true, true);
         this._appearAnimationFunc = this.openAnimation;
-        this._isOpen = true;
-        this._nodeContentBehind?.invisible();
+        this._nodeContentBehind?.disappear();
+        this._startScrollY = window.scrollY;
+        this._startPosY = window.scrollY + this._nodeElement.getBoundingClientRect().top;
 
         if (toggleOtherNodes) {
             this._toggleOtherNodesInGroup('close');
@@ -70,41 +70,48 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
 
     public openAnimation(): void
     {
-        this.parentNode.resizeConnectionLine();
         const nodeRect = this._nodeElement.getBoundingClientRect();
         const posY = nodeRect.top + window.scrollY;
         if (posY !== this._startPosY) {
-            //window.scrollTo(0, this._startScrollY - (this._startPosY - posY));
+            window.scrollTo(0, this._startScrollY + (posY - this._startPosY));
         }
         
-        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus) ||
-            AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+        if (AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
+            this._openStatus = AppearStatus.APPEARED;
         }
+        this.parentNode.resizeConnectionLine();
     }
 
     public close(): void
     {
-        if (!this._isOpen) {
+        if (!AppearStatus.isAppeared(this._openStatus)) {
             return;
         }
+        this._openStatus = AppearStatus.DISAPPEARING;
         
-        this._nodeContentTree.contentElement.classList.remove('open');
-        this._nodeContentTree.disappear();
-        const nodeRect = this._nodeElement.getBoundingClientRect();
-        this._startPosY = nodeRect.top + window.scrollY;
-        this._startScrollY = window.scrollY;
-
-        this._appearAnimationFunc = this.openAnimation;
-        this._isOpen = false;
-        this._nodeContentBehind?.visible();
+        this._nodeContentTree.disappear(true, true);
+        this._appearAnimationFunc = this.closeAnimation;
+        this._nodeContentBehind?.appear();
     }
+
+
+    public closeAnimation(): void
+    {
+        if (AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
+            this._appearAnimationFunc = null;
+            this._nodeContentTree.contentElement.classList.remove('open');
+            this._openStatus = AppearStatus.DISAPPEARED;
+        }
+        this.parentNode.resizeConnectionLine();
+    }
+
 
     public toggle(): void
     {
-        if (this._isOpen) {
+        if (AppearStatus.isAppeared(this._openStatus)) {
             this.close();
-        } else {
+        } else if (AppearStatus.isDisappeared(this._openStatus)) {
             this.open(true);
         }
     }

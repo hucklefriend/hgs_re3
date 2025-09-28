@@ -17,7 +17,8 @@ export class BasicNode extends NodeBase
     protected _parentNode: TreeNodeInterface;
     protected _nodeContentBehind: NodeContentBehind | null;
     protected _curveCanvas: CurveCanvas;
-    
+    protected _isFast: boolean;
+    protected _doNotAppearBehind: boolean;
 
     public get parentNode(): TreeNodeInterface
     {
@@ -44,10 +45,11 @@ export class BasicNode extends NodeBase
         this._parentNode = parentNode;
 
         this._curveCanvas = new CurveCanvas(this);
-        
+        this._isFast = false;
         this._animationStartTime = 0;
         this._appearAnimationFunc = null;
         this._updateGradientEndAlphaFunc = null;
+        this._doNotAppearBehind = false;
 
         this._nodeContentBehind = null;
         if (this._behindContentElement) {
@@ -55,8 +57,6 @@ export class BasicNode extends NodeBase
             this._nodeContentBehind.loadNodes();
         }
     }
-
-    
 
     /**
      * ノードのヘッダを読み込む
@@ -97,14 +97,14 @@ export class BasicNode extends NodeBase
     /**
      * 出現アニメーション開始
      */
-    public appear(): void
+    public appear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
         if (AppearStatus.isDisappeared(this._appearStatus)) {
-            this.startAppear();
+            this.startAppear(isFast, doNotAppearBehind);
         }
     }
 
-    protected startAppear(): void
+    protected startAppear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
         this._appearStatus = AppearStatus.APPEARING;
         this._appearAnimationFunc = this.appearAnimation;
@@ -115,6 +115,8 @@ export class BasicNode extends NodeBase
 
         this.freePt.setPos(Math.floor(this._parentNode.nodeHead.getNodePtWidth() / 2), 0).setElementPos();
         this.freePt.show();
+        this._isFast = isFast;
+        this._doNotAppearBehind = doNotAppearBehind;
     }
 
     /**
@@ -122,7 +124,7 @@ export class BasicNode extends NodeBase
      */
     public appearAnimation(): void
     {
-        this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, 200);
+        this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, this._isFast ? 70 : 200);
         
         const connectionPoint = this._nodeHead.getConnectionPoint();
         const pos = Util.getQuadraticBezierPoint(
@@ -139,7 +141,7 @@ export class BasicNode extends NodeBase
             this.freePt.setPos(connectionPoint.x, connectionPoint.y).setElementPos();
             this.appearContents();
 
-            if (this._nodeContentBehind) {
+            if (this._nodeContentBehind && !this._doNotAppearBehind) {
                 this._nodeContentBehind.appear();
                 this._appearAnimationFunc = this.appearBehindAnimation;
             } else {
@@ -168,15 +170,18 @@ export class BasicNode extends NodeBase
     /**
      * 消滅アニメーション開始
      */
-    public disappear(): void
+    public disappear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
+        this._isFast = isFast;
         this.disappearContents();
         this._animationStartTime = (window as any).hgn.timestamp;
         this._curveCanvas.gradientEndAlpha = 0;
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._updateGradientEndAlphaFunc = null;
 
-        this._nodeContentBehind?.disappear();
+        if (!doNotAppearBehind) {
+            this._nodeContentBehind?.disappear();
+        }
 
         this._isDraw = true;
 
