@@ -80,7 +80,7 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
             this._appearAnimationFunc = null;
             this._openStatus = AppearStatus.APPEARED;
         }
-        this.parentNode.resizeConnectionLine();
+        //this.parentNode.resizeConnectionLine();
     }
 
     public close(): void
@@ -103,7 +103,7 @@ export class AccordionTreeNode extends TreeNode implements ClickableNodeInterfac
             this._nodeContentTree.contentElement.classList.remove('open');
             this._openStatus = AppearStatus.DISAPPEARED;
         }
-        this.parentNode.resizeConnectionLine();
+        //this.parentNode.resizeConnectionLine();
     }
 
 
