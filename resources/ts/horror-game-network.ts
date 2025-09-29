@@ -71,9 +71,32 @@ export class HorrorGameNetwork
     public start(): void
     {
         // リサイズイベントの登録
-        window.addEventListener('resize', () => {
-            this.isForceResize = true;
+        const target = document.body; // 監視対象
+        let lastWidth = target.offsetWidth;
+        let lastHeight = target.offsetHeight;
+        
+        const ro = new ResizeObserver(entries => {
+          for (const entry of entries) {
+            const { width, height } = entry.contentRect;
+        
+            // if (width !== lastWidth && height !== lastHeight) {
+            //   console.log("幅・高さの両方が変化");
+            // } else if (width !== lastWidth) {
+            //   console.log("横幅のみ変化");
+            // }
+            
+            // 高さが変化したらリサイズ
+            if (height !== lastHeight) {
+                this.isForceResize = true;
+            }
+        
+            lastWidth = width;
+            lastHeight = height;
+          }
         });
+        
+        ro.observe(target);
+        
 
         // ページ遷移前のイベント登録
         window.addEventListener('beforeunload', () => {

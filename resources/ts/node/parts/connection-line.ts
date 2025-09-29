@@ -258,7 +258,12 @@ export class ConnectionLine
     public changeHeight(height: number): void
     {
         this._height = height;
-        this._element.style.height = `${this._height}px`;
+
+        if (AppearStatus.isAppeared(this._appearStatus)) {
+            this._element.style.height = `${this._height}px`;
+        } else if (AppearStatus.isTransitioning(this._appearStatus)) {
+            this._element.style.height = `${this._animationHeight}px`;
+        }
     }
 
     /**

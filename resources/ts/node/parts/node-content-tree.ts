@@ -112,6 +112,12 @@ export class NodeContentTree extends NodeContent
         this._nodes = [];
     }
 
+    public resize(): void
+    {
+        this._nodes.forEach(node => node.resize());
+        this.resizeConnectionLine(this._parentNode.nodeHead.getConnectionPoint());
+    }
+
     public resizeConnectionLine(headerPosition: Point): void
     {
         if (this._connectionLine && !AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {

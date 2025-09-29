@@ -67,6 +67,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         return this._nodeContentTree;
     }
 
+    public resize(): void
+    {
+        super.resize();
+        this._nodeContentTree.resize();
+    }
+
     /**
      * 更新
      */

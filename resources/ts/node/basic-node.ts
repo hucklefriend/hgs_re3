@@ -78,6 +78,8 @@ export class BasicNode extends NodeBase
      */
     public resize(): void
     {
+        this._nodeContentBehind?.resize();
+        super.resize();
         this.setDraw();
     }
 
