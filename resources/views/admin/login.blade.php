@@ -27,7 +27,6 @@
     <div class="login login-v1">
 
         <div class="login-container">
-            @php var_dump(\Illuminate\Support\Facades\Auth::check()) @endphp
             <div class="login-header">
                 <div class="brand">
                     <div class="d-flex align-items-center">

@@ -97,7 +97,7 @@
             @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
             <section class="node link-node" id="admin-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}" class="node-head-text">管理</a>
+                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}" class="node-head-text" rel="external">管理</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

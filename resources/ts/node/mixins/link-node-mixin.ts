@@ -3,7 +3,6 @@ import { AppearStatus } from "../../enum/appear-status";
 import { CurrentNode } from "../current-node";
 import { Util } from "../../common/util";
 import { Point } from "../../common/point";
-import { ClickableNodeInterface } from "../interface/clickable-node-interface";
 import { NodeHeadClickable } from "../parts/node-head-clickable";
 
 /**
@@ -56,6 +55,12 @@ export class LinkNodeMixin
      */
     public click(e: MouseEvent): void
     {
+        // 外部リンクの場合は処理しない
+        if (this.anchor.getAttribute('rel') === 'external') {
+            location.href = this.anchor.href;
+            return;
+        }
+
         const nodeContentTree = this._parentInstance.parentNode.nodeContentTree;
         if (!AppearStatus.isAppeared(nodeContentTree.appearStatus)) {
             return;
