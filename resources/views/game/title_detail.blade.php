@@ -5,7 +5,7 @@
 @section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
 
 @section('current-node-content')
-    @include('common.head1', ['model' => $title])
+    @include('common.current-node-ogp', ['model' => $title])
 @endsection
 
 
@@ -71,10 +71,26 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
-            <section class="node link-node" id="admin-link-node">
+            <section class="node link-tree-node" id="admin-link-node">
                 <div class="node-head">
                     <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}フランチャイズ</a>
                     <span class="node-pt">●</span>
+                </div>
+                <div class="node-content tree">
+                    <section class="node link-tree-node" id="back-to-franchises-node">
+                        <div class="node-head">
+                            <a href="{{ route('Game.Franchises') }}" class="node-head-text">Franchises</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                        <div class="node-content tree">
+                            <section class="node link-node" id="back-to-entrance-node">
+                                <div class="node-head">
+                                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                                    <span class="node-pt">●</span>
+                                </div>
+                            </section>
+                        </div>
+                    </section>
                 </div>
             </section>
 

@@ -9,6 +9,7 @@ import { TreeNodeInterface } from "../interface/tree-node-interface";
 import { BasicNode } from "../basic-node";
 import { AccordionTreeNode } from "../accordion-tree-node";
 import { LinkTreeNode } from "../link-tree-node";
+import { CurrentNode } from "../current-node";
 
 export class NodeContentTree extends NodeContent
 {
@@ -241,6 +242,9 @@ export class NodeContentTree extends NodeContent
             this.disappeareUnderLine(conLineHeight - 100, headerPosition);
             if (conLineHeight <= 70) {
                 this._parentNode.nodeHead.disappear();
+                if (this._parentNode instanceof CurrentNode) {
+                    this._parentNode.disappearContents();
+                }
             }
 
             freePt.moveOffset(0, conLineHeight);

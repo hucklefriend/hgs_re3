@@ -4,9 +4,7 @@
 @section('current-node-title', $franchise->name . 'フランチャイズ')
 
 @section('current-node-content')
-    <div class="node-content basic">
-        {!! nl2br($franchise->description) !!}
-    </div>
+    {!! nl2br($franchise->description) !!}
 @endsection
 
 @section('nodes')

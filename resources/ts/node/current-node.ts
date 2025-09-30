@@ -1,5 +1,4 @@
 import { Util } from "../common/util";
-import { FreePoint } from "./parts/free-point";
 import { AppearStatus } from "../enum/appear-status";
 import { NextNodeCache } from "./parts/next-node-cache";
 import { NodeContentTree } from "./parts/node-content-tree";
@@ -57,6 +56,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
         this._homewardNode = null;
+        this._currentNodeContentElement!.innerHTML = '';
     }
 
     /**
@@ -152,6 +152,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             this._appearAnimationFunc = this.disappearAnimation;
         } else {
             this._nodeHead.disappear();
+            this.disappearContents();
+            
             this._appearAnimationFunc = this.disappearAnimationWaitFinished;
         }
     }

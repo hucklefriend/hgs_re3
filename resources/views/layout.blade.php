@@ -29,11 +29,11 @@
     <main>
         <section class="node" id="current-node">
             <div class="node-head">
-                <h1 class="node-head-text head-fade-mask">@yield('current-node-title')</h1>
+                <h1 class="node-head-text">@yield('current-node-title')</h1>
                 <span class="node-pt current-node-pt">●</span>
             </div>
             
-            <div class="node-content head-fade-mask" id="current-node-content">
+            <div class="node-content" id="current-node-content">
                 @hasSection('current-node-content')
                     @yield('current-node-content')
                 @endif
