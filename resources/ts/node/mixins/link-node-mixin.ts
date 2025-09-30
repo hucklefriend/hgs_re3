@@ -61,13 +61,13 @@ export class LinkNodeMixin
             return;
         }
 
-
-
         this._isHomewardDisappear = true;
 
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const currentNode = hgn.currentNode as CurrentNode;
         currentNode.moveNode(this.anchor.href, this._parentInstance, false);
+
+        this._parentInstance.disappearContents();
 
         this._parentInstance.parentNode.prepareDisappear(this._parentInstance);
     }

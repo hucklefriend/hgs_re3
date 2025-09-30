@@ -31,6 +31,14 @@ body {
 
     background-color: #000000;
 
+    > footer {
+        width: 100%;
+        text-align: center;
+        color: #334433;
+        margin: 50px 0;
+        font-size: 11px;
+    }
+
     /*
     background: linear-gradient(
         315deg,
@@ -55,14 +63,6 @@ main {
     }
 }
 
-footer {
-    width: 100%;
-    text-align: center;
-    color: #334433;
-    margin: 50px 0;
-    font-size: 11px;
-}
-
 a {
     text-decoration: none;
     color: lightgray;
@@ -85,6 +85,27 @@ h2 {
 
 h3 {
     font-size: 17px;
+}
+
+footer {
+    margin-top: 0.8rem;
+    text-align: right;
+    font-size: 12px;
+}
+
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+
+blockquote.description {
+    display: inline-block;
+    max-width: 100%;
+    
+    > footer {
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
 
 img.default-img {
@@ -162,7 +183,19 @@ div.connection-line {
 }
 
 #current-node-content {
-    min-height: 40px;
+    margin-bottom: 25px;
+    min-height: 10px;
+    padding-left: 30px;
+    transition: opacity 0.2s ease-in;
+    opacity: 0;
+
+    &.content-fade-in {
+        opacity: 1;
+    }
+
+    &.content-fade-out {
+        opacity: 0;
+    }
 }
 
 .invisible {
@@ -514,5 +547,31 @@ div.shop-link {
             opacity: 1;
             position: static;
         }
+    }
+}
+
+
+.ogp-img-container {
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+
+    > .ogp-img {
+        display: inline-block;
+        
+        > a {
+            display: inline-block;
+        }
+    }
+
+    > footer {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding-right: 5px;
     }
 }
