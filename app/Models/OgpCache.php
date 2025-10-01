@@ -36,6 +36,7 @@ class OgpCache extends \Eloquent
             'base_url'     => null,
             'title'        => null,
             'description'  => null,
+            'site_name'    => null,
             'url'          => null,
             'image'        => null,
             'image_width'  => null,
@@ -76,6 +77,7 @@ class OgpCache extends \Eloquent
             }
             $this->id = null;
         } else {
+            $this->touch();
             $this->save();
         }
     }
@@ -149,6 +151,7 @@ class OgpCache extends \Eloquent
                 case 'description':
                 case 'image':
                 case 'type':
+                case 'site_name':
                     $hasData = true;
                 case 'url':
                     // <br> <br/> <br />などを\r\nに変換

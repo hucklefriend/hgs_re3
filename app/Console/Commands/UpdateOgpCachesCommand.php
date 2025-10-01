@@ -29,7 +29,12 @@ class UpdateOgpCachesCommand extends Command
         $ogps = OgpCache::orderBy('updated_at', 'asc')->take(10)->get();
 
         foreach ($ogps as $ogp) {
+            $this->info("Updating OGP cache for {$ogp->id}.");
             $ogp->fetch()->saveOrDelete();
+
+            if ($ogp->id === null) {
+                $this->info('OGP cache deleted.');
+            }
 
             sleep(1);
         }
