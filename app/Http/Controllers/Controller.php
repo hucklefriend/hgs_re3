@@ -7,9 +7,19 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\App;
 
 abstract class Controller
 {
+    public function __construct()
+    {
+        if (App::environment('local')) {
+            Auth::guard('admin')->attempt(['email' => 'webmaster@horragame.net', 'password' => 'huckle'], true);
+        }
+    }
+    
     /**
      * Ajaxリクエストかどうかを判定する
      *

@@ -8,35 +8,60 @@
     @include('common.current-node-ogp', ['model' => $title])
 @endsection
 
-
 @section('nodes')
-
-    @if ($title->packageGroups()->exists() || $title->packages()->exists())
-        <section class="node tree-node" id="title-lineup-tree-node">
+    @if ($title->packageGroups()->exists())
+        <section class="node tree-node" id="pkg-lineup-tree-node">
             <div class="node-head">
                 <h2 class="node-head-text">パッケージラインナップ</h2>
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content tree">
-                @if ($title->packageGroups()->exists())
-                    @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                        <section class="node tree-node" id="ああ-tree-node">
-                            <div class="node-head">
-                                <h2 class="node-head-text">{{ $pkgGroup->name }}</h2>
-                                <span class="node-pt">●</span>
+                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
+                    <section class="node" id="pkgg-{{ $pkgGroup->id }}-tree-node">
+                        <div class="node-head">
+                            <h3 class="node-head-text">{{ $pkgGroup->name }}</h3>
+                            <span class="node-pt">●</span>
+                        </div>
+                        <div class="node-content basic">
+                            @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
+                            <div class="pkg-info">
+                                <div class="pkg-info-text">
+                                    {{ $pkg->platform->acronym }}
+                                    @empty($pkg->node_name)
+                                    @else
+                                        &nbsp;{!! $pkg->node_name !!}
+                                    @endif
+                                    <br>
+                                    <span>{{ $pkg->release_at }}</span>
+                                </div>
+                                
+                                @if ($pkg->shops->count() > 0)
+                                <div class="pkg-info-shops">
+                                    @foreach($pkg->shops as $shop)
+                                    <div class="pkg-info-shop">
+                                        <a href="{{ $shop->url }}">
+                                            <div class="pkg-info-shop-img">
+                                            @if ($shop->ogp !== null && $shop->ogp->image !== null)
+                                                <img src="{{ $shop->ogp->image }}" width="{{ $shop->ogp->image_width }}" height="{{ $shop->ogp->image_height }}" class="pkg-img">
+                                            @elseif (!empty($shop->img_tag))
+                                                {!! $shop->img_tag !!}
+                                            @else
+                                                <img src="{{ $pkg->default_img_type->imgUrl() }}">
+                                            @endif
+                                            </div>
+                                            <div class="shop-name">
+                                                {{ $shop->shop()?->name() ?? '--' }}
+                                            </div>
+                                        </a>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @endif
                             </div>
-                            <div class="node-content tree">
-                                @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
-                                    @include('common.package', ['pkg' => $pkg])
-                                @endforeach
-                            </div>
-                        </section>
-                    @endforeach
-                @else
-                    @foreach ($title->packages->sortByDesc('sort_order') as $pkg)
-                    @include('common.package', ['pkg' => $pkg])
-                    @endforeach
-                @endif
+                            @endforeach
+                        </div>
+                    </section>
+                @endforeach
             </div>
         </section>
     @endif
@@ -53,7 +78,7 @@
                 @if ($sameSeriesTitle->id === $title->id)
                     @continue
                 @endif
-                <section class="node link-node" id="biohazard-link-node">
+                <section class="node link-node" id="{{ $title->key }}-link-node">
                     <div class="node-head">
                         <a href="{{ route('Game.TitleDetail', ['titleKey' => $sameSeriesTitle->key]) }}" class="node-head-text">{{ $sameSeriesTitle->name }}</a>
                         <span class="node-pt">●</span>

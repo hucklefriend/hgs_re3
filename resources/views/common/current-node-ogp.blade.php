@@ -1,17 +1,19 @@
 
 @if ($model->ogp !== null)
     @if (!empty($model->ogp->image))
-    <div class="ogp-img-container">
-        <div class="ogp-img">
-            <a href="{{ $model->ogp->url }}" target="_blank" class="external-link">
-                <img src="{{ $model->ogp->image }}" width="{{ $model->ogp->image_width }}" height="{{ $model->ogp->image_height }}" alt="{{ $model->name }}" class="ogp-img">
-            </a>
+    <div>
+        <div class="ogp-img-container">
+            <div class="ogp-img">
+                <a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">
+                    <img src="{{ $model->ogp->image }}" width="{{ $model->ogp->image_width }}" height="{{ $model->ogp->image_height }}" alt="{{ $model->name }}" class="ogp-img">
+                </a>
+            </div>
+            @if ($model->use_ogp_description == 0 || empty($model->ogp->description))
+            <footer>
+                — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
+            </footer>
+            @endif
         </div>
-        @if ($model->use_ogp_description == 0 || empty($model->ogp->description))
-        <footer>
-            — <cite><a href="{{ $model->ogp->url }}" target="_blank" class="external-link">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
-        </footer>
-        @endif
     </div>
     @endif
 
@@ -19,7 +21,7 @@
     <blockquote class="description">
         {!! nl2br(e($model->ogp->description)) !!}
         <footer>
-            — <cite><a href="{{ $model->ogp->url }}" target="_blank" class="external-link">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
+            — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
         </footer>
     </blockquote>
     @elseif (!empty($model->description))

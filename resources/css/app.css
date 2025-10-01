@@ -85,6 +85,7 @@ h2 {
 
 h3 {
     font-size: 17px;
+    font-weight: unset;
 }
 
 footer {
@@ -109,13 +110,17 @@ blockquote.description {
 }
 
 img.default-img {
-    width: 20px;
+    width: 50px;
 }
 
 img.pkg-img, img.ogp-img {
     max-width: 100%;
     width: auto;
     height: auto;
+}
+
+td.pkg-img {
+    max-width: 200px;
 }
 
 
@@ -504,19 +509,8 @@ div.free-pt {
     }
 }
 
-div.shop-link {
-    margin-top: 5px;
-    display: flex;
-
-    > div {
-        margin-right: 5px;
-        
-        > a {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-    }
+td.shop-link {
+    font-size: 11px;
 }
 
 .accordion {
@@ -573,5 +567,46 @@ div.shop-link {
         box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.5);
         padding-right: 5px;
+    }
+}
+
+div.pkg-info {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #363;
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    gap: 15px;
+
+    > .pkg-info-text {
+        margin-bottom: 5px;
+    }
+
+    > .pkg-info-shops {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 10px;
+
+        > .pkg-info-shop {
+            width: 100px;
+            text-align: center;
+
+            .pkg-info-shop-img {
+                margin-bottom: 10px;
+
+                img {
+                    max-width: 100%;
+                    max-height: 50px;
+                    width: auto;
+                    height: auto;
+                }
+            }
+
+            .shop-name {
+                font-size: 11px;
+            }
+        }
     }
 }

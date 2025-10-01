@@ -1,3 +1,54 @@
+<table class="pkg-table">
+    <tr>
+        <td>
+            {{ $pkg->platform->acronym }}
+            @empty($pkg->node_name)
+            @else
+                &nbsp;{!! $pkg->node_name !!}
+            @endif
+        </td>
+        <td>
+            {{ $pkg->release_at }}
+        </td>
+        <td class="pkg-img">
+            @if ($pkg->imgShop)
+                @if ($pkg->imgShop->ogp !== null)
+                    <div>
+                        <a href="{{ $pkg->imgShop->url }}">
+                            <img src="{{ $pkg->imgShop->ogp->image }}" width="{{ $pkg->imgShop->ogp->image_width }}" height="{{ $pkg->imgShop->ogp->image_height }}" class="pkg-img">
+                        </a>
+                    </div>
+
+                    <div class="shop-title">
+                        <a href="{{ $pkg->imgShop->url }}">{{ $pkg->imgShop->shop()->name() }}</a>
+                    </div>
+                @else
+                    <div>
+                        {!! $pkg->imgShop->img_tag !!}
+                    </div>
+
+                    <div class="shop-title">
+                        画像提供元 <a href="{{ $pkg->imgShop->url }}" target="_blank" rel="sponsored"><i class="bi bi-shop"></i> {{ $pkg->imgShop->shop()->name() }}</a>
+                    </div>
+                @endif
+            @else
+                <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
+            @endif
+        </td>
+        <td>
+            @foreach($pkg->shops as $shop)
+                <div>
+                    <a href="{{ $shop->url }}" target="_blank" rel="sponsored">
+                        <i class="bi bi-shop"></i>
+                        <span class="shop-name">{{ $shop->shop()?->name() ?? '--' }}</span>
+                    </a>
+                </div>
+            @endforeach
+        </td>
+    </tr>
+</table>
+
+{{--
 <section class="node" id="biohazard-link-node">
     <div class="node-head">
         <span class="node-head-text">
@@ -34,7 +85,7 @@
                     </div>
                 @endif
             @else
-                
+                <img src="{{ $pkg->default_img_type->imgUrl() }}" class="default-img">
             @endif
 
     
@@ -53,7 +104,7 @@
         </div>
     </div>
 </section>
-
+--}}
 {{--
 <div class="product-info">
     <div class="text-node fade @if($pkg->rating === \App\Enums\Rating::R18A) text-node-a @endif @if($pkg->rating == \App\Enums\Rating::R18Z) text-node-z @endif ">
