@@ -82,31 +82,14 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function makerNetwork(Request $request): JsonResponse|Application|Factory|View
+    public function maker(Request $request): JsonResponse|Application|Factory|View
     {
-        $makers = GameMaker::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+        $makers = GameMaker::select(['id', 'key', 'name'])
             ->whereNull('related_game_maker_id')
             ->orderBy('name')
-            ->paginate(self::ITEM_PER_PAGE);
+            ->get();
 
-        // game_maker_idと紐づくパッケージの数を検索
-        GameMakerPackageLink::whereIn('game_maker_id', $makers->getCollection()->pluck('id'))
-            ->select(['game_maker_id', \DB::raw('count(game_maker_id) as count')])
-            ->groupBy('game_maker_id')
-            ->get()
-            ->each(function ($item) use ($makers) {
-                $maker = $makers->getCollection()->where('id', $item->game_maker_id)->first();
-
-                if ($item->count >= 30) {
-                    $maker->sub_net = 'l';
-                } else if ($item->count >= 10) {
-                    $maker->sub_net = 'm';
-                } else if ($item->count >= 1) {
-                    $maker->sub_net = 's';
-                }
-            });
-
-        return $this->document(view('game.maker_network', compact('makers')));
+        return $this->tree(view('game.maker', compact('makers')));
     }
 
     /**
@@ -117,7 +100,7 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function makerDetailNetwork(Request $request, string $makerKey): JsonResponse|Application|Factory|View
+    public function makerDetail(Request $request, string $makerKey): JsonResponse|Application|Factory|View
     {
         $maker = GameMaker::findByKey($makerKey);
 
@@ -125,57 +108,37 @@ class GameController extends Controller
         $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
-        return $this->document(view('game.maker_detail_network', [
+        return $this->tree(view('game.maker_detail', [
             'maker'  => $maker,
             'titles' => $titles,
-            'footerLinks' => [
-                'Maker' => route('Game.MakerNetwork'),
-            ]
         ]));
     }
 
     /**
-     * プラットフォームネットワーク
+     * プラットフォーム
      *
      * @param Request $request
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function platformNetwork(Request $request): JsonResponse|Application|Factory|View
+    public function platform(Request $request): JsonResponse|Application|Factory|View
     {
-        $platforms = GamePlatform::select(['id', 'key', 'node_name', \DB::raw('"n" as `sub_net`')])
+        $platforms = GamePlatform::select(['id', 'key', 'name'])
             ->orderBy('sort_order')
-            ->paginate(self::ITEM_PER_PAGE);
+            ->get();
 
-        // game_maker_idとcount(id)を取得
-        GamePackage::whereIn('game_platform_id', $platforms->getCollection()->pluck('id'))
-            ->select(['game_platform_id', \DB::raw('count(id) as count')])
-            ->groupBy('game_platform_id')
-            ->get()
-            ->each(function ($item) use ($platforms) {
-                $platform = $platforms->getCollection()->where('id', $item->game_platform_id)->first();
-
-                if ($item->count >= 30) {
-                    $platform->sub_net = 'l';
-                } else if ($item->count >= 15) {
-                    $platform->sub_net = 'm';
-                } else if ($item->count >= 1) {
-                    $platform->sub_net = 's';
-                }
-            });
-
-        return $this->document(view('game.platform_network', compact('platforms')));
+        return $this->tree(view('game.platform', compact('platforms')));
     }
 
     /**
-     * プラットフォームの詳細ネットワーク
+     * プラットフォームの詳細
      *
      * @param Request $request
      * @param string $platformKey
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function platformDetailNetwork(Request $request, string $platformKey): JsonResponse|Application|Factory|View
+    public function platformDetail(Request $request, string $platformKey): JsonResponse|Application|Factory|View
     {
         $platform = GamePlatform::findByKey($platformKey);
 
@@ -183,12 +146,9 @@ class GameController extends Controller
         $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
 
-        return $this->document(view('game.platform_detail_network', [
+        return $this->tree(view('game.platform_detail', [
             'platform'    => $platform,
-            'titles'      => $titles,
-            'footerLinks' => [
-                'Platform' => route('Game.PlatformNetwork'),
-            ],
+            'titles'      => $titles
         ]));
     }
 
@@ -292,7 +252,7 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function mediaMixDetailNetwork(Request $request, string $mediaMixKey): JsonResponse|Application|Factory|View
+    public function mediaMixDetail(Request $request, string $mediaMixKey): JsonResponse|Application|Factory|View
     {
         $mediaMix = GameMediaMix::findByKey($mediaMixKey);
 
@@ -306,7 +266,7 @@ class GameController extends Controller
             }
         }
 
-        return $this->document(view('game.media_mix_detail_network', [
+        return $this->tree(view('game.media_mix_detail', [
             'mediaMix' => $mediaMix,
             'relatedNetworks' => $relatedNetworks,
         ]));

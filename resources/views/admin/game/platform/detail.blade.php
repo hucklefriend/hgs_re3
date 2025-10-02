@@ -18,7 +18,7 @@
                 </tr>
                 <tr>
                     <th>key</th>
-                    <td><a href="{{ route('Game.PlatformDetailNetwork', ['platformKey' => $model->key]) }}">{{ $model->key }}</a></td>
+                    <td><a href="{{ route('Game.PlatformDetail', ['platformKey' => $model->key]) }}">{{ $model->key }}</a></td>
                 </tr>
                 <tr>
                     <th>名称</th>

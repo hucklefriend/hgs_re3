@@ -10,7 +10,7 @@
             </div>
             @if ($model->use_ogp_description == 0 || empty($model->ogp->description))
             <footer>
-                — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
+                — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->site_name ?? $model->ogp->title }}</a></cite>
             </footer>
             @endif
         </div>
@@ -21,7 +21,7 @@
     <blockquote class="description">
         {!! nl2br(e($model->ogp->description)) !!}
         <footer>
-            — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->title ?? $model->ogp->url }}</a></cite>
+            — <cite><a href="{{ $model->ogp->url }}" target="_blank" rel="sponsored">{{ $model->ogp->site_name ?? $model->ogp->title }}</a></cite>
         </footer>
     </blockquote>
     @elseif (!empty($model->description))

@@ -253,6 +253,9 @@ export class NodeContentTree extends NodeContent
             // ヘッダーが出現中だったら消す
             if (AppearStatus.isAppeared(this._parentNode.nodeHead.appearStatus)) {
                 this._parentNode.nodeHead.disappear();
+                if (this._parentNode instanceof CurrentNode) {
+                    this._parentNode.disappearContents();
+                }
             }
             this.disappeared();
             freePt.hide();

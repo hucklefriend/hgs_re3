@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class OgpCache extends \Eloquent
 {
-    protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'image_width', 'image_height', 'type'];
+    protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'image_width', 'image_height', 'type', 'site_name'];
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
