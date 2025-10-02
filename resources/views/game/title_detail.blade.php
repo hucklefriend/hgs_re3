@@ -18,11 +18,14 @@
             <div class="node-content tree">
                 @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
                     <section class="node" id="pkgg-{{ $pkgGroup->id }}-tree-node">
-                        <div class="node-head">
+                        <div class="node-head @if (!empty($pkgGroup->description)) node-head-small-margin @endif">
                             <h3 class="node-head-text">{{ $pkgGroup->name }}</h3>
                             <span class="node-pt">●</span>
                         </div>
                         <div class="node-content basic">
+                            @if (!empty($pkgGroup->description))
+                                <p class="pkg-group-description">{!! nl2br($pkgGroup->description) !!}</p>
+                            @endif
                             @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
                             <div class="pkg-info">
                                 <div class="pkg-info-text">
@@ -66,8 +69,7 @@
         </section>
     @endif
 
-
-    @if ($title->series)
+    @if ($title->series && $title->series->titles->count() > 1)
         <section class="node tree-node" id="footer-tree-node">
             <div class="node-head">
                 <h2 class="node-head-text">同一シリーズのタイトル</h2>
@@ -88,7 +90,6 @@
             </div>
         </section>
     @endif
-
 
     <section class="node tree-node" id="footer-tree-node">
         <div class="node-head">

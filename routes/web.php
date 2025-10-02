@@ -301,7 +301,7 @@ Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
 Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
 Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 
-// ゲームネットワーク
+// ゲーム
 Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // ホラーゲームネットワーク
@@ -314,14 +314,14 @@ Route::group(['prefix' => 'game'], function () {
     // タイトル詳細
     Route::get('/title/{titleKey}', [$class, 'titleDetail'])->name('Game.TitleDetail');
 
-    // メーカー詳細ネットワーク
-    Route::get('/maker/{makerKey}', [$class, 'makerDetailNetwork'])->name('Game.MakerDetailNetwork');
-    // メーカーネットワーク
-    Route::get('/maker-network', [$class, 'makerNetwork'])->name('Game.MakerNetwork');
-    // プラットフォーム詳細ネットワーク
-    Route::get('/platform/{platformKey}', [$class, 'platformDetailNetwork'])->name('Game.PlatformDetailNetwork');
-    // プラットフォームネットワーク
-    Route::get('/platform-network', [$class, 'platformNetwork'])->name('Game.PlatformNetwork');
-    // メディアミックス詳細ネットワーク
-    Route::get('/media-mix/{mediaMixKey}', [$class, 'mediaMixDetailNetwork'])->name('Game.MediaMixDetailNetwork');
+    // メーカー詳細
+    Route::get('/maker/{makerKey}', [$class, 'makerDetail'])->name('Game.MakerDetail');
+    // メーカー
+    Route::get('/maker', [$class, 'maker'])->name('Game.Maker');
+    // プラットフォーム詳細
+    Route::get('/platform/{platformKey}', [$class, 'platformDetail'])->name('Game.PlatformDetail');
+    // プラットフォーム
+    Route::get('/platform', [$class, 'platform'])->name('Game.Platform');
+    // メディアミックス詳細
+    Route::get('/media-mix/{mediaMixKey}', [$class, 'mediaMixDetail'])->name('Game.MediaMixDetail');
 });

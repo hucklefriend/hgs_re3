@@ -283,7 +283,12 @@ div.connection-line {
 
         transition: all 0.3s ease-out;
         margin-bottom: 30px;
+
+        &.node-head-small-margin {
+            margin-bottom: 0px !important;
+        }
     }
+    
 
     > .node-content {
         padding-right: 1rem;
@@ -571,6 +576,7 @@ td.shop-link {
 }
 
 div.pkg-info {
+    font-size: 13px;
     margin-bottom: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #363;
@@ -609,4 +615,8 @@ div.pkg-info {
             }
         }
     }
+}
+
+p.pkg-group-description {
+    margin-bottom: 25px !important;
 }

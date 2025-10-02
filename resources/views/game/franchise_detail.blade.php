@@ -22,7 +22,7 @@
                     </div>
                     <div class="node-content tree">
                         @foreach ($series->titles as $title)
-                        <section class="node link-node" id="biohazard-link-node">
+                        <section class="node link-node" id="{{ $title->key }}-link-node">
                             <div class="node-head">
                                 <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                                 <span class="node-pt">●</span>
@@ -35,7 +35,7 @@
 
             @if ($franchise->titles->count() > 0)
                 @foreach ($franchise->titles as $title)
-                <section class="node link-node" id="biohazard-link-node">
+                <section class="node link-node" id="{{ $title->key }}-link-node">
                     <div class="node-head">
                         <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                         <span class="node-pt">●</span>
@@ -55,38 +55,34 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
-        @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
-        <section class="node tree-node" id="media-mix-tree-node">
-            <div class="node-head">
-                <h2 class="node-head-text">{{ $mediaMixGroup->name }}</h2>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content tree">
+            @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
+            <section class="node tree-node" id="media-mix-tree-node">
+                <div class="node-head">
+                    <h2 class="node-head-text">{{ $mediaMixGroup->name }}</h2>
+                    <span class="node-pt">●</span>
+                </div>
+                <div class="node-content tree">
                     @if ($franchise->mediaMixGroups->isNotEmpty())
                         @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
                         <section class="node link-node" id="biohazard-link-node">
                             <div class="node-head">
-                                <a href="#" class="node-head-text">{{ $mediaMix->name }}</a>
+                                <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
                                 <span class="node-pt">●</span>
                             </div>
                         </section>
                         @endforeach
                     @endif
-
                 </div>
             </section>
-            
-        @endforeach
-
-    </div>
-    <canvas class="node-canvas"></canvas>
-</section>
+            @endforeach
+        </div>
+    </section>
 
     @elseif ($franchise->mediaMixes->isNotEmpty())
         @foreach ($franchise->mediaMixes as $mediaMix)
         <section class="node link-node" id="biohazard-link-node">
             <div class="node-head invisible">
-                <a href="#" class="node-head-text">{{ $mediaMix->name }}</a>
+                <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
                 <span class="node-pt">●</span>
             </div>
         </section>

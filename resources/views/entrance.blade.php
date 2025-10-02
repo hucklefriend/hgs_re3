@@ -34,6 +34,42 @@
                     </div>
                 </div>
             </section>
+
+            <section class="node link-node" id="platform-link-node">
+                <div class="node-head">
+                    <a href="{{ route('Game.Platform') }}" class="node-head-text">Platforms</a>
+                    <span class="node-pt">●</span>
+                </div>
+                <div class="node-content behind">
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>Nintendo Switch 2</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>PlayStation 5</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>Xbox Series X</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="node link-node" id="maker-link-node">
+                <div class="node-head">
+                    <a href="{{ route('Game.Maker') }}" class="node-head-text">Makers</a>
+                    <span class="node-pt">●</span>
+                </div>
+                <div class="node-content behind">
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>カプコン</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>コナミ</span>
+                    </div>
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>コーエーテクモ</span>
+                    </div>
+                </div>
+            </section>
         </div>
     </section>
     <section class="node link-node" id="information-node">
