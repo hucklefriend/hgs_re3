@@ -519,7 +519,6 @@ td.shop-link {
 }
 
 .accordion {
-
     > .node-head {
         > button.node-head-text {
             background: none;
@@ -555,6 +554,8 @@ td.shop-link {
     position: relative;
     display: inline-block;
     max-width: 100%;
+    min-width: 100px;
+    min-height: 50px;
 
     > .ogp-img {
         display: inline-block;

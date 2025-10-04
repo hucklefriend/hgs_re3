@@ -74,9 +74,7 @@
         </div>
         @endif
     </section>
-
 @endisset
-
 
 <section class="node tree-node">
     <div class="node-head">
