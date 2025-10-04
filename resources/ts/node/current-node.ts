@@ -14,6 +14,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private _nodeContentTree: NodeContentTree;
 
     private _isChanging: boolean;
+    private _isChildOnly: boolean;
     private _nextNodeCache: NextNodeCache | null;
     private _homewardNode: NodeType | null;
     private _currentNodeContentElement: HTMLElement | null;
@@ -35,6 +36,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
         this._nextNodeCache = null;
         this._isChanging = false;
+        this._isChildOnly = false;
         this._homewardNode = null;
         this._currentNodeContentElement = document.getElementById('current-node-content');
 
@@ -56,7 +58,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
         this._homewardNode = null;
-        this._currentNodeContentElement!.innerHTML = '';
+
+        if (!this._isChildOnly) {
+            this._currentNodeContentElement!.innerHTML = '';
+        }
     }
 
     /**
@@ -104,7 +109,9 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public appear(): void
     {
         this._appearStatus = AppearStatus.APPEARING;
-        this._nodeHead.appear();
+        if (!this._isChildOnly) {
+            this._nodeHead.appear();
+        }
         this.appearContents();
         this._nodeContentTree.appear();
 
@@ -151,10 +158,9 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (this._homewardNode !== null) {
             this._appearAnimationFunc = this.disappearAnimation;
         } else {
-            this._nodeHead.disappear();
-            this.disappearContents();
+            this.disappearHeader();
             
-            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
+            this._appearAnimationFunc = this.disappearAnimationWaitComplete;
         }
     }
 
@@ -164,13 +170,21 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private disappearAnimation(): void
     {
         if (AppearStatus.isDisappeared(this._nodeContentTree.lastNode.appearStatus)) {
-            this._appearAnimationFunc = this.disappearAnimationWaitFinished;
+            this._appearAnimationFunc = this.disappearAnimationWaitComplete;
         }
     }
 
-    private disappearAnimationWaitFinished(): void
+    public disappearHeader(): void
     {
-        if (AppearStatus.isDisappeared(this._nodeHead.appearStatus) &&
+        if (!this._isChildOnly) {
+            this._nodeHead.disappear();
+            this.disappearContents();
+        }
+    }
+
+    private disappearAnimationWaitComplete(): void
+    {
+        if ((this._isChildOnly || AppearStatus.isDisappeared(this._nodeHead.appearStatus)) &&
             AppearStatus.isDisappeared(this._nodeContentTree.appearStatus)) {
             this._appearAnimationFunc = null;
             this.disappeared();
@@ -197,10 +211,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
             this.dispose();
 
-            document.title = this._nextNodeCache.title;
-            this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
-            if (this._currentNodeContentElement) {
-                this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
+            if (!this._isChildOnly) {
+                document.title = this._nextNodeCache.title;
+                this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
+                if (this._currentNodeContentElement) {
+                    this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
+                }
             }
             if (this._treeContentElement) {
                 this._treeContentElement.innerHTML = this._nextNodeCache.nodes;
@@ -227,18 +243,22 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      * @param url 
      * @param linkNode 
      * @param isFromPopState 
+     * @param isChildOnly 子ノードのみの場合はtrue
      */
-    public moveNode(url: string, linkNode: LinkNode | LinkTreeNode | null, isFromPopState: boolean): void
+    public moveNode(url: string, linkNode: LinkNode | LinkTreeNode | null, isFromPopState: boolean, isChildOnly: boolean = false): void
     {
         if (!isFromPopState) {
             // pushStateで履歴に追加
             const stateData = {
                 type: 'link-node',
                 url: url,
-                anchorId: linkNode?.anchor.id || ''
+                anchorId: linkNode?.anchor.id || '',
+                isChildOnly: isChildOnly
             };
             history.pushState(stateData, '', url);
         }
+
+        this._isChildOnly = isChildOnly;
 
         const urlWithParam = Util.addParameterA(url);
         fetch(urlWithParam, {
@@ -253,6 +273,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             .catch(error => {
                 console.error('データの取得に失敗しました:', error);
             });
+    }
+
+    public changeChildNodes(url: string): void
+    {
+        this.moveNode(url, null, false, true);
+        this.disappear();
     }
 
     public homewardDisappear(): void

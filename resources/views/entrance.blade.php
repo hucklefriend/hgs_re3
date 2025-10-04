@@ -12,7 +12,7 @@
         <div class="node-content tree">
             <section class="node link-node" id="search-link-node">
                 <div class="node-head">
-                    <a href="#" class="node-head-text">Search</a>
+                    <a href="{{ route('Game.Search') }}" class="node-head-text">Search</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

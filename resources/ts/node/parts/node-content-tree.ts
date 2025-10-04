@@ -236,25 +236,28 @@ export class NodeContentTree extends NodeContent
     public disappearAnimation(): void
     {
         const freePt = this._parentNode.freePt;
+        const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
         if (AppearStatus.isDisappearing(this._connectionLine.appearStatus)) {
-            const headerPosition = this._parentNode.nodeHead.getConnectionPoint();
             const conLineHeight = this._connectionLine.getAnimationHeight();
             this.disappeareUnderLine(conLineHeight - 100, headerPosition);
             if (conLineHeight <= 70) {
-                this._parentNode.nodeHead.disappear();
                 if (this._parentNode instanceof CurrentNode) {
-                    this._parentNode.disappearContents();
+                    this._parentNode.disappearHeader();
+                } else {
+                    this._parentNode.nodeHead.disappear();
                 }
             }
 
             freePt.moveOffset(0, conLineHeight);
             this.disappearScroll();
         } else if (AppearStatus.isDisappeared(this._connectionLine.appearStatus)) {
+            this.disappeareUnderLine(0, headerPosition);
             // ヘッダーが出現中だったら消す
             if (AppearStatus.isAppeared(this._parentNode.nodeHead.appearStatus)) {
-                this._parentNode.nodeHead.disappear();
                 if (this._parentNode instanceof CurrentNode) {
-                    this._parentNode.disappearContents();
+                    this._parentNode.disappearHeader();
+                } else {
+                    this._parentNode.nodeHead.disappear();
                 }
             }
             this.disappeared();
