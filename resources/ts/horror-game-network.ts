@@ -176,7 +176,7 @@ export class HorrorGameNetwork
         const previousState = event?.state;
         
         if (previousState) {
-            this._currentNode.moveNode(previousState.url, null, true);
+            this._currentNode.moveNode(previousState.url, null, true, previousState.isChildOnly ?? false);
         }
 
         if (AppearStatus.isAppeared(this._currentNode.appearStatus)) {

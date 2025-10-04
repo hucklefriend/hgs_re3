@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Enums\Rating;
 use App\Models\GameFranchise;
 use App\Models\GameMaker;
-use App\Models\GameMakerPackageLink;
 use App\Models\GameMediaMix;
 use App\Models\GamePackage;
 use App\Models\GamePlatform;
+use App\Models\GameSeries;
 use App\Models\GameTitle;
 use App\Models\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
@@ -16,63 +16,61 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class GameController extends Controller
 {
     const ITEM_PER_PAGE = 50;
 
     /**
-     * ホラーゲーム
-     *
-     * @param Request $request
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    public function horrorGames(Request $request): JsonResponse|Application|Factory|View
-    {
-        return $this->tree(view('horror_games'));
-    }
-
-    /**
-     * ホラーゲームネットワーク
-     *
-     * @param Request $request
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    public function horrorGameNetwork(Request $request): JsonResponse|Application|Factory|View
-    {
-        $json = Storage::get('public/main.json');
-
-        return $this->map(view('game.horrorgame_network'), $json, ['hgs' => 'horror-game-search']);
-    }
-
-    /**
      * ホラーゲームの検索
      *
      * @param Request $request
-     * @return JsonResponse
+     * @return JsonResponse|Application|Factory|View
      */
-    public function searchHorrorGame(Request $request): JsonResponse
+    public function search(Request $request): JsonResponse|Application|Factory|View
     {
-        $text = $request->input('text');
+        $text = $request->input('text', '');
 
-        $franchises = GameFranchise::select(['id', 'key', 'name'])
+        if (empty($text)) {
+            return $this->tree(view('game.search', compact('text')));
+        }
+
+        $titles = GameTitle::select(['id', 'key', 'name', 'game_series_id', 'game_franchise_id'])
             ->where('name', 'like', '%' . $text . '%')
-            ->get()
-            ->toArray();
-        $titles = GameTitle::select(['id', 'key', 'name'])
-            ->where('name', 'like', '%' . $text . '%')
-            ->get()
+            ->get();
+
+        // series_idがnullでないものを取得
+        $seriesIds = $titles->whereNotNull('game_series_id')
+            ->unique('game_series_id')
+            ->pluck('game_series_id')
             ->toArray();
 
-        return response()->json([
-            'franchises' => $franchises,
-            'titles' => $titles,
-        ]);
+        // seriesを取得
+        $series = GameSeries::whereIn('id', $seriesIds)->get();
+
+
+        $franchiseIds = $series->pluck('game_franchise_id')
+            ->unique('game_franchise_id')
+            ->toArray();
+
+        $franchiseIds = array_merge($franchiseIds, 
+            $titles->whereNotNull('game_franchise_id')
+                ->pluck('game_franchise_id')
+                ->unique('game_franchise_id')
+                ->toArray()
+        );
+
+        // franchiseを取得
+        $franchises = GameFranchise::whereIn('id', $franchiseIds)->get();
+
+        // franchiseに$seriesと$titlesInFranchiseを紐づけ
+        foreach ($franchises as $franchise) {
+            $franchise->series = $series->where('game_franchise_id', $franchise->id);
+            $franchise->titles = $titles->where('game_franchise_id', $franchise->id);
+        }
+
+        return $this->tree(view('game.search', compact('text', 'franchises', 'franchiseIds', 'series', 'titles')));
     }
 
     /**

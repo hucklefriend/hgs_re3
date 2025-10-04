@@ -44,9 +44,9 @@
         </div>
         <div class="node-content tree">
             @foreach ($titles as $title)
-                <section class="node basic" id="{{ $title->key }}-link-node">
+                <section class="node link-node" id="{{ $title->key }}-link-node">
                     <div class="node-head">
-                        <h2 class="node-head-text">{{ $title->name }}</h2>
+                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                         <span class="node-pt">●</span>
                     </div>
                 </section>

@@ -58,7 +58,7 @@
             @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
             <section class="node tree-node" id="media-mix-tree-node">
                 <div class="node-head">
-                    <h2 class="node-head-text">{{ $mediaMixGroup->name }}</h2>
+                    <h3 class="node-head-text">{{ $mediaMixGroup->name }}</h3>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
