@@ -196,9 +196,6 @@ class OgpCache extends \Eloquent
             if ($imageSize !== false) {
                 $ogpData['image_width'] = $imageSize[0];
                 $ogpData['image_height'] = $imageSize[1];
-            } else {
-                // 画像サイズが取れないならimageもnullにする
-                $ogpData['image'] = null;
             }
         }
 
