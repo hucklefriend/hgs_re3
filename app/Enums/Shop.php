@@ -6,8 +6,6 @@
 namespace App\Enums;
 
 use App\Models\GamePackage;
-use App\Models\GamePlatform;
-use Illuminate\Support\Facades\Log;
 
 enum Shop: int
 {
@@ -44,8 +42,7 @@ enum Shop: int
     case PRIME_VIDEO = 51;
     case NETFLIX = 52;
     case DMM_TV = 53;
-    case PRIME_VIDEO_DUBBING = 54;
-    case PRIME_VIDEO_SUBTITLES = 55;
+    case PRIME_VIDEO_BUY_RENTAL = 54;
     case RAKUTEN_TV = 56;
 
     // 電子書籍
@@ -98,8 +95,7 @@ enum Shop: int
             self::PRIME_VIDEO      => 'Prime Video<br>見放題',
             self::NETFLIX          => 'Netflix',
             self::DMM_TV           => 'DMM TV',
-            self::PRIME_VIDEO_DUBBING   => 'Prime Video<br>購入/レンタル',
-            self::PRIME_VIDEO_SUBTITLES => 'Prime Video<br>購入/レンタル',
+            self::PRIME_VIDEO_BUY_RENTAL   => 'Prime Video<br>購入/レンタル',
             self::RAKUTEN_TV       => '楽天TV',
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
@@ -131,15 +127,6 @@ enum Shop: int
             self::NintendoStore, self::NintendoEShop => '<i class="fab fa-nintendo-switch"></i>',
             self::XboxStore        => '<i class="fab fa-xbox"></i>',
             default                => '',
-        };
-    }
-
-    public function subCategory(): string
-    {
-        return match($this) {
-            self::PRIME_VIDEO           => '見放題',
-            self::PRIME_VIDEO_DUBBING   => '吹替版<br>購入/レンタル',
-            self::PRIME_VIDEO_SUBTITLES => '字幕版<br>購入/レンタル',
         };
     }
 
@@ -225,8 +212,7 @@ enum Shop: int
         if (in_array($defaultImgType, $itemType)) {
             $items = [
                 self::PRIME_VIDEO,
-                self::PRIME_VIDEO_DUBBING,
-                self::PRIME_VIDEO_SUBTITLES,
+                self::PRIME_VIDEO_BUY_RENTAL,
                 self::NETFLIX,
                 self::DMM_TV,
                 self::RAKUTEN_TV,

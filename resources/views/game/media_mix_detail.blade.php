@@ -15,7 +15,7 @@
     @if ($mediaMix->mediaMixGroup && $mediaMix->mediaMixGroup->mediaMixes->count() > 1)
     <section class="node tree-node" id="footer-tree-node">
         <div class="node-head">
-            <h2 class="node-head-text">シリーズ作品</h2>
+            <h2 class="node-head-text">関連作品</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
