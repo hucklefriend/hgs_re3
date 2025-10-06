@@ -66,9 +66,12 @@ export class LinkNodeMixin
             return;
         }
 
+        const headPos = this._parentInstance.nodeHead.getConnectionPoint();
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        hgn.calculateDisappearSpeedRate(headPos.y + window.scrollY);
+
         this._isHomewardDisappear = true;
 
-        const hgn = (window as any).hgn as HorrorGameNetwork;
         const currentNode = hgn.currentNode as CurrentNode;
         currentNode.moveNode(this.anchor.href, this._parentInstance, false);
 
@@ -94,7 +97,7 @@ export class LinkNodeMixin
 
             this._parentInstance._animationStartTime = hgn.timestamp;
         } else {
-            // TODO: 12を計算で出す
+            // TODO: 12を計算で出す nodeHeadPointの幅の半分
             this._parentInstance._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
 
             const pos = Util.getQuadraticBezierPoint(
@@ -132,6 +135,7 @@ export class LinkNodeMixin
         const connectionPoint = this.nodeHead.getConnectionPoint();
         this._parentInstance._updateGradientEndAlphaFunc = null;
 
+        // TODO: 12を計算で出す nodeHeadPointの幅の半分
         freePt.setPos(12, 0).setElementPos();
         freePt.show();
         this.nodeHead.nodePoint.hidden();

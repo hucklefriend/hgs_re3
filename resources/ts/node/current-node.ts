@@ -8,6 +8,7 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
 import { AccordionTreeNode } from "./accordion-tree-node";
 import { LinkTreeNode } from "./link-tree-node";
+import { HorrorGameNetwork } from "../horror-game-network";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {
@@ -108,6 +109,9 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     public appear(): void
     {
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        hgn.calculateDisappearSpeedRate(1);
+
         this._appearStatus = AppearStatus.APPEARING;
         if (!this._isChildOnly) {
             this._nodeHead.appear();

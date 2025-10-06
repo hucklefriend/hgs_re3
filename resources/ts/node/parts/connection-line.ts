@@ -191,12 +191,14 @@ export class ConnectionLine
      */
     private disappearAnimation(): void
     {
-        if (this._appearType === 0) {
-            this._animationHeight -= this.getShortDisappearSpeed();
-        } else {
-            const progress = 1 - Util.getAnimationProgress(this._animationStartTime, this.getLongDisappearTime());
-            this._animationHeight = this._height * progress;
-        }
+        // if (this._appearType === 0) {
+        //     this._animationHeight -= this.getShortDisappearSpeed() * (window as any).hgn.disappearSpeedRate;
+        // } else {
+        //     const progress = 1 - Util.getAnimationProgress(this._animationStartTime, this.getLongDisappearTime());
+        //     this._animationHeight = this._height * progress;
+        // }
+
+        this._animationHeight -= this.getShortDisappearSpeed() * (window as any).hgn.disappearSpeedRate;
 
         if (this._animationHeight <= this._disappearHeight) {
             this._animationHeight = this._disappearHeight;
