@@ -19,20 +19,3 @@
         </form>
     </div>
 @endsection
-@section('js')
-    @vite(['resources/js/app.js', 'resources/js/network-editor.js'])
-
-    <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            window.mainNetworkEditor.start(@json($data));
-        });
-
-        // document.getElementById('add_series_node').addEventListener('click', function() {
-        //     const seriesNodes = document.getElementById('series_nodes');
-        //
-        //     const selectedSeriesNode = seriesNodes.options[seriesNodes.selectedIndex];
-        //     const seriesNodeName = selectedSeriesNode.getAttribute('data-name');
-        //     window.networkEditor.appendNode(selectedSeriesNode.value, seriesNodeName);
-        // });
-    </script>
-@endsection
