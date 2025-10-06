@@ -1,6 +1,6 @@
 @if ($model->relatedProducts->count() > 0)
 <section class="node tree-node" id="rp-tree-node">
-    <div class="node-head">
+    <div class="node-head node-head-small-margin">
         <h2 class="node-head-text">関連商品</h2>
         <span class="node-pt">●</span>
     </div>

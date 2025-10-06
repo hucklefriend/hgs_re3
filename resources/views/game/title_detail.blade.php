@@ -18,7 +18,7 @@
             <div class="node-content tree">
                 @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
                     <section class="node" id="pkgg-{{ $pkgGroup->id }}-tree-node">
-                        <div class="node-head @if (!empty($pkgGroup->description)) node-head-small-margin @endif">
+                        <div class="node-head node-head-small-margin">
                             <h3 class="node-head-text">{{ $pkgGroup->name }}</h3>
                             <span class="node-pt">●</span>
                         </div>
