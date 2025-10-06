@@ -588,7 +588,7 @@ div.pkg-info {
     gap: 15px;
 
     > .pkg-info-text {
-        margin-bottom: 5px;
+        margin-bottom: 0;
     }
 
     > .pkg-info-shops {
