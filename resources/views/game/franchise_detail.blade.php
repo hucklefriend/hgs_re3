@@ -17,7 +17,7 @@
             @foreach ($franchise->series as $series)
                 <section class="node tree-node" id="{{ $series->key }}-tree-node">
                     <div class="node-head">
-                        <h2 class="node-head-text">{{ $series->name }}シリーズ</h2>
+                        <h3 class="node-head-text">{{ $series->name }}シリーズ</h3>
                         <span class="node-pt">●</span>
                     </div>
                     <div class="node-content tree">
@@ -47,7 +47,7 @@
     </section>
 
 
-    @if ($franchise->mediaMixGroups->isNotEmpty())
+    @if ($franchise->mediaMixGroups->isNotEmpty() || $franchise->mediaMixes->isNotEmpty())
 
     <section class="node tree-node" id="media-mix-tree-node">
         <div class="node-head">
@@ -64,7 +64,7 @@
                 <div class="node-content tree">
                     @if ($franchise->mediaMixGroups->isNotEmpty())
                         @foreach ($mediaMixGroup->mediaMixes->sortBy('sort_order') as $mediaMix)
-                        <section class="node link-node" id="biohazard-link-node">
+                        <section class="node link-node" id="{{ $mediaMix->key }}-link-node">
                             <div class="node-head">
                                 <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
                                 <span class="node-pt">●</span>
@@ -75,18 +75,20 @@
                 </div>
             </section>
             @endforeach
+
+            @if ($franchise->mediaMixes->isNotEmpty())
+                @foreach ($franchise->mediaMixes as $mediaMix)
+                <section class="node link-node" id="{{ $mediaMix->key }}-link-node">
+                    <div class="node-head">
+                        <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
+                        <span class="node-pt">●</span>
+                    </div>
+                </section>
+                @endforeach
+            @endif
         </div>
     </section>
 
-    @elseif ($franchise->mediaMixes->isNotEmpty())
-        @foreach ($franchise->mediaMixes as $mediaMix)
-        <section class="node link-node" id="biohazard-link-node">
-            <div class="node-head invisible">
-                <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
-                <span class="node-pt">●</span>
-            </div>
-        </section>
-        @endforeach
     @endif
 
     <section class="node tree-node" id="footer-tree-node">
