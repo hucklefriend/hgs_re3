@@ -44,7 +44,6 @@ export class LinkNodeMixin
     public unhover(): void
     {
         this._parentInstance._nodeContentBehind?.unhover();
-
         this._parentInstance._animationStartTime = (window as any).hgn.timestamp;
         this._parentInstance._updateGradientEndAlphaFunc = this._parentInstance.updateGradientEndAlphaOnUnhover;
     }

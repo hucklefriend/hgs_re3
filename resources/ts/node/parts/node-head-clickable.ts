@@ -35,8 +35,8 @@ export class NodeHeadClickable extends NodeHead
             return;
         }
 
-        this._nodeElement.classList.add('hover');
         this._parentNode.hover();
+        this._titleElement.classList.add('hover');
     }
 
     public unhover(): void
@@ -44,9 +44,9 @@ export class NodeHeadClickable extends NodeHead
         if (!AppearStatus.isAppeared(this._parentNode.appearStatus)) {
             return;
         }
-        
-        this._nodeElement.classList.remove('hover');
+
         this._parentNode.unhover();
+        this._titleElement.classList.remove('hover');
     }
 
     public click(e: MouseEvent): void
