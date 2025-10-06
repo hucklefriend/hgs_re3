@@ -195,11 +195,11 @@ export class HorrorGameNetwork
 
     public calculateDisappearSpeedRate(disappearStartPos: number): void
     {
-        if (disappearStartPos <= 1000) {
+        if (disappearStartPos <= 700) {
             this._disappearSpeedRate = 1;
         } else {
-            // 100px毎に0.1ずつ増加
-            this._disappearSpeedRate = 1 + ((disappearStartPos - 1000) / 100 * 0.1);
+            // 100px毎に0.2ずつ増加
+            this._disappearSpeedRate = 1 + ((disappearStartPos - 700) / 100 * 0.2);
         }
     }
 } 
