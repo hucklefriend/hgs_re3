@@ -95,11 +95,11 @@ enum Shop: int
             self::DLsite           => 'DLsite',
             self::FANZA            => 'FANZA通販',
             self::FANZA_GAMES      => 'FANZA Games',
-            self::PRIME_VIDEO      => 'Prime Video',
+            self::PRIME_VIDEO      => 'Prime Video<br>見放題',
             self::NETFLIX          => 'Netflix',
             self::DMM_TV           => 'DMM TV',
-            self::PRIME_VIDEO_DUBBING   => 'Prime Video(吹替)',
-            self::PRIME_VIDEO_SUBTITLES => 'Prime Video(字幕)',
+            self::PRIME_VIDEO_DUBBING   => 'Prime Video<br>購入/レンタル',
+            self::PRIME_VIDEO_SUBTITLES => 'Prime Video<br>購入/レンタル',
             self::RAKUTEN_TV       => '楽天TV',
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
@@ -131,6 +131,15 @@ enum Shop: int
             self::NintendoStore, self::NintendoEShop => '<i class="fab fa-nintendo-switch"></i>',
             self::XboxStore        => '<i class="fab fa-xbox"></i>',
             default                => '',
+        };
+    }
+
+    public function subCategory(): string
+    {
+        return match($this) {
+            self::PRIME_VIDEO           => '見放題',
+            self::PRIME_VIDEO_DUBBING   => '吹替版<br>購入/レンタル',
+            self::PRIME_VIDEO_SUBTITLES => '字幕版<br>購入/レンタル',
         };
     }
 

@@ -8,8 +8,9 @@ use App\Models\Extensions\KeyFindTrait;
 use App\Models\Extensions\OgpTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
 
-class GameMediaMix extends \Eloquent
+class GameMediaMix extends Model
 {
     use KeyFindTrait;
     use OgpTrait;

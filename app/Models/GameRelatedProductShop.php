@@ -4,8 +4,9 @@ namespace App\Models;
 
 use App\Enums\Shop;
 use App\Models\Extensions\OgpTrait;
+use Illuminate\Database\Eloquent\Model;
 
-class GameRelatedProductShop extends \Eloquent
+class GameRelatedProductShop extends Model
 {
     use OgpTrait;
 

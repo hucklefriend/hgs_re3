@@ -5,8 +5,9 @@ namespace App\Models;
 use App\Models\Extensions\KeyFindTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Model;
 
-class GameFranchise extends \Eloquent
+class GameFranchise extends Model
 {
     use KeyFindTrait;
 

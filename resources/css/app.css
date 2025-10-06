@@ -156,7 +156,7 @@ div.connection-line {
     color: var(--node-pt-light);
     text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
     display: inline-block;
-    line-height: 1;
+    line-height: 1.0;
     text-align: center;
     display: flex;
     align-items: center;
@@ -221,6 +221,7 @@ div.connection-line {
     -webkit-mask-repeat: no-repeat;
 
     opacity: 1;
+    line-height: 1.5;
 }
 
 /* 右側から透明になるアニメーション用のクラス */
@@ -505,7 +506,7 @@ div.free-pt {
     text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
     color: var(--node-pt-light);
     text-align: center;
-    line-height: 1;
+    line-height: 1.0;
     visibility: hidden;
     user-select: none;
 
@@ -583,7 +584,7 @@ div.pkg-info {
     border-bottom: 1px solid #363;
     display:flex;
     flex-wrap: wrap;
-    align-items:center;
+    align-items:flex-end;
     gap: 15px;
 
     > .pkg-info-text {
@@ -593,12 +594,18 @@ div.pkg-info {
     > .pkg-info-shops {
         display: flex;
         flex-wrap: wrap;
+        align-items:flex-end;
         gap: 10px;
         padding-top: 10px;
 
         > .pkg-info-shop {
             width: 100px;
             text-align: center;
+
+            .shop-subtitle {
+                font-size: 11px;
+                margin-bottom: 5px;
+            }
 
             .pkg-info-shop-img {
                 margin-bottom: 10px;

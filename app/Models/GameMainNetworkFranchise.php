@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GameMainNetworkFranchise extends \Eloquent
+class GameMainNetworkFranchise extends Model
 {
     public $incrementing = false;
     protected $primaryKey = 'game_franchise_id';

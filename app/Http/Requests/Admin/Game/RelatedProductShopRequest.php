@@ -27,6 +27,7 @@ class RelatedProductShopRequest extends FormRequest
     {
         return [
             'shop_id'     => ['required', new Enum(\App\Enums\Shop::class)],
+            'subtitle'    => 'nullable',
             'url'         => 'required',
             'img_tag'     => 'nullable',
             'param1'      => 'nullable',

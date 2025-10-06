@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
 
-class GamePackageGroup extends \Eloquent
+class GamePackageGroup extends Model
 {
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];

@@ -7,8 +7,9 @@ use App\Enums\Rating;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 
-class GamePackage extends \Eloquent
+class GamePackage extends Model
 {
     protected $guarded = ['id'];
     protected $casts = [
