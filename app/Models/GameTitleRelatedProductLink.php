@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
-class GameTitleRelatedProductLink extends \Eloquent
+class GameTitleRelatedProductLink extends Model
 {
     protected $primaryKey = ['game_title_id', 'game_related_product_id'];
     protected $hidden = ['created_at', 'updated_at'];

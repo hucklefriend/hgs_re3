@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 
-class OgpCache extends \Eloquent
+class OgpCache extends Model
 {
     protected $fillable = ['base_url', 'url', 'title', 'description', 'image', 'image_width', 'image_height', 'type', 'site_name'];
     protected $hidden = ['created_at', 'updated_at'];
@@ -139,6 +140,7 @@ class OgpCache extends \Eloquent
 
         $hasData = false;
 
+        /** @var \DOMElement $tag */
         foreach ($metaTags as $tag) {
             $property = $tag->getAttribute('property');
             $content = $tag->getAttribute('content');
@@ -196,9 +198,6 @@ class OgpCache extends \Eloquent
             if ($imageSize !== false) {
                 $ogpData['image_width'] = $imageSize[0];
                 $ogpData['image_height'] = $imageSize[1];
-            } else {
-                // 画像サイズが取れないならimageもnullにする
-                $ogpData['image'] = null;
             }
         }
 

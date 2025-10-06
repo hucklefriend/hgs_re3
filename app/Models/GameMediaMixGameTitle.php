@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
-class GameMediaMixGameTitle extends \Eloquent
+class GameMediaMixGameTitle extends Model
 {
     protected $primaryKey = ['game_media_mix_id', 'game_title_id'];
     protected $hidden = ['created_at', 'updated_at'];

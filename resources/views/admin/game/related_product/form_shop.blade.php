@@ -12,6 +12,12 @@
         </td>
     </tr>
     <tr>
+        <th>サブタイトル</th>
+        <td>
+            <x-admin.input name="subtitle" :model="$model" maxlength="50" />
+        </td>
+    </tr>
+    <tr>
         <th>URL</th>
         <td>
             <x-admin.input name="url" :model="$model" required maxlength="250" />

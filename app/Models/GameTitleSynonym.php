@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
-class GameTitleSynonym extends \Eloquent
+class GameTitleSynonym extends Model
 {
     public $incrementing = false;
     protected $guarded = ['id'];
