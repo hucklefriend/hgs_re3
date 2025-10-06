@@ -449,16 +449,19 @@ div.connection-line {
     }
 }
 
-.link-node {
+.link-node, .link-tree-node {
     .node-head-text {
         & + .node-pt {
             color: var(--node-pt-dark);
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+
         }
 
         &.hover, &.active {
             & + .node-pt {
                 color: var(--node-pt-light);
                 text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+                transition: color 0.3s ease, text-shadow 0.3s ease;
             }
         }
     }

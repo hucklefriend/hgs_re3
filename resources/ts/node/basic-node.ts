@@ -206,7 +206,7 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
-        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 100);
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 100 / (window as any).hgn.disappearSpeedRate);
         this._curveCanvas.gradientEndAlpha = this._curveCanvas.appearProgress * 0.7;
         if (this._curveCanvas.appearProgress === 0) {
             this._curveCanvas.gradientEndAlpha = 0;

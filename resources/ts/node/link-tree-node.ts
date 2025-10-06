@@ -2,6 +2,7 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { ClickableNodeInterface } from "./interface/clickable-node-interface";
 import { LinkNodeMixin } from "./mixins/link-node-mixin";
 import { TreeNode } from "./tree-node";
+import { Util } from "../common/util";
 
 export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
 {
@@ -73,5 +74,25 @@ export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
             (this as any)._linkMixin = new LinkNodeMixin(this);
         }
         return (this as any)._linkMixin;
+    }
+
+    
+
+    /**
+     * ホバー開始時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnHover(): void
+    {
+        // 何もしない
+        this._updateGradientEndAlphaFunc = null;
+    }
+
+    /**
+     * ホバー終了時のグラデーションα値を更新
+     */
+    protected updateGradientEndAlphaOnUnhover(): void
+    {
+        // 何もしない
+        this._updateGradientEndAlphaFunc = null;
     }
 }

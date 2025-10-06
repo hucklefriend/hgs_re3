@@ -13,7 +13,7 @@ export class HorrorGameNetwork
     private _mainElement: HTMLElement;
 
     private _currentNode: CurrentNode;
-    //private _contentNodeView: ContentNodeView;
+    private _disappearSpeedRate: number;
 
     public isForceResize: boolean;
 
@@ -52,6 +52,11 @@ export class HorrorGameNetwork
         return this._currentNode;
     }
 
+    public get disappearSpeedRate(): number
+    {
+        return this._disappearSpeedRate;
+    }
+
     /**
      * コンストラクタ
      */
@@ -61,6 +66,7 @@ export class HorrorGameNetwork
         this._currentNode = new CurrentNode(this._mainElement.querySelector('#current-node') as HTMLElement);
 
         this._timestamp = 0;
+        this._disappearSpeedRate = 1;
 
         this.isForceResize = false;
     }
@@ -184,6 +190,16 @@ export class HorrorGameNetwork
         } else {
             // アニメーション中だったら強制遷移
             location.href = previousState.url;
+        }
+    }
+
+    public calculateDisappearSpeedRate(disappearStartPos: number): void
+    {
+        if (disappearStartPos <= 1000) {
+            this._disappearSpeedRate = 1;
+        } else {
+            // 100px毎に0.1ずつ増加
+            this._disappearSpeedRate = 1 + ((disappearStartPos - 1000) / 100 * 0.1);
         }
     }
 } 
