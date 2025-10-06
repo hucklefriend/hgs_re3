@@ -17,7 +17,7 @@
             @foreach ($franchise->series as $series)
                 <section class="node tree-node" id="{{ $series->key }}-tree-node">
                     <div class="node-head">
-                        <h2 class="node-head-text">{{ $series->name }}シリーズ</h2>
+                        <h3 class="node-head-text">{{ $series->name }}シリーズ</h3>
                         <span class="node-pt">●</span>
                     </div>
                     <div class="node-content tree">
@@ -77,18 +77,7 @@
             @endforeach
         </div>
     </section>
-
-    @elseif ($franchise->mediaMixes->isNotEmpty())
-        @foreach ($franchise->mediaMixes as $mediaMix)
-        <section class="node link-node" id="biohazard-link-node">
-            <div class="node-head invisible">
-                <a href="{{ route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]) }}" class="node-head-text">{{ $mediaMix->name }}</a>
-                <span class="node-pt">●</span>
-            </div>
-        </section>
-        @endforeach
     @endif
-
     <section class="node tree-node" id="footer-tree-node">
         <div class="node-head">
             <h2 class="node-head-text">Quick Links</h2>
