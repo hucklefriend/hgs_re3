@@ -42,6 +42,7 @@
                     <th>ID</th>
                     <th>名前</th>
                     <th>略称</th>
+                    <th>区分</th>
                     <td></td>
                 </tr>
                 </thead>
@@ -51,6 +52,7 @@
                         <td>{{ $platform->id }}</td>
                         <td>{{ $platform->name }}</td>
                         <td>{{ $platform->acronym }}</td>
+                        <td>{{ $platform->type?->text() ?? '' }}</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.Game.Platform.Detail', $platform) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>

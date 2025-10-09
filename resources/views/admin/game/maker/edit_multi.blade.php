@@ -45,6 +45,7 @@
                         <th>タイトル</th>
                         <th>キー</th>
                         <th>ノード名</th>
+                        <th>種別</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -54,6 +55,7 @@
                             <td>{{ $model->name }}</td>
                             <td><x-admin.multi-edit-input name="key" :model="$model" /></td>
                             <td><x-admin.multi-edit-textarea name="node_name" :model="$model" /></td>
+                            <td><x-admin.select-enum name="type[{{ $model->id }}]" :model="$model" :list="\App\Enums\GameMakerType::selectList()" /></td>
                         </tr>
                     @endforeach
                     </tbody>

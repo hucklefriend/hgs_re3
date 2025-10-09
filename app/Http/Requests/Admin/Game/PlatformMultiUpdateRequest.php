@@ -29,6 +29,8 @@ class PlatformMultiUpdateRequest extends FormRequest
             'node_name.*'    => 'string|max:200',
             'key'            => 'array',
             'key.*'          => 'string|max:50',
+            'type'           => 'array',
+            'type.*'         => 'integer',
         ];
     }
 }
