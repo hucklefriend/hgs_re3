@@ -29,7 +29,6 @@ class GameMediaMix extends Model
         'type'         => MediaMixType::MOVIE,
         'name'         => '',
         'node_name'    => '',
-        'h1_node_name' => '',
         'rating'       => Rating::None,
         'sort_order'   => 1,
     ];

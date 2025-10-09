@@ -113,16 +113,6 @@ class GameTitle extends Model
     }
 
     /**
-     * パッケージを取得
-     *
-     * @return BelongsToMany
-     */
-    public function packages(): BelongsToMany
-    {
-        return $this->belongsToMany(GamePackage::class, GameTitlePackageLink::class);
-    }
-
-    /**
      * 関連商品を取得
      *
      * @return BelongsToMany
@@ -150,11 +140,6 @@ class GameTitle extends Model
     public function setFirstReleaseInt(): self
     {
         $minReleaseInt = 99999999;
-        foreach ($this->packages as $pkg) {
-            if ($pkg->sort_order < $minReleaseInt) {
-                $minReleaseInt = $pkg->sort_order;
-            }
-        }
 
         foreach ($this->packageGroups as $pkgGroup) {
             foreach ($pkgGroup->packages as $pkg) {

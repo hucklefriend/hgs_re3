@@ -37,14 +37,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>H1ノード表示用名称</th>
-                    <td>
-                        <div class="d-inline-block text-center">
-                            {!! $model->h1_node_name !!}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
                     <th>説明</th>
                     <td>
                         @include('common.description', ['model' => $model])

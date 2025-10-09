@@ -46,7 +46,6 @@ class TitleRequest extends FormRequest
             'key'                 => 'required|max:50',
             'phonetic'            => 'required|max:200|regex:/^[あ-ん][ぁ-んー0-9]*/',
             'node_name'           => 'required|max:200',
-            'h1_node_name'        => 'required|max:200',
             'original_package_id' => 'nullable|exists:game_packages,id',
             'description'         => '',
             'description_source'  => 'nullable',

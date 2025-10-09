@@ -233,9 +233,6 @@ class PackageController extends AbstractAdminController
             $package->makers()->sync($makerIds);
         }
 
-        foreach ($package->titles as $title) {
-            $title->setFirstReleaseInt()->save();
-        }
         foreach ($package->packageGroups as $packageGroup) {
             foreach ($packageGroup->packages as $pkg) {
                 foreach ($pkg->titles as $title) {
@@ -447,38 +444,6 @@ class PackageController extends AbstractAdminController
     public function syncMaker(LinkMultiMakerRequest $request, GamePackage $package): RedirectResponse
     {
         $package->makers()->sync($request->validated('game_maker_ids'));
-        return redirect()->route('Admin.Game.Package.Detail', $package);
-    }
-
-    /**
-     * タイトルとリンク
-     *
-     * @param GamePackage $package
-     * @return Application|Factory|View
-     */
-    public function linkTitle(GamePackage $package): Application|Factory|View
-    {
-        $titles = GameTitle::orderBy('id')->get(['id', 'name']);
-        return view('admin.game.package.link_title', [
-            'model'          => $package,
-            'linkedTitleIds' => $package->titles()->pluck('id')->toArray(),
-            'titles'         => $titles,
-        ]);
-    }
-
-    /**
-     * タイトルと同期処理
-     *
-     * @param LinkMultiTitleRequest $request
-     * @param GamePackage $package
-     * @return RedirectResponse
-     */
-    public function syncTitle(LinkMultiTitleRequest $request, GamePackage $package): RedirectResponse
-    {
-        $package->titles()->sync($request->validated('game_title_ids'));
-        foreach ($package->titles as $title) {
-            $title->setFirstReleaseInt()->save();
-        }
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 

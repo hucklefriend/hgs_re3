@@ -46,7 +46,6 @@ class MediaMixRequest extends FormRequest
             'name'                    => 'required|max:200',
             'key'                     => 'required|max:50',
             'node_name'               => 'required|max:200',
-            'h1_node_name'            => 'required|max:200',
             'game_franchise_id'       => 'nullable|exists:game_franchises,id',
             'game_media_mix_group_id' => 'nullable|exists:game_media_mix_groups,id',
             'rating'                  => ['required', new Enum(Rating::class)],

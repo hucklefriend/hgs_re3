@@ -69,16 +69,6 @@ class GamePackage extends Model
     }
 
     /**
-     * タイトルを取得
-     *
-     * @return BelongsToMany
-     */
-    public function titles(): BelongsToMany
-    {
-        return $this->belongsToMany(GameTitle::class, GameTitlePackageLink::class);
-    }
-
-    /**
      * パッケージグループを取得
      *
      * @return BelongsToMany
@@ -106,16 +96,6 @@ class GamePackage extends Model
     public function shops(): HasMany
     {
         return $this->hasMany(GamePackageShop::class, 'game_package_id', 'id');
-    }
-
-    /**
-     * 画像表示用ショップ
-     *
-     * @return BelongsTo
-     */
-    public function imgShop(): BelongsTo
-    {
-        return $this->belongsTo(GamePackageShop::class, 'img_shop_id');
     }
 
     /**

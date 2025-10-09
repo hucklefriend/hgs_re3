@@ -150,13 +150,11 @@ class TitleController extends AbstractAdminController
     public function updateMulti(TitleMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
-        $h1NodeNames = $request->validated(['h1_node_name']);
         $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
             $model = GameTitle::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
-                $model->h1_node_name = $h1NodeNames[$id];
                 $model->key = $keys[$id];
                 $model->save();
             }
@@ -242,7 +240,6 @@ class TitleController extends AbstractAdminController
     public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GameTitle $title): RedirectResponse
     {
         $title->packageGroups()->sync($request->validated('game_package_group_ids'));
-        $title->packages()->detach();
         $title->setFirstReleaseInt()->save();
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
@@ -293,40 +290,6 @@ class TitleController extends AbstractAdminController
             }
         }
 
-        return redirect()->route('Admin.Game.Title.Detail', $title);
-    }
-
-    /**
-     * パッケージとリンク
-     *
-     * @param Request $request
-     * @param GameTitle $title
-     * @return Application|Factory|View
-     */
-    public function linkPackage(Request $request, GameTitle $title): Application|Factory|View
-    {
-        $packages = \App\Models\GamePackage::orderBy('id')->get(['id', 'name', 'game_platform_id']);
-        return view('admin.game.title.link_packages', [
-            'model'            => $title,
-            'linkedPackageIds' => $title->packages()->pluck('id')->toArray(),
-            'packages'         => $packages,
-            'platformHash'     => \App\Models\GamePlatform::all(['id', 'acronym'])->pluck('acronym', 'id')->toArray(),
-        ]);
-    }
-
-    /**
-     * パッケージと同期処理
-     *
-     * @param LinkMultiPackageRequest $request
-     * @param GameTitle $title
-     * @return RedirectResponse
-     * @throws Throwable
-     */
-    public function syncPackage(LinkMultiPackageRequest $request, GameTitle $title): RedirectResponse
-    {
-        $title->packages()->sync($request->validated('game_package_ids'));
-        $title->packageGroups()->detach();
-        $title->setFirstReleaseInt()->save();
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 

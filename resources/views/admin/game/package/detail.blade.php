@@ -87,21 +87,6 @@
                     <td>{{ $model->default_img_type->text() }}</td>
                 </tr>
                 <tr>
-                    <th>タイトル</th>
-                    <td>
-                        <ul class="list-group">
-                            @foreach ($model->titles as $title)
-                                <li class="list-group-item">
-                                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}">{{ $title->name ?? '' }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                        <a href="{{ route('Admin.Game.Package.LinkTitle', $model) }}" class="btn btn-sm btn-default">
-                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
                     <th>パッケージグループ</th>
                     <td>
                         <ul class="list-group">
