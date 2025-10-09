@@ -15,7 +15,7 @@ class GameMakerFactory extends Factory
             'key' => $this->faker->unique()->word,
             'name' => $this->faker->company,
             'node_name' => $this->faker->slug,
-            'h1_node_name' => $this->faker->company,
+            'type' => $this->faker->randomElement([1, 2, 3]),
             'description' => $this->faker->paragraph,
             'description_source' => $this->faker->url,
             'related_game_maker_id' => null,

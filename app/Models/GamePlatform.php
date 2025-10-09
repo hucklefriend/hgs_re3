@@ -44,6 +44,7 @@ class GamePlatform extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'type' => \App\Enums\GamePlatformType::class,
     ];
 
     /**

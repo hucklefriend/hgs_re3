@@ -136,13 +136,11 @@ class PlatformController extends AbstractAdminController
     public function updateMulti(PlatformMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
-        $h1NodeNames = $request->validated(['h1_node_name']);
         $keys = $request->validated(['key']);
         foreach ($nodeNames as $id => $nodeName) {
             $model = GamePlatform::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
-                $model->h1_node_name = $h1NodeNames[$id];
                 $model->key = $keys[$id];
                 $model->save();
             }

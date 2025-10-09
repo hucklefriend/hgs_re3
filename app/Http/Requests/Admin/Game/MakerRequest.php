@@ -41,7 +41,7 @@ class MakerRequest extends FormRequest
             'name'                  => 'required|max:100',
             'key'                   => 'required|max:50',
             'node_name'             => 'required|max:200',
-            'h1_node_name'          => 'required|max:200',
+            'type'                  => 'required|integer',
             'related_game_maker_id' => 'nullable|exists:game_makers,id',
             'synonymsStr'           => '',
             'description'           => 'nullable',

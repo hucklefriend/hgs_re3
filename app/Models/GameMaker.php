@@ -19,6 +19,13 @@ class GameMaker extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
+     * @var array キャスト属性
+     */
+    protected $casts = [
+        'type' => \App\Enums\GameMakerType::class,
+    ];
+
+    /**
      * @var array デフォルト値
      */
     protected $attributes = [

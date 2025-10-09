@@ -89,7 +89,7 @@ export class LinkNodeMixin
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = this._parentInstance.freePt;
 
-        this._parentInstance._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._parentInstance._animationStartTime, 200);
+        this._parentInstance._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._parentInstance._animationStartTime, 100);
         if (this._parentInstance._curveCanvas.appearProgress === 0) {
             this._parentInstance._curveCanvas.gradientEndAlpha = 0;
             this._parentInstance._appearAnimationFunc = this._parentInstance.selectedDisappearAnimation2;
