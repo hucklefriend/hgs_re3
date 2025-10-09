@@ -76,12 +76,6 @@ class GameTree
                 $node->addParent($parentNode);
                 self::addParent($group, $parentNode, $roots);
             }
-            foreach ($model->titles as $title) {
-                $parentNode = new GameTreeNode($title->id, $title->name, self::getAcronym($title));
-                $parentNode->addChild($node);
-                $node->addParent($parentNode);
-                self::addParent($title, $parentNode, $roots);
-            }
         } else if ($model instanceof GameMediaMixGroup) {
             if ($model->franchise !== null) {
                 $parentNode = new GameTreeNode($model->franchise->id, $model->franchise->name . 'フランチャイズ', self::getAcronym($model->franchise));
@@ -170,11 +164,6 @@ class GameTree
                 $childNode = new GameTreeNode($group->id, $group->name, self::getAcronym($group));
                 $node->addChild($childNode);
                 self::addChild($group, $childNode);
-            }
-            foreach ($model->packages as $pkg) {
-                $childNode = new GameTreeNode($pkg->id, "[" . $pkg->platform->acronym . "]" . $pkg->name, self::getAcronym($pkg));
-                $node->addChild($childNode);
-                self::addChild($pkg, $childNode);
             }
             foreach ($model->mediaMixes as $mm) {
                 $childNode = new GameTreeNode($mm->id, $mm->name, self::getAcronym($mm));

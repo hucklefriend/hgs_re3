@@ -95,6 +95,9 @@
 
         function convertDateFormat(str)
         {
+            // strの前後空白を取り除く
+            str = str.trim();
+
             // 正規表現で日付フォーマットをチェック
             const datePattern = /^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/;
             const match = str.match(datePattern);

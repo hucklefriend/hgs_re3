@@ -126,7 +126,7 @@ export class BasicNode extends NodeBase
      */
     public appearAnimation(): void
     {
-        this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, this._isFast ? 70 : 200);
+        this._curveCanvas.appearProgress = Util.getAnimationProgress(this._animationStartTime, this._isFast ? 50 : 100);
         
         const connectionPoint = this._nodeHead.getConnectionPoint();
         const pos = Util.getQuadraticBezierPoint(
@@ -206,7 +206,7 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
-        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 100 / (window as any).hgn.disappearSpeedRate);
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 50 / (window as any).hgn.disappearSpeedRate);
         this._curveCanvas.gradientEndAlpha = this._curveCanvas.appearProgress * 0.7;
         if (this._curveCanvas.appearProgress === 0) {
             this._curveCanvas.gradientEndAlpha = 0;

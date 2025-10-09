@@ -157,9 +157,6 @@
                         <div class="menu-item {{ menu_active("Admin.Game.MediaMix") }}">
                             <a href="{{ route("Admin.Game.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.Game.MainNetwork") }}">
-                            <a href="{{ route("Admin.Game.MainNetwork") }}" class="menu-link"><div class="menu-text">Main Network</div></a>
-                        </div>
                     </div>
                 </div>
 

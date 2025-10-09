@@ -147,12 +147,10 @@ class RelatedProductController extends AbstractAdminController
     public function updateMulti(RelatedProductMultiUpdateRequest $request): RedirectResponse
     {
         $nodeNames = $request->validated(['node_name']);
-        $h1NodeNames = $request->validated(['h1_node_name']);
         foreach ($nodeNames as $id => $nodeName) {
             $maker = GameRelatedProduct::find($id);
             if ($maker !== null) {
                 $maker->node_name = $nodeName;
-                $maker->h1_node_name = $h1NodeNames[$id];
                 $maker->save();
             }
         }

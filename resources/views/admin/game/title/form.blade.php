@@ -50,13 +50,6 @@
         </td>
     </tr>
     <tr>
-        <th>H1ノード表示用の名前</th>
-        <td>
-            <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
-            <x-admin.node-input-support />
-        </td>
-    </tr>
-    <tr>
         <th>レーティング</th>
         <td>
             <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />

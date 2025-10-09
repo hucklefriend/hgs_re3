@@ -55,7 +55,7 @@ class GameMakerControllerTest extends TestCase
                 'key',
                 'name',
                 'node_name',
-                'h1_node_name',
+                'type',
                 'description',
                 'description_source',
                 'related_game_maker_id'
@@ -86,7 +86,7 @@ class GameMakerControllerTest extends TestCase
             'key' => 'test-maker',
             'name' => 'テストメーカー',
             'node_name' => 'Test Maker',
-            'h1_node_name' => 'Test Maker H1',
+            'type' => 1,
             'description' => 'テストメーカーの説明',
             'description_source' => 'テストソース',
             'related_game_maker_id' => null
@@ -109,7 +109,7 @@ class GameMakerControllerTest extends TestCase
             'key',
             'name',
             'node_name',
-            'h1_node_name',
+            'type',
             'description',
             'description_source',
             'related_game_maker_id'
@@ -120,7 +120,7 @@ class GameMakerControllerTest extends TestCase
             'key' => 'test-maker',
             'name' => 'テストメーカー',
             'node_name' => 'Test Maker',
-            'h1_node_name' => 'Test Maker H1',
+            'type' => 1,
             'description' => 'テストメーカーの説明',
             'description_source' => 'テストソース'
         ]);
@@ -130,7 +130,7 @@ class GameMakerControllerTest extends TestCase
             'key' => 'test-maker',
             'name' => 'テストメーカー',
             'node_name' => 'Test Maker',
-            'h1_node_name' => 'Test Maker H1',
+            'type' => 1,
             'description' => 'テストメーカーの説明',
             'description_source' => 'テストソース'
         ]);
@@ -161,7 +161,7 @@ class GameMakerControllerTest extends TestCase
         $response->assertStatus(422);
 
         // バリデーションエラーメッセージの確認
-        $response->assertJsonValidationErrors(['key', 'name', 'node_name', 'h1_node_name']);
+        $response->assertJsonValidationErrors(['key', 'name', 'node_name', 'type']);
     }
 
     /**
@@ -181,7 +181,7 @@ class GameMakerControllerTest extends TestCase
             'key' => 'existing-key',
             'name' => 'テストメーカー',
             'node_name' => 'Test Maker',
-            'h1_node_name' => 'Test Maker H1'
+            'type' => 1
         ];
 
         // APIを呼び出し

@@ -59,12 +59,6 @@
                             <a href="{{ route('Admin.Game.Franchise.Detail', $franchise) }}" class="btn btn-default">
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
                             </a>
-                            <a href="{{ route('Admin.Game.Franchise.LinkTree', $franchise) }}" class="btn btn-default">
-                                <i class="fas fa-tree"></i><span class="d-none d-md-inline"> Tree</span>
-                            </a>
-                            <a href="{{ route('Admin.Game.Franchise.EditMainNetwork', $franchise) }}" class="btn btn-default">
-                                <i class="fas fa-project-diagram"></i><span class="d-none d-md-inline"> Main Network</span>
-                            </a>
                         </td>
                     </tr>
                 @endforeach

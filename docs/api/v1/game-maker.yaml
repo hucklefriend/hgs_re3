@@ -122,10 +122,9 @@ components:
           type: string
           maxLength: 200
           description: ノード名
-        h1_node_name:
-          type: string
-          maxLength: 200
-          description: H1ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
         description:
           type: string
           nullable: true
@@ -151,7 +150,7 @@ components:
         - key
         - name
         - node_name
-        - h1_node_name
+        - type
       properties:
         key:
           type: string
@@ -165,10 +164,9 @@ components:
           type: string
           maxLength: 200
           description: ノード名
-        h1_node_name:
-          type: string
-          maxLength: 200
-          description: H1ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
         description:
           type: string
           nullable: true
@@ -197,10 +195,9 @@ components:
           type: string
           maxLength: 200
           description: ノード名
-        h1_node_name:
-          type: string
-          maxLength: 200
-          description: H1ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
         description:
           type: string
           nullable: true

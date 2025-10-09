@@ -69,14 +69,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>H1ノード表示用名称</th>
-                    <td>
-                        <div class="d-inline-block text-center">
-                            {!! $model->h1_node_name !!}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
                     <th>レーティング</th>
                     <td>{{ $model->rating->text() }}</td>
                 </tr>
@@ -135,27 +127,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>パッケージ</th>
-                    <td>
-                        <ul class="list-group">
-                            @foreach ($model->packages as $package)
-                                <li class="list-group-item"><a href="{{ route('Admin.Game.Package.Detail', $package) }}">{{ $package->getNameWithPlatform() }}</a></li>
-                            @endforeach
-                        </ul>
-                        <a href="{{ route('Admin.Game.Package.Add') }}?title_id={{ $model->id }}" class="btn btn-default">
-                            <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
-                        </a>
-                        <a href="{{ route('Admin.Game.Title.LinkPackage', $model) }}" class="btn btn-default">
-                            <i class="fas fa-link"></i><span class="d-none d-md-inline"> Link</span>
-                        </a>
-                        @if (!$model->packages->isEmpty())
-                            <a href="{{ route('Admin.Game.Title.UpdatePackageMulti', $model) }}" class="btn btn-default">
-                                <i class="fas fa-table"></i><span class="d-none d-md-inline"> Edit Package</span>
-                            </a>
-                        @endif
-                    </td>
-                </tr>
-                <tr>
                     <th>関連商品</th>
                     <td>
                         <ul class="list-group">
@@ -209,7 +180,7 @@
                     @endif
                 </div>
                 <div class="text-end">
-                    @if ($model->packages()->count() === 0)
+                    @if ($model->packageGroups->count() === 0)
                         <form method="POST" action="{{ route('Admin.Game.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
                             @csrf
                             {{ method_field('DELETE') }}

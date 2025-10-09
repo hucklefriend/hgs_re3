@@ -31,7 +31,7 @@ class GameMakerRequest extends FormRequest
             'key' => 'required|unique:game_makers,key|max:50',
             'name' => 'required|max:200',
             'node_name' => 'required|max:200',
-            'h1_node_name' => 'required|max:200',
+            'type' => 'required|integer',
             'description' => 'nullable|string',
             'description_source' => 'nullable|string',
             'related_game_maker_id' => 'nullable|integer'
@@ -42,7 +42,7 @@ class GameMakerRequest extends FormRequest
             $rules['key'] = 'sometimes|unique:game_makers,key,' . $this->route('game_maker') . '|max:50';
             $rules['name'] = 'sometimes|max:200';
             $rules['node_name'] = 'sometimes|max:200';
-            $rules['h1_node_name'] = 'sometimes|max:200';
+            $rules['type'] = 'sometimes|integer';
         }
 
         return $rules;

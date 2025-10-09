@@ -18,7 +18,7 @@
                 </tr>
                 <tr>
                     <th>key</th>
-                    <td><a href="{{ route('Game.MakerDetailNetwork', ['makerKey' => $model->key]) }}">{{ $model->key }}</a></td>
+                    <td><a href="{{ route('Game.MakerDetail', ['makerKey' => $model->key]) }}">{{ $model->key }}</a></td>
                 </tr>
                 <tr>
                     <th>名称</th>
@@ -33,12 +33,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>H1ノード表示用名称</th>
-                    <td>
-                        <div class="d-inline-block text-center">
-                            {!! $model->h1_node_name !!}
-                        </div>
-                    </td>
+                    <th>種別</th>
+                    <td>{{ $model->type?->text() ?? '' }}</td>
                 </tr>
                 <tr>
                     <th>関連メーカー(親)</th>

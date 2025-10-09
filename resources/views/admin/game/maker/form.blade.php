@@ -27,14 +27,12 @@
         <th>ノード表示用の名前</th>
         <td>
             <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
-            <x-admin.node-input-support />
         </td>
     </tr>
     <tr>
-        <th>H1ノード表示用の名前</th>
+        <th>種別</th>
         <td>
-            <x-admin.textarea name="h1_node_name" :model="$model" required maxlength="200" />
-            <x-admin.node-input-support />
+            <x-admin.select-enum name="type" :model="$model" :list="\App\Enums\GameMakerType::selectList()" required />
         </td>
     </tr>
     <tr>

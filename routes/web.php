@@ -104,8 +104,6 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/link_tree', [$class, 'linkTree'])->name("{$basename}.LinkTree");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
-                Route::get('{' . $prefix . '}/edit-main-net', [$class, 'editMainNetwork'])->name("{$basename}.EditMainNetwork");
-                Route::post('{' . $prefix . '}/edit-main-net', [$class, 'saveMainNetwork'])->name("{$basename}.SaveMainNetwork");
             });
 
             // シリーズ
@@ -144,8 +142,6 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_series', [$class, 'syncSeries'])->name("{$basename}.SyncSeries");
                 Route::get('{' . $prefix . '}/link_package_group', [$class, 'linkPackageGroup'])->name("{$basename}.LinkPackageGroup");
                 Route::post('{' . $prefix . '}/link_package_group', [$class, 'syncPackageGroup'])->name("{$basename}.SyncPackageGroup");
-                Route::get('{' . $prefix . '}/link_package', [$class, 'linkPackage'])->name("{$basename}.LinkPackage");
-                Route::post('{' . $prefix . '}/link_package', [$class, 'syncPackage'])->name("{$basename}.SyncPackage");
                 Route::get('{' . $prefix . '}/edit_package_group_multi', [$class, 'editPackageGroupMulti'])->name("{$basename}.EditPackageGroupMulti");
                 Route::put('{' . $prefix . '}/edit_package_group_multi', [$class, 'updatePackageGroupMulti'])->name("{$basename}.UpdatePackageGroupMulti");
                 Route::get('{' . $prefix . '}/edit_package_multi', [$class, 'editPackageMulti'])->name("{$basename}.EditPackageMulti");
@@ -279,15 +275,6 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
-            });
-
-            // メインネットワーク
-            $prefix = 'main_network';
-            Route::group(['prefix' => $prefix], function () use ($prefix) {
-                $basename = 'Admin.Game.MainNetwork';
-                $class = Admin\Game\MainNetworkController::class;
-                Route::get('/', [$class, 'edit'])->name($basename);
-                Route::post('/', [$class, 'save'])->name("{$basename}.Save");
             });
         });
     });
