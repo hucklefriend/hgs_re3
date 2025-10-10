@@ -5,6 +5,7 @@
 
 @section('nodes')
     @foreach (\App\Enums\GamePlatformType::cases() as $type)
+    @if ($platforms->where('type', $type)->count() > 0)
         <section class="node tree-node">
             <div class="node-head">
                 <h2 class="node-head-text">{{ $type->text() }}</h2>
@@ -21,6 +22,7 @@
                 @endforeach
             </div>
         </section>
+    @endif
     @endforeach
 
     <section class="node tree-node">
