@@ -160,6 +160,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.disappear();
         if (this._homewardNode !== null) {
+            console.log(this._homewardNode );
             this._appearAnimationFunc = this.disappearAnimation;
         } else {
             this.disappearHeader();
@@ -245,18 +246,16 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      * 別のノードへ移動する
      * 
      * @param url 
-     * @param linkNode 
      * @param isFromPopState 
      * @param isChildOnly 子ノードのみの場合はtrue
      */
-    public moveNode(url: string, linkNode: LinkNode | LinkTreeNode | null, isFromPopState: boolean, isChildOnly: boolean = false): void
+    public moveNode(url: string, isFromPopState: boolean, isChildOnly: boolean = false): void
     {
         if (!isFromPopState) {
             // pushStateで履歴に追加
             const stateData = {
                 type: 'link-node',
                 url: url,
-                anchorId: linkNode?.anchor.id || '',
                 isChildOnly: isChildOnly
             };
             history.pushState(stateData, '', url);
@@ -281,7 +280,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
     public changeChildNodes(url: string): void
     {
-        this.moveNode(url, null, false, true);
+        this.moveNode(url, false, true);
         this.disappear();
     }
 

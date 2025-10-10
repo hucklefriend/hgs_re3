@@ -51,22 +51,13 @@ export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
 
     public disappear(): void
     {
-        if (!this.linkMixin._isHomewardDisappear) {
+        if (!this.isHomewardDisappear) {
             super.disappear();
         } else {
-            this.linkMixin.executeHomewardDisappear();
+            this.homewardDisappear();
         }
     }
 
-    public selectedDisappearAnimation(): void
-    {
-        this.linkMixin.selectedDisappearAnimation();
-    }
-
-    public selectedDisappearAnimation2(): void
-    {
-        this.linkMixin.selectedDisappearAnimation2();
-    }
 
     private get linkMixin(): LinkNodeMixin
     {
