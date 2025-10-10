@@ -169,11 +169,13 @@ class MakerController extends AbstractAdminController
     {
         $nodeNames = $request->validated(['node_name']);
         $keys = $request->validated(['key']);
+        $types = $request->validated(['type']);
         foreach ($nodeNames as $id => $nodeName) {
             $model = GameMaker::find($id);
             if ($model !== null) {
                 $model->node_name = $nodeName;
                 $model->key = $keys[$id];
+                $model->type = $types[$id];
                 $model->save();
             }
         }
