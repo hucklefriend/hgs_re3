@@ -9,16 +9,20 @@ import { NodeHeadClickable } from "./parts/node-head-clickable";
 import { CurveCanvas } from "./parts/curve-canvas";
 import { Point } from "../common/point";
 import { ClickableNodeInterface } from "./interface/clickable-node-interface";
+import { HorrorGameNetwork } from "../horror-game-network";
+import { CurrentNode } from "./current-node";
 
 export class BasicNode extends NodeBase
 {
-    protected _animationStartTime: number;
-    protected _updateGradientEndAlphaFunc: (() => void) | null;
+    public isHomewardDisappear: boolean = false;
+    protected _animationStartTime: number = 0;
+    protected _updateGradientEndAlphaFunc: (() => void) | null = null;
     protected _parentNode: TreeNodeInterface;
     protected _nodeContentBehind: NodeContentBehind | null;
     protected _curveCanvas: CurveCanvas;
-    protected _isFast: boolean;
-    protected _doNotAppearBehind: boolean;
+    protected _isFast: boolean = false;
+    protected _doNotAppearBehind: boolean = false;
+    protected _anchors: HTMLAnchorElement[] = [];
 
     public get parentNode(): TreeNodeInterface
     {
@@ -45,17 +49,23 @@ export class BasicNode extends NodeBase
         this._parentNode = parentNode;
 
         this._curveCanvas = new CurveCanvas(this);
-        this._isFast = false;
-        this._animationStartTime = 0;
         this._appearAnimationFunc = null;
         this._updateGradientEndAlphaFunc = null;
-        this._doNotAppearBehind = false;
 
         this._nodeContentBehind = null;
         if (this._behindContentElement) {
             this._nodeContentBehind = new NodeContentBehind(this._behindContentElement as HTMLElement);
             this._nodeContentBehind.loadNodes();
         }
+
+        // .node-content a かつ、relがinternalであるもの
+        this._anchors = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic a[rel="internal"]')) as HTMLAnchorElement[];
+        // _anchorsをクリックした時にclickLinkを呼び出す
+        this._anchors.forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                this.clickLink(anchor, e);
+            });
+        });
     }
 
     /**
@@ -170,20 +180,24 @@ export class BasicNode extends NodeBase
      */
     public disappear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
-        this._isFast = isFast;
-        this.disappearContents();
-        this._animationStartTime = (window as any).hgn.timestamp;
-        this._curveCanvas.gradientEndAlpha = 0;
-        this._appearStatus = AppearStatus.DISAPPEARING;
-        this._updateGradientEndAlphaFunc = null;
+        if (this.isHomewardDisappear) {
+            this.homewardDisappear();
+        } else {
+            this._isFast = isFast;
+            this.disappearContents();
+            this._animationStartTime = (window as any).hgn.timestamp;
+            this._curveCanvas.gradientEndAlpha = 0;
+            this._appearStatus = AppearStatus.DISAPPEARING;
+            this._updateGradientEndAlphaFunc = null;
 
-        if (!doNotAppearBehind) {
-            this._nodeContentBehind?.disappear();
+            if (!doNotAppearBehind) {
+                this._nodeContentBehind?.disappear();
+            }
+
+            this._isDraw = true;
+
+            this._appearAnimationFunc = this.disappearAnimation;
         }
-
-        this._isDraw = true;
-
-        this._appearAnimationFunc = this.disappearAnimation;
     }
 
     /**
@@ -262,5 +276,116 @@ export class BasicNode extends NodeBase
         this._nodeContentBehind?.draw(this._curveCanvas, connectionPoint);
     
         this._isDraw = false;
+    }
+
+
+    
+
+    /**
+     * クリック時の処理
+     * @param anchor クリックしたアンカー
+     * @param e クリックイベント
+     */
+    public clickLink(anchor: HTMLAnchorElement, e: MouseEvent): void
+    {
+        // 外部リンクの場合は処理しない
+        if (anchor.getAttribute('rel') === 'external') {
+            location.href = anchor.href;
+            return;
+        }
+
+        const nodeContentTree = this.parentNode.nodeContentTree;
+        if (!AppearStatus.isAppeared(nodeContentTree.appearStatus)) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const headPos = this.nodeHead.getConnectionPoint();
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        hgn.calculateDisappearSpeedRate(headPos.y + window.scrollY);
+
+        this.isHomewardDisappear = true;
+
+        const currentNode = hgn.currentNode as CurrentNode;
+        currentNode.moveNode(anchor.href, false);
+
+        this.disappearContents();
+
+        this.parentNode.prepareDisappear(this);
+    }
+
+    /**
+     * 消滾アニメーション
+     */
+    public selectedDisappearAnimation(): void
+    {
+        const connectionPoint = this.nodeHead.getConnectionPoint();
+
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        const freePt = this.freePt;
+
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 100);
+
+        if (this._curveCanvas.appearProgress === 0) {
+            this._curveCanvas.gradientEndAlpha = 0;
+            this._appearAnimationFunc = this.selectedDisappearAnimation2;
+
+            this._animationStartTime = hgn.timestamp;
+        } else {
+            // TODO: 12を計算で出す nodeHeadPointの幅の半分
+            this._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
+
+            const pos = Util.getQuadraticBezierPoint(
+                0, 0,
+                connectionPoint.x, connectionPoint.y,
+                this._curveCanvas.appearProgress
+            );
+    
+            freePt.moveOffset(pos.x, pos.y);
+        }
+        
+        this._isDraw = true;
+    }
+
+    /**
+     * 消滾アニメーション2
+     */
+    public selectedDisappearAnimation2(): void
+    {
+        this.isHomewardDisappear = false;
+        this._appearAnimationFunc = null;
+        this._appearStatus = AppearStatus.DISAPPEARED;
+
+        this.freePt.hide();
+        this._parentNode.homewardDisappear();
+    }
+
+    /**
+     * ホームワード消滾処理
+     */
+    public homewardDisappear(): void
+    {
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        const freePt = this.freePt;
+        const connectionPoint = this.nodeHead.getConnectionPoint();
+        this._updateGradientEndAlphaFunc = null;
+
+        // TODO: 12を計算で出す nodeHeadPointの幅の半分
+        freePt.setPos(12, 0).setElementPos();
+        freePt.show();
+        this.nodeHead.nodePoint.hidden();
+        
+        this._nodeContentBehind?.disappear();
+        // TreeNodeの場合は_nodeContentTreeも消滾させる
+        this._nodeContentTree?.disappear();
+
+        this._animationStartTime = hgn.timestamp;
+        this._appearStatus = AppearStatus.DISAPPEARING;
+        this._curveCanvas.gradientEndAlpha = 0;
+        this.nodeHead.disappear();
+        this._isDraw = true;
+
+        this._appearAnimationFunc = this.selectedDisappearAnimation;
     }
 } 

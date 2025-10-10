@@ -12,11 +12,11 @@ export abstract class NodeBase
     protected _nodeElement: HTMLElement;
     protected _nodeHead: NodeHeadType;
     protected _nodeContents: { [key: string]: NodeContentType };
-    protected _appearStatus: AppearStatus;
-    protected _appearAnimationFunc: (() => void) | null;
-    protected _treeContentElement: HTMLElement | null;
-    protected _behindContentElement: HTMLElement | null;
-    protected _isDraw: boolean;
+    protected _appearStatus: AppearStatus = AppearStatus.DISAPPEARED;
+    protected _appearAnimationFunc: (() => void) | null = null;
+    protected _treeContentElement: HTMLElement | null = null;
+    protected _behindContentElement: HTMLElement | null = null;
+    protected _isDraw: boolean = false;
     protected _freePt: FreePoint;
 
     /**
@@ -66,16 +66,10 @@ export abstract class NodeBase
         this._id = nodeElement.id;
 
         this._nodeElement = nodeElement;
-        this._treeContentElement = null;
-        this._behindContentElement = null;
         this._nodeHead = this.loadHead();
         this._nodeContents = this.loadContents();
 
         this._freePt = new FreePoint(this._nodeElement);
-
-        this._appearStatus = AppearStatus.DISAPPEARED;
-        this._appearAnimationFunc = null;
-        this._isDraw = false;
     }
 
     /**

@@ -29,7 +29,7 @@
                             @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
                             <div class="pkg-info">
                                 <div class="pkg-info-text">
-                                    {{ $pkg->platform->acronym }}
+                                    <a href="{{ route('Game.PlatformDetail', ['platformKey' => $pkg->platform->key]) }}" rel="internal">{{ $pkg->platform->acronym }}</a>
                                     @empty($pkg->node_name)
                                     @else
                                         &nbsp;{!! $pkg->node_name !!}
@@ -42,7 +42,7 @@
                                 <div class="pkg-info-shops">
                                     @foreach($pkg->shops as $shop)
                                     <div class="pkg-info-shop">
-                                        <a href="{{ $shop->url }}">
+                                        <a href="{{ $shop->url }}" target="_blank" rel="external">
                                             <div class="pkg-info-shop-img">
                                             @if ($shop->ogp !== null && $shop->ogp->image !== null)
                                                 <img src="{{ $shop->ogp->image }}" width="{{ $shop->ogp->image_width }}" height="{{ $shop->ogp->image_height }}" class="pkg-img">

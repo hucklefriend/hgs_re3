@@ -56,25 +56,6 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
         }
     }
 
-    public disappear(): void
-    {
-        if (!this.linkMixin._isHomewardDisappear) {
-            super.disappear();
-        } else {
-            this.linkMixin.executeHomewardDisappear();
-        }
-    }
-
-    public selectedDisappearAnimation(): void
-    {
-        this.linkMixin.selectedDisappearAnimation();
-    }
-
-    public selectedDisappearAnimation2(): void
-    {
-        this.linkMixin.selectedDisappearAnimation2();
-    }
-
     private get linkMixin(): LinkNodeMixin
     {
         if (!(this as any)._linkMixin) {
