@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'Privacy Policy | ホラーゲームネットワーク')
-@section('current-node-title', 'Privacy Policy')
+@section('title', 'プライバシーポリシー | ホラーゲームネットワーク')
+@section('current-node-title', 'プライバシーポリシー')
 
 @section('nodes')
 

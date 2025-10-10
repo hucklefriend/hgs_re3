@@ -6,7 +6,7 @@
 @section('nodes')
     <section class="node tree-node" id="horror-games-tree-node">
         <div class="node-head">
-            <h2 class="node-head-text">Horror Games</h2>
+            <h2 class="node-head-text">ホラーゲーム</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">

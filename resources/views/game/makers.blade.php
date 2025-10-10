@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Maker | ホラーゲームネットワーク')
+@section('title', 'ゲームメーカー | ホラーゲームネットワーク')
 @section('current-node-title', 'ゲームメーカー')
 
 @section('nodes')

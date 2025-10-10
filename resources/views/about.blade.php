@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'About | ホラーゲームネットワーク')
-@section('current-node-title', 'About')
+@section('title', 'このサイトについて | ホラーゲームネットワーク')
+@section('current-node-title', 'このサイトについて')
 
 @section('nodes')
 
