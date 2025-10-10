@@ -180,6 +180,10 @@ export class BasicNode extends NodeBase
      */
     public disappear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
+        if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
+            return;
+        }
+
         if (this.isHomewardDisappear) {
             this.homewardDisappear();
         } else {
@@ -366,6 +370,11 @@ export class BasicNode extends NodeBase
      */
     public homewardDisappear(): void
     {
+        if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
+            return;
+        }
+
+        // TreeNodeの場合は_nodeContentTreeも消滾させる
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = this.freePt;
         const connectionPoint = this.nodeHead.getConnectionPoint();
