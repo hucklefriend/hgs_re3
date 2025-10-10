@@ -82,7 +82,7 @@ class GameController extends Controller
      */
     public function maker(Request $request): JsonResponse|Application|Factory|View
     {
-        $makers = GameMaker::select(['id', 'key', 'name'])
+        $makers = GameMaker::select()
             ->whereNull('related_game_maker_id')
             ->orderBy('name')
             ->get();
@@ -121,7 +121,7 @@ class GameController extends Controller
      */
     public function platform(Request $request): JsonResponse|Application|Factory|View
     {
-        $platforms = GamePlatform::select(['id', 'key', 'name'])
+        $platforms = GamePlatform::select()
             ->orderBy('sort_order')
             ->get();
 
@@ -228,18 +228,10 @@ class GameController extends Controller
     {
         $title = GameTitle::findByKey($titleKey);
 
-        $packages = $title->packages->sortBy('release_at');
-        $makers = [];
-        foreach ($packages as $package) {
-            foreach ($package->makers as $maker) {
-                $makers[$maker->id] = $maker;
-            }
-        }
-
         $ratingCheck = $title->rating != Rating::None;
         $franchise = $title->getFranchise();
 
-        return $this->tree(view('game.title_detail', compact('title', 'packages', 'makers', 'ratingCheck', 'franchise')), $ratingCheck);
+        return $this->tree(view('game.title_detail', compact('title', 'ratingCheck', 'franchise')), $ratingCheck);
     }
 
     /**
