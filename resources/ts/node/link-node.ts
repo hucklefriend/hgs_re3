@@ -48,6 +48,14 @@ export class LinkNode extends BasicNode implements ClickableNodeInterface
         this.linkMixin.click(e);
     }
 
+    public appearAnimation(): void
+    {
+        super.appearAnimation();
+        if (this._curveCanvas.appearProgress === 1) {
+            this._curveCanvas.gradientEndAlpha = 0.3;
+        }
+    }
+
     public disappear(): void
     {
         if (!this.linkMixin._isHomewardDisappear) {
