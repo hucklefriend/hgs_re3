@@ -285,10 +285,6 @@ class PackageController extends AbstractAdminController
             }
 
             if ($originalPackage) {
-                foreach ($originalPackage->titles as $title) {
-                    $package->titles()->attach($title->id);
-                }
-
                 foreach ($originalPackage->packageGroups as $packageGroup) {
                     $package->packageGroups()->attach($packageGroup->id);
                 }
