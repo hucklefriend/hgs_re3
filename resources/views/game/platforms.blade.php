@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'Platforms | ホラーゲームネットワーク')
-@section('current-node-title', 'Platforms')
+@section('title', 'プラットフォーム | ホラーゲームネットワーク')
+@section('current-node-title', 'プラットフォーム')
 
 @section('nodes')
     @foreach (\App\Enums\GamePlatformType::cases() as $type)

@@ -89,7 +89,7 @@ class GameController extends Controller
             ->orderBy('name')
             ->get();
 
-        return $this->tree(view('game.maker', compact('makers')));
+        return $this->tree(view('game.makers', compact('makers')));
     }
 
     /**
@@ -128,7 +128,7 @@ class GameController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        return $this->tree(view('game.platform', compact('platforms')));
+        return $this->tree(view('game.platforms', compact('platforms')));
     }
 
     /**

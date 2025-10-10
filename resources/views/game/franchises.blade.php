@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'Franchises | ホラーゲームネットワーク')
-@section('current-node-title', 'Franchises')
+@section('title', 'フランチャイズ | ホラーゲームネットワーク')
+@section('current-node-title', 'フランチャイズ')
 
 @section('nodes')
     @foreach ($prefixes as $prefix => $words)
