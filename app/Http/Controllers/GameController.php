@@ -7,6 +7,8 @@ use App\Models\GameFranchise;
 use App\Models\GameMaker;
 use App\Models\GameMediaMix;
 use App\Models\GamePackage;
+use App\Models\GamePackageGroupPackageLink;
+use App\Models\GameTitlePackageGroupLink;
 use App\Models\GamePlatform;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
@@ -103,8 +105,9 @@ class GameController extends Controller
         $maker = GameMaker::findByKey($makerKey);
 
         $packages = $maker->packages();
-        $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
-        $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
+        $packageGroups = GamePackageGroupPackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
+        $titleIds = GameTitlePackageGroupLink::whereIn('game_package_group_id', $packageGroups->pluck('game_package_group_id')->unique())->pluck('game_title_id');
+        $titles = GameTitle::whereIn('id', $titleIds)->get();
 
         return $this->tree(view('game.maker_detail', [
             'maker'  => $maker,
@@ -141,8 +144,9 @@ class GameController extends Controller
         $platform = GamePlatform::findByKey($platformKey);
 
         $packages = GamePackage::select(['id'])->where('game_platform_id', $platform->id)->get();
-        $titleLinks = GameTitlePackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
-        $titles = GameTitle::whereIn('id', $titleLinks->pluck('game_title_id'))->get();
+        $packageGroups = GamePackageGroupPackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
+        $titleIds = GameTitlePackageGroupLink::whereIn('game_package_group_id', $packageGroups->pluck('game_package_group_id')->unique())->pluck('game_title_id');
+        $titles = GameTitle::whereIn('id', $titleIds)->get();
 
         return $this->tree(view('game.platform_detail', [
             'platform'    => $platform,
