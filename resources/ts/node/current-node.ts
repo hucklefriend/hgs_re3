@@ -160,7 +160,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.disappear();
         if (this._homewardNode !== null) {
-            console.log(this._homewardNode );
             this._appearAnimationFunc = this.disappearAnimation;
         } else {
             this.disappearHeader();

@@ -120,8 +120,8 @@
                 下記は画像生成AI(DALL-E3)を使って生成しました。
             </p>
             <ul>
-                <li>・<a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
-                <li>・<a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
+                <li><a href="{{ asset('img/ai/favicon.png') }}" target="_blank">ファビコン</a></li>
+                <li><a href="{{ asset('img/ai/bg3.jpg') }}" target="_blank">背景</a></li>
             </ul>
             <p>
                 タイトル、プラットフォームやフランチャイズ等の紹介文はAI(ChatGPT)が生成した文章を加筆修正したものが一部あります。
@@ -139,21 +139,21 @@
                 下記の素材サイト様から、素材を利用させて頂いてます。
             </p>
             <ul>
-                <li>・<a href="https://pixabay.com/" target="_blank">Pixabay</a></li>
-                <li>・<a href="https://icon-pit.com/" target="_blank">icon-pit</a></li>
+                <li><a href="https://pixabay.com/" target="_blank">Pixabay</a></li>
+                <li><a href="https://icon-pit.com/" target="_blank">icon-pit</a></li>
             </ul>
         </div>
     </section>
 
     <section class="node tree-node">
         <div class="node-head">
-            <h2 class="node-head-text">Quick Links</h2>
+            <h2 class="node-head-text">近道</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
             <section class="node link-node">
                 <div class="node-head">
-                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
                     <span class="node-pt main-node-pt">●</span>
                 </div>
             </section>

@@ -79,7 +79,7 @@
                     </a>
                     <a href="calendar.html" class="dropdown-item">Calendar</a>
                     --}}
-                    <a href="{{ route('Entrance') }}" class="dropdown-item">Entrance</a>
+                    <a href="{{ route('Root') }}" class="dropdown-item">トップ</a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('Admin.Logout') }}" class="dropdown-item">Log Out</a>
                 </div>

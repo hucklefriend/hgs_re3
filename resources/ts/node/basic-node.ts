@@ -180,6 +180,10 @@ export class BasicNode extends NodeBase
      */
     public disappear(isFast: boolean = false, doNotAppearBehind: boolean = false): void
     {
+        if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
+            return;
+        }
+
         if (this.isHomewardDisappear) {
             this.homewardDisappear();
         } else {
@@ -216,7 +220,7 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
-        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 50 / (window as any).hgn.disappearSpeedRate);
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 20 / (window as any).hgn.disappearSpeedRate);
         this._curveCanvas.gradientEndAlpha = this._curveCanvas.appearProgress * 0.7;
         if (this._curveCanvas.appearProgress === 0) {
             this._curveCanvas.gradientEndAlpha = 0;
@@ -366,6 +370,11 @@ export class BasicNode extends NodeBase
      */
     public homewardDisappear(): void
     {
+        if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
+            return;
+        }
+
+        // TreeNodeの場合は_nodeContentTreeも消滾させる
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = this.freePt;
         const connectionPoint = this.nodeHead.getConnectionPoint();
@@ -377,8 +386,6 @@ export class BasicNode extends NodeBase
         this.nodeHead.nodePoint.hidden();
         
         this._nodeContentBehind?.disappear();
-        // TreeNodeの場合は_nodeContentTreeも消滾させる
-        this._nodeContentTree?.disappear();
 
         this._animationStartTime = hgn.timestamp;
         this._appearStatus = AppearStatus.DISAPPEARING;

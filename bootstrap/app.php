@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('Admin.Login');
             }
 
-            return route('Entrance');
+            return route('Root');
         });
 
         $middleware->appendToGroup('admin', [

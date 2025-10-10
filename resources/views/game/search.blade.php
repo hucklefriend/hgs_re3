@@ -1,11 +1,11 @@
 @extends('layout')
 
 @section('title', 'Horror Game Search | ホラーゲームネットワーク')
-@section('current-node-title', 'Horror Game Search')
+@section('current-node-title', 'タイトル検索')
 
 @section('current-node-content')
 <form id="search-form" method="GET" action="{{ route('Game.Search') }}" onsubmit="submitSearchForm(event)">
-    <input type="text" id="search-input" placeholder="Search" value="{{ $text }}">
+    <input type="text" id="search-input" value="{{ $text }}">
     <button type="submit">検索</button>
 </form>
 <script>
@@ -78,13 +78,13 @@
 
 <section class="node tree-node">
     <div class="node-head">
-        <h2 class="node-head-text">Quick Links</h2>
+        <h2 class="node-head-text">近道</h2>
         <span class="node-pt">●</span>
     </div>
     <div class="node-content tree">
         <section class="node link-node">
             <div class="node-head">
-                <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
                 <span class="node-pt main-node-pt">●</span>
             </div>
         </section>

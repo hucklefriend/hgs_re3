@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HgnController::class, 'entrance'])->name('Entrance');
+Route::get('/', [HgnController::class, 'root'])->name('Root');
 if (App::environment('production')) {
     return;
 }
@@ -291,8 +291,6 @@ Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
 // ゲーム
 Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
-    // ホラーゲームネットワーク
-    Route::get('/', [$class, 'horrorGames'])->name('Game.HorrorGames');
     // ホラーゲーム検索
     Route::get('/search', [$class, 'search'])->name('Game.Search');
     // フランチャイズ詳細
