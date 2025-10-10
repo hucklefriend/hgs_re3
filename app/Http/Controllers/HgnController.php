@@ -19,7 +19,7 @@ class HgnController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function entrance(): JsonResponse|Application|Factory|View
+    public function root(): JsonResponse|Application|Factory|View
     {
         if (App::environment('production')) {
             return view('suspend');
@@ -31,7 +31,7 @@ class HgnController extends Controller
             ->orderBy('open_at', 'desc')
             ->get();
 
-        return $this->tree(view('entrance', compact('infoList')));
+        return $this->tree(view('root', compact('infoList')));
     }
 
     /**

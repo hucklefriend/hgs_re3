@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('title', 'Maker | ホラーゲームネットワーク')
-@section('current-node-title', 'Maker')
+@section('current-node-title', 'ゲームメーカー')
 
 @section('nodes')
 
@@ -58,13 +58,13 @@
 
     <section class="node tree-node">
         <div class="node-head">
-            <h2 class="node-head-text">Quick Links</h2>
+            <h2 class="node-head-text">フランチャイズ</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
             <section class="node link-node">
                 <div class="node-head">
-                    <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

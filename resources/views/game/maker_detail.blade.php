@@ -39,19 +39,19 @@
 
     <section class="node tree-node" id="footer-tree-node">
         <div class="node-head">
-            <h2 class="node-head-text">Quick Links</h2>
+            <h2 class="node-head-text">近道</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
             <section class="node link-tree-node" id="back-to-platforms-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.Maker') }}" class="node-head-text">Maker</a>
+                    <a href="{{ route('Game.Maker') }}" class="node-head-text">ゲームメーカー</a>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
-                    <section class="node link-node" id="back-to-entrance-node">
+                    <section class="node link-node" id="back-to-root-node">
                         <div class="node-head">
-                            <a href="{{ route('Entrance') }}" class="node-head-text">Entrance</a>
+                            <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>
