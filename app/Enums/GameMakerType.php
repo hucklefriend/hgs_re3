@@ -19,9 +19,9 @@ enum GameMakerType: int
     public function text(): string
     {
         return match($this) {
-            GameMakerType::COMMERCIAL => '商業ゲームメーカー',
-            GameMakerType::INDIE => 'インディーゲームメーカー',
-            GameMakerType::DOUJIN => '同人',
+            GameMakerType::COMMERCIAL => '商業メーカー',
+            GameMakerType::INDIE => 'インディーメーカー',
+            GameMakerType::DOUJIN => '同人サークル',
         };
     }
 

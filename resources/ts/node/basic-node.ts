@@ -137,7 +137,7 @@ export class BasicNode extends NodeBase
 
         this.freePt.moveOffset(pos.x-10, pos.y);
         if (this._curveCanvas.appearProgress === 1) {
-            this._curveCanvas.gradientEndAlpha = 0.3;//this.isHover() ? 1 : 0.3;
+            this._curveCanvas.gradientEndAlpha = 1;
             this._nodeHead.appear();
             this.freePt.hide();
             this.freePt.setPos(connectionPoint.x, connectionPoint.y).setElementPos();
@@ -150,10 +150,6 @@ export class BasicNode extends NodeBase
                 this._appearAnimationFunc = null;
             }
             this._appearStatus = AppearStatus.APPEARED;
-
-            // if (this.getNodeElement().matches(':hover')) {
-            //     this.hover();
-            // }
         }
         
         this._isDraw = true;

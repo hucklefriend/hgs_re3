@@ -84,12 +84,6 @@ export class HorrorGameNetwork
         const ro = new ResizeObserver(entries => {
           for (const entry of entries) {
             const { width, height } = entry.contentRect;
-        
-            // if (width !== lastWidth && height !== lastHeight) {
-            //   console.log("幅・高さの両方が変化");
-            // } else if (width !== lastWidth) {
-            //   console.log("横幅のみ変化");
-            // }
             
             // 高さが変化したらリサイズ
             if (height !== lastHeight) {
@@ -158,7 +152,6 @@ export class HorrorGameNetwork
         }
 
         this._currentNode.update();
-        //this.contentNodeView.update();
         
         this.draw();
 

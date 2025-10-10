@@ -69,12 +69,12 @@ $(()=> {
 
     $('.description-source-tool-a').click(function (e) {
         e.preventDefault();
-        $('#description_source').val('<a href="" target="_blank"></a>');
+        $('#description_source').val('<a href="" target="_blank" rel="external"></a>');
     });
 
     $('.description-source-tool-a-shop').click(function (e) {
         e.preventDefault();
-        $('#description_source').val('<a href="" target="_blank"><i class="bi bi-shop"></i></a>');
+        $('#description_source').val('<a href="" target="_blank" rel="external"><i class="bi bi-shop"></i></a>');
     });
 
 
