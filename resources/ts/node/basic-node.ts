@@ -377,8 +377,6 @@ export class BasicNode extends NodeBase
         this.nodeHead.nodePoint.hidden();
         
         this._nodeContentBehind?.disappear();
-        // TreeNodeの場合は_nodeContentTreeも消滾させる
-        this._nodeContentTree?.disappear();
 
         this._animationStartTime = hgn.timestamp;
         this._appearStatus = AppearStatus.DISAPPEARING;

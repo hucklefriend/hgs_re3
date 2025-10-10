@@ -49,13 +49,10 @@ export class LinkTreeNode extends TreeNode implements ClickableNodeInterface
         this.linkMixin.click(e);
     }
 
-    public disappear(): void
+    public homewardDisappear(): void
     {
-        if (!this.isHomewardDisappear) {
-            super.disappear();
-        } else {
-            this.homewardDisappear();
-        }
+        this._nodeContentTree?.disappear();
+        super.homewardDisappear();
     }
 
 
