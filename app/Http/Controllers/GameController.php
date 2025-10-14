@@ -36,7 +36,7 @@ class GameController extends Controller
             return $this->tree(view('game.search', compact('text')));
         }
 
-        $titles = GameTitle::select(['id', 'key', 'name', 'game_series_id', 'game_franchise_id'])
+        $titles = GameTitle::select(['id', 'key', 'name', 'game_series_id', 'game_franchise_id', 'rating'])
             ->where('name', 'like', '%' . $text . '%')
             ->get();
 
@@ -107,10 +107,12 @@ class GameController extends Controller
         $titleIds = GameTitlePackageGroupLink::whereIn('game_package_group_id', $packageGroups->pluck('game_package_group_id')->unique())->pluck('game_title_id');
         $titles = GameTitle::whereIn('id', $titleIds)->get();
 
+        $ratingCheck = $titles->where('rating', Rating::R18A)->count() > 0;
+
         return $this->tree(view('game.maker_detail', [
             'maker'  => $maker,
             'titles' => $titles,
-        ]));
+        ]), $ratingCheck);
     }
 
     /**
@@ -202,20 +204,27 @@ class GameController extends Controller
     public function franchiseDetail(Request $request, string $franchiseKey): JsonResponse|Application|Factory|View
     {
         $franchise = GameFranchise::findByKey($franchiseKey);
+        $ratingCheck = false;
         $titles = [];
         foreach ($franchise->series as $series) {
             foreach ($series->titles as $title) {
                 $titles[] = $title;
+                if ($title->rating == Rating::R18A) {
+                    $ratingCheck = true;
+                }
             }
         }
         foreach ($franchise->titles as $title) {
             $titles[] = $title;
+            if ($title->rating == Rating::R18A) {
+                $ratingCheck = true;
+            }
         }
 
         return $this->tree(view('game.franchise_detail', [
             'franchise'   => $franchise,
             'titles'      => $titles,
-        ]));
+        ]), $ratingCheck);
     }
 
     /**
@@ -261,6 +270,6 @@ class GameController extends Controller
         return $this->tree(view('game.media_mix_detail', [
             'mediaMix' => $mediaMix,
             'relatedNetworks' => $relatedNetworks,
-        ]));
+        ]), $mediaMix->rating == Rating::R18A);
     }
 }
