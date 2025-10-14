@@ -2,21 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Information;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
+use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cookie;
 
 abstract class Controller
 {
+    protected bool $isOver18 = false;
+
     public function __construct()
     {
         if (App::environment('local')) {
             Auth::guard('admin')->attempt(['email' => 'webmaster@horragame.net', 'password' => 'huckle'], true);
+        }
+
+        // 現在のURLにクエリ文字列でover18=1があったら、cookieにover18=1をセットする
+        if (request()->query('over18', 0) == 1) {
+            Cookie::queue('is_over_18', 1, 60 * 60 * 24 * 30);
+            $this->isOver18 = true;
+        } else {
+            // cookieからis_over_18を取得
+            $this->isOver18 = intval(Cookie::get('is_over_18', 0)) === 1;
         }
     }
     
@@ -31,45 +39,22 @@ abstract class Controller
     }
 
     /**
-     * マップ表示
-     *
-     * @param Factory|View $view
-     * @param string $json
-     * @param array $components
-     * @return JsonResponse|Application|Factory|View
-     */
-    protected function map(Factory|View $view, string $json, array $components = []): JsonResponse|Application|Factory|View
-    {
-        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにJSONテキストを返す
-        if (self::isAjax()) {
-            $rendered = $view->renderSections();
-            return response()->json([
-                'title' => $rendered['title'],
-                'map'   => $json,
-                'sub'   => $rendered['map-sub'] ?? '',
-                'popup' => $rendered['popup'] ?? '',
-                'ratingCheck' => false,
-                'components' => $components,
-            ]);
-        }
-
-        // $viewに$jsonを渡してviewを返す
-        return $view->with('map', $json)
-            ->with('viewerType', 'map')
-            ->with('components', $components);
-    }
-
-    /**
      * ツリーの生成
      *
-     * @param Factory|View $view
+     * @param View $view
      * @param bool $ratingCheck
      * @param array $components
-     * @return JsonResponse|Application|Factory|View
+     * @return JsonResponse|View
      * @throws \Throwable
      */
-    protected function tree(Factory|View $view, bool $ratingCheck = false, array $components = []): JsonResponse|Application|Factory|View
+    protected function tree(View $view, bool $ratingCheck = false, array $components = []): JsonResponse|View
     {
+        if ($ratingCheck) {
+            if (!$this->isOver18) {
+                $view = $this->ratingCheck(request()->fullUrl());
+            }
+        }
+
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
             $rendered = $view->renderSections();
@@ -79,7 +64,6 @@ abstract class Controller
                 'currentNodeContent' => $rendered['current-node-content'] ?? '',
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
-                'ratingCheck'        => $ratingCheck,
                 'components'         => $components,
             ]);
         }
@@ -88,57 +72,30 @@ abstract class Controller
             ->with('components', $components);
     }
 
-    /**
-     * ネットワークの生成
-     *
-     * @param Factory|View $view
-     * @param bool $ratingCheck
-     * @param array $components
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    protected function document(Factory|View $view, bool $ratingCheck = false, array $components = []): JsonResponse|Application|Factory|View
+    private function ratingCheck(string $currentUrl): View
     {
-        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
-        if (self::isAjax()) {
-            $rendered = $view->renderSections();
-            return response()->json([
-                'title'    => $rendered['title'],
-                'document' => $rendered['content'],
-                'popup'    => $rendered['popup'] ?? '',
-                'ratingCheck' => $ratingCheck,
-                'components' => $components,
-            ]);
+        // URLを分解
+        $parsedUrl = parse_url($currentUrl);
+        
+        // クエリパラメータを配列に変換
+        $queryParams = [];
+        if (isset($parsedUrl['query'])) {
+            parse_str($parsedUrl['query'], $queryParams);
         }
+        
+        // a パラメータを除外し、over18=1 を追加
+        unset($queryParams['a']);
+        $queryParams['over18'] = 1;
+        
+        // URLを再構築
+        $scheme = $parsedUrl['scheme'] ?? 'http';
+        $host = $parsedUrl['host'] ?? '';
+        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+        $path = $parsedUrl['path'] ?? '';
+        $query = http_build_query($queryParams);
+        
+        $currentUrl = "{$scheme}://{$host}{$port}{$path}?{$query}";
 
-        return $view->with('viewerType', 'doc')
-            ->with('components', $components);
-    }
-
-    /**
-     * コンテンツノードの表示
-     *
-     * @param Factory|View $view
-     * @param callable $baseViewCallback
-     * @return Factory|View|JsonResponse
-     * @throws \Throwable
-     */
-    protected function contentNode(Factory|View $view, $baseViewCallback): Factory|View|JsonResponse
-    {
-        $rendered = $view->renderSections();
-        $contentData = [
-            'linkNodeId'    => $rendered['link-node-id'] ?? '',
-            'title'         => $rendered['content-node-title'],
-            'body'          => $rendered['content-node-body'],
-            'footer'        => $rendered['content-node-footer'] ?? '',
-            'documentTitle' => $rendered['content-node-title'] . ' | ホラーゲームネットワーク',
-        ];
-        if (self::isAjax()) {
-            return response()->json($contentData);
-        } else {
-            $view = $baseViewCallback();
-            $view->with('contentData', $contentData);
-            return $view;
-        }
+        return view('rating_check', compact('currentUrl'));
     }
 }

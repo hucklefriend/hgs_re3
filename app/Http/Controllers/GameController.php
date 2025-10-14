@@ -12,13 +12,11 @@ use App\Models\GameTitlePackageGroupLink;
 use App\Models\GamePlatform;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
-use App\Models\GameTitlePackageLink;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class GameController extends Controller
 {
@@ -232,7 +230,7 @@ class GameController extends Controller
     {
         $title = GameTitle::findByKey($titleKey);
 
-        $ratingCheck = $title->rating != Rating::None;
+        $ratingCheck = $title->rating == Rating::R18A;
         $franchise = $title->getFranchise();
 
         return $this->tree(view('game.title_detail', compact('title', 'ratingCheck', 'franchise')), $ratingCheck);
