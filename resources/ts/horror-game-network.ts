@@ -1,6 +1,7 @@
 import { CurrentNode } from "./node/current-node";
 import { Util } from "./common/util";
 import { AppearStatus } from "./enum/appear-status";
+import Cookies from "js-cookie";
 
 /**
  * ホラーゲームネットワーク
@@ -9,13 +10,13 @@ import { AppearStatus } from "./enum/appear-status";
 export class HorrorGameNetwork
 {
     private static _instance: HorrorGameNetwork;
-    private _timestamp: number;
+    private _timestamp: number = 0;
     private _mainElement: HTMLElement;
 
     private _currentNode: CurrentNode;
-    private _disappearSpeedRate: number;
+    private _disappearSpeedRate: number = 1;
 
-    public isForceResize: boolean;
+    public isForceResize: boolean = false;
 
     /**
      * インスタンスを返す
@@ -64,11 +65,6 @@ export class HorrorGameNetwork
     {
         this._mainElement = document.querySelector('main') as HTMLElement;
         this._currentNode = new CurrentNode(this._mainElement.querySelector('#current-node') as HTMLElement);
-
-        this._timestamp = 0;
-        this._disappearSpeedRate = 1;
-
-        this.isForceResize = false;
     }
 
     /**
@@ -97,7 +93,6 @@ export class HorrorGameNetwork
         
         ro.observe(target);
         
-
         // ページ遷移前のイベント登録
         window.addEventListener('beforeunload', () => {
             sessionStorage.setItem('isPageTransition', 'true');
@@ -175,7 +170,7 @@ export class HorrorGameNetwork
         const previousState = event?.state;
         
         if (previousState) {
-            this._currentNode.moveNode(previousState.url, null, true, previousState.isChildOnly ?? false);
+            this._currentNode.moveNode(previousState.url, true, previousState.isChildOnly ?? false);
         }
 
         if (AppearStatus.isAppeared(this._currentNode.appearStatus)) {
@@ -194,5 +189,16 @@ export class HorrorGameNetwork
             // 100px毎に0.2ずつ増加
             this._disappearSpeedRate = 1 + ((disappearStartPos - 700) / 100 * 0.2);
         }
+    }
+
+    public getOver18(): boolean
+    {
+        const isOver18 = Cookies.get('over_18');
+        return isOver18 === '1';
+    }
+
+    public setOver18(value: boolean)
+    {
+        Cookies.set('over_18', value ? '1' : '0');
     }
 } 

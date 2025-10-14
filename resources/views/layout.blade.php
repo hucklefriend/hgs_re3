@@ -12,18 +12,6 @@
         window.Laravel = @json(['csrfToken' => csrf_token()]);
         window.baseUrl = '{{ url('/') }}';
         window.lazyCss = @json([]);
-
-        @isset($contentData)
-            window.content = @json($contentData);
-        @else
-            window.content = null;
-        @endif
-
-        @isset($ratingCheck)
-            window.ratingCheck = @json($ratingCheck);
-        @else
-            window.ratingCheck = false;
-        @endif
     </script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>

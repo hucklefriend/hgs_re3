@@ -104,6 +104,11 @@ export class NodeContentTree extends NodeContent
         return this._nodes[this._nodes.length - 1];
     }
 
+    public getNodeByIndex(index: number): NodeType
+    {
+        return this._nodes[index];
+    }
+
     /**
      * ノードの開放
      */
@@ -303,5 +308,15 @@ export class NodeContentTree extends NodeContent
     public draw(): void
     {
         this._nodes.forEach(node => node.draw());
+    }
+
+    public noDisplay(): void
+    {
+        this._contentElement.style.display = 'none';
+    }
+
+    public display(): void
+    {
+        this._contentElement.style.display = 'block';
     }
 }

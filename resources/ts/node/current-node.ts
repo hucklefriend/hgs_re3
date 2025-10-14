@@ -3,23 +3,21 @@ import { AppearStatus } from "../enum/appear-status";
 import { NextNodeCache } from "./parts/next-node-cache";
 import { NodeContentTree } from "./parts/node-content-tree";
 import { NodeBase } from "./node-base";
-import { LinkNode } from "./link-node";
 import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
 import { AccordionTreeNode } from "./accordion-tree-node";
-import { LinkTreeNode } from "./link-tree-node";
 import { HorrorGameNetwork } from "../horror-game-network";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {
     private _nodeContentTree: NodeContentTree;
 
-    private _isChanging: boolean;
-    private _isChildOnly: boolean;
-    private _nextNodeCache: NextNodeCache | null;
-    private _homewardNode: NodeType | null;
-    private _currentNodeContentElement: HTMLElement | null;
-    private _accordionGroups: { [key: string]: AccordionTreeNode[] };
+    private _isChanging: boolean = false;
+    private _isChildOnly: boolean = false;
+    private _nextNodeCache: NextNodeCache | null = null;
+    private _homewardNode: NodeType | null = null;
+    private _currentNodeContentElement: HTMLElement | null = null;
+    private _accordionGroups: { [key: string]: AccordionTreeNode[] } = {};
 
     public get homewardNode(): NodeType | null
     {
@@ -35,15 +33,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         super(htmlElement);
 
-        this._nextNodeCache = null;
-        this._isChanging = false;
-        this._isChildOnly = false;
-        this._homewardNode = null;
         this._currentNodeContentElement = document.getElementById('current-node-content');
-
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
-
-        this._accordionGroups = {};
     }
 
     public start(): void
@@ -91,6 +82,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             this._appearAnimationFunc?.();
 
             super.update();
+
             this._nodeContentTree.update();
         }
     }
@@ -101,6 +93,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public draw(): void
     {
         super.draw();
+
         this._nodeContentTree.draw();
     }
 
@@ -116,6 +109,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (!this._isChildOnly) {
             this._nodeHead.appear();
         }
+
+
         this.appearContents();
         this._nodeContentTree.appear();
 
@@ -159,6 +154,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         this._appearStatus = AppearStatus.DISAPPEARING;
         this._nodeContentTree.disappear();
+
         if (this._homewardNode !== null) {
             this._appearAnimationFunc = this.disappearAnimation;
         } else {
