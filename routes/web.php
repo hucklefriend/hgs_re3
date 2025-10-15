@@ -284,9 +284,8 @@ Route::group(['prefix' => 'admin'], function () {
 $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
-Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
-Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
-Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
+Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
+Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');
 
 // ゲーム
 Route::group(['prefix' => 'game'], function () {

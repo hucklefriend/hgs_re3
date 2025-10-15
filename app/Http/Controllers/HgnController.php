@@ -25,28 +25,32 @@ class HgnController extends Controller
             return view('suspend');
         }
 
-        $infoList = Information::where('open_at', '<', now())
+        $infoList = Information::select(['id', 'head'])
+            ->where('open_at', '<', now())
             ->where('close_at', '>=', now())
             ->orderBy('priority', 'desc')
             ->orderBy('open_at', 'desc')
+            ->limit(3)
             ->get();
 
         return $this->tree(view('root', compact('infoList')));
     }
 
     /**
-     * お知らせネットワーク
+     * お知らせ一覧
      *
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function infoNetwork(): JsonResponse|Application|Factory|View
+    public function infomations(): JsonResponse|Application|Factory|View
     {
-        $infoList = Information::where('open_at', '<=', now())
+        $informations = Information::where('open_at', '<=', now())
+            ->where('close_at', '>=', now())
+            ->orderBy('priority', 'desc')
             ->orderBy('open_at', 'desc')
-            ->paginate(30);
+            ->get();
 
-        return $this->document(view('info_network', compact('infoList')));
+        return $this->tree(view('infomations', compact('informations')));
     }
 
     /**
@@ -56,11 +60,9 @@ class HgnController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function info(Information $info): JsonResponse|Application|Factory|View
+    public function infomationDetail(Information $info): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('info', ['info' => $info]), function() {
-            return $this->infoNetwork();
-        });
+        return $this->tree(view('infomation_detail', compact('info')));
     }
 
     /**
@@ -83,20 +85,5 @@ class HgnController extends Controller
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
         return $this->tree(view('privacy_policy'));
-    }
-
-    /**
-     * 描画チェック
-     *
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    public function drawCheck(): JsonResponse|Application|Factory|View
-    {
-        if (App::environment('production')) {
-            return view('suspend');
-        }
-
-        return $this->document(view('draw_check'));
     }
 }
