@@ -26,12 +26,19 @@
                 @foreach ($franchises as $franchise)
                 <section class="node link-node" id="search-node">
                     <div class="node-head">
-                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}</a>
+                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">
+                            {{ $franchise->name }}
+                            @if ($franchise->rating == \App\Enums\Rating::R18A)
+                                &nbsp;🔞
+                            @endif
+                        </a>
                         <span class="node-pt">●</span>
                     </div>
+                    @if ($isOver18 || $franchise->rating != \App\Enums\Rating::R18A)
                     <div class="node-content basic">
                         {!! $franchise->description !!}
                     </div>
+                    @endif
                 </section>
                 @endforeach
             </div>

@@ -126,6 +126,12 @@ class TitleController extends AbstractAdminController
         $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
+        $franchise = $title->getFranchise();
+        if ($franchise !== null) {
+            $franchise->setRating();
+            $franchise->save();
+        }
+
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 
@@ -157,6 +163,12 @@ class TitleController extends AbstractAdminController
                 $model->node_name = $nodeName;
                 $model->key = $keys[$id];
                 $model->save();
+            }
+
+            $franchise = $model->getFranchise();
+            if ($franchise !== null) {
+                $franchise->setRating();
+                $franchise->save();
             }
         }
 
@@ -192,6 +204,12 @@ class TitleController extends AbstractAdminController
         $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
+        $franchise = $title->getFranchise();
+        if ($franchise !== null) {
+            $franchise->setRating();
+            $franchise->save();
+        }
+
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 
@@ -203,11 +221,18 @@ class TitleController extends AbstractAdminController
      */
     public function delete(GameTitle $title): RedirectResponse
     {
+        $franchise = $title->getFranchise();
+        
         $title->packages()->detach();
         $title->packageGroups()->detach();
         $title->synonyms()->delete();
         $title->relatedProducts()->detach();
         $title->delete();
+
+        if ($franchise !== null) {
+            $franchise->setRating();
+            $franchise->save();
+        }
 
         return redirect()->route('Admin.Game.Title');
     }
@@ -264,86 +289,6 @@ class TitleController extends AbstractAdminController
             $packages = $title->packages;
         }
         return view('admin.game.title.edit_package_group_multi', compact('packages', 'title'));
-    }
-
-    /**
-     * 関連パッケージの更新処理
-     *
-     * @param TitleMultiPackageGroupUpdateRequest $request
-     * @param GameTitle $title
-     * @return RedirectResponse
-     * @throws Throwable
-     */
-    public function updatePackageGroupMulti(TitleMultiPackageGroupUpdateRequest $request, GameTitle $title): RedirectResponse
-    {
-        $ids = $request->validated('id');
-        $names = $request->validated(['name']);
-        $nodeNames = $request->validated(['node_name']);
-        $sortOrder = $request->validated(['sort_order']);
-        foreach ($ids as $id) {
-            $pkgGroup = GamePackageGroup::find($id);
-            if ($pkgGroup !== null) {
-                $pkgGroup->name = $names[$id] ?? '';
-                $pkgGroup->node_name = $nodeNames[$id] ?? '';
-                $pkgGroup->sort_order = $sortOrder[$id] ?? 99999999;
-                $pkgGroup->save();
-            }
-        }
-
-        return redirect()->route('Admin.Game.Title.Detail', $title);
-    }
-
-    /**
-     * 関連パッケージの一括更新
-     *
-     * @param Request $request
-     * @param GameTitle $title
-     * @return Application|Factory|View
-     */
-    public function editPackageMulti(Request $request, GameTitle $title): Application|Factory|View
-    {
-        $packages = [];
-        if ($title->packages->isEmpty()) {
-            foreach ($title->packageGroups as $pg) {
-                foreach ($pg->packages as $package) {
-                    $packages[] = $package;
-                }
-            }
-        } else {
-            $packages = $title->packages;
-        }
-        return view('admin.game.title.edit_package_multi', compact('packages', 'title'));
-    }
-
-    /**
-     * 関連パッケージの更新処理
-     *
-     * @param PackageMultiUpdateRequest $request
-     * @param GameTitle $title
-     * @return RedirectResponse
-     * @throws Throwable
-     */
-    public function updatePackageMulti(PackageMultiUpdateRequest $request, GameTitle $title): RedirectResponse
-    {
-        $ids = $request->validated('id');
-        $names = $request->validated(['name']);
-        $nodeNames = $request->validated(['node_name']);
-        $releaseAt = $request->validated(['release_at']);
-        $sortOrder = $request->validated(['sort_order']);
-        $rating = $request->validated(['rating']);
-        foreach ($ids as $id) {
-            $package = GamePackage::find($id);
-            if ($package !== null) {
-                $package->name = $names[$id] ?? '';
-                $package->node_name = $nodeNames[$id] ?? '';
-                $package->release_at = $releaseAt[$id] ?? '';
-                $package->sort_order = $sortOrder[$id] ?? 99999999;
-                $package->rating = $rating[$id] ?? $package->rating;
-                $package->save();
-            }
-        }
-
-        return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 
     /**

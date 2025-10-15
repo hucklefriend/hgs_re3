@@ -85,7 +85,7 @@ class FranchiseController extends AbstractAdminController
      * @param GameFranchise $franchise
      * @return Application|Factory|View
      */
-    public function linkTree(\App\Models\GameFranchise $franchise): Application|Factory|View
+    public function linkTree(GameFranchise $franchise): Application|Factory|View
     {
         return view('admin.game.franchise.link_tree', [
             'franchise' => $franchise

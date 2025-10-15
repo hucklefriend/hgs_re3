@@ -30,6 +30,12 @@
         </td>
     </tr>
     <tr>
+        <th>レーティング</th>
+        <td>
+            <x-admin.select-enum name="rating" :model="$model" :list="App\Enums\Rating::selectList()" />
+        </td>
+    </tr>
+    <tr>
         <th>種別</th>
         <td>
             <x-admin.select-enum name="type" :model="$model" :list="\App\Enums\GameMakerType::selectList()" required />

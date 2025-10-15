@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Models\Extensions\KeyFindTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\Rating;
 
 class GameFranchise extends Model
 {
@@ -13,6 +13,9 @@ class GameFranchise extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
+    protected $casts = [
+        'rating' => Rating::class,
+    ];
 
     /**
      * @var array デフォルト値
@@ -20,6 +23,7 @@ class GameFranchise extends Model
     protected $attributes = [
         'name'     => '',
         'phonetic' => '',
+        'rating'   => Rating::None,
     ];
 
     /**
@@ -60,16 +64,6 @@ class GameFranchise extends Model
     public function mediaMixes(): HasMany
     {
         return $this->hasMany(GameMediaMix::class);
-    }
-
-    /**
-     * メインネットワーク
-     *
-     * @return HasOne
-     */
-    public function mainNetwork(): HasOne
-    {
-        return $this->hasOne(GameMainNetworkFranchise::class);
     }
 
     /**
@@ -120,5 +114,38 @@ class GameFranchise extends Model
         $num += $this->titles()->count();
 
         return $num;
+    }
+
+    public function setRating(): void
+    {
+        foreach ($this->series as $series) {
+            foreach ($series->titles as $title) {
+                if ($title->rating == Rating::R18A) {
+                    $this->rating = Rating::R18A;
+                    break 2;
+                }
+            }
+        }
+
+        if ($this->rating == Rating::None) {
+            foreach ($this->titles as $title) {
+                if ($title->rating == Rating::R18A) {
+                    $this->rating = Rating::R18A;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 保存
+     *
+     * @throws \Throwable
+     */
+    public function save(array $options = []): void
+    {
+        $this->setRating();
+
+        parent::save($options);
     }
 }

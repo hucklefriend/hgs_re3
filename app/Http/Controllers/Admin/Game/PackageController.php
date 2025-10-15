@@ -7,7 +7,6 @@ use App\Enums\Shop;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMakerRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
-use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\PackageRequest;
 use App\Http\Requests\Admin\Game\PackageShopMultiUpdateRequest;
@@ -149,6 +148,11 @@ class PackageController extends AbstractAdminController
             }
         }
 
+        // メーカーのレーティングを更新
+        foreach ($package->makers as $maker) {
+            $maker->setRating()->save();
+        }
+
         if ($linked['title_id'] !== null) {
             return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
         } else if ($linked['package_group_id'] !== null) {
@@ -233,12 +237,19 @@ class PackageController extends AbstractAdminController
             $package->makers()->sync($makerIds);
         }
 
+        $updatedTitles = [];
         foreach ($package->packageGroups as $packageGroup) {
-            foreach ($packageGroup->packages as $pkg) {
-                foreach ($pkg->titles as $title) {
+            foreach ($packageGroup->titles as $title) {
+                if (!isset($updatedTitles[$title->id])) {
                     $title->setFirstReleaseInt()->save();
+                    $updatedTitles[$title->id] = true;
                 }
             }
+        }
+
+        // メーカーのレーティングを更新
+        foreach ($package->makers as $maker) {
+            $maker->setRating()->save();
         }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
@@ -289,6 +300,11 @@ class PackageController extends AbstractAdminController
                     $package->packageGroups()->attach($packageGroup->id);
                 }
             }
+
+            // メーカーのレーティングを更新
+            foreach ($package->makers as $maker) {
+                $maker->setRating()->save();
+            }
         }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
@@ -303,7 +319,26 @@ class PackageController extends AbstractAdminController
      */
     public function delete(GamePackage $package): RedirectResponse
     {
+        $titles = [];
+
+        foreach ($package->packageGroups as $packageGroup) {
+            foreach ($packageGroup->titles as $title) {
+                if (!isset($titles[$title->id])) {
+                    $titles[$title->id] = $title;
+                }
+            }
+        }
+
         $package->delete();
+
+        // メーカーのレーティングを更新
+        foreach ($package->makers as $maker) {
+            $maker->setRating()->save();
+        }
+
+        foreach ($titles as $title) {
+            $title->setFirstReleaseInt()->save();
+        }
 
         return redirect()->route('Admin.Game.Package');
     }
@@ -440,6 +475,12 @@ class PackageController extends AbstractAdminController
     public function syncMaker(LinkMultiMakerRequest $request, GamePackage $package): RedirectResponse
     {
         $package->makers()->sync($request->validated('game_maker_ids'));
+
+        // メーカーのレーティングを更新
+        foreach ($package->makers as $maker) {
+            $maker->setRating()->save();
+        }
+
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 
@@ -468,6 +509,18 @@ class PackageController extends AbstractAdminController
     public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GamePackage $package): RedirectResponse
     {
         $package->packageGroups()->sync($request->validated('game_package_group_ids'));
+
+        // タイトルの初期リリース日を更新
+        $titles = [];
+        foreach ($package->packageGroups as $packageGroup) {
+            foreach ($packageGroup->titles as $title) {
+                if (!isset($titles[$title->id])) {
+                    $title->setFirstReleaseInt()->save();
+                    $titles[$title->id] = true;
+                }
+            }
+        }
+
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 

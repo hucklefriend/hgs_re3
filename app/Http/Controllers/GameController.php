@@ -49,7 +49,6 @@ class GameController extends Controller
         // seriesを取得
         $series = GameSeries::whereIn('id', $seriesIds)->get();
 
-
         $franchiseIds = $series->pluck('game_franchise_id')
             ->unique('game_franchise_id')
             ->toArray();
@@ -182,7 +181,7 @@ class GameController extends Controller
 
         $franchisesByPrefix = [];
         foreach ($prefixes as $prefix => $words) {
-            $model = GameFranchise::select(['id', 'key', 'name', 'description']);
+            $model = GameFranchise::select(['id', 'key', 'name', 'description', 'rating']);
             foreach ($words as $word) {
                 $model->orWhere('phonetic', 'like', $word . '%');
             }
