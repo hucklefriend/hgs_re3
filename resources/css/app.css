@@ -60,6 +60,10 @@ main {
 
     > #current-node {
         position: relative;
+
+        > .node-head {
+            margin-bottom: 0px !important;
+        }
     }
 }
 
@@ -283,7 +287,7 @@ div.connection-line {
         min-height: 40px;
 
         transition: all 0.3s ease-out;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
 
         &.node-head-small-margin {
             margin-bottom: 0px !important;
@@ -630,4 +634,15 @@ div.pkg-info {
 
 p.pkg-group-description {
     margin-bottom: 25px !important;
+}
+
+p.rating-warning {
+    display: inline-block;
+    color: #ff8888;
+    font-size: 13px;
+    margin-bottom: 10px;
+    border: solid 1px #883333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 3rem;
 }
