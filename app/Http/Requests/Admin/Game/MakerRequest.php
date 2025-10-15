@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\Game;
 
+use App\Enums\Rating;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
 class MakerRequest extends FormRequest
 {
@@ -41,6 +43,7 @@ class MakerRequest extends FormRequest
             'name'                  => 'required|max:100',
             'key'                   => 'required|max:50',
             'node_name'             => 'required|max:200',
+            'rating'                => ['required', new Enum(Rating::class)],
             'type'                  => 'required|integer',
             'related_game_maker_id' => 'nullable|exists:game_makers,id',
             'synonymsStr'           => '',

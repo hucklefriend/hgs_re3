@@ -33,6 +33,10 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>レーティング</th>
+                    <td>{{ $model->rating->text() }}</td>
+                </tr>
+                <tr>
                     <th>種別</th>
                     <td>{{ $model->type?->text() ?? '' }}</td>
                 </tr>

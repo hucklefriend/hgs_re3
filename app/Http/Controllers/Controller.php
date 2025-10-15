@@ -49,6 +49,8 @@ abstract class Controller
      */
     protected function tree(View $view, bool $ratingCheck = false, array $components = []): JsonResponse|View
     {
+        $view->with('isOver18', $this->isOver18);
+
         if ($ratingCheck) {
             if (!$this->isOver18) {
                 $view = $this->ratingCheck(request()->fullUrl());

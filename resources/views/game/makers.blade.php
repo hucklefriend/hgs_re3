@@ -14,7 +14,12 @@
             @foreach ($makers->where('type', \App\Enums\GameMakerType::COMMERCIAL) as $maker)
             <section class="node link-node" id="{{ $maker->key }}-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">{{ $maker->name }}</a>
+                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">
+                        {{ $maker->name }}
+                        @if ($maker->rating == \App\Enums\Rating::R18A)
+                        &nbsp;🔞
+                        @endif
+                    </a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
@@ -31,7 +36,12 @@
             @foreach ($makers->where('type', \App\Enums\GameMakerType::INDIE) as $maker)
             <section class="node link-node" id="{{ $maker->key }}-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">{{ $maker->name }}</a>
+                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">
+                        {{ $maker->name }}
+                        @if ($maker->rating == \App\Enums\Rating::R18A)
+                        &nbsp;🔞
+                        @endif
+                    </a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
@@ -48,7 +58,12 @@
             @foreach ($makers->where('type', \App\Enums\GameMakerType::DOUJIN) as $maker)
             <section class="node link-node" id="{{ $maker->key }}-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">{{ $maker->name }}</a>
+                    <a href="{{ route('Game.MakerDetail', ['makerKey' => $maker->key]) }}" class="node-head-text">
+                        {{ $maker->name }}
+                        @if ($maker->rating == \App\Enums\Rating::R18A)
+                        &nbsp;🔞
+                        @endif
+                    </a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
