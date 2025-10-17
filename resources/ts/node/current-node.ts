@@ -309,17 +309,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this.disappear();
     }
 
-    public changeChildNodesWithData(url: string, data: any, nodeId: string | null, isChildOnly: boolean = false): void
+    public changeChildNodesWithData(url: string, data: any, isChildOnly: boolean = false): void
     {
-        if (nodeId) {
-            const node = this.getNodeById(nodeId);
-            if (node && !(node instanceof CurrentNode)) {
-                node.isHomewardDisappear = true;
-                node.parentNode.prepareDisappear(node);
-                node.disappear();
-            }
-        }
-
         this._isChildOnly = false;
         this.postData(url, data, isChildOnly);
         this.disappear();

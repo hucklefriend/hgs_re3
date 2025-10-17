@@ -38,7 +38,7 @@
                 </div>
             @endif
 
-            <form id="contact-form" method="POST" action="{{ route('SendContact') }}" style="margin-top: 20px;" onsubmit="return window.hgn.submitContactForm(this, 'contact-form-node', true);">
+            <form id="contact-form" method="POST" action="{{ route('SendContact') }}" style="margin-top: 20px;" rel="internal" data-child-only="0" onsubmit="return false;">
                 @csrf
 
                 <div style="margin-bottom: 20px;">
@@ -122,6 +122,16 @@
                     <span class="node-pt main-node-pt">●</span>
                 </div>
             </section>
+            
+        
+            @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Admin.Manage.Contact') }}" class="node-head-text" rel="external">管理</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            @endif
         </div>
     </section>
 @endsection

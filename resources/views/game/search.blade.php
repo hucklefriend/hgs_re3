@@ -4,21 +4,10 @@
 @section('current-node-title', 'タイトル検索')
 
 @section('current-node-content')
-<form id="search-form" method="GET" action="{{ route('Game.Search') }}">
+<form id="search-form" method="GET" action="{{ route('Game.Search') }}" rel="internal" data-child-only="1">
     <input type="text" id="search-input" value="{{ $text }}">
     <button type="submit">検索</button>
 </form>
-<script>
-    document.getElementById('search-form').addEventListener('submit', e => {
-        e.preventDefault();
-        const searchInput = document.getElementById('search-input');
-        // urlを生成
-        const url = new URL(window.location.href);
-        url.searchParams.set('text', searchInput.value);
-
-        window.hgn.currentNode.changeChildNodes(url.toString(), true);
-    });
-</script>
 @endsection
 
 @section('nodes')

@@ -1,11 +1,9 @@
 @extends('layout')
 
-@section('title', 'お問い合わせ内容 | ホラーゲームネットワーク')
-@section('current-node-title', 'お問い合わせ内容')
-
-@section('nodes')
-
-    @if (session('success'))
+@section('title', 'お問い合わせ | ホラーゲームネットワーク')
+@section('current-node-title', 'お問い合わせ')
+@section('current-node-content')
+@if (session('success'))
         <section class="node">
             <div class="node-content basic">
                 <div style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin: 15px 0; border-radius: 4px;">
@@ -41,185 +39,38 @@
             </div>
         </section>
     @endif
+    <div style="line-height: 1.6;font-size: 13px;">
+        <span style="padding: 3px 5px; background-color: {{ $contact->status->value === 0 ? '#ff9800' : ($contact->status->value === 1 ? '#2196F3' : ($contact->status->value === 2 ? '#4CAF50' : '#999')) }}; color: white; border-radius: 3px;">
+            {{ $contact->status->label() }}
+        </span>
+    </div>
+    <p>{{ $contact->category }}</p>
+    <p>
+        {!! nl2br(e($contact->masked_message)) !!}
+    </p>
 
-    <section class="node">
-        <div class="node-head">
-            <h2 class="node-head-text">お問い合わせ内容</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic">
-            <dl style="line-height: 1.8;">
-                <dt style="font-weight: bold; margin-top: 15px;">お問い合わせ番号</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; font-family: monospace;">
-                    {{ $contact->token }}
-                </dd>
+    <div style="line-height: 1.6;font-size: 13px;">
+        お名前：{{ $contact->name }}<br>
+        受付日時：{{ $contact->created_at->format('Y年m月d日 H:i') }}
+    </div>
+@endsection
 
-                <dt style="font-weight: bold; margin-top: 15px;">ステータス</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                    <span style="padding: 5px 15px; background-color: {{ $contact->status->value === 0 ? '#ff9800' : ($contact->status->value === 1 ? '#2196F3' : ($contact->status->value === 2 ? '#4CAF50' : '#999')) }}; color: white; border-radius: 3px;">
-                        {{ $contact->status->label() }}
-                    </span>
-                </dd>
 
-                <dt style="font-weight: bold; margin-top: 15px;">お名前</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                    {{ $contact->name }}
-                </dd>
-
-                @if($contact->category)
-                    <dt style="font-weight: bold; margin-top: 15px;">カテゴリー</dt>
-                    <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                        {{ $contact->category }}
-                    </dd>
-                @endif
-
-                @if($contact->subject)
-                    <dt style="font-weight: bold; margin-top: 15px;">件名</dt>
-                    <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                        {{ $contact->masked_subject }}
-                    </dd>
-                @endif
-
-                <dt style="font-weight: bold; margin-top: 15px;">お問い合わせ内容</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; white-space: pre-wrap;">{{ $contact->masked_message }}</dd>
-
-                <dt style="font-weight: bold; margin-top: 15px;">受付日時</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                    {{ $contact->created_at->format('Y年m月d日 H:i') }}
-                </dd>
-            </dl>
-        </div>
-    </section>
-
-    @if($responses->count() > 0)
-        <section class="node">
-            <div class="node-head">
-                <h2 class="node-head-text">返信履歴</h2>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content basic">
-                @foreach($responses as $response)
-                    <div style="margin-bottom: 20px; padding: 15px; border-left: 4px solid {{ $response->responder_type->value === 0 ? '#4CAF50' : '#2196F3' }}; background-color: #f9f9f9; border-radius: 4px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div>
-                                <span style="font-weight: bold; color: {{ $response->responder_type->value === 0 ? '#4CAF50' : '#2196F3' }};">
-                                    @if($response->responder_type->value === 0)
-                                        👤 {{ $response->responder_name ?? '管理者' }}
-                                    @elseif($response->responder_type->value === 1)
-                                        💬 {{ $response->responder_name ?? 'ユーザー' }}
-                                    @else
-                                        🤖 システム
-                                    @endif
-                                </span>
-                                <span style="margin-left: 10px; padding: 3px 8px; background-color: {{ $response->responder_type->value === 0 ? '#4CAF50' : '#2196F3' }}; color: white; font-size: 12px; border-radius: 3px;">
-                                    {{ $response->responder_type->label() }}
-                                </span>
-                            </div>
-                            <span style="color: #666; font-size: 14px;">
-                                {{ $response->created_at->format('Y年m月d日 H:i') }}
-                            </span>
-                        </div>
-                        <div style="white-space: pre-wrap; line-height: 1.6;">{{ $response->masked_message }}</div>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    @else
-        <section class="node">
-            <div class="node-head">
-                <h2 class="node-head-text">返信履歴</h2>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content basic">
-                <p style="color: #999; text-align: center; padding: 30px;">まだ返信がありません。</p>
-            </div>
-        </section>
-    @endif
-
-    <section class="node">
-        <div class="node-head">
-            <h2 class="node-head-text">追加の返信を投稿</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic">
-            <p style="margin-bottom: 20px;">
-                追加で情報を送信したい場合は、こちらから返信を投稿できます。
-            </p>
-
-            <div style="background-color: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                <strong style="color: #1976D2;">💡 個人情報保護機能について</strong>
-                <p style="margin: 10px 0 0 0; line-height: 1.6; font-size: 14px;">
-                    メールアドレスや電話番号などの個人情報は、<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">/*</code>と<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">*/</code>で囲むことで、管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
-                </p>
-            </div>
-
-            @if ($errors->any())
-                <div style="background-color: #fee; border: 1px solid #f00; padding: 15px; margin: 15px 0; border-radius: 4px;">
-                    <ul style="margin: 0; padding-left: 20px;">
-                        @foreach ($errors->all() as $error)
-                            <li style="color: #c00;">{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('Contact.StoreResponse', ['token' => $contact->token]) }}">
-                @csrf
-
-                <div style="margin-bottom: 20px;">
-                    <label for="responder_name" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                        お名前 <span style="color: #c00;">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="responder_name" 
-                        name="responder_name" 
-                        value="{{ old('responder_name', $contact->name) }}" 
-                        required
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
-                    >
-                    <p style="font-size: 12px; color: #666; margin-top: 5px;">※ 元のお問い合わせ時のお名前がデフォルトで入力されています。</p>
-                </div>
-
-                <div style="margin-bottom: 20px;">
-                    <label for="message" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                        返信内容 <span style="color: #c00;">*</span>
-                    </label>
-                    <textarea 
-                        id="message" 
-                        name="message" 
-                        rows="8" 
-                        required
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;"
-                    >{{ old('message') }}</textarea>
-                </div>
-
-                <div style="text-align: center; margin-top: 30px;">
-                    <button 
-                        type="submit"
-                        style="background-color: #2196F3; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
-                    >
-                        返信を投稿
-                    </button>
-                </div>
-            </form>
-        </div>
-    </section>
-
+@section('nodes')
     @if($contact->status->value === 0)
-        <section class="node">
+        <section class="node" id="cancel-node">
             <div class="node-head">
-                <h2 class="node-head-text">お問い合わせを取り消す</h2>
+                <h2 class="node-head-text">取り消し</h2>
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content basic">
-                <p style="margin-bottom: 20px; color: #666;">
-                    まだ対応されていない問い合わせは取り消すことができます。<br>
-                    取り消すと、この問い合わせは表示されなくなります。
+                <p style="margin-bottom: 20px; color: #ffffff;">
+                    未対応のお問い合わせは取り消すことができます。<br>
+                    取り消すと、このお問い合わせは表示されなくなります。
                 </p>
-                <form method="POST" action="{{ route('Contact.Cancel', ['token' => $contact->token]) }}" onsubmit="return confirm('本当にこの問い合わせを取り消しますか？\n取り消し後は元に戻せません。');">
+                <form method="POST" action="{{ route('Contact.Cancel', ['token' => $contact->token]) }}">
                     @csrf
-                    <div style="text-align: center;">
+                    <div>
                         <button 
                             type="submit"
                             style="background-color: #f44336; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
@@ -232,25 +83,137 @@
         </section>
     @endif
 
-    <section class="node tree-node">
+
+    <section class="node tree-node" id="response-node">
         <div class="node-head">
-            <h2 class="node-head-text">近道</h2>
+            <h2 class="node-head-text">返信</h2>
             <span class="node-pt">●</span>
         </div>
-        <div class="node-content tree">
-            <section class="node link-node">
+
+        @if($responses->count() === 0)
+        <div class="node-content basic" id="response-empty">
+            <p style="color: #CCC;">返信はありません。</p>
+        </div>
+        @endif
+        <div class="node-content tree" id="response-node-content">
+            @if($responses->count() > 0)
+                @foreach($responses as $response)
+                <section class="node" id="response-form-node">
+                    <div class="node-head">
+                        <h3 class="node-head-text">
+                            {{ $response->responder_name }}
+                            {{ $response->created_at->format('Y年m月d日 H:i') }}
+                        </h3>
+                        <span class="node-pt">●</span>
+                    </div>
+                    <div class="node-content basic">
+                        {!! nl2br(e($response->masked_message)) !!}
+                    </div>
+                </section>
+                @endforeach
+            @endif
+            <section class="node" id="response-form-node">
                 <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
-                    <span class="node-pt main-node-pt">●</span>
+                    <h3 class="node-head-text">返信を投稿</h3>
+                    <span class="node-pt">●</span>
                 </div>
-            </section>
-            <section class="node link-node">
-                <div class="node-head">
-                    <a href="{{ route('Contact') }}" class="node-head-text">お問い合わせ</a>
-                    <span class="node-pt main-node-pt">●</span>
+                <div class="node-content basic" id="response-form">
+                    <div style="background-color: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                        <strong style="color: #1976D2;">💡 個人情報保護機能について</strong>
+                        <p style="margin: 10px 0 0 0; line-height: 1.6; font-size: 14px;">
+                            メールアドレスや電話番号などの個人情報は、<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">/*</code>と<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">*/</code>で囲むことで、管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
+                        </p>
+                    </div>
+
+                    @if ($errors->any())
+                        <div style="background-color: #fee; border: 1px solid #f00; padding: 15px; margin: 15px 0; border-radius: 4px;">
+                            <ul style="margin: 0; padding-left: 20px;">
+                                @foreach ($errors->all() as $error)
+                                    <li style="color: #c00;">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('Contact.StoreResponse', ['token' => $contact->token]) }}" data-child-only="1">
+                        @csrf
+
+                        <div style="margin-bottom: 20px;">
+                            <label for="responder_name" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                                お名前 <span style="color: #c00;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="responder_name" 
+                                name="responder_name" 
+                                value="{{ old('responder_name', $contact->name) }}" 
+                                required
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
+                            >
+                            <p style="font-size: 12px; color: #666; margin-top: 5px;">※ 元のお問い合わせ時のお名前がデフォルトで入力されています。</p>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label for="message" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                                返信内容 <span style="color: #c00;">*</span>
+                            </label>
+                            <textarea 
+                                id="message" 
+                                name="message" 
+                                rows="8" 
+                                required
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;"
+                            >{{ old('message') }}</textarea>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 30px;">
+                            <button 
+                                type="submit"
+                                style="background-color: #2196F3; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
+                            >
+                                返信を投稿
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </section>
         </div>
     </section>
+ 
+
+        <section class="node tree-node">
+            <div class="node-head">
+                <h2 class="node-head-text">近道</h2>
+                <span class="node-pt">●</span>
+            </div>
+            <div class="node-content tree">
+                <section class="node link-node">
+                    <div class="node-head">
+                        <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                        <span class="node-pt main-node-pt">●</span>
+                    </div>
+                </section>
+                <section class="node link-node">
+                    <div class="node-head">
+                        <a href="{{ route('Contact') }}" class="node-head-text">お問い合わせ</a>
+                        <span class="node-pt main-node-pt">●</span>
+                    </div>
+                </section>
+
+                
+            
+                @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+                <section class="node link-node">
+                    <div class="node-head">
+                        <a href="{{ route('Admin.Manage.Contact.Show', $contact) }}" class="node-head-text" rel="external">管理</a>
+                        <span class="node-pt">●</span>
+                    </div>
+                </section>
+                @endif
+            </div>
+        </section>
+    </section>
+
+
 @endsection
 
