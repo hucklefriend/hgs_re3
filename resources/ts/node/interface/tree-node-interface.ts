@@ -34,4 +34,6 @@ export interface TreeNodeInterface
     homewardDisappear(): void;
 
     resizeConnectionLine(): void;
+
+    getNodeById(id: string): NodeType | null;
 }

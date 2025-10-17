@@ -104,4 +104,10 @@
             <span class="node-pt">●</span>
         </div>
     </section>
+    <section class="node link-node" id="contact-node">
+        <div class="node-head">
+            <a href="{{ route('Contact') }}" class="node-head-text" id="contact-a">問い合わせ</a>
+            <span class="node-pt">●</span>
+        </div>
+    </section>
 @endsection

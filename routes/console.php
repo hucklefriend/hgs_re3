@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 Schedule::command(\App\Console\Commands\UpdateOgpCachesCommand::class)
     ->hourly();
+
+Schedule::command(\App\Console\Commands\CloseResolvedContacts::class)
+    ->dailyAt('04:00');

@@ -201,4 +201,19 @@ export class HorrorGameNetwork
     {
         Cookies.set('over_18', value ? '1' : '0');
     }
+
+    /**
+     * お問い合わせフォームの送信処理
+     * 
+     * @param form フォーム要素
+     * @param nodeId ノードID
+     * @param isChildOnly 子ノードのみの場合はtrue
+     * @returns false
+     */
+    public submitContactForm(form: HTMLFormElement, nodeId: string, isChildOnly: boolean): boolean
+    {
+        const formData = new FormData(form);
+        this._currentNode.changeChildNodesWithData(form.action, formData, nodeId, isChildOnly);
+        return false;
+    }
 } 

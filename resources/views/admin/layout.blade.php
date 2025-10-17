@@ -116,6 +116,9 @@
                         <div class="menu-item  {{ menu_active("Admin.Manage.Information") }}">
                             <a href="{{ route("Admin.Manage.Information") }}" class="menu-link"><div class="menu-text">Information</div></a>
                         </div>
+                        <div class="menu-item  {{ menu_active("Admin.Manage.Contact") }}">
+                            <a href="{{ route("Admin.Manage.Contact") }}" class="menu-link"><div class="menu-text">Contact</div></a>
+                        </div>
                     </div>
                 </div>
                 <div class="menu-item has-sub {{ menu_active("Admin.Game") }}">

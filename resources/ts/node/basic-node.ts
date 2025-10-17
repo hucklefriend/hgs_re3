@@ -373,6 +373,7 @@ export class BasicNode extends NodeBase
         if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
             return;
         }
+        this.disappearContents();
 
         // TreeNodeの場合は_nodeContentTreeも消滾させる
         const hgn = (window as any).hgn as HorrorGameNetwork;

@@ -6,8 +6,8 @@ export class NextNodeCache
     public currentNodeContent: string;
     public nodes: string;
     public popup: string;
-    public ratingCheck: boolean;
-
+    public url: string;
+    
     public constructor()
     {
         this.title = '';
@@ -15,6 +15,6 @@ export class NextNodeCache
         this.currentNodeContent = '';
         this.nodes = '';
         this.popup = '';
-        this.ratingCheck = false;
+        this.url = '';
     }
 }

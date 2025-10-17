@@ -43,11 +43,11 @@ abstract class Controller
      *
      * @param View $view
      * @param bool $ratingCheck
-     * @param array $components
+     * @param string $url
      * @return JsonResponse|View
      * @throws \Throwable
      */
-    protected function tree(View $view, bool $ratingCheck = false, array $components = []): JsonResponse|View
+    protected function tree(View $view, bool $ratingCheck = false, string $url = ''): JsonResponse|View
     {
         $view->with('isOver18', $this->isOver18);
 
@@ -66,12 +66,11 @@ abstract class Controller
                 'currentNodeContent' => $rendered['current-node-content'] ?? '',
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
-                'components'         => $components,
+                'url'                => $url,
             ]);
         }
 
-        return $view->with('viewerType', 'tree')
-            ->with('components', $components);
+        return $view->with('viewerType', 'tree');
     }
 
     private function ratingCheck(string $currentUrl): View
