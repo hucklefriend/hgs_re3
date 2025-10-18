@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'トップ | ホラーゲームネットワーク')
-@section('current-node-title', 'ホラーゲームネットワーク')
+@section('title', 'トップ')
+@section('current-node-title', 'ホラーゲームネットワーク(α)')
 
 @section('nodes')
     <section class="node tree-node" id="horror-games-tree-node">
@@ -74,19 +74,21 @@
     </section>
     <section class="node link-node" id="information-node">
         <div class="node-head">
-            <a href="#" class="node-head-text">お知らせ</a>
+            <a href="{{ route('Informations') }}" class="node-head-text">お知らせ</a>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content behind">
-            <div class="behind-node">
-                <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
-            </div>
-            <div class="behind-node">
-                <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
-            </div>
-            <div class="behind-node">
-                <span class="node-pt">●</span><span>2025.5.5 メンテナンスのお知らせ</span>
-            </div>
+            @if (!$infoList->isEmpty())
+                @foreach ($infoList as $info)
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>{{ $info->head }}</span>
+                    </div>
+                @endforeach
+            @else
+                <div class="behind-node">
+                    <span class="node-pt">●</span><span>現在、お知らせはありません。</span>
+                </div>
+            @endif
         </div>
     </section>
     
@@ -99,6 +101,12 @@
     <section class="node link-node" id="privacy-policy-node">
         <div class="node-head">
             <a href="{{ route('PrivacyPolicy') }}" class="node-head-text" id="privacy-policy-a">プライバシーポリシー</a>
+            <span class="node-pt">●</span>
+        </div>
+    </section>
+    <section class="node link-node" id="contact-node">
+        <div class="node-head">
+            <a href="{{ route('Contact') }}" class="node-head-text" id="contact-a">問い合わせ</a>
             <span class="node-pt">●</span>
         </div>
     </section>

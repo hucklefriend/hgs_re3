@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $mediaMix->name . ' | ホラーゲームネットワーク')
+@section('title', $mediaMix->name)
 @section('current-node-title', $mediaMix->name)
 @section('ratingCheck', $mediaMix->rating == \App\Enums\Rating::None ? "false" : "true")
 

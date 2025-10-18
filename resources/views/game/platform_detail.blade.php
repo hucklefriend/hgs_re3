@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $platform->name . ' | ホラーゲームネットワーク')
+@section('title', $platform->name)
 @section('current-node-title', $platform->name)
 
 @section('current-node-content')

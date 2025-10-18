@@ -60,6 +60,10 @@ main {
 
     > #current-node {
         position: relative;
+
+        > .node-head {
+            margin-bottom: 0px !important;
+        }
     }
 }
 
@@ -283,7 +287,7 @@ div.connection-line {
         min-height: 40px;
 
         transition: all 0.3s ease-out;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
 
         &.node-head-small-margin {
             margin-bottom: 0px !important;
@@ -297,7 +301,7 @@ div.connection-line {
 }
 
 .node-content.basic {
-    margin-left: 20px;
+    margin-left: 30px;
     opacity: 0;
     transition: opacity 0.2s ease-in;
 
@@ -630,4 +634,190 @@ div.pkg-info {
 
 p.pkg-group-description {
     margin-bottom: 25px !important;
+}
+
+p.rating-warning {
+    display: inline-block;
+    color: #ff8888;
+    font-size: 13px;
+    margin-bottom: 10px;
+    border: solid 1px #883333;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 3rem;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+    border-left: 4px solid;
+    line-height: 1.6;
+
+    strong {
+        font-weight: bold;
+    }
+
+    code {
+        background-color: #333333;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+
+    p:first-of-type {
+        margin-top: 10px;
+    }
+}
+
+.alert-info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left-color: #2196F3;
+
+    > strong {
+        color: #40AAFF;
+    }
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-left-color: #FFC107;
+
+    > strong {
+        color: #FFD54F;
+    }
+}
+
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left-color: #F44336;
+
+    > strong {
+        color: #EF5350;
+    }
+}
+
+.alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-left-color: #4CAF50;
+
+    > strong {
+        color: #66BB6A;
+    }
+}
+
+.alert-default {
+    background-color: rgba(158, 158, 158, 0.1);
+    border-left-color: #9E9E9E;
+
+    > strong {
+        color: #BDBDBD;
+    }
+}
+
+.alert-secondary {
+    color: #CCC;
+    font-size: 14px;
+}
+
+/* Button Styles */
+.btn {
+    background-color: transparent;
+    padding: 12px 30px;
+    border: 2px solid;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-success {
+    color: #d0d0d0;
+    border-color: #2e7d32;
+    text-shadow: 0 0 8px rgba(208, 208, 208, 0.5);
+}
+
+.btn-success:hover {
+    border-color: #66bb6a;
+    color: white;
+    box-shadow: 0 0 15px rgba(102, 187, 106, 0.6), 0 0 25px rgba(102, 187, 106, 0.4);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(102, 187, 106, 0.4);
+}
+
+.btn-info {
+    color: #d0d0d0;
+    border-color: #1976d2;
+    text-shadow: 0 0 8px rgba(208, 208, 208, 0.5);
+}
+
+.btn-info:hover {
+    border-color: #42a5f5;
+    color: white;
+    box-shadow: 0 0 15px rgba(66, 165, 245, 0.6), 0 0 25px rgba(66, 165, 245, 0.4);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(66, 165, 245, 0.4);
+}
+
+.btn-warning {
+    color: #d0d0d0;
+    border-color: #f57c00;
+    text-shadow: 0 0 8px rgba(208, 208, 208, 0.5);
+}
+
+.btn-warning:hover {
+    border-color: #ffb74d;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 183, 77, 0.6), 0 0 25px rgba(255, 183, 77, 0.4);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 183, 77, 0.4);
+}
+
+.btn-danger {
+    color: #d0d0d0;
+    border-color: #c62828;
+    text-shadow: 0 0 8px rgba(208, 208, 208, 0.5);
+}
+
+.btn-danger:hover {
+    border-color: #ef5350;
+    color: white;
+    box-shadow: 0 0 15px rgba(239, 83, 80, 0.6), 0 0 25px rgba(239, 83, 80, 0.4);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(239, 83, 80, 0.4);
+}
+
+.btn-default {
+    color: #d0d0d0;
+    border-color: #616161;
+    text-shadow: 0 0 8px rgba(208, 208, 208, 0.5);
+}
+
+.btn-default:hover {
+    border-color: #bdbdbd;
+    color: white;
+    box-shadow: 0 0 15px rgba(189, 189, 189, 0.6), 0 0 25px rgba(189, 189, 189, 0.4);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(189, 189, 189, 0.4);
+}
+
+form {
+    div.form-group {
+        margin-bottom: 20px;
+
+        > label {  
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        > input, > select, > textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    }
+
+    .required {
+        color: #c00;
+    }
 }

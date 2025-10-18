@@ -1,10 +1,18 @@
 @extends('layout')
 
-@section('title', $title->name . ' | ホラーゲームネットワーク')
+@section('title', $title->name)
 @section('current-node-title', $title->name)
 @section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
 
 @section('current-node-content')
+
+    @if (!$isOver18 && $title->rating == \App\Enums\Rating::R18Z)
+        <p class="rating-warning">
+            CERO-Z相当の年齢指定があるパッケージが含まれます。<br>
+            18歳未満には適さない表現が表示される場合があります。
+        </p>
+    @endif
+
     @include('common.current-node-ogp', ['model' => $title])
 @endsection
 

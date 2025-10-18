@@ -18,6 +18,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private _homewardNode: NodeType | null = null;
     private _currentNodeContentElement: HTMLElement | null = null;
     private _accordionGroups: { [key: string]: AccordionTreeNode[] } = {};
+    private _tmpStateData: { url: string, isChildOnly: boolean } | null = null;
 
     public get homewardNode(): NodeType | null
     {
@@ -109,7 +110,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (!this._isChildOnly) {
             this._nodeHead.appear();
         }
-
 
         this.appearContents();
         this._nodeContentTree.appear();
@@ -211,6 +211,15 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
             this.dispose();
 
+            if (this._tmpStateData) {
+                if (this._nextNodeCache.url.length > 0) {
+                    this._tmpStateData.url = this._nextNodeCache.url;
+                }
+
+                window.history.pushState(this._tmpStateData, '', this._tmpStateData.url);
+                this._tmpStateData = null;
+            }
+
             if (!this._isChildOnly) {
                 document.title = this._nextNodeCache.title;
                 this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
@@ -248,22 +257,15 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         if (!isFromPopState) {
             // pushStateで履歴に追加
-            const stateData = {
-                type: 'link-node',
-                url: url,
-                isChildOnly: isChildOnly
-            };
-            history.pushState(stateData, '', url);
+            this._tmpStateData = { url: url, isChildOnly: isChildOnly };
         }
 
         this._isChildOnly = isChildOnly;
 
         const urlWithParam = Util.addParameterA(url);
         fetch(urlWithParam, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        })
+                headers: {"X-Requested-With": "XMLHttpRequest"}
+            })
             .then(response => response.json())
             .then(data => {
                 this.nextNodeCache = data;
@@ -273,9 +275,47 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             });
     }
 
-    public changeChildNodes(url: string): void
+    public postData(url: string, data: any, isChildOnly: boolean = false, isNoPushState: boolean = false): void
     {
-        this.moveNode(url, false, true);
+        if (!isNoPushState) {
+            this._tmpStateData = { url: url, isChildOnly: isChildOnly };
+        } else {
+            this._tmpStateData = null;
+        }
+        this._isChildOnly = isChildOnly;
+
+        const urlWithParam = Util.addParameterA(url);
+        fetch(urlWithParam, {
+            headers: {"X-Requested-With": "XMLHttpRequest"},
+            method: 'POST',
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.nextNodeCache = data;
+        })
+        .catch(error => {
+            console.error('データの送信に失敗しました:', error);
+        });
+    }
+
+    public changeChildNodes(url: string, nodeId: string | null, isChildOnly: boolean = false): void
+    {
+        if (nodeId) {
+            const node = this.getNodeById(nodeId);
+            if (node && !(node instanceof CurrentNode)) {
+                node.parentNode.prepareDisappear(node);
+            }
+        }
+
+        this.moveNode(url, false, isChildOnly);
+        this.disappear();
+    }
+
+    public changeChildNodesWithData(url: string, data: any, isChildOnly: boolean = false, isNoPushState: boolean = false): void
+    {
+        this._isChildOnly = false;
+        this.postData(url, data, isChildOnly, isNoPushState);
         this.disappear();
     }
 
@@ -300,6 +340,11 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public getAccordionGroup(groupId: string): AccordionTreeNode[]
     {
         return this._accordionGroups[groupId];
+    }
+
+    public getNodeById(id: string): NodeType | null
+    {
+        return this._nodeContentTree.getNodeById(id);
     }
 }
 

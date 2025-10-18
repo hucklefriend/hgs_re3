@@ -1,11 +1,16 @@
 @extends('layout')
 
-@section('title', 'プライバシーポリシー | ホラーゲームネットワーク')
+@section('title', 'プライバシーポリシー')
 @section('current-node-title', 'プライバシーポリシー')
 
+
+@section('current-node-content')
+    <p style="font-size: 13px; padding-bottom: 30px;">
+        最終改定日：2025年10月16日
+    </p>
+@endsection
+
 @section('nodes')
-
-
     <section class="node">
         <div class="node-head">
             <span class="node-head-text">Intended for users in Japan only</span>
@@ -13,34 +18,32 @@
         </div>
         <div class="node-content basic">
             <p>
-                当サイトは日本国内向けです。<br>
-                日本国内の法律に従い、日本語以外でのサービス提供やサポートは行っておりせん。
+                当サイトは日本専用サイトです。<br>
+                日本国の法律に従い、日本語以外でのサービス提供やサポートは行っておりません。
             </p>
             <p>
-                This website is intended for users in Japan.<br>
-                I do not provide services or support in languages other than Japanese.<br>
-                I comply with the laws of Japan.
+                This website is exclusively for users in Japan.<br>
+                In compliance with Japanese law, we do not provide services or support in languages other than Japanese.
             </p>
         </div>
     </section>
 
+
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">Cookieの利用</span>
+            <span class="node-head-text">アクセスログ</span>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
             <p>
-                当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
-                Cookieを第三者へ送信することはありません。
-            </p>
-            <p>
-                Cookieについて詳しくはこちら<br>
-                <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
+                当サイトでは、サーバーの運用・保守およびセキュリティ確保のため、アクセスログを記録しています。<br>
+                記録される情報には、IPアドレス、アクセス日時、閲覧ページ、ブラウザの種類などが含まれます。<br>
+                これらの情報は個人を特定する目的では使用せず、サイトの改善やセキュリティ対策のためにのみ利用します。<br>
+                また、法令に基づく場合を除き、これらの情報を第三者へ提供することはありません。<br>
+                アクセスログは一定期間（おおよそ6か月以内）保管した後、順次削除しています。
             </p>
         </div>
     </section>
-
 
     <section class="node">
         <div class="node-head">
@@ -50,9 +53,9 @@
         <div class="node-content basic">
             <p>
                 現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
-                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、<br>
+                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、
                 ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
-                データ削除の依頼は<a href="https://x.com/huckle_friend" target="_blank">X(Twitter)</a>までお願いします。
+                その際に取得する個人情報については、後日プライバシーポリシーに記載します。
             </p>
         </div>
     </section>
@@ -105,6 +108,53 @@
     </section>
     --}}
 
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の安全管理措置</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトでは、取得した個人情報を適切に管理し、漏えい・改ざん・紛失等を防止するため、必要かつ合理的な安全管理措置を講じています。<br>
+                通信にはSSLによる暗号化を採用し、通信経路上での盗聴や改ざんを防止しています。<br>
+                当サイトはLaravelによって構築されており、サーバーにはアクセス制限および不正アクセス対策を実施しています。<br>
+                過去に取得したメールアドレス等の個人情報についても、安全なサーバー環境で適切に保管し、外部への漏えい防止に努めています。<br>
+                個人情報は、利用目的の達成に必要な範囲内でのみ取り扱い、不要となった場合には適切な方法で削除または破棄いたします。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の開示・訂正・削除について</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトが保有する個人情報について、ご本人から開示・訂正・削除等のご請求があった場合には、本人確認の上、合理的な範囲で対応いたします。<br>
+                ご請求は当サイトの<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
+                メール等での個別対応は行っておりません。<br>
+                原則として30日以内に対応いたしますが、法令等に基づき削除できない場合や、対応に時間を要する場合には、その旨をお知らせいたします。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">Cookieの利用</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトでは、Cookieを使用しています。<br>
+                これは、ログイン状態の維持や各種パラメーターの保持のために利用しています。
+            </p>
+            <p>
+                また、広告配信および成果測定のため、第三者であるアフィリエイトサービス提供事業者のプログラムを利用しています。<br>
+                これにより、当該事業者がCookie等を通じてユーザーのアクセス情報を取得する場合があります。
+            </p>
+        </div>
+    </section>
 
     <section class="node">
         <div class="node-head">
@@ -114,31 +164,12 @@
         <div class="node-content basic">
             <p>
                 下記のアフィリエイトに参加しています。<br>
-                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクを行っている部分があります。
+                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクしている部分があります。
             </p>
             <ul>
                 <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
-                <li>
-                    <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a>
-                </li>
+                <li><a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a></li>
             </ul>
-        </div>
-    </section>
-
-    <section class="node">
-        <div class="node-head">
-            <span class="node-head-text">アフィリエイト画像について</span>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic">
-            <p>
-                アフィリエイトサイトから取得・直リンクで表示している画像は、右下に取得元を表記しています。<br>
-                また、画像の利用については各サイトの規約に則り下記の通りに運用しています。
-            </p>
-            <h3>・DMM アフィリエイト</h3>
-            <p>
-                <a href="https://support.dmm.com/affiliate/article/47112" target="_blank">画像は直リンクしていいですか？それともダウンロードして使った方がいいのでしょうか？</a>に則り、ダウンロードして利用しています。
-            </p>
         </div>
     </section>
 
@@ -161,7 +192,7 @@
             <li>
                 R-18Z: CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
                 また過激なグロテスク表現のある関連商品や二次創作。<br>
-                年齢設定をしていない場合、パッケージ画像が非表示となります。
+                年齢設定をしていない場合、画面上に警告文が表示されます。
             </li>
             <li>
                 R-18A: アダルトゲーム、いわゆるエロゲ。<br>
@@ -183,11 +214,23 @@
         </div>
         <div class="node-content basic">
             <p>
-                当サイトで掲載している画像等の著作権等は権利所有者のものです。<br>
-                また生成AIで生成した画像の著作権については日本国の法律に従います。
+                当サイトで掲載している画像等の著作権等は権利所有者のものです。
             </p>
             <p>
                 当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
+            </p>
+        </div>
+    </section>
+
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">問い合わせ</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                個人情報の削除については、<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
             </p>
         </div>
     </section>

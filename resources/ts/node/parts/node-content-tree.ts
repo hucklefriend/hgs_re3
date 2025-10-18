@@ -109,6 +109,25 @@ export class NodeContentTree extends NodeContent
         return this._nodes[index];
     }
 
+    public getNodeById(id: string): NodeType | null
+    {
+        let node = this._nodes.find(node => node.id === id) || null;
+        if (node) {
+            return node;
+        }
+
+        for (const n of this._nodes) {
+            // nodeがTreeNodeInterfaceを実装している場合
+            if ('getNodeById' in n && typeof n.getNodeById === 'function') {
+                node = (n as TreeNodeInterface).getNodeById(id);
+                if (node) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * ノードの開放
      */

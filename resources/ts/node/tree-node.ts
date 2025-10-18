@@ -191,4 +191,9 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         // 親にも伝播させる
         this._parentNode.resizeConnectionLine();
     }
+
+    public getNodeById(id: string): NodeType | null
+    {
+        return this._nodeContentTree.getNodeById(id);
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -16,9 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HgnController::class, 'root'])->name('Root');
-if (App::environment('production')) {
-    return;
-}
 
 use App\Http\Controllers\Admin;
 // 管理用
@@ -45,6 +43,12 @@ Route::group(['prefix' => 'admin'], function () {
                 'update'  => 'Admin.Manage.Information.Update',
                 'destroy' => 'Admin.Manage.Information.Destroy',
             ]);
+
+            // 問い合わせ
+            Route::get('contact', [Admin\Manage\ContactController::class, 'index'])->name('Admin.Manage.Contact');
+            Route::get('contact/{contact}', [Admin\Manage\ContactController::class, 'show'])->name('Admin.Manage.Contact.Show');
+            Route::post('contact/{contact}/response', [Admin\Manage\ContactController::class, 'storeResponse'])->name('Admin.Manage.Contact.StoreResponse');
+            Route::post('contact/{contact}/status', [Admin\Manage\ContactController::class, 'updateStatus'])->name('Admin.Manage.Contact.UpdateStatus');
         });
 
         // マスター
@@ -284,9 +288,13 @@ Route::group(['prefix' => 'admin'], function () {
 $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::get('about', [$class, 'about'])->name('About');
-Route::get('draw-check', [$class, 'drawCheck'])->name('DrawCheck');
-Route::get('/info', [HgnController::class, 'infoNetwork'])->name('InfoNetwork');
-Route::get('/info/{info}', [HgnController::class, 'info'])->name('Info');
+Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
+Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');
+Route::get('/contact', [ContactController::class, 'form'])->name('Contact');
+Route::post('/contact', [ContactController::class, 'submit'])->name('SendContact');
+Route::get('/contact/{token}', [ContactController::class, 'show'])->name('Contact.Show');
+Route::post('/contact/{token}/response', [ContactController::class, 'storeResponse'])->name('Contact.StoreResponse');
+Route::post('/contact/{token}/cancel', [ContactController::class, 'cancel'])->name('Contact.Cancel');
 
 // ゲーム
 Route::group(['prefix' => 'game'], function () {

@@ -22,7 +22,6 @@ export class BasicNode extends NodeBase
     protected _curveCanvas: CurveCanvas;
     protected _isFast: boolean = false;
     protected _doNotAppearBehind: boolean = false;
-    protected _anchors: HTMLAnchorElement[] = [];
 
     public get parentNode(): TreeNodeInterface
     {
@@ -59,11 +58,19 @@ export class BasicNode extends NodeBase
         }
 
         // .node-content a かつ、relがinternalであるもの
-        this._anchors = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic a[rel="internal"]')) as HTMLAnchorElement[];
-        // _anchorsをクリックした時にclickLinkを呼び出す
-        this._anchors.forEach(anchor => {
+        const anchors = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic a[rel="internal"]')) as HTMLAnchorElement[];
+        // anchorsをクリックした時にclickLinkを呼び出す
+        anchors.forEach(anchor => {
             anchor.addEventListener('click', (e) => {
                 this.clickLink(anchor, e);
+            });
+        });
+
+        const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
+        forms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                this.submitForm(form, e);
+                return false;
             });
         });
     }
@@ -282,9 +289,6 @@ export class BasicNode extends NodeBase
         this._isDraw = false;
     }
 
-
-    
-
     /**
      * クリック時の処理
      * @param anchor クリックしたアンカー
@@ -305,18 +309,53 @@ export class BasicNode extends NodeBase
 
         e.preventDefault();
 
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        const currentNode = hgn.currentNode as CurrentNode;
+        currentNode.moveNode(anchor.href, false);
+
+        this.disappearStart();
+    }
+
+    public disappearStart(): void
+    {
         const headPos = this.nodeHead.getConnectionPoint();
         const hgn = (window as any).hgn as HorrorGameNetwork;
         hgn.calculateDisappearSpeedRate(headPos.y + window.scrollY);
 
         this.isHomewardDisappear = true;
-
-        const currentNode = hgn.currentNode as CurrentNode;
-        currentNode.moveNode(anchor.href, false);
-
-        this.disappearContents();
-
         this.parentNode.prepareDisappear(this);
+        this.disappearContents();
+    }
+
+    /**
+     * フォーム送信時の処理
+     * 
+     * @param form 送信したフォーム
+     * @param e 送信イベント
+     */
+    public submitForm(form: HTMLFormElement, e: SubmitEvent): void
+    {
+        e.preventDefault();
+
+        const nodeContentTree = this.parentNode.nodeContentTree;
+        if (!AppearStatus.isAppeared(nodeContentTree.appearStatus)) {
+            return;
+        }
+
+        const hgn = (window as any).hgn as HorrorGameNetwork;
+        const currentNode = hgn.currentNode as CurrentNode;
+        const isChildOnly = form.dataset.childOnly === '1';
+
+        if (form.method.toUpperCase() !== 'POST') {
+            const params = new URLSearchParams(new FormData(form) as any);
+            currentNode.moveNode(form.action + '?' + params.toString(), false, isChildOnly);
+        } else {
+            const isNoPushState = form.dataset.noPushState === '1';
+            const formData = new FormData(form);
+            currentNode.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
+        }
+
+        this.disappearStart();
     }
 
     /**
@@ -373,6 +412,7 @@ export class BasicNode extends NodeBase
         if (AppearStatus.isDisappeared(this.appearStatus) || AppearStatus.isDisappearing(this.appearStatus)) {
             return;
         }
+        this.disappearContents();
 
         // TreeNodeの場合は_nodeContentTreeも消滾させる
         const hgn = (window as any).hgn as HorrorGameNetwork;
