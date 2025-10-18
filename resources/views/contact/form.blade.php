@@ -1,38 +1,33 @@
 @extends('layout')
 
-@section('title', 'お問い合わせ | ホラーゲームネットワーク')
-@section('current-node-title', 'お問い合わせ')
+@section('title', '問い合わせ | ホラーゲームネットワーク')
+@section('current-node-title', '問い合わせ')
 
 @section('nodes')
 
     <section class="node" id="contact-form-node">
         <div class="node-head">
-            <h2 class="node-head-text">お問い合わせフォーム</h2>
+            <h2 class="node-head-text">問い合わせフォーム</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
-            <p>
-                お問い合わせは下記のフォームからお願いします。<br>
-                内容を確認次第、ご連絡させていただきます。
-            </p>
-
-            <div style="background-color: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                <strong style="color: #1976D2;">💡 個人情報保護機能について</strong>
-                <p style="margin: 10px 0 0 0; line-height: 1.6;">
-                    メールアドレスやSNSのIDなどの個人情報を送信したい場合は、<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">/*</code>と<code style="background-color: #fff; padding: 2px 6px; border-radius: 3px;">*/</code>で囲んでください。<br>
+            <div class="alert alert-info">
+                <strong>💡 個人情報保護機能について</strong>
+                <p>
+                    メールアドレスやSNSのIDなどの個人情報を送信したい場合は、<code>/*</code>と<code>*/</code>で囲んでください。<br>
                     囲まれた部分は管理者にのみ表示され、お問い合わせ確認画面では<strong>■で伏せ字</strong>として表示されます。
                 </p>
-                <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">
+                <p class="alert-secondary">
                     <strong>例：</strong> 私のメールアドレスは /*example@example.com*/ です。<br>
                     → 確認画面では「私のメールアドレスは <strong>■■■■■■■■■■■■■■■■■■■■■</strong> です。」と表示されます。
                 </p>
             </div>
 
             @if ($errors->any())
-                <div class="alert alert-danger" style="background-color: #fee; border: 1px solid #f00; padding: 15px; margin: 15px 0; border-radius: 4px;">
+                <div class="alert alert-danger">
                     <ul style="margin: 0; padding-left: 20px;">
                         @foreach ($errors->all() as $error)
-                            <li style="color: #c00;">{{ $error }}</li>
+                            <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
@@ -98,10 +93,10 @@
                     >{{ old('message') }}</textarea>
                 </div>
 
-                <div style="text-align: center; margin-top: 30px;">
+                <div style="margin-top: 30px;">
                     <button 
                         type="submit"
-                        style="background-color: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;"
+                        class="btn btn-success"
                     >
                         送信する
                     </button>
