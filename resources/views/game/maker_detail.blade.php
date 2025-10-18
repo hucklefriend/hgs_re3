@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $maker->name . ' | ホラーゲームネットワーク')
+@section('title', $maker->name)
 @section('current-node-title', $maker->name)
 
 @section('current-node-content')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContactCategory;
 use App\Enums\ContactStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,7 @@ class Contact extends Model
     {
         return [
             'status' => ContactStatus::class,
+            'category' => ContactCategory::class,
         ];
     }
 
@@ -57,22 +59,6 @@ class Contact extends Model
             $length = mb_strlen($matches[1]);
             return str_repeat('■', $length);
         }, $this->message);
-    }
-
-    /**
-     * Get masked subject for public users
-     *
-     * @return string|null
-     */
-    public function getMaskedSubjectAttribute(): ?string
-    {
-        if (!$this->subject) {
-            return null;
-        }
-        return preg_replace_callback('/\/\*(.*?)\*\//s', function ($matches) {
-            $length = mb_strlen($matches[1]);
-            return str_repeat('■', $length);
-        }, $this->subject);
     }
 }
 

@@ -212,7 +212,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             this.dispose();
 
             if (this._tmpStateData) {
-                console.log(this._nextNodeCache.url);
                 if (this._nextNodeCache.url.length > 0) {
                     this._tmpStateData.url = this._nextNodeCache.url;
                 }
@@ -276,9 +275,13 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             });
     }
 
-    public postData(url: string, data: any, isChildOnly: boolean = false): void
+    public postData(url: string, data: any, isChildOnly: boolean = false, isNoPushState: boolean = false): void
     {
-        this._tmpStateData = { url: url, isChildOnly: isChildOnly };
+        if (!isNoPushState) {
+            this._tmpStateData = { url: url, isChildOnly: isChildOnly };
+        } else {
+            this._tmpStateData = null;
+        }
         this._isChildOnly = isChildOnly;
 
         const urlWithParam = Util.addParameterA(url);
@@ -309,10 +312,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this.disappear();
     }
 
-    public changeChildNodesWithData(url: string, data: any, isChildOnly: boolean = false): void
+    public changeChildNodesWithData(url: string, data: any, isChildOnly: boolean = false, isNoPushState: boolean = false): void
     {
         this._isChildOnly = false;
-        this.postData(url, data, isChildOnly);
+        this.postData(url, data, isChildOnly, isNoPushState);
         this.disappear();
     }
 

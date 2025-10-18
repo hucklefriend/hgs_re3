@@ -68,7 +68,6 @@ export class BasicNode extends NodeBase
 
         const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
         forms.forEach(form => {
-            console.log(form);
             form.addEventListener('submit', (e) => {
                 this.submitForm(form, e);
                 return false;
@@ -351,8 +350,9 @@ export class BasicNode extends NodeBase
             const params = new URLSearchParams(new FormData(form) as any);
             currentNode.moveNode(form.action + '?' + params.toString(), false, isChildOnly);
         } else {
+            const isNoPushState = form.dataset.noPushState === '1';
             const formData = new FormData(form);
-            currentNode.changeChildNodesWithData(form.action, formData, isChildOnly);
+            currentNode.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
         }
 
         this.disappearStart();

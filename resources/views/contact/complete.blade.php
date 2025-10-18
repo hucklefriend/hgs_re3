@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'お問い合わせ完了 | ホラーゲームネットワーク')
-@section('current-node-title', 'お問い合わせ完了')
+@section('title', '問い合わせ完了')
+@section('current-node-title', '問い合わせ完了')
 
 @section('nodes')
 
@@ -11,74 +11,109 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
-            <p style="font-size: 18px; text-align: center; margin: 30px 0 20px 0;">
-                お問い合わせありがとうございました。<br>
-                内容を確認次第、ご連絡させていただきます。
-            </p>
-
-            <div style="margin-top: 30px; padding: 20px; background-color: #fff3cd; border: 3px solid #ff5722; border-radius: 8px;">
-                <p style="font-size: 18px; font-weight: bold; color: #ff5722; margin: 0 0 15px 0; text-align: center;">
-                    ⚠️ 重要：必ずこのURLを保存してください ⚠️
+            <div class="alert alert-warning">
+                <p>
+                    ⚠️ 重要：必ずURLをメモまたはブックマークしてください ⚠️
                 </p>
-                <p style="line-height: 1.8; margin-bottom: 15px;">
-                    お問い合わせ内容や返信を確認するには、下記のURLが必要です。<br>
-                    <strong style="color: #d32f2f;">メール通知は行いませんので、必ずこのURLをブックマークするか、メモしてください。</strong><br>
-                    このURLを失うと、お問い合わせ内容を確認できなくなります。
+                <p>
+                    返信は現在のページにて行います。<br>
+                    このページを閉じると、問い合わせ内容を確認できなくなりますので、<br>
+                    必ずURLをメモまたはブックマークして、定期的に確認にお越しください。
                 </p>
-                <div style="background-color: white; padding: 15px; border: 2px solid #ff9800; border-radius: 4px; margin-bottom: 15px;">
-                    <p style="font-weight: bold; margin-bottom: 5px; color: #666;">確認用URL:</p>
-                    <p style="word-break: break-all; font-family: monospace; font-size: 14px; margin: 0; color: #2196F3;">
+                <div class="alert alert-info">
+                    <p>確認用URL:</p>
+                    <p style="word-break: break-all;">
                         {{ route('Contact.Show', ['token' => $contact->token]) }}
                     </p>
-                </div>
-                <div style="text-align: center;">
-                    <a href="{{ route('Contact.Show', ['token' => $contact->token]) }}" style="display: inline-block; background-color: #ff5722; color: white; padding: 15px 40px; text-decoration: none; border-radius: 4px; font-size: 16px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                        📌 この問い合わせを確認する（今すぐブックマーク推奨）
-                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="node">
+    <section class="node tree-node" id="contact-content-node">
         <div class="node-head">
-            <h2 class="node-head-text">お問い合わせ内容</h2>
+            <h2 class="node-head-text">問い合わせ内容</h2>
             <span class="node-pt">●</span>
         </div>
-        <div class="node-content basic">
-            <dl style="line-height: 1.8;">
-                <dt style="font-weight: bold; margin-top: 15px;">お名前</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                    {{ $contact->name }}
-                </dd>
+        <div class="node-content basic" id="contact-content">
+            <div class="alert alert-info">
+                <p>{{ $contact->category?->label() ?? '-' }}</p>
+                <p>
+                    {!! nl2br(e($contact->masked_message)) !!}
+                </p>
+            
+                <div>
+                    お名前：{{ $contact->name }}<br>
+                    受付日時：{{ $contact->created_at->format('Y年m月d日 H:i') }}
+                </div>
+            </div>
+        </div>
+        <div class="node-content tree" id="response-node-content">
+            <section class="node" id="response-form-node">
+                <div class="node-head">
+                    <h3 class="node-head-text">返信を投稿</h3>
+                    <span class="node-pt">●</span>
+                </div>
+                <div class="node-content basic" id="response-form">
+                    <div class="alert alert-info">
+                        <strong>💡 個人情報保護機能について</strong>
+                        <p>
+                            メールアドレスや電話番号などの個人情報は、<code>/*</code>と<code>*/</code>で囲むことで、管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
+                        </p>
+                    </div>
+                    
+                    <form method="POST" action="{{ route('Contact.StoreResponse', ['token' => $contact->token]) }}" data-child-only="0" data-no-push-state="1">
+                        @csrf
+        
+                        <div class="form-group">
+                            <label for="responder_name">
+                                お名前 <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="responder_name" 
+                                name="responder_name" 
+                                value="{{ old('responder_name', $contact->name) }}" 
+                                required
+                            >
+                            <p class="alert-secondary">※ 元の問い合わせ時のお名前がデフォルトで入力されています。</p>
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="message">
+                                返信内容 <span class="required">*</span>
+                            </label>
+                            <textarea 
+                                id="message" 
+                                name="message" 
+                                rows="8" 
+                                required
+                            >{{ old('message') }}</textarea>
+                        </div>
+        
+                        <button type="submit" class="btn btn-success">返信を投稿</button>
+                    </form>
+                </div>
+            </section>
 
-                @if($contact->category)
-                    <dt style="font-weight: bold; margin-top: 15px;">カテゴリー</dt>
-                    <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                        {{ $contact->category }}
-                    </dd>
-                @endif
-
-                @if($contact->subject)
-                    <dt style="font-weight: bold; margin-top: 15px;">件名</dt>
-                    <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                        {{ $contact->masked_subject }}
-                    </dd>
-                @endif
-
-                <dt style="font-weight: bold; margin-top: 15px;">お問い合わせ内容</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; white-space: pre-wrap;">{{ $contact->masked_message }}</dd>
-
-                <dt style="font-weight: bold; margin-top: 15px;">受付日時</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
-                    {{ $contact->created_at->format('Y年m月d日 H:i') }}
-                </dd>
-
-                <dt style="font-weight: bold; margin-top: 15px;">お問い合わせ番号</dt>
-                <dd style="margin-left: 20px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; font-family: monospace;">
-                    {{ $contact->token }}
-                </dd>
-            </dl>
+            @if($contact->status->value === 0)
+                <section class="node" id="cancel-node">
+                    <div class="node-head">
+                        <h2 class="node-head-text">取り消し</h2>
+                        <span class="node-pt">●</span>
+                    </div>
+                    <div class="node-content basic">
+                        <p style="margin-bottom: 20px;">
+                            未対応の問い合わせは取り消すことができます。<br>
+                            取り消すと、この問い合わせは表示されなくなります。  
+                        </p>
+                        <form method="POST" action="{{ route('Contact.Cancel', ['token' => $contact->token]) }}" data-child-only="0" data-no-push-state="1">
+                            @csrf
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('本当に取り消していいですか？');">問い合わせを取り消す</button>
+                        </form>
+                    </div>
+                </section>
+            @endif
         </div>
     </section>
 

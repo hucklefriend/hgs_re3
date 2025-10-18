@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HgnController::class, 'root'])->name('Root');
-if (App::environment('production')) {
-    return;
-}
 
 use App\Http\Controllers\Admin;
 // 管理用
@@ -47,7 +44,7 @@ Route::group(['prefix' => 'admin'], function () {
                 'destroy' => 'Admin.Manage.Information.Destroy',
             ]);
 
-            // お問い合わせ
+            // 問い合わせ
             Route::get('contact', [Admin\Manage\ContactController::class, 'index'])->name('Admin.Manage.Contact');
             Route::get('contact/{contact}', [Admin\Manage\ContactController::class, 'show'])->name('Admin.Manage.Contact.Show');
             Route::post('contact/{contact}/response', [Admin\Manage\ContactController::class, 'storeResponse'])->name('Admin.Manage.Contact.StoreResponse');

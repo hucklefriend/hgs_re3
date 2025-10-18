@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $franchise->name . 'フランチャイズ | ホラーゲームネットワーク')
+@section('title', $franchise->name . 'フランチャイズ')
 @section('current-node-title', $franchise->name . 'フランチャイズ')
 
 @section('current-node-content')

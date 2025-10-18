@@ -16,7 +16,7 @@
     @endif
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">お問い合わせ詳細 #{{ $model->id }}</h4>
+            <h4 class="panel-title">問い合わせ詳細 #{{ $model->id }}</h4>
         </div>
         <div class="panel-body">
             <table class="table admin-form-table">
@@ -55,11 +55,7 @@
                 </tr>
                 <tr>
                     <th>Category</th>
-                    <td>{{ $model->category ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th>Subject</th>
-                    <td>{{ $model->subject ?? '-' }}</td>
+                    <td>{{ $model->category?->label() ?? '-' }}</td>
                 </tr>
                 <tr>
                     <th>Message</th>

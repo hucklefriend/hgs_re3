@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', $title->name . ' | ホラーゲームネットワーク')
+@section('title', $title->name)
 @section('current-node-title', $title->name)
 @section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
 

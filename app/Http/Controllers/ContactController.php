@@ -41,8 +41,7 @@ class ContactController extends Controller
 
         // お問い合わせ内容を保存
         $contact = Contact::create([
-            'name' => $validated['name'],
-            'subject' => $validated['subject'] ?? null,
+            'name' => $validated['name'] ?? 'No Name',
             'category' => $validated['category'] ?? null,
             'message' => $validated['message'],
             'status' => ContactStatus::PENDING,
@@ -129,17 +128,16 @@ class ContactController extends Controller
      * お問い合わせ取り消し処理
      *
      * @param string $token
-     * @return RedirectResponse
+     * @return RedirectResponse|JsonResponse|Application|Factory|View
      */
-    public function cancel(string $token): RedirectResponse
+    public function cancel(string $token): RedirectResponse|JsonResponse|Application|Factory|View
     {
         // tokenで問い合わせを検索
         $contact = Contact::where('token', $token)->first();
 
         // 見つからない場合、またはクローズ済みの場合
         if (!$contact || $contact->status === ContactStatus::CLOSED) {
-            return redirect()->route('Contact')
-                ->with('error', 'お問い合わせが見つかりません。');
+            return $this->tree(view('contact.form'), url: route('Contact'));
         }
 
         // PENDINGの場合のみ取り消し可能
@@ -151,7 +149,6 @@ class ContactController extends Controller
         // ステータスを取り消しに変更
         $contact->update(['status' => ContactStatus::CANCELLED]);
 
-        return redirect()->route('Contact')
-            ->with('success', 'お問い合わせを取り消しました。');
+        return $this->tree(view('contact.form'), url: route('Contact'));
     }
 }

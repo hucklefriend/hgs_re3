@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Horror Game Search | ホラーゲームネットワーク')
+@section('title', 'Horror Game Search')
 @section('current-node-title', 'タイトル検索')
 
 @section('current-node-content')

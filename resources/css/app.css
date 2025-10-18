@@ -665,10 +665,6 @@ p.rating-warning {
         border-radius: 3px;
     }
 
-    p {
-        margin: 10px 0 0 0;
-    }
-
     p:first-of-type {
         margin-top: 10px;
     }
@@ -800,4 +796,28 @@ p.rating-warning {
     color: white;
     box-shadow: 0 0 15px rgba(189, 189, 189, 0.6), 0 0 25px rgba(189, 189, 189, 0.4);
     text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(189, 189, 189, 0.4);
+}
+
+form {
+    div.form-group {
+        margin-bottom: 20px;
+
+        > label {  
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        > input, > select, > textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    }
+
+    .required {
+        color: #c00;
+    }
 }

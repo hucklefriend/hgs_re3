@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', '年齢確認 | ホラーゲームネットワーク')
+@section('title', '年齢確認')
 @section('current-node-title', '年齢確認')
 
 @section('nodes')

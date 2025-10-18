@@ -21,10 +21,6 @@ class HgnController extends Controller
      */
     public function root(): JsonResponse|Application|Factory|View
     {
-        if (App::environment('production')) {
-            return view('suspend');
-        }
-
         $infoList = Information::select(['id', 'head'])
             ->where('open_at', '<', now())
             ->where('close_at', '>=', now())

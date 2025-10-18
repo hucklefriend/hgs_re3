@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'トップ | ホラーゲームネットワーク')
-@section('current-node-title', 'ホラーゲームネットワーク')
+@section('title', 'トップ')
+@section('current-node-title', 'ホラーゲームネットワーク(α)')
 
 @section('nodes')
     <section class="node tree-node" id="horror-games-tree-node">

@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'お知らせ | ホラーゲームネットワーク')
+@section('title', 'お知らせ')
 @section('current-node-title', 'お知らせ')
 
 @section('nodes')

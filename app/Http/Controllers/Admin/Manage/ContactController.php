@@ -52,13 +52,11 @@ class ContactController extends AbstractAdminController
             $query->where('status', intval($searchStatus));
         }
 
-        // キーワード検索（名前、件名、メッセージ）
+        // キーワード検索（名前、メッセージ）
         if (!empty($searchKeyword)) {
             $query->where(function ($q) use ($searchKeyword) {
                 $q->where('name', 'like', '%' . $searchKeyword . '%')
-                    ->orWhere('subject', 'like', '%' . $searchKeyword . '%')
-                    ->orWhere('message', 'like', '%' . $searchKeyword . '%')
-                    ->orWhere('category', 'like', '%' . $searchKeyword . '%');
+                    ->orWhere('message', 'like', '%' . $searchKeyword . '%');
             });
         }
 

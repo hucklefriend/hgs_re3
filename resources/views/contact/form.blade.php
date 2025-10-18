@@ -11,11 +11,21 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
+            <div class="alert alert-warning">
+                <p>
+                    現在当サイトはα版としてテスト運用中の段階です。<br>
+                    [個人情報の削除]以外については、対応が遅くなるかもしれません。<br>
+                    ご了承ください。<br>
+                    <br>
+                    なお、当サイトで扱われる個人情報については<a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>をご確認ください。
+                </p>
+            </div>
+            
             <div class="alert alert-info">
                 <strong>💡 個人情報保護機能について</strong>
                 <p>
                     メールアドレスやSNSのIDなどの個人情報を送信したい場合は、<code>/*</code>と<code>*/</code>で囲んでください。<br>
-                    囲まれた部分は管理者にのみ表示され、お問い合わせ確認画面では<strong>■で伏せ字</strong>として表示されます。
+                    囲まれた部分は管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
                 </p>
                 <p class="alert-secondary">
                     <strong>例：</strong> 私のメールアドレスは /*example@example.com*/ です。<br>
@@ -33,73 +43,35 @@
                 </div>
             @endif
 
-            <form id="contact-form" method="POST" action="{{ route('SendContact') }}" style="margin-top: 20px;" rel="internal" data-child-only="0" onsubmit="return false;">
+            <form id="contact-form" method="POST" action="{{ route('SendContact') }}" style="margin-top: 20px;" data-child-only="0">
                 @csrf
 
-                <div style="margin-bottom: 20px;">
-                    <label for="name" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                        お名前 <span style="color: #c00;">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        value="{{ old('name') }}" 
-                        required
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
-                    >
+                <div class="form-group">
+                    <label for="name">お名前</label>
+                    <input type="text" id="name" name="name" value="{{ old('name') }}">
                 </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label for="category" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                <div class="form-group">
+                    <label for="category">
                         カテゴリー
                     </label>
-                    <select 
-                        id="category" 
-                        name="category"
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
-                    >
+                    <select id="category" name="category">
                         <option value="">選択してください</option>
-                        <option value="不具合報告" {{ old('category') === '不具合報告' ? 'selected' : '' }}>不具合報告</option>
-                        <option value="ゲーム情報の誤り" {{ old('category') === 'ゲーム情報の誤り' ? 'selected' : '' }}>ゲーム情報の誤り</option>
-                        <option value="機能要望" {{ old('category') === '機能要望' ? 'selected' : '' }}>機能要望</option>
-                        <option value="その他" {{ old('category') === 'その他' ? 'selected' : '' }}>その他</option>
+                        @foreach (\App\Enums\ContactCategory::cases() as $category)
+                            <option value="{{ $category->value }}" {{ old('category') == $category->value ? 'selected' : '' }}>{{ $category->label() }}</option>
+                        @endforeach
                     </select>
                 </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label for="subject" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                        件名
+                <div class="form-group">
+                    <label for="message">
+                        問い合わせ内容 <span class="required">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="subject" 
-                        name="subject" 
-                        value="{{ old('subject') }}"
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;"
-                    >
-                </div>
-
-                <div style="margin-bottom: 20px;">
-                    <label for="message" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                        お問い合わせ内容 <span style="color: #c00;">*</span>
-                    </label>
-                    <textarea 
-                        id="message" 
-                        name="message" 
-                        rows="10" 
-                        required
-                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; resize: vertical;"
-                    >{{ old('message') }}</textarea>
+                    <textarea id="message" name="message" rows="10" required>{{ old('message') }}</textarea>
                 </div>
 
                 <div style="margin-top: 30px;">
-                    <button 
-                        type="submit"
-                        class="btn btn-success"
-                    >
-                        送信する
-                    </button>
+                    <button type="submit" class="btn btn-success">送信する</button>
                 </div>
             </form>
         </div>

@@ -53,7 +53,6 @@
                     <th>Status</th>
                     <th>Name</th>
                     <th>Category</th>
-                    <th>Subject</th>
                     <th>Responses</th>
                     <th>Created At</th>
                     <td></td>
@@ -77,14 +76,7 @@
                             <span class="badge bg-{{ $color }}">{{ $contact->status->label() }}</span>
                         </td>
                         <td>{{ $contact->name }}</td>
-                        <td>{{ $contact->category ?? '-' }}</td>
-                        <td>
-                            @if($contact->subject)
-                                {{ Str::limit($contact->subject, 30) }}
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
+                        <td>{{ $contact->category?->label() ?? '-' }}</td>
                         <td>{{ $contact->responses->count() }}</td>
                         <td>{{ $contact->created_at->format('Y-m-d H:i') }}</td>
                         <td class="text-center">
@@ -97,7 +89,7 @@
 
             @if($contacts->isEmpty())
                 <div class="alert alert-warning text-center">
-                    お問い合わせが見つかりませんでした。
+                    問い合わせが見つかりませんでした。
                 </div>
             @endif
 
