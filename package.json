@@ -3,6 +3,10 @@
     "type": "module",
     "license": "AGPL-3.0-or-later",
     "name": "HORRORGAME NETWORK",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
     "devDependencies": {
         "@types/jest": "^29.5.14",
         "@types/node": "^22.15.6",
