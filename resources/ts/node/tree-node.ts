@@ -131,14 +131,14 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
 
             const freePt = this.freePt;
     
-            // TODO: 12を計算で出す
-            freePt.setPos(12, 0).setElementPos();
+            const x = this.nodeHead.nodePoint.htmlElement.offsetWidth / 2;
+            freePt.setPos(x, 0).setElementPos();
             freePt.show();
 
             const connectionPoint = this._nodeHead.getConnectionPoint();
             const pos = Util.getQuadraticBezierPoint(
                 0, 0,
-                connectionPoint.x - 15, connectionPoint.y,
+                connectionPoint.x - x + 3, connectionPoint.y,
                 this._curveCanvas.appearProgress
             );
     
@@ -152,10 +152,11 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         const connectionPoint = this._nodeHead.getConnectionPoint();
         const freePt = this.freePt;
 
-        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 200);
+        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 50);
         this._curveCanvas.gradientStartAlpha = this._curveCanvas.appearProgress;
         this._curveCanvas.gradientEndAlpha = this._curveCanvas.appearProgress / 3;
         if (this._curveCanvas.appearProgress === 0) {
+            this._curveCanvas.gradientStartAlpha = 0;
             this._curveCanvas.gradientEndAlpha = 0;
             this._homewardNode = null;
             this._appearAnimationFunc = null;
@@ -164,8 +165,8 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
             freePt.hide();
             this.parentNode.homewardDisappear();
         } else { 
-            // TODO: 12を計算で出す
-            this._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
+            const x = this.nodeHead.nodePoint.htmlElement.offsetWidth / 2;
+            this._curveCanvas.drawCurvedLine(new Point(x, 0), connectionPoint);
 
             const pos = Util.getQuadraticBezierPoint(
                 0, 0,
