@@ -1,6 +1,8 @@
 {
     "private": true,
     "type": "module",
+    "license": "AGPL-3.0-or-later",
+    "name": "HORRORGAME NETWORK",
     "scripts": {
         "dev": "vite",
         "build": "vite build"

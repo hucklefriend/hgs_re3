@@ -227,7 +227,7 @@ export class BasicNode extends NodeBase
 
     protected curveDisappearAnimation(): boolean
     {
-        this._curveCanvas.appearProgress = 1 - Util.getAnimationProgress(this._animationStartTime, 20 / (window as any).hgn.disappearSpeedRate);
+        this._curveCanvas.appearProgress = 0;//1 - Util.getAnimationProgress(this._animationStartTime, 10);
         this._curveCanvas.gradientEndAlpha = this._curveCanvas.appearProgress * 0.7;
         if (this._curveCanvas.appearProgress === 0) {
             this._curveCanvas.gradientEndAlpha = 0;
@@ -376,8 +376,8 @@ export class BasicNode extends NodeBase
 
             this._animationStartTime = hgn.timestamp;
         } else {
-            // TODO: 12を計算で出す nodeHeadPointの幅の半分
-            this._curveCanvas.drawCurvedLine(new Point(12, 0), connectionPoint);
+            const x = this.nodeHead.nodePoint.htmlElement.offsetWidth / 2;
+            this._curveCanvas.drawCurvedLine(new Point(x, 0), connectionPoint);
 
             const pos = Util.getQuadraticBezierPoint(
                 0, 0,
@@ -417,11 +417,10 @@ export class BasicNode extends NodeBase
         // TreeNodeの場合は_nodeContentTreeも消滾させる
         const hgn = (window as any).hgn as HorrorGameNetwork;
         const freePt = this.freePt;
-        const connectionPoint = this.nodeHead.getConnectionPoint();
         this._updateGradientEndAlphaFunc = null;
 
-        // TODO: 12を計算で出す nodeHeadPointの幅の半分
-        freePt.setPos(12, 0).setElementPos();
+        const nodeHeadPointWidth = this.nodeHead.nodePoint.htmlElement.offsetWidth / 2;
+        freePt.setPos(nodeHeadPointWidth, 0).setElementPos();
         freePt.show();
         this.nodeHead.nodePoint.hidden();
         
