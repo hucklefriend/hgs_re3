@@ -137,7 +137,7 @@ div.connection-line {
     width: 2px;
     background: #66ff66;
     box-shadow: 0 0 10px #66ff66;
-    transition: background 0.25s ease, box-shadow 0.1s ease;
+    transition: background 0.1s ease, box-shadow 0.05s ease;
     visibility: hidden;
     z-index: -1;
 
@@ -301,7 +301,7 @@ div.connection-line {
 }
 
 .node-content.basic {
-    margin-left: 30px;
+    margin-left: 20px;
     opacity: 0;
     transition: opacity 0.2s ease-in;
 
