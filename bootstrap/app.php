@@ -12,6 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            // テスト用ルートを読み込み（開発環境のみ）
+            if (app()->environment('local')) {
+                require __DIR__.'/../routes/test-debugbar.php';
+            }
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(function (Request $request) {
@@ -35,5 +41,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //$middleware->append(CrossOriginHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (Throwable $e, Request $request) {
+            // グローバル例外処理を呼び出し
+            return \App\Http\Controllers\Controller::handleGlobalException($e, $request);
+        });
     })->create();

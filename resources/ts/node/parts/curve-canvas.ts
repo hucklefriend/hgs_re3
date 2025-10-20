@@ -1,6 +1,7 @@
 import { Config } from "../../common/config";
 import { NodeBase } from "../node-base";
 import { Point } from "../../common/point";
+import { Util } from "../../common/util";
 
 export class CurveCanvas
 {
@@ -48,6 +49,7 @@ export class CurveCanvas
         return this._appearProgress;
     }
 
+
     public constructor(parentNode: NodeBase)
     {
         // <canvas>を作成
@@ -66,7 +68,8 @@ export class CurveCanvas
         this._appearProgress = 0;
         
         // 発光効果の設定
-        this._ctx.shadowColor = 'rgba(144, 238, 144, 0.5)';
+        const [r, g, b] = Util.getColorFromCSSVariable('--node-pt-light');
+        this._ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
         this._ctx.shadowBlur = 10;
         this._ctx.shadowOffsetX = 0;
         this._ctx.shadowOffsetY = 0;
@@ -122,8 +125,9 @@ export class CurveCanvas
 
         // カーブに沿ったグラデーションを作成
         const gradient = this._ctx.createLinearGradient(startPoint.x, startPoint.y, currentEndX, currentEndY);
-        gradient.addColorStop(0, `rgba(144, 255, 144, ${this._gradientStartAlpha})`);    // 開始点（明るい緑）
-        gradient.addColorStop(1, `rgba(144, 255, 144, ${this._gradientEndAlpha})`);   // 終了点
+        const [r, g, b] = Util.getColorFromCSSVariable('--node-pt-light');
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${this._gradientStartAlpha})`);    // 開始点
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${this._gradientEndAlpha})`);   // 終了点
 
         this._ctx.strokeStyle = gradient;
 
@@ -162,8 +166,10 @@ export class CurveCanvas
         }
 
         const gradient = this._ctx.createLinearGradient(startX, startY, currentEndX, currentEndY);
-        gradient.addColorStop(0, `rgba(100, 200, 100, ${endOpacity})`);   // 開始点の透明度
-        gradient.addColorStop(1, `rgba(20, 80, 20, ${endOpacity})`);   // 終了点の透明度
+        const [startR, startG, startB] = Util.getColorFromCSSVariable('--node-pt-light');
+        const [endR, endG, endB] = Util.getColorFromCSSVariable('--node-pt-dark');
+        gradient.addColorStop(0, `rgba(${startR}, ${startG}, ${startB}, ${endOpacity})`);   // 開始点の透明度
+        gradient.addColorStop(1, `rgba(${endR}, ${endG}, ${endB}, ${endOpacity})`);   // 終了点の透明度
 
         this._ctx.beginPath();
         this._ctx.strokeStyle = gradient;
