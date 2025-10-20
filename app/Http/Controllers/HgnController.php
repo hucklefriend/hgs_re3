@@ -69,7 +69,6 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        throw new \Exception('test');
         return $this->tree(view('about'));
     }
 

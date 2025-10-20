@@ -9,7 +9,13 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Session\TokenMismatchException;
 
 abstract class Controller
 {
@@ -109,19 +115,54 @@ abstract class Controller
      *
      * @param Throwable $e
      * @param Request $request
-     * @return JsonResponse|View
+     * @return JsonResponse|View|Response
      */
-    public static function handleGlobalException(Throwable $e, Request $request): JsonResponse|View
+    public static function handleGlobalException(Throwable $e, Request $request): JsonResponse|View|Response
     {
-        // ログに記録
-        Log::error('Exception occurred', [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
-            'url' => $request->fullUrl(),
-            'user_agent' => $request->userAgent(),
-        ]);
+        // 例外の種類に応じてステータスコードとビューを決定
+        $statusCode = 500;
+        $viewName = 'errors.500';
+        
+        // HTTPステータスコードの判定
+        if ($e instanceof HttpException) {
+            $statusCode = $e->getStatusCode();
+        } elseif ($e instanceof AuthenticationException) {
+            $statusCode = 401;
+        } elseif ($e instanceof AuthorizationException) {
+            $statusCode = 403;
+        } elseif ($e instanceof ModelNotFoundException) {
+            $statusCode = 404;
+        } elseif ($e instanceof TokenMismatchException) {
+            $statusCode = 419;
+        }
+
+        // ビュー名の決定（対応するビューが存在する場合）
+        $viewName = "errors.{$statusCode}";
+        if (!view()->exists($viewName)) {
+            $viewName = 'errors.500';
+            $statusCode = 500;
+        }
+
+        // ログに記録（500系エラーのみ）
+        if ($statusCode >= 500) {
+            Log::error('Exception occurred', [
+                'status_code' => $statusCode,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'url' => $request->fullUrl(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        } else {
+            // 400系エラーは警告レベルで記録
+            Log::warning('Client error occurred', [
+                'status_code' => $statusCode,
+                'message' => $e->getMessage(),
+                'url' => $request->fullUrl(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
 
         // デバッグモードの場合は詳細なエラー情報を表示
         if (config('app.debug')) {
@@ -130,7 +171,7 @@ abstract class Controller
             $errorLine = $e->getLine();
             $errorTrace = $e->getTraceAsString();
         } else {
-            $errorMessage = 'システムエラーが発生しました。';
+            $errorMessage = self::getErrorMessage($statusCode);
             $errorFile = '';
             $errorLine = '';
             $errorTrace = '';
@@ -140,7 +181,7 @@ abstract class Controller
         $isAjax = $request->ajax() || ($request->query('a', 0) == 1);
 
         /** @var View $view */
-        $view = view('errors.500', compact('errorMessage', 'errorFile', 'errorLine', 'errorTrace'))
+        $view = view($viewName, compact('errorMessage', 'errorFile', 'errorLine', 'errorTrace'))
             ->with('hasError', true);
 
         // Ajaxリクエストの場合はJSONで返す
@@ -154,10 +195,30 @@ abstract class Controller
                 'popup'              => $rendered['popup'] ?? '',
                 'url'                => '',
                 'hasError'           => true,
-            ]);
+                'statusCode'         => $statusCode,
+            ], $statusCode);
         }
 
         // 通常のリクエストの場合はエラーページを表示
-        return $view;
+        return response($view, $statusCode);
+    }
+
+    /**
+     * ステータスコードに応じたエラーメッセージを取得
+     *
+     * @param int $statusCode
+     * @return string
+     */
+    private static function getErrorMessage(int $statusCode): string
+    {
+        return match ($statusCode) {
+            401 => '認証が必要です。',
+            403 => 'アクセス権限がありません。',
+            404 => 'ページが見つかりません。',
+            419 => 'ページの有効期限が切れました。',
+            502 => 'ゲートウェイエラーが発生しました。',
+            503 => 'サービスが一時的に利用できません。',
+            default => 'システムエラーが発生しました。',
+        };
     }
 }
