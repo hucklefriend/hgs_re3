@@ -51,6 +51,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
         this._homewardNode = null;
+        document.body.classList.remove('has-error');
 
         if (!this._isChildOnly) {
             this._currentNodeContentElement!.innerHTML = '';
@@ -210,6 +211,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     {
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
             this.dispose();
+
+            if (this._nextNodeCache.hasError) {
+                document.body.classList.add('has-error');
+            }
 
             if (this._tmpStateData) {
                 if (this._nextNodeCache.url.length > 0) {

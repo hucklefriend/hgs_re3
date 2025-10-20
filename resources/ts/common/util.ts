@@ -113,4 +113,29 @@ export class Util
                typeof node.hover === 'function' && 
                typeof node.unhover === 'function';
     }
+
+    /**
+     * CSS変数から色を取得する
+     * @param variableName CSS変数名
+     * @returns RGB値の配列 [r, g, b]
+     */
+    public static getColorFromCSSVariable(variableName: string): [number, number, number]
+    {
+        // body要素から取得（body.has-errorで定義されている変数を優先的に取得）
+        const colorValue = getComputedStyle(document.body)
+            .getPropertyValue(variableName)
+            .trim();
+        
+        // #66ff66 形式を [102, 255, 102] に変換
+        if (colorValue.startsWith('#')) {
+            const hex = colorValue.slice(1);
+            const r = parseInt(hex.slice(0, 2), 16);
+            const g = parseInt(hex.slice(2, 4), 16);
+            const b = parseInt(hex.slice(4, 6), 16);
+            return [r, g, b];
+        }
+        
+        // フォールバック（デフォルトの緑色）
+        return [144, 255, 144];
+    }
 } 

@@ -15,7 +15,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
-<body>
+<body class="@if(isset($hasError) && $hasError) has-error @endif">
     <main>
         <section class="node" id="current-node">
             <div class="node-head">

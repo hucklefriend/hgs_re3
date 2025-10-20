@@ -8,6 +8,18 @@
     --node-pt-dark: #55AA55;
     --sub-node-pt: #003300;
     --sub-node-pt-light: #006600;
+    --connection-line-color: #66ff66;
+    --connection-line-shadow: #66ff66;
+}
+
+body.has-error {
+    --node-pt-light: #ff6666;
+    --node-pt-light-shadow: #ff0000;
+    --node-pt-dark: #AA5555;
+    --sub-node-pt: #330000;
+    --sub-node-pt-light: #660000;
+    --connection-line-color: #ff6666;
+    --connection-line-shadow: #ff6666;
 }
 
 html {
@@ -135,9 +147,9 @@ div.connection-line {
     top: 24px;
     height: 0;
     width: 2px;
-    background: #66ff66;
-    box-shadow: 0 0 10px #66ff66;
-    transition: background 0.25s ease, box-shadow 0.1s ease;
+    background: var(--connection-line-color);
+    box-shadow: 0 0 10px var(--connection-line-shadow);
+    transition: background 0.1s ease, box-shadow 0.05s ease;
     visibility: hidden;
     z-index: -1;
 
@@ -301,7 +313,7 @@ div.connection-line {
 }
 
 .node-content.basic {
-    margin-left: 30px;
+    margin-left: 20px;
     opacity: 0;
     transition: opacity 0.2s ease-in;
 

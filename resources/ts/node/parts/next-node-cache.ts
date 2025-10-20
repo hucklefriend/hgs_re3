@@ -7,7 +7,8 @@ export class NextNodeCache
     public nodes: string;
     public popup: string;
     public url: string;
-    
+    public hasError: boolean;
+
     public constructor()
     {
         this.title = '';
@@ -16,5 +17,6 @@ export class NextNodeCache
         this.nodes = '';
         this.popup = '';
         this.url = '';
+        this.hasError = false;
     }
 }

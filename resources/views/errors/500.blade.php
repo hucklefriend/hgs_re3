@@ -1,24 +1,36 @@
 @extends('layout')
 
-@section('title', '500-internal-server-error.hgn')
+@section('title', 'システムエラー')
+@section('current-node-title', 'システムエラー')
 
-@section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1 fade">
-                500 Internal Server Error
-            </h1>
+@section('nodes')
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">エラー発生</h2>
+            <span class="node-pt">●</span>
         </div>
-
-
-        <div class="node node-center">
-            <div class="text-node fade">
-                エラーが発生しました。<br>
-                申し訳ありません、不具合があったため処理を実行できませんでした。<br>
-                対処されるまでお待ちください。
-            </div>
+        <div class="node-content basic">
+            <p>
+                システムエラーが発生しました。<br>
+                エラーの詳細はログに記録済みですので、ご連絡いただく必要はございません。<br>
+                申し訳ありませんが、使われていた機能は現在利用できません。<br>
+                修正されるまでしばらくお待ちください。
+            </p>
         </div>
-    </div>
+    </section>
 
-    @include('footer')
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">近道</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
 @endsection
