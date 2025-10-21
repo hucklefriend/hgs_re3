@@ -6,7 +6,7 @@
 
 @section('current-node-content')
     <p style="font-size: 13px; padding-bottom: 30px;">
-        最終改定日：2025年10月16日
+        最終改定日：2025年10月21日
     </p>
 @endsection
 
@@ -28,6 +28,17 @@
         </div>
     </section>
 
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">法令遵守</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトは、個人情報の保護に関する法律（個人情報保護法）およびその他関連法令を遵守し、個人情報を適切に取り扱います。
+            </p>
+        </div>
+    </section>
 
     <section class="node">
         <div class="node-head">
@@ -53,8 +64,7 @@
         <div class="node-content basic">
             <p>
                 現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
-                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、
-                ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
+                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
                 その際に取得する個人情報については、後日プライバシーポリシーに記載します。
             </p>
         </div>
@@ -132,7 +142,7 @@
         <div class="node-content basic">
             <p>
                 当サイトが保有する個人情報について、ご本人から開示・訂正・削除等のご請求があった場合には、本人確認の上、合理的な範囲で対応いたします。<br>
-                ご請求は当サイトの<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
+                請求は当サイトの<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
                 メール等での個別対応は行っておりません。<br>
                 原則として30日以内に対応いたしますが、法令等に基づき削除できない場合や、対応に時間を要する場合には、その旨をお知らせいたします。
             </p>
@@ -147,11 +157,20 @@
         <div class="node-content basic">
             <p>
                 当サイトでは、Cookieを使用しています。<br>
-                これは、ログイン状態の維持や各種パラメーターの保持のために利用しています。
+                これは、ログイン状態の維持や各種パラメーターの保持のために利用しています。<br>
+                取得されるCookie情報には個人を特定できる情報は含まれていません。
             </p>
             <p>
                 また、広告配信および成果測定のため、第三者であるアフィリエイトサービス提供事業者のプログラムを利用しています。<br>
-                これにより、当該事業者がCookie等を通じてユーザーのアクセス情報を取得する場合があります。
+                これにより、当該事業者がCookie等を通じてユーザーのアクセス情報を取得する場合があります。<br>
+                これらの事業者が取得する情報の取扱いについては、各事業者のプライバシーポリシーをご確認ください。
+            </p>
+            <ul>
+                <li><a href="https://www.amazon.co.jp/gp/help/customer/display.html?nodeId=201909010" target="_blank">Amazon.co.jp プライバシー規約</a></li>
+                <li><a href="https://www.dmm.com/help/privacy/" target="_blank">DMM.com プライバシーポリシー</a></li>
+            </ul>
+            <p>
+                また、今後アクセス解析ツール（例：Google Analytics）等を導入する場合には、本ポリシーを改定し、その旨を明記します。
             </p>
         </div>
     </section>
@@ -163,8 +182,8 @@
         </div>
         <div class="node-content basic">
             <p>
-                下記のアフィリエイトに参加しています。<br>
-                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクしている部分があります。
+                下記のアフィリエイトプログラムに参加しています。<br>
+                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページ・商品検索ページへのリンクが設置されています。
             </p>
             <ul>
                 <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
@@ -214,14 +233,26 @@
         </div>
         <div class="node-content basic">
             <p>
-                当サイトで掲載している画像等の著作権等は権利所有者のものです。
-            </p>
-            <p>
-                当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
+                当サイトで掲載している画像・文章・動画等の著作権は、各権利所有者に帰属します。<br>
+                当サイトの掲載内容に関して、できる限り正確な情報を提供するよう努めていますが、その正確性・完全性を保証するものではありません。<br>
+                当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。<br>
+                また、当サイトの利用により生じた損害等についても一切の責任を負いかねます。
             </p>
         </div>
     </section>
 
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">プライバシーポリシーの改定</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                本ポリシーの内容は、法令の改正や運営方針の変更等により、予告なく改定することがあります。<br>
+                重要な変更がある場合は、当サイト上でお知らせします。
+            </p>
+        </div>
+    </section>
 
     <section class="node">
         <div class="node-head">
@@ -230,7 +261,8 @@
         </div>
         <div class="node-content basic">
             <p>
-                個人情報の削除については、<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
+                個人情報の削除や本ポリシーに関するお問い合わせは、当サイト内の<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>フォームよりご連絡ください。<br>
+                スパム防止のため、メール等での直接対応は行っておりません。
             </p>
         </div>
     </section>
