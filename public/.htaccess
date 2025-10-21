@@ -19,3 +19,32 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+
+# --- Security Headers ---
+
+# クリックジャッキング防止（iframe埋め込み禁止）
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# MIMEスニッフィング防止
+Header always set X-Content-Type-Options "nosniff"
+
+
+# リファラ制御（外部サイトに詳細なリファラを送らない）
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+
+# ブラウザ機能（カメラ・マイク・位置情報など）を無効化
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+
+
+# localhost / 127.0.0.1 のときは環境変数をセット
+SetEnvIf Host "^(localhost|127\.0\.0\.1)$" IS_LOCAL
+
+# 環境変数がセットされていないときのみ HSTS を適用
+Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains" env=!IS_LOCAL
+
+# --- Content Security Policy (YouTube & DMM-friendly) ---
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https://* data:; connect-src 'self' https://*; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://ssl-cache.stream.ne.jp https://*.dmm.com https://*.dmm.co.jp; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+
