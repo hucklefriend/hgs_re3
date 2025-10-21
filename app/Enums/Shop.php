@@ -44,6 +44,7 @@ enum Shop: int
     case DMM_TV = 53;
     case PRIME_VIDEO_BUY_RENTAL = 54;
     case RAKUTEN_TV = 56;
+    case DISNEY_PLUS = 57;
 
     // 電子書籍
     case KINDLE = 61;
@@ -97,6 +98,7 @@ enum Shop: int
             self::DMM_TV           => 'DMM TV',
             self::PRIME_VIDEO_BUY_RENTAL   => 'Prime Video<br>購入/レンタル',
             self::RAKUTEN_TV       => '楽天TV',
+            self::DISNEY_PLUS      => 'Disney+',
             self::KINDLE           => 'Kindle',
             self::DMM_BOOKS        => 'DMMブックス',
             self::DMM_RENTAL       => 'DMM宅配レンタル',
@@ -216,6 +218,7 @@ enum Shop: int
                 self::NETFLIX,
                 self::DMM_TV,
                 self::RAKUTEN_TV,
+                self::DISNEY_PLUS,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
