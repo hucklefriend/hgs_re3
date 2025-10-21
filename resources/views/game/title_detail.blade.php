@@ -84,7 +84,7 @@
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content tree">
-                @foreach ($title->series->titles as $sameSeriesTitle)
+                @foreach ($title->series->titles->sortBy('first_release_int') as $sameSeriesTitle)
                 @if ($sameSeriesTitle->id === $title->id)
                     @continue
                 @endif
