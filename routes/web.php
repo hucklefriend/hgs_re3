@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HgnController::class, 'root'])->name('Root');
+Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
 
 use App\Http\Controllers\Admin;
 // 管理用

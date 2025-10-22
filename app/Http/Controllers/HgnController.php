@@ -82,4 +82,15 @@ class HgnController extends Controller
     {
         return $this->tree(view('privacy_policy'));
     }
+
+    /**
+     * ロゴ
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function logo(): JsonResponse|Application|Factory|View
+    {
+        return $this->tree(view('logo'));
+    }
 }

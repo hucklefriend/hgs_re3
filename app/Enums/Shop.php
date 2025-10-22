@@ -39,12 +39,13 @@ enum Shop: int
     case FANZA_GAMES = 45;
 
     // 動画配信サービス
-    case PRIME_VIDEO = 51;
+    case PRIME_VIDEO_SUBSCRIPTION = 51;
     case NETFLIX = 52;
     case DMM_TV = 53;
     case PRIME_VIDEO_BUY_RENTAL = 54;
     case RAKUTEN_TV = 56;
     case DISNEY_PLUS = 57;
+    case PRIME_VIDEO_ALL = 58;
 
     // 電子書籍
     case KINDLE = 61;
@@ -93,10 +94,11 @@ enum Shop: int
             self::DLsite           => 'DLsite',
             self::FANZA            => 'FANZA通販',
             self::FANZA_GAMES      => 'FANZA Games',
-            self::PRIME_VIDEO      => 'Prime Video<br>見放題',
+            self::PRIME_VIDEO_SUBSCRIPTION => 'Prime Video<br>見放題',
             self::NETFLIX          => 'Netflix',
             self::DMM_TV           => 'DMM TV',
-            self::PRIME_VIDEO_BUY_RENTAL   => 'Prime Video<br>購入/レンタル',
+            self::PRIME_VIDEO_BUY_RENTAL => 'Prime Video<br>購入/レンタル',
+            self::PRIME_VIDEO_ALL  => 'Prime Video',
             self::RAKUTEN_TV       => '楽天TV',
             self::DISNEY_PLUS      => 'Disney+',
             self::KINDLE           => 'Kindle',
@@ -213,7 +215,8 @@ enum Shop: int
         ];
         if (in_array($defaultImgType, $itemType)) {
             $items = [
-                self::PRIME_VIDEO,
+                self::PRIME_VIDEO_ALL,
+                self::PRIME_VIDEO_SUBSCRIPTION,
                 self::PRIME_VIDEO_BUY_RENTAL,
                 self::NETFLIX,
                 self::DMM_TV,
