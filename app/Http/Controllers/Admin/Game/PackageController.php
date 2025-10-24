@@ -376,14 +376,6 @@ class PackageController extends AbstractAdminController
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
-        if ($request->post('use_img_tag', 0) == 1) {
-            $package->img_shop_id = $shop->id;
-            $package->save();
-        } else if ($package->img_shop_id === null && $shop->ogp_cache_id !== null) {
-            $package->img_shop_id = $shop->id;
-            $package->save();
-        }
-
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 
@@ -418,14 +410,6 @@ class PackageController extends AbstractAdminController
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
-        if ($request->post('use_img_tag', 0) == 1) {
-            $package->img_shop_id = $shop->id;
-            $package->save();
-        } else if ($package->img_shop_id === null && $shop->ogp_cache_id !== null) {
-            $package->img_shop_id = $shop->id;
-            $package->save();
-        }
-
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
 
@@ -439,10 +423,6 @@ class PackageController extends AbstractAdminController
     public function deleteShop(GamePackage $package, $shopId)
     {
         $package->shops()->where('shop_id', $shopId)->delete();
-        if ($package->img_shop_id == $shopId) {
-            $package->img_shop_id = null;
-            $package->save();
-        }
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
