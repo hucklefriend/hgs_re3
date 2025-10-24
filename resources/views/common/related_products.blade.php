@@ -19,6 +19,9 @@
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content basic">
+                <p>
+                    {{ $rp->description }}
+                </p>
                 <div class="pkg-info">
                     @if ($rp->shops->count() > 0)
                     <div class="pkg-info-shops">
