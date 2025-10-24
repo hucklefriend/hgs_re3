@@ -15,7 +15,7 @@ class SelectEnum extends Select
     {
         $name = $this->name;
         return view('components.admin.select', [
-            'selected' => $this->model?->$name?->value,
+            'selected' => $this->model?->$name?->value ?? $this->model?->$name,
         ]);
     }
 }

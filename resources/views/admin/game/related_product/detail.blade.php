@@ -96,7 +96,7 @@
                                 <tr>
                                     <td>
                                         <p>
-                                            <a href="{{ $shop->url ?? '' }}" target="_blank">{{ $shop->shop()?->name() ?? '--' }}</a>
+                                            <a href="{{ $shop->url ?? '' }}" target="_blank">{{ $shop->shop()?->name() ?? '--' }} {{ $shop->subtitle ?? '' }}</a>
                                         </p>
 
                                         @if ($shop->ogp)
@@ -110,10 +110,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('Admin.Game.RelatedProduct.EditShop', ['relatedProduct' => $model, 'shopId' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
+                                        <a href="{{ route('Admin.Game.RelatedProduct.EditShop', ['relatedProduct' => $model, 'shop' => $shop]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;"><i class="fas fa-edit"></i> Edit</a>
                                     </td>
                                     <td>
-                                        <form method="post" action="{{ route('Admin.Game.RelatedProduct.DeleteShop', ['relatedProduct' => $model, 'shopId' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
+                                        <form method="post" action="{{ route('Admin.Game.RelatedProduct.DeleteShop', ['relatedProduct' => $model, 'shop' => $shop]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()->name }}を削除します。');">
                                             @csrf
                                             {{ method_field('DELETE') }}
                                             <button type="submit" class="btn btn-danger btn-sm">

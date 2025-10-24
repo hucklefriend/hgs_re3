@@ -1,19 +1,14 @@
 <table class="table admin-form-table">
     <tr>
-        <th>ショップ</th>
-        <td>
-            @if ($isEdit)
-                {{ $model->shop()->name() }}
-                <input type="hidden" name="shop_id" id="shop_id" value="{{ $model->shop_id }}">
-            @else
-                <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectListByPackage($package, $excludeShopList)" />
-            @endif
-        </td>
-    </tr>
-    <tr>
         <th>URL</th>
         <td>
             <x-admin.input name="url" :model="$model" required maxlength="250" />
+        </td>
+    </tr>
+    <tr>
+        <th>ショップ</th>
+        <td>
+            <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectListByPackage($package)" />
         </td>
     </tr>
     <tr>

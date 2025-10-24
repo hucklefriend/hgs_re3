@@ -351,12 +351,9 @@ class PackageController extends AbstractAdminController
      */
     public function addShop(GamePackage $package)
     {
-        $excludeShopList = $package->shops()->pluck('shop_id')->toArray();
-
         return view('admin.game.package.add_shop', [
-            'package'         => $package,
-            'excludeShopList' => $excludeShopList,
-            'model'           => new GamePackageShop(),
+            'package' => $package,
+            'model'   => new GamePackageShop(),
         ]);
     }
 
@@ -383,15 +380,14 @@ class PackageController extends AbstractAdminController
      * ショップの編集
      *
      * @param GamePackage $package
-     * @param $shop_id
+     * @param GamePackageShop $pkgShop
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function editShop(GamePackage $package, $shop_id)
+    public function editShop(GamePackage $package, GamePackageShop $pkgShop)
     {
-        $shop = $package->shops()->firstWhere('shop_id', $shop_id);
         return view('admin.game.package.edit_shop', [
             'package' => $package,
-            'model'   => $shop,
+            'model'   => $pkgShop,
         ]);
     }
 
@@ -400,15 +396,14 @@ class PackageController extends AbstractAdminController
      *
      * @param PackageShopRequest $request
      * @param GamePackage $package
-     * @param $shop_id
+     * @param GamePackageShop $pkgShop
      * @return RedirectResponse
      */
-    public function updateShop(PackageShopRequest $request, GamePackage $package, $shop_id)
+    public function updateShop(PackageShopRequest $request, GamePackage $package, GamePackageShop $pkgShop)
     {
-        $shop = $package->shops()->firstWhere('shop_id', $shop_id);
-        $shop->fill($request->validated());
-        $shop->setOgpInfo($request->post('ogp_url'));
-        $shop->save();
+        $pkgShop->fill($request->validated());
+        $pkgShop->setOgpInfo($request->post('ogp_url'));
+        $pkgShop->save();
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }
@@ -417,12 +412,12 @@ class PackageController extends AbstractAdminController
      * ショップの削除
      *
      * @param GamePackage $package
-     * @param $shopId
+     * @param GamePackageShop $pkgShop
      * @return RedirectResponse
      */
-    public function deleteShop(GamePackage $package, $shopId)
+    public function deleteShop(GamePackage $package, GamePackageShop $pkgShop)
     {
-        $package->shops()->where('shop_id', $shopId)->delete();
+        $pkgShop->delete();
 
         return redirect()->route('Admin.Game.Package.Detail', $package);
     }

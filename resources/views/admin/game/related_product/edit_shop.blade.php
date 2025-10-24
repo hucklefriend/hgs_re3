@@ -6,7 +6,7 @@
             <h4 class="panel-title">更新</h4>
         </div>
         <form method="POST"
-              action="{{ route('Admin.Game.RelatedProduct.UpdateShop', ['relatedProduct' => $relatedProduct, 'shopId' => $model->shop_id]) }}">
+              action="{{ route('Admin.Game.RelatedProduct.UpdateShop', ['relatedProduct' => $relatedProduct, 'shop' => $model]) }}">
             {{ method_field('PUT') }}
             @csrf
 

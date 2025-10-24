@@ -340,12 +340,8 @@ class RelatedProductController extends AbstractAdminController
      */
     public function addShop(GameRelatedProduct $relatedProduct)
     {
-        // 重複化となったので除外しない
-        $excludeShopList = [];//$relatedProduct->shops()->pluck('shop_id')->toArray();
-
         return view('admin.game.related_product.add_shop', [
             'relatedProduct'  => $relatedProduct,
-            'excludeShopList' => $excludeShopList,
             'model'           => new GameRelatedProductShop(),
         ]);
     }
@@ -363,8 +359,6 @@ class RelatedProductController extends AbstractAdminController
         $shop->game_related_product_id = $relatedProduct->id;
 
         $validated = $request->validated();
-        $useImgTag = ($validated['use_img_tag'] ?? 0) == 1;
-        unset($validated['use_img_tag']);
 
         $shop->fill($validated);
         $shop->setOgpInfo($request->post('ogp_url'));
@@ -377,12 +371,11 @@ class RelatedProductController extends AbstractAdminController
      * ショップの編集
      *
      * @param GameRelatedProduct $relatedProduct
-     * @param $shopId
+     * @param GameRelatedProductShop $shop
      * @return Application|Factory|View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
-    public function editShop(GameRelatedProduct $relatedProduct, $shopId)
+    public function editShop(GameRelatedProduct $relatedProduct, GameRelatedProductShop $shop)
     {
-        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shopId);
         return view('admin.game.related_product.edit_shop', [
             'relatedProduct' => $relatedProduct,
             'model'          => $shop,
@@ -394,12 +387,11 @@ class RelatedProductController extends AbstractAdminController
      *
      * @param RelatedProductShopRequest $request
      * @param GameRelatedProduct $relatedProduct
-     * @param $shopId
+     * @param GameRelatedProductShop $shop
      * @return RedirectResponse
      */
-    public function updateShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, $shopId)
+    public function updateShop(RelatedProductShopRequest $request, GameRelatedProduct $relatedProduct, GameRelatedProductShop $shop)
     {
-        $shop = $relatedProduct->shops()->firstWhere('shop_id', $shopId);
         $shop->fill($request->validated());
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
@@ -411,12 +403,12 @@ class RelatedProductController extends AbstractAdminController
      * ショップの削除
      *
      * @param GameRelatedProduct $relatedProduct
-     * @param $shopId
+     * @param GameRelatedProductShop $shop
      * @return RedirectResponse
      */
-    public function deleteShop(GameRelatedProduct $relatedProduct, $shopId)
+    public function deleteShop(GameRelatedProduct $relatedProduct, GameRelatedProductShop $shop)
     {
-        $relatedProduct->shops()->where('shop_id', $shopId)->delete();
+        $shop->delete();
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }

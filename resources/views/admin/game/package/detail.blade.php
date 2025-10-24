@@ -110,12 +110,12 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('Admin.Game.Package.EditShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;">
+                                    <a href="{{ route('Admin.Game.Package.EditShop', ['package' => $model, 'pkgShop' => $shop]) }}" class="btn btn-default btn-sm" style="margin-left:2rem;">
                                         <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                                     </a>
                                 </td>
                                 <td>
-                                    <form method="post" action="{{ route('Admin.Game.Package.DeleteShop', ['package' => $model, 'shop_id' => $shop->shop_id]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()?->name() ?? '--' }}を削除します。');">
+                                    <form method="post" action="{{ route('Admin.Game.Package.DeleteShop', ['package' => $model, 'pkgShop' => $shop]) }}" style="margin-left:1rem;" onsubmit="return confirm('{{ $shop->shop()?->name() ?? '--' }}を削除します。');">
                                         @csrf
                                         {{ method_field('DELETE') }}
                                         <button type="submit" class="btn btn-danger btn-sm">
