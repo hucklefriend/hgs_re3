@@ -67,12 +67,6 @@
         </td>
     </tr>
     <tr>
-        <th>画像表示ショップ</th>
-        <td>
-            <x-admin.select name="img_shop_id" :model="$model" :list="$model->getSelectShopList()" />
-        </td>
-    </tr>
-    <tr>
         <th>デフォルト画像</th>
         <td>
             <x-admin.select-enum name="default_img_type" :model="$model" :list="App\Enums\ProductDefaultImage::selectList()" />

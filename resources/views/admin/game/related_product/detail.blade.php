@@ -40,17 +40,6 @@
                     <td>{{ $model->sort_order }}</td>
                 </tr>
                 <tr>
-                    <th>画像表示用ショップ</th>
-                    <td>
-                        @if ($model->imgShop)
-                            {{ $model->imgShop->shop()->name }}
-                            {!! $model->imgShop->img_tag !!}
-                        @else
-                            --
-                        @endif
-                    </td>
-                </tr>
-                <tr>
                     <th>デフォルト画像</th>
                     <td>{{ $model->default_img_type->text() }}</td>
                 </tr>

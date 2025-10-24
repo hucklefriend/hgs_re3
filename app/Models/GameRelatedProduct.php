@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
@@ -66,16 +65,6 @@ class GameRelatedProduct extends Model
     public function shops(): HasMany
     {
         return $this->hasMany(GameRelatedProductShop::class, 'game_related_product_id', 'id');
-    }
-
-    /**
-     * 画像表示用ショップ
-     *
-     * @return BelongsTo
-     */
-    public function imgShop(): BelongsTo
-    {
-        return $this->belongsTo(GameRelatedProductShop::class, 'img_shop_id');
     }
 
     /**

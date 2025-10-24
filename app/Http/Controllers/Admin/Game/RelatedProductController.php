@@ -370,11 +370,6 @@ class RelatedProductController extends AbstractAdminController
         $shop->setOgpInfo($request->post('ogp_url'));
         $shop->save();
 
-        if ($useImgTag) {
-            $relatedProduct->img_shop_id = $shop->id;
-            $relatedProduct->save();
-        }
-
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
 
@@ -422,10 +417,6 @@ class RelatedProductController extends AbstractAdminController
     public function deleteShop(GameRelatedProduct $relatedProduct, $shopId)
     {
         $relatedProduct->shops()->where('shop_id', $shopId)->delete();
-        if ($relatedProduct->img_shop_id == $shopId) {
-            $relatedProduct->img_shop_id = null;
-            $relatedProduct->save();
-        }
 
         return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct);
     }
