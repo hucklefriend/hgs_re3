@@ -5,9 +5,14 @@
     "name": "HORRORGAME NETWORK",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:debug": "playwright test --debug",
+        "test:e2e:report": "playwright show-report"
     },
     "devDependencies": {
+        "@playwright/test": "^1.56.1",
         "@types/jest": "^29.5.14",
         "@types/node": "^22.15.6",
         "@types/react": "^19.1.2",
