@@ -20,7 +20,13 @@ test('ホームページが表示される', async ({ page }) =>
     }
   });
   
-  await page.goto('');
+  await page.goto('game/franchise/home-sweet-home');
+  
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(1000);
   
   // ページタイトルを確認
   await expect(page).toHaveTitle(/.*ホラーゲームネットワーク.*/i);
@@ -30,11 +36,4 @@ test('ホームページが表示される', async ({ page }) =>
   expect(consoleErrors, `コンソールエラーが発生しました: ${consoleErrors.join(', ')}`).toHaveLength(0);
 });
 
-test('基本的なナビゲーションが機能する', async ({ page }) =>
-{
-  await page.goto('');
-  
-  // ページが正常に読み込まれたことを確認
-  await expect(page.locator('body')).toBeVisible();
-});
 

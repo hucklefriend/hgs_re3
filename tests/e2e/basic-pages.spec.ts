@@ -27,6 +27,12 @@ test('トップページが正常に表示される', async ({ page }) =>
   
   // ページにアクセス
   await page.goto('');
+
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(3000);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -58,6 +64,12 @@ test('プライバシーポリシーページが正常に表示される', async
   
   // ページにアクセス
   await page.goto('privacy');
+
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(3000);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -89,6 +101,12 @@ test('aboutページが正常に表示される', async ({ page }) =>
   
   // ページにアクセス
   await page.goto('about');
+
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(3000);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -120,6 +138,12 @@ test('お知らせ一覧ページが正常に表示される', async ({ page }) 
   
   // ページにアクセス
   await page.goto('info');
+
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(3000);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();

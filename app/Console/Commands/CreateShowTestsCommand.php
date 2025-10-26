@@ -249,6 +249,12 @@ test('{$escapedTestName}', async ({ page }) =>
   
   // ページにアクセス
   await page.goto('{$url}');
+
+  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
+  await page.waitForLoadState('networkidle');
+  
+  // アニメーションや遅延実行されるスクリプトのために追加で待機
+  await page.waitForTimeout(3000);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
