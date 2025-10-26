@@ -8,7 +8,7 @@
     <tr>
         <th>ショップ</th>
         <td>
-            <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectListByPackage($package)" />
+            <x-admin.select-shop name="shop_id" :model="$model" :list="App\Enums\Shop::selectListByPackage($package)" />
         </td>
     </tr>
     <tr>

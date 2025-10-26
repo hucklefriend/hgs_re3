@@ -9,7 +9,7 @@
     <tr>
         <th>ショップ</th>
         <td>
-            <x-admin.select-enum name="shop_id" :model="$model" :list="App\Enums\Shop::selectList($relatedProduct->default_img_type)" />
+            <x-admin.select-shop name="shop_id" :model="$model" :list="App\Enums\Shop::selectList($relatedProduct->default_img_type)" />
         </td>
     </tr>
     <tr>
