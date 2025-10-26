@@ -14,6 +14,8 @@ use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use App\Models\GameRelatedProduct;
 use App\Models\GameRelatedProductShop;
+use App\Models\GameTitle;
+use App\Models\GamePlatform;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -92,9 +94,25 @@ class RelatedProductController extends AbstractAdminController
             'media_mix_id' => request()->query('media_mix_id', null),
         ]);
 
+        $parentModel = null;
+
+        if (request()->query('title_id') !== null) {
+            $parentModel = GameTitle::find(request()->query('title_id'));
+        } else if (request()->query('platform_id') !== null) {
+            $parentModel = GamePlatform::find(request()->query('platform_id'));
+        } else if (request()->query('media_mix_id') !== null) {
+            $parentModel = GameMediaMix::find(request()->query('media_mix_id'));
+        }
+
+        $model = new GameRelatedProduct();
+        if ($parentModel !== null) {
+            $model->name = $parentModel->name;
+        }
+
         return view('admin.game.related_product.add', [
-            'model'  => new GameRelatedProduct(),
+            'model'  => $model,
             'linked' => $linked,
+            'parentModel' => $parentModel,
         ]);
     }
 

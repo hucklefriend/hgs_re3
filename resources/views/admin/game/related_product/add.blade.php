@@ -3,7 +3,12 @@
 @section('content')
     <div class="panel panel-inverse">
         <div class="panel-heading">
-            <h4 class="panel-title">New Related Product</h4>
+            <h4 class="panel-title">
+                New Related Product
+                @if ($parentModel)
+                    - {{ $parentModel->name }}
+                @endif
+            </h4>
         </div>
         <form method="POST" action="{{ route('Admin.Game.RelatedProduct.Store') }}">
             @csrf

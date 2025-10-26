@@ -17,6 +17,9 @@
         <td>
             <div>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(1);">動画配信</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(5);">4K UHD Blu-ray</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(3);">Blu-ray</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(4);">DVD</button>
 
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(21);">商品を探す</button>
             </div>
@@ -35,6 +38,24 @@
                             $('#node_name').val('動画配信(購入/レンタル)');
                             $('#sort_order').val(99999998);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::VIDEO_STREAMING->value }}).trigger('change');
+                            break;
+                        case 3:
+                            $('#name').val($('#name').val() + ' Blu-ray');
+                            $('#node_name').val('Blu-ray');
+                            $('#sort_order').val(1);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::DISC->value }}).trigger('change');
+                            break;
+                        case 4:
+                            $('#name').val($('#name').val() + ' DVD');
+                            $('#node_name').val('DVD');
+                            $('#sort_order').val(0);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::DISC->value }}).trigger('change');
+                            break;
+                        case 5:
+                            $('#name').val($('#name').val() + ' 4K UHD Blu-ray');
+                            $('#node_name').val('4K UHD Blu-ray');
+                            $('#sort_order').val(2);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::DISC->value }}).trigger('change');
                             break;
                         case 21:
                             $('#name').val('「' + $('#name').val() + '」を探す');
