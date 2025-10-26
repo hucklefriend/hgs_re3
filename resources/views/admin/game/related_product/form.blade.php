@@ -20,6 +20,8 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(5);">4K UHD Blu-ray</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(3);">Blu-ray</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(4);">DVD</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(10);">電子書籍</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(11);">本</button>
 
                 <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTemplate(21);">商品を探す</button>
             </div>
@@ -56,6 +58,18 @@
                             $('#node_name').val('4K UHD Blu-ray');
                             $('#sort_order').val(2);
                             $('#default_img_type').val({{ App\Enums\ProductDefaultImage::DISC->value }}).trigger('change');
+                            break;
+                        case 10:
+                            $('#name').val($('#name').val() + ' 電子書籍');
+                            $('#node_name').val('電子書籍');
+                            $('#sort_order').val(99999999);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::DIGITAL_BOOK->value }}).trigger('change');
+                            break;
+                        case 11:
+                            $('#name').val($('#name').val() + ' 文庫版');
+                            $('#node_name').val('文庫版');
+                            $('#sort_order').val(0);
+                            $('#default_img_type').val({{ App\Enums\ProductDefaultImage::BOOK->value }}).trigger('change');
                             break;
                         case 21:
                             $('#name').val('「' + $('#name').val() + '」を探す');
