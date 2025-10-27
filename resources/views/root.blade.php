@@ -53,6 +53,7 @@
                 </div>
             </section>
 
+            {{--
             <section class="node link-node" id="maker-link-node">
                 <div class="node-head">
                     <a href="{{ route('Game.Maker') }}" class="node-head-text">ゲームメーカー</a>
@@ -70,6 +71,7 @@
                     </div>
                 </div>
             </section>
+            --}}
         </div>
     </section>
     <section class="node link-node" id="information-node">

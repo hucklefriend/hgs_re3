@@ -7,9 +7,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\App;
-use App\Notifications\TestFailedNotification;
-use Illuminate\Support\Facades\Notification;
 
 class HgnController extends Controller
 {
