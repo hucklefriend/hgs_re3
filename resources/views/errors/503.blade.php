@@ -6,19 +6,35 @@
 @section('nodes')
     <section class="node">
         <div class="node-head">
-            <h2 class="node-head-text">サービス利用不可</h2>
+            @if (app()->isDownForMaintenance())
+                <h2 class="node-head-text">メンテナンス中</h2>
+            @else
+                <h2 class="node-head-text">サービス利用不可</h2>
+            @endif
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
-            <p>
-                サービスが一時的に利用できません。<br>
-                メンテナンス中か、サーバーの負荷が高い可能性があります。<br>
-                <br>
-                申し訳ありませんが、しばらく待って再度アクセスしてください。
-            </p>
+            @if (app()->isDownForMaintenance())
+                <p>
+                    現在、システムメンテナンスを実施しております。<br>
+                    @if(isset($exception) && $exception->retryAfter)
+                        {{ date('Y年m月d日 H:i', $exception->retryAfter) }} 頃に終了予定です。<br>
+                    @endif
+                    <br>
+                    しばらくお待ちください。
+                </p>
+            @else
+                <p>
+                    サービスが一時的に利用できません。<br>
+                    サーバーの負荷が高い可能性があります。<br>
+                    <br>
+                    申し訳ありませんが、しばらく待って再度アクセスしてください。
+                </p>
+            @endif
         </div>
     </section>
 
+    @if (!app()->isDownForMaintenance())
     <section class="node tree-node">
         <div class="node-head">
             <h2 class="node-head-text">近道</h2>
@@ -33,4 +49,5 @@
             </section>
         </div>
     </section>
+    @endif
 @endsection
