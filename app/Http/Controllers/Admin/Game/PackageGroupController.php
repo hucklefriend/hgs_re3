@@ -190,7 +190,6 @@ class PackageGroupController extends AbstractAdminController
     {
         $packageGroup->titles()->sync($request->validated('game_title_ids'));
         foreach ($packageGroup->titles as $title) {
-            $title->packages()->detach();
             $title->setFirstReleaseInt()->save();
         }
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
