@@ -26,6 +26,7 @@ enum Shop: int
     case XboxStore = 18;
     case GOG = 19;
     case EPIC = 50;
+    case BOOTH = 21;
 
     // スマホアプリ
     case APP_STORE = 31;
@@ -87,6 +88,7 @@ enum Shop: int
             self::XboxStore        => 'XBOX Game Store',
             self::GOG              => 'GOG.com',
             self::EPIC             => 'Epic Games Store',
+            self::BOOTH            => 'BOOTH',
             self::APP_STORE        => 'App Store',
             self::GooglePlay       => 'Google Play',
             self::SQM              => 'スクエニマーケット',
@@ -163,6 +165,7 @@ enum Shop: int
                 self::OFFICIAL_SITE,
                 self::MicrosoftStore,
                 self::NintendoEShop,
+                self::BOOTH,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
@@ -185,6 +188,7 @@ enum Shop: int
                 self::SURUGAYA,
                 self::FANZA,
                 self::Getchu,
+                self::BOOTH,
             ];
             foreach ($items as $item) {
                 if (!in_array($item->value, $excludeShopList)) {
