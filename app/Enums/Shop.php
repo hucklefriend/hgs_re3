@@ -357,6 +357,7 @@ enum Shop: int
                     self::OFFICIAL_SITE,
                     self::MicrosoftStore,
                     self::NintendoEShop,
+                    self::BOOTH,
                 ];
             }
 
@@ -390,6 +391,7 @@ enum Shop: int
                     self::NintendoStore,
                     self::RAKUTEN_BOOKS,
                     self::SURUGAYA,
+                    self::BOOTH,
                 ];
             }
             foreach ($items as $item) {
