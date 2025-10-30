@@ -60,11 +60,6 @@
                                 <i class="fas fa-info-circle"></i><span class="d-none d-md-inline"> Detail</span>
                             </a>
                         </td>
-                        <td class="text-center">
-                            <a href="{{ route('Admin.Game.Series.EditNetwork', $s) }}" class="btn btn-default">
-                                <i class="fas fa-project-diagram"></i><span class="d-none d-md-inline"> Network</span>
-                            </a>
-                        </td>
                     </tr>
                 @endforeach
                 </tbody>
