@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+
+# Playwrightテスト作成ルール
+
+## page.gotoの使用方法
+
+- `page.goto()`を使用する際は、URLの先頭に`/`を付けないこと
+- これにより`playwright.config.ts`の`baseURL`設定が有効になる
+- 例:
+  - ✅ 正しい: `page.goto('')` (トップページ)
+  - ✅ 正しい: `page.goto('about')`
+  - ✅ 正しい: `page.goto('privacy')`
+  - ❌ 誤り: `page.goto('/')`
+  - ❌ 誤り: `page.goto('/about')`
+
+## 理由
+
+- `baseURL`が設定されている場合、先頭に`/`があるとbaseURLが無効になってしまう
+- 環境ごとにbaseURLを変更できる柔軟性を保つため

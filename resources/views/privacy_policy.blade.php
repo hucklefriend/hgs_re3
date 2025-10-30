@@ -1,19 +1,75 @@
-@section('content-node-title', 'Privacy Policy')
+@extends('layout')
 
-@section('link-node-name', 'privacy-policy-node')
+@section('title', 'プライバシーポリシー')
+@section('current-node-title', 'プライバシーポリシー')
 
-@section('content-node-body')
-    <section>
-        <h2><i class="bi bi-octagon"></i>Cookieの利用</h2>
-        <p>
-            当サイトではサイト内でのログイン状態維持や各種パラメーター保持のためCookieを利用しています。<br>
-            Cookieを第三者へ送信することはありません。
-        </p>
-        <p>
-            Cookieについて詳しくはこちら<br>
-            <a href="https://ja.wikipedia.org/wiki/HTTP_cookie" target="_blank">HTTP cookie - Wikipedia <i class="fas fa-sign-out-alt"></i></a><br>
-        </p>
+
+@section('current-node-content')
+    <p style="font-size: 13px; padding-bottom: 30px;">
+        最終改定日：2025年10月21日
+    </p>
+@endsection
+
+@section('nodes')
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">Intended for users in Japan only</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトは日本専用サイトです。<br>
+                日本国の法律に従い、日本語以外でのサービス提供やサポートは行っておりません。
+            </p>
+            <p>
+                This website is exclusively for users in Japan.<br>
+                In compliance with Japanese law, we do not provide services or support in languages other than Japanese.
+            </p>
+        </div>
     </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">法令遵守</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトは、個人情報の保護に関する法律（個人情報保護法）およびその他関連法令を遵守し、個人情報を適切に取り扱います。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">アクセスログ</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトでは、サーバーの運用・保守およびセキュリティ確保のため、アクセスログを記録しています。<br>
+                記録される情報には、IPアドレス、アクセス日時、閲覧ページ、ブラウザの種類などが含まれます。<br>
+                これらの情報は個人を特定する目的では使用せず、サイトの改善やセキュリティ対策のためにのみ利用します。<br>
+                また、法令に基づく場合を除き、これらの情報を第三者へ提供することはありません。<br>
+                アクセスログは一定期間（おおよそ6か月以内）保管した後、順次削除しています。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の取得</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
+                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
+                その際に取得する個人情報については、後日プライバシーポリシーに記載します。
+            </p>
+        </div>
+    </section>
+
     {{--
     <section>
     <h2><i class="bi bi-octagon"></i>メールアドレスの取得</h2>
@@ -62,19 +118,80 @@
     </section>
     --}}
 
-    <section>
-        <h2><i class="bi bi-octagon"></i>アフィリエイト</h2>
-        <p>
-            下記のアフィリエイトに参加しています。<br>
-            当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページおよび商品検索ページへのリンクを行っている部分があります。
-        </p>
-        <ul class="mb-4">
-            <li class="mb-2"><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト <i class="fas fa-sign-out-alt"></i></a></li>
-            <li class="mb-2">
-                <a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト <i class="fas fa-sign-out-alt"></i></a>
-            </li>
-        </ul>
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の安全管理措置</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトでは、取得した個人情報を適切に管理し、漏えい・改ざん・紛失等を防止するため、必要かつ合理的な安全管理措置を講じています。<br>
+                通信にはSSLによる暗号化を採用し、通信経路上での盗聴や改ざんを防止しています。<br>
+                当サイトはLaravelによって構築されており、サーバーにはアクセス制限および不正アクセス対策を実施しています。<br>
+                過去に取得したメールアドレス等の個人情報についても、安全なサーバー環境で適切に保管し、外部への漏えい防止に努めています。<br>
+                個人情報は、利用目的の達成に必要な範囲内でのみ取り扱い、不要となった場合には適切な方法で削除または破棄いたします。
+            </p>
+        </div>
     </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">個人情報の開示・訂正・削除について</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトが保有する個人情報について、ご本人から開示・訂正・削除等のご請求があった場合には、本人確認の上、合理的な範囲で対応いたします。<br>
+                請求は当サイトの<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>よりご連絡ください。<br>
+                メール等での個別対応は行っておりません。<br>
+                原則として30日以内に対応いたしますが、法令等に基づき削除できない場合や、対応に時間を要する場合には、その旨をお知らせいたします。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">Cookieの利用</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトでは、Cookieを使用しています。<br>
+                これは、ログイン状態の維持や各種パラメーターの保持のために利用しています。<br>
+                取得されるCookie情報には個人を特定できる情報は含まれていません。
+            </p>
+            <p>
+                また、広告配信および成果測定のため、第三者であるアフィリエイトサービス提供事業者のプログラムを利用しています。<br>
+                これにより、当該事業者がCookie等を通じてユーザーのアクセス情報を取得する場合があります。<br>
+                これらの事業者が取得する情報の取扱いについては、各事業者のプライバシーポリシーをご確認ください。
+            </p>
+            <ul>
+                <li><a href="https://www.amazon.co.jp/gp/help/customer/display.html?nodeId=201909010" target="_blank">Amazon.co.jp プライバシー規約</a></li>
+                <li><a href="https://www.dmm.com/help/privacy/" target="_blank">DMM.com プライバシーポリシー</a></li>
+            </ul>
+            <p>
+                また、今後アクセス解析ツール（例：Google Analytics）等を導入する場合には、本ポリシーを改定し、その旨を明記します。
+            </p>
+        </div>
+    </section>
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">アフィリエイト</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                下記のアフィリエイトプログラムに参加しています。<br>
+                当サイト内において、アフィリエイトの画像の表示や、アフィリエイトサイトの商品ページ・商品検索ページへのリンクが設置されています。
+            </p>
+            <ul>
+                <li><a href="https://affiliate.amazon.co.jp/" target="_blank">Amazon.co.jpアソシエイト</a></li>
+                <li><a href="https://affiliate.dmm.com/" target="_blank">DMM アフィリエイト</a></li>
+            </ul>
+        </div>
+    </section>
+
 
     {{--
     <section>
@@ -94,7 +211,7 @@
             <li>
                 R-18Z: CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
                 また過激なグロテスク表現のある関連商品や二次創作。<br>
-                年齢設定をしていない場合、パッケージ画像が非表示となります。
+                年齢設定をしていない場合、画面上に警告文が表示されます。
             </li>
             <li>
                 R-18A: アダルトゲーム、いわゆるエロゲ。<br>
@@ -106,22 +223,62 @@
     </section>
     --}}
 
-    <section>
-        <h2><i class="bi bi-octagon"></i>AI</h2>
-        <p>
-            当サイトではChatGPTを利用して生成したイラストを利用している場合があります。<br>
-        </p>
+
+
+
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">免責事項</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトで掲載している画像・文章・動画等の著作権は、各権利所有者に帰属します。<br>
+                当サイトの掲載内容に関して、できる限り正確な情報を提供するよう努めていますが、その正確性・完全性を保証するものではありません。<br>
+                当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。<br>
+                また、当サイトの利用により生じた損害等についても一切の責任を負いかねます。
+            </p>
+        </div>
     </section>
 
-    <section>
-        <h2><i class="bi bi-octagon"></i>免責事項</h2>
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">プライバシーポリシーの改定</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                本ポリシーの内容は、法令の改正や運営方針の変更等により、予告なく改定することがあります。<br>
+                重要な変更がある場合は、当サイト上でお知らせします。
+            </p>
+        </div>
+    </section>
 
-        <p>
-            当サイトで掲載している画像の著作権等は権利所有者のものです。<br>
-            また、AI生成の画像を利用していますが、AI生成画像の著作権については日本国の法律に従います。
-        </p>
-        <p>
-            当サイトから他のサイトに移動された場合、移動先サイトで提供されるサービス等について一切の責任を負いません。
-        </p>
+    <section class="node">
+        <div class="node-head">
+            <span class="node-head-text">問い合わせ</span>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                個人情報の削除や本ポリシーに関するお問い合わせは、当サイト内の<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>フォームよりご連絡ください。<br>
+                スパム防止のため、メール等での直接対応は行っておりません。
+            </p>
+        </div>
+    </section>
+
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">近道</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
     </section>
 @endsection

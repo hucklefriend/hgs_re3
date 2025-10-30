@@ -109,6 +109,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'manticore' => [
+            'driver' => 'mysql',
+            'host' => env('MANTICORE_HOST', '127.0.0.1'),
+            'port' => env('MANTICORE_PORT', '9306'),
+            'database' => env('MANTICORE_DATABASE', ''),
+            'username' => env('MANTICORE_USERNAME', 'root'),
+            'password' => env('MANTICORE_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
     ],
 
     /*

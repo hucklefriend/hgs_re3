@@ -1,0 +1,224 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\ProductDefaultImage;
+use App\Enums\Rating;
+use App\Models\Extensions\KeyFindTrait;
+use App\Models\Extensions\OgpTrait;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+
+class GameTitle extends Model
+{
+    use KeyFindTrait;
+    use OgpTrait;
+
+    protected $guarded = ['id', 'synonymsStr'];
+    protected $hidden = ['created_at', 'updated_at'];
+
+    protected $casts = [
+        'rating' => Rating::class,
+    ];
+
+    /**
+     * @var array デフォルト値
+     */
+    protected $attributes = [
+        'rating'           => Rating::None,
+        'first_release_int' => 99999999,
+    ];
+
+    /**
+     * フランチャイズを取得
+     *
+     * @return BelongsTo
+     */
+    public function franchise(): BelongsTo
+    {
+        return $this->belongsTo(GameFranchise::class, 'game_franchise_id');
+    }
+
+    /**
+     * シリーズを取得
+     *
+     * @return BelongsTo
+     */
+    public function series(): BelongsTo
+    {
+        return $this->belongsTo(GameSeries::class, 'game_series_id');
+    }
+
+    /**
+     * 自身もしくはシリーズに桃づけられたフランチャイズを取得
+     *
+     * @return GameFranchise|null
+     */
+    public function getFranchise(): ?GameFranchise
+    {
+        if ($this->series) {
+            return $this->series->franchise;
+        } else {
+            return $this->franchise;
+        }
+    }
+
+    /**
+     * @var string 俗称の改行区切り文字列
+     */
+    public string $synonymsStr = '';
+
+    /**
+     * 俗称
+     *
+     * @return HasMany
+     */
+    public function synonyms(): HasMany
+    {
+        return $this->hasMany(GameTitleSynonym::class, 'game_title_id');
+    }
+
+    /**
+     * 俗称の読み取り
+     *
+     * @return void
+     */
+    public function loadSynonyms(): void
+    {
+        $this->synonymsStr = $this->synonyms()->pluck('synonym')->implode("\r\n");
+    }
+
+    /**
+     * 原点のパッケージを取得
+     *
+     * @return HasOne
+     */
+    public function originalPackage(): HasOne
+    {
+        return $this->hasOne(GamePackage::class, 'id', 'original_package_id');
+    }
+
+    /**
+     * パッケージグループを取得
+     *
+     * @return BelongsToMany
+     */
+    public function packageGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(GamePackageGroup::class, GameTitlePackageGroupLink::class);
+    }
+
+    /**
+     * 関連商品を取得
+     *
+     * @return BelongsToMany
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(GameRelatedProduct::class, GameTitleRelatedProductLink::class);
+    }
+
+    /**
+     * メディアミックスを取得
+     *
+     * @return BelongsToMany
+     */
+    public function mediaMixes(): BelongsToMany
+    {
+        return $this->belongsToMany(GameMediaMix::class);
+    }
+
+    /**
+     * 紐づいているパッケージから最初の発売日を設定
+     *
+     * @return self
+     */
+    public function setFirstReleaseInt(): self
+    {
+        $minReleaseInt = 99999999;
+
+        foreach ($this->packageGroups as $pkgGroup) {
+            foreach ($pkgGroup->packages as $pkg) {
+                if ($pkg->sort_order < $minReleaseInt) {
+                    $minReleaseInt = $pkg->sort_order;
+                }
+            }
+        }
+
+        $this->first_release_int = $minReleaseInt;
+        return $this;
+    }
+
+    /**
+     * 保存
+     *
+     * @throws \Throwable
+     */
+    public function save(array $options = []): void
+    {
+        if ($this->game_franchise_id !== null && $this->game_series_id !== null) {
+            $this->game_series_id = null;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            parent::save($options);
+
+            // synonymsから一旦全部削除して再登録する
+            $this->synonyms()->delete();
+            foreach (explode("\r\n", $this->synonymsStr) as $synonym) {
+                $synonym = trim($synonym);
+                if (empty($synonym)) {
+                    continue;
+                }
+
+                $this->synonyms()->create([
+                    'game_title_id' => $this->id,
+                    'synonym' => synonym($synonym),
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * 前のタイトルを取得
+     *
+     * @return self
+     */
+    public function prev(): self
+    {
+        $prev = self::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+        if ($prev !== null) {
+            return $prev;
+        } else {
+            // idが最大のデータを取得
+            return self::orderBy('id', 'desc')->first();
+        }
+    }
+
+    /**
+     * 次のタイトルを取得
+     *
+     * @return self
+     */
+    public function next(): self
+    {
+        $next = self::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+        if ($next !== null) {
+            return $next;
+        } else {
+            // idが最小のデータを取得
+            return self::orderBy('id', 'asc')->first();
+        }
+    }
+}

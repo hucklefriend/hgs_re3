@@ -1,4 +1,4 @@
-<input name="{{ $name }}"  value="{{ old($name, $model->$name) }}" {{ $attributes
+<input name="{{ $name }}"  value="{{ old($name, $value) }}" {{ $attributes
 ->class(['form-control', 'is-invalid' => $hasError])
 ->merge(['type' => 'text', 'id' => $name])->except('name') }} autocomplete="off">
 @error($name)

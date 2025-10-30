@@ -1,23 +1,37 @@
 @extends('layout')
 
-@section('title', '502-bad-gateway.hgn')
+@section('title', '502 Bad Gateway')
+@section('current-node-title', '502 Bad Gateway')
 
-@section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">
-                502 Bad Gateway
-            </h1>
+@section('nodes')
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">ゲートウェイエラー</h2>
+            <span class="node-pt">●</span>
         </div>
-
-        <div class="node node-center">
-            <div class="text-node">
+        <div class="node-content basic">
+            <p>
                 不正な応答を受信したため、処理を実行できませんでした。<br>
-                やり直しても問題が解決しない場合はお問い合わせください。<br>
-                問い合わせ先はAboutノードを確認してください。
-            </div>
+                サーバーの一時的な問題の可能性があります。<br>
+                <br>
+                しばらく待ってから再度お試しください。<br>
+                問題が解決しない場合は、<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>ください。
+            </p>
         </div>
-    </div>
+    </section>
 
-    @include('footer')
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">近道</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
 @endsection

@@ -1,11 +1,22 @@
 <?php
 
+/**
+ * メニューのアクティブ状態を設定
+ *
+ * @param string $match
+ * @param bool $isPerfectMatch
+ * @return string
+ */
 function menu_active(string $match, bool $isPerfectMatch = false): string
 {
     if ($isPerfectMatch) {
         return (Request::route()->getName() === $match) ? 'active' : '';
     } else {
-        return str_starts_with(Request::route()->getName(), $match) ? 'active' : '';
+        if (Request::route()->getName() === $match) {
+            return 'active';
+        }
+
+        return str_starts_with(Request::route()->getName(), $match . '.') ? 'active' : '';
     }
 }
 
@@ -17,7 +28,7 @@ function menu_active(string $match, bool $isPerfectMatch = false): string
  * @param $val2
  * @return string
  */
-function checked($val1, $val2)
+function checked($val1, $val2): string
 {
     if ($val1 == $val2) {
         return ' checked';
@@ -41,7 +52,13 @@ function invalid($errors, $formName): string
 
     return '';
 }
-function selected($val1, $val2)
+
+/**
+ * @param $val1
+ * @param $val2
+ * @return string
+ */
+function selected($val1, $val2): string
 {
     if ($val1 == $val2) {
         return ' selected';
@@ -72,7 +89,7 @@ function active($val1, $val2)
  * @param $text
  * @return string
  */
-function cut_new_line($text)
+function cut_new_line($text): string
 {
     return trim(preg_replace("/(\r\n){3,}|\r{3,}|\n{3,}/", "\n\n", $text));
 }

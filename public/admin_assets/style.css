@@ -1,8 +1,9 @@
-table.admin-detail-table {
+table.admin-detail-table, table.admin-form-table {
     width: 100%;
 
     th {
         width: auto;
+        padding-right: 10px;
         white-space: nowrap;
     }
 
@@ -11,12 +12,12 @@ table.admin-detail-table {
     }
 }
 
-.admin-form-table th {
+table.admin-form-table th {
     white-space: nowrap;
 }
 
-.admin-form-table tr:last-child > td,
-.admin-form-table tr:last-child > th {
+table.admin-form-table tr:last-child > td,
+table.admin-form-table tr:last-child > th {
     border-bottom: none;
 }
 
@@ -29,3 +30,184 @@ table.admin-detail-table {
 .edit-multi-textarea {
     height: 4rem;
 }
+
+textarea {
+    height: 60px;
+}
+
+#network-editor-control {
+    margin-top: 3rem;
+}
+
+#network-editor-container {
+    width: 100%;
+    min-height: 500px;
+    overflow: scroll;
+    position: relative;
+
+    #network-editor {
+        position: absolute;
+        top:0;
+        left:0;
+        width: 10000px;
+        height: 10000px;
+
+        div#size-checker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: dotted 1px red;
+        }
+
+        .edit-node {
+            position: absolute;
+            display: inline-block;
+            touch-action: none;
+            user-select: none;
+            padding: 13px 18px;
+            font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
+            font-weight: 300;
+            font-style: normal;
+            font-size: 14px;
+            cursor: grab;
+            text-align: center;
+
+            .edit-node-remove {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                padding: 3px;
+                font-size: 12px;
+                cursor: pointer;
+                display: none;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+            }
+
+            .edit-node-edge-select {
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                font-size: 12px;
+                display: none;
+                border: solid 2px #777;
+                border-radius: 50%;
+            }
+        }
+
+        .edit-node.small {
+            font-size: 11px;
+            padding: 8px 12px;
+        }
+
+        .edit-node:active {
+            cursor: grabbing;
+        }
+
+        .edit-node.edge-mode, .edit-node:active.edge-mode {
+            cursor: unset;
+
+            .edit-node-edge-select {
+                display: inline-block;
+            }
+
+            .edit-node-edge-select:hover, .edit-node-edge-select.selected {
+                border: solid 2px white;
+            }
+        }
+
+        .edit-pt-node {
+            position: absolute;
+            display: inline-block;
+            touch-action: none;
+            user-select: none;
+            width: 25px;
+            height: 25px;
+            cursor: grab;
+            border: solid 1px #555;
+            border-radius: 20%;
+
+            .edit-pt-node-remove {
+                position: absolute;
+                top: -20px;
+                right: -5px;
+                padding: 0 3px;
+                cursor: pointer;
+                display: none;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+            }
+        }
+
+        .edit-pt-node:hover {
+            border: solid 1px #CCC;
+        }
+
+        .edit-pt-node.edge-mode, .edit-pt-node:active.edge-mode {
+            cursor: unset;
+            border: solid 2px #777;
+            border-radius: 50%;
+        }
+
+        .edit-pt-node.edge-mode:hover, .edit-pt-node.edge-mode.selected {
+            border: solid 2px white;
+        }
+
+        .dom-node {
+            position: absolute;
+            padding: 13px 18px;
+            display: inline-block;
+            font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "Noto Serif JP", "游明朝 Demibold", "游明朝", "Yu Mincho", "游明朝体", "YuMincho", serif;
+            font-weight: 300;
+            font-style: normal;
+            font-size: 14px;
+            text-align: center;
+            left: 0;
+            top: 0;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .dom-node.small {
+            font-size: 11px;
+            padding: 8px 12px;
+        }
+
+        .edit-network {
+            position: absolute;
+            display: inline-block;
+
+            .edit-network-remove {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 2px;
+                font-size: 15px;
+                cursor: pointer;
+                border: solid 2px #c9302c;
+                border-radius: 6px;
+                width: 33px;
+                height: 33px;
+                text-align: center;
+                display: none;
+                z-index: 99999;
+            }
+        }
+
+        .edit-network:hover {
+            background-color: rgba(100, 200, 100, 0.4);
+        }
+    }
+
+    #network-editor-canvas {
+        position: absolute;
+        top:0;
+        left:0;
+        z-index:-1000;
+        backdrop-filter: blur(3px);
+        pointer-events: none;
+    }
+}
+
+
+

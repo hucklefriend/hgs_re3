@@ -28,6 +28,7 @@ abstract class AbstractAdminController extends Controller
         }
 
         $key = $this->makeSearchSessionKey();
+        \Log::debug($key);
         if (!empty($search)) {
             session([$key => $search]);
         } else {
@@ -39,23 +40,20 @@ abstract class AbstractAdminController extends Controller
      * 検索内容を取得
      *
      * @return array
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function getSearchSession(): array
     {
-        return session()->get($this->makeSearchSessionKey(), []);
+        return session($this->makeSearchSessionKey(), []);
     }
 
     /**
      * 検索セッションのキーを生成
      *
-     * @return void
+     * @return string
      */
     protected function makeSearchSessionKey(): string
     {
-        // "search_コントローラー名"
-        return 'search_' . class_basename($this);
+        return 'search_' . substr(class_basename($this), 4, -10);
     }
 
     /**

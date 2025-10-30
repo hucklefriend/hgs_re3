@@ -1,0 +1,212 @@
+openapi: 3.0.0
+info:
+  title: Game Maker API
+  version: 1.0.0
+  description: ゲームメーカー情報を管理するAPI
+
+servers:
+  - url: /api/v1
+    description: APIサーバー
+
+paths:
+  /game-makers:
+    get:
+      summary: ゲームメーカー一覧取得
+      description: 登録されている全てのゲームメーカー情報を取得します
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameMaker'
+    
+    post:
+      summary: ゲームメーカー作成
+      description: 新しいゲームメーカー情報を作成します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameMakerCreate'
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameMaker'
+        '422':
+          description: バリデーションエラー
+
+  /game-makers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ゲームメーカーID
+    
+    get:
+      summary: ゲームメーカー詳細取得
+      description: 指定したIDのゲームメーカー情報を取得します
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameMaker'
+        '404':
+          description: ゲームメーカーが見つかりません
+    
+    put:
+      summary: ゲームメーカー更新
+      description: 指定したIDのゲームメーカー情報を更新します
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GameMakerUpdate'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameMaker'
+        '404':
+          description: ゲームメーカーが見つかりません
+        '422':
+          description: バリデーションエラー
+    
+    delete:
+      summary: ゲームメーカー削除
+      description: 指定したIDのゲームメーカー情報を削除します
+      responses:
+        '200':
+          description: 削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: GameMaker deleted
+        '404':
+          description: ゲームメーカーが見つかりません
+
+components:
+  schemas:
+    GameMaker:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ゲームメーカーID
+        key:
+          type: string
+          maxLength: 50
+          description: ゲームメーカーキー
+        name:
+          type: string
+          maxLength: 200
+          description: ゲームメーカー名
+        node_name:
+          type: string
+          maxLength: 200
+          description: ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
+        description:
+          type: string
+          nullable: true
+          description: 説明
+        description_source:
+          type: string
+          nullable: true
+          description: 説明の出典
+        related_game_maker_id:
+          type: integer
+          nullable: true
+          description: 関連ゲームメーカーID
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    GameMakerCreate:
+      type: object
+      required:
+        - key
+        - name
+        - node_name
+        - type
+      properties:
+        key:
+          type: string
+          maxLength: 50
+          description: ゲームメーカーキー
+        name:
+          type: string
+          maxLength: 200
+          description: ゲームメーカー名
+        node_name:
+          type: string
+          maxLength: 200
+          description: ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
+        description:
+          type: string
+          nullable: true
+          description: 説明
+        description_source:
+          type: string
+          nullable: true
+          description: 説明の出典
+        related_game_maker_id:
+          type: integer
+          nullable: true
+          description: 関連ゲームメーカーID
+    
+    GameMakerUpdate:
+      type: object
+      properties:
+        key:
+          type: string
+          maxLength: 50
+          description: ゲームメーカーキー
+        name:
+          type: string
+          maxLength: 200
+          description: ゲームメーカー名
+        node_name:
+          type: string
+          maxLength: 200
+          description: ノード名
+        type:
+          type: integer
+          description: ゲームメーカー種別（1:商業ゲームメーカー、2:インディーゲームメーカー、3:同人）
+        description:
+          type: string
+          nullable: true
+          description: 説明
+        description_source:
+          type: string
+          nullable: true
+          description: 説明の出典
+        related_game_maker_id:
+          type: integer
+          nullable: true
+          description: 関連ゲームメーカーID 

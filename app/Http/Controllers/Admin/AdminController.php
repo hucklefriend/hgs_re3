@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AdminController extends AbstractAdminController
 {
@@ -29,12 +30,6 @@ class AdminController extends AbstractAdminController
      */
     public function login(): Application|Factory|View|RedirectResponse
     {
-        // ローカル環境でのみ、id:1で自動ログインする
-        if (App::environment('local')) {
-            Auth::loginUsingId(1, true);
-            return redirect()->route('Admin');
-        }
-
         return view('admin.login');
     }
 
@@ -49,9 +44,9 @@ class AdminController extends AbstractAdminController
         $credentials = $request->only('email', 'password');
         $rememberMe = $request->input('remember_me', 0);
 
-        if (Auth::attempt($credentials, $rememberMe == 1)) {
+        if (Auth::guard('admin')->attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
-            return redirect()->route('Admin');
+            return redirect()->route('Admin.Dashboard');
         } else {
             // 認証に失敗したときの処理
             return back()->withInput()->withErrors(['login' => '認証に失敗しました。再度やり直してください。']);
@@ -61,11 +56,14 @@ class AdminController extends AbstractAdminController
     /**
      * ログアウト
      *
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('Admin.Login');
     }
 }

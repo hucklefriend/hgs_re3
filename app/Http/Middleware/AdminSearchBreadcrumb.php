@@ -20,11 +20,11 @@ class AdminSearchBreadcrumb
         // 現在のルートの名前を取得
         $currentRouteName = Route::currentRouteName();
 
-        // preg_matchで正規表現を使って、Admin.MasterData.(アルファベットと数字).の文字列を取得
-        if (preg_match('/Admin\.MasterData\.([a-zA-Z0-9]+)\./', $currentRouteName, $matches)) {
+        // preg_matchで正規表現を使って、Admin.Game.(アルファベットと数字).の文字列を取得
+        if (preg_match('/Admin\.Game\.([a-zA-Z0-9]+)\./', $currentRouteName, $matches)) {
             $search = session('search_' . $matches[1], []);
             View::share('overwriteBreadcrumb', [
-                $matches[1] => route('Admin.MasterData.' . $matches[1], $search),
+                $matches[1] => route('Admin.Game.' . $matches[1], $search),
             ]);
         }
 

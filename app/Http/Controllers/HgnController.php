@@ -3,15 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Information;
-use App\Models\MasterData\GameFranchise;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class HgnController extends Controller
 {
@@ -21,34 +16,34 @@ class HgnController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function entrance(): JsonResponse|Application|Factory|View
+    public function root(): JsonResponse|Application|Factory|View
     {
-        if (App::environment('production')) {
-            return view('suspend');
-        }
+        $infoList = Information::select(['id', 'head'])
+            ->where('open_at', '<', now())
+            ->where('close_at', '>=', now())
+            ->orderBy('priority', 'desc')
+            ->orderBy('open_at', 'desc')
+            ->limit(3)
+            ->get();
 
-        $infoList = Information::where('open_at', '<', now())
+        return $this->tree(view('root', compact('infoList')));
+    }
+
+    /**
+     * お知らせ一覧
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function infomations(): JsonResponse|Application|Factory|View
+    {
+        $informations = Information::where('open_at', '<=', now())
             ->where('close_at', '>=', now())
             ->orderBy('priority', 'desc')
             ->orderBy('open_at', 'desc')
             ->get();
 
-        return $this->network(view('entrance', compact('infoList')));
-    }
-
-    /**
-     * お知らせネットワーク
-     *
-     * @return JsonResponse|Application|Factory|View
-     * @throws \Throwable
-     */
-    public function infoNetwork(): JsonResponse|Application|Factory|View
-    {
-        $infoList = Information::where('open_at', '<=', now())
-            ->orderBy('open_at', 'desc')
-            ->paginate(30);
-
-        return $this->network(view('info_network', compact('infoList')));
+        return $this->tree(view('infomations', compact('informations')));
     }
 
     /**
@@ -58,9 +53,9 @@ class HgnController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function info(Information $info): JsonResponse|Application|Factory|View
+    public function infomationDetail(Information $info): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('info', ['info' => $info]));
+        return $this->tree(view('infomation_detail', compact('info')));
     }
 
     /**
@@ -71,7 +66,7 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('about'));
+        return $this->tree(view('about'));
     }
 
     /**
@@ -82,6 +77,17 @@ class HgnController extends Controller
      */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
-        return $this->contentNode(view('privacy_policy'));
+        return $this->tree(view('privacy_policy'));
+    }
+
+    /**
+     * ロゴ
+     *
+     * @return JsonResponse|Application|Factory|View
+     * @throws \Throwable
+     */
+    public function logo(): JsonResponse|Application|Factory|View
+    {
+        return $this->tree(view('logo'));
     }
 }

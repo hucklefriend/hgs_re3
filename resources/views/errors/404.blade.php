@@ -1,22 +1,34 @@
 @extends('layout')
 
-@section('title', '404-not-found.hgn')
+@section('title', '404 Not Found')
+@section('current-node-title', '404 Not Found')
 
-@section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">
-                404 Not Found
-            </h1>
+@section('nodes')
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">ページが見つかりません</h2>
+            <span class="node-pt">●</span>
         </div>
-
-
-        <div class="node node-center">
-            <div class="text-node">
-                指定のネットワークまたはノードは存在しません。
-            </div>
+        <div class="node-content basic">
+            <p>
+                指定のページは存在しません。<br>
+                URLが間違っているか、ページが削除された可能性があります。
+            </p>
         </div>
-    </div>
+    </section>
 
-    @include('footer')
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">近道</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
 @endsection

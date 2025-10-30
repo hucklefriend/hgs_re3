@@ -8,6 +8,7 @@
 .env
 .env.backup
 .env.production
+.env.testing
 .phpactor.json
 .phpstorm.meta.php
 .phpunit.result.cache
@@ -21,3 +22,7 @@ yarn-error.log
 /.idea
 /.vscode
 composer.lock
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

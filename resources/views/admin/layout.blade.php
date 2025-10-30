@@ -7,26 +7,29 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $controllerName }}.Admin.HGN</title>
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <meta content="" name="description" />
-    <meta content="" name="author" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="author">
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
-
     <!-- ================== BEGIN core-css ================== -->
-    <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/transparent/app.min.css') }}" rel="stylesheet">
     <!-- ================== END core-css ================== -->
 
     <!-- オリジナルCSS -->
-    <link href="{{ asset('admin_assets/style.css') }}?{{ time() }}" rel="stylesheet" />
+    <link href="{{ asset('admin_assets/style.css') }}?{{ time() }}" rel="stylesheet">
 
     <!-- ================== BEGIN page-css ================== -->
-    <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/jvectormap-next/jquery-jvectormap.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/gritter/css/jquery.gritter.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/jstree/dist/themes/default/style.min.css') }}" rel="stylesheet">
     <!-- ================== END page-css ================== -->
+    <script>
+        window.START_HGN = false;
+    </script>
 </head>
 <body>
 <!-- BEGIN page-cover -->
@@ -45,7 +48,7 @@
     <div id="header" class="app-header">
         <!-- BEGIN navbar-header -->
         <div class="navbar-header">
-            <a href="{{ route('Admin') }}" class="navbar-brand"><img src="{{ asset('admin_assets/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
+            <a href="{{ route('Admin.Dashboard') }}" class="navbar-brand"><img src="{{ asset('admin_assets/logo.png') }}" class="navbar-logo-hgn"></img> <b class="me-1">H.G.N.</b> Admin</a>
             <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -75,9 +78,9 @@
                         <span class="badge bg-danger rounded-pill ms-auto pb-4px">2</span>
                     </a>
                     <a href="calendar.html" class="dropdown-item">Calendar</a>
-                    <a href="extra_settings_page.html" class="dropdown-item">Settings</a>
-                    <div class="dropdown-divider"></div>
                     --}}
+                    <a href="{{ route('Root') }}" class="dropdown-item">トップ</a>
+                    <div class="dropdown-divider"></div>
                     <a href="{{ route('Admin.Logout') }}" class="dropdown-item">Log Out</a>
                 </div>
             </div>
@@ -93,18 +96,18 @@
             <!-- BEGIN menu -->
             <div class="menu">
                 <div class="menu-header">Navigation</div>
-                <div class="menu-item {{ menu_active("Admin", true) }}">
-                    <a href="{{ route("Admin") }}" class="menu-link">
+                <div class="menu-item {{ menu_active("Admin.Dashboard") }}">
+                    <a href="{{ route("Admin.Dashboard") }}" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-sitemap"></i>
                         </div>
-                        <div class="menu-text">Top</div>
+                        <div class="menu-text">Dashboard</div>
                     </a>
                 </div>
                 <div class="menu-item has-sub {{ menu_active("Admin.Manage") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-sitemap"></i>
+                            <i class="far fa-calendar"></i>
                         </div>
                         <div class="menu-text">Manage</div>
                         <div class="menu-caret"></div>
@@ -113,40 +116,49 @@
                         <div class="menu-item  {{ menu_active("Admin.Manage.Information") }}">
                             <a href="{{ route("Admin.Manage.Information") }}" class="menu-link"><div class="menu-text">Information</div></a>
                         </div>
+                        <div class="menu-item  {{ menu_active("Admin.Manage.Contact") }}">
+                            <a href="{{ route("Admin.Manage.Contact") }}" class="menu-link"><div class="menu-text">Contact</div></a>
+                        </div>
                     </div>
                 </div>
-                <div class="menu-item has-sub {{ menu_active("Admin.MasterData") }}">
+                <div class="menu-item has-sub {{ menu_active("Admin.Game") }}">
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-sitemap"></i>
+                            <i class="fas fa-gamepad"></i>
                         </div>
-                        <div class="menu-text">MasterData</div>
+                        <div class="menu-text">Game</div>
                         <div class="menu-caret"></div>
                     </a>
                     <div class="menu-submenu">
-                        <div class="menu-item  {{ menu_active("Admin.MasterData.Maker") }}">
-                            <a href="{{ route("Admin.MasterData.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
+                        <div class="menu-item  {{ menu_active("Admin.Game.Maker") }}">
+                            <a href="{{ route("Admin.Game.Maker") }}" class="menu-link"><div class="menu-text">Maker</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Platform") }}">
-                            <a href="{{ route("Admin.MasterData.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Platform") }}">
+                            <a href="{{ route("Admin.Game.Platform") }}" class="menu-link"><div class="menu-text">Platform</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Franchise") }}">
-                            <a href="{{ route("Admin.MasterData.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Franchise") }}">
+                            <a href="{{ route("Admin.Game.Franchise") }}" class="menu-link"><div class="menu-text">Franchise</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Series") }}">
-                            <a href="{{ route("Admin.MasterData.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Series") }}">
+                            <a href="{{ route("Admin.Game.Series") }}" class="menu-link"><div class="menu-text">Series</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Title") }}">
-                            <a href="{{ route("Admin.MasterData.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Title") }}">
+                            <a href="{{ route("Admin.Game.Title") }}" class="menu-link"><div class="menu-text">Title</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.Package") }}">
-                            <a href="{{ route("Admin.MasterData.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.PackageGroup") }}">
+                            <a href="{{ route("Admin.Game.PackageGroup") }}" class="menu-link"><div class="menu-text">Package Group</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.RelatedProduct") }}">
-                            <a href="{{ route("Admin.MasterData.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.Package") }}">
+                            <a href="{{ route("Admin.Game.Package") }}" class="menu-link"><div class="menu-text">Package</div></a>
                         </div>
-                        <div class="menu-item {{ menu_active("Admin.MasterData.MediaMix") }}">
-                            <a href="{{ route("Admin.MasterData.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
+                        <div class="menu-item {{ menu_active("Admin.Game.RelatedProduct") }}">
+                            <a href="{{ route("Admin.Game.RelatedProduct") }}" class="menu-link"><div class="menu-text">Related Product</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.Game.MediaMixGroup") }}">
+                            <a href="{{ route("Admin.Game.MediaMixGroup") }}" class="menu-link"><div class="menu-text">Media Mix Group</div></a>
+                        </div>
+                        <div class="menu-item {{ menu_active("Admin.Game.MediaMix") }}">
+                            <a href="{{ route("Admin.Game.MediaMix") }}" class="menu-link"><div class="menu-text">Media Mix</div></a>
                         </div>
                     </div>
                 </div>
@@ -220,6 +232,7 @@
 <script src="{{ asset('assets/plugins/jvectormap-content/world-mill.js') }}"></script>
 <script src="{{ asset('assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js') }}"></script>
 <script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/jstree/dist/jstree.min.js') }}"></script>
 
 <script src="{{ asset('admin_assets/common.js') }}"></script>
 <script>

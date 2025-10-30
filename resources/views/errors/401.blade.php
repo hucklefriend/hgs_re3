@@ -1,22 +1,34 @@
 @extends('layout')
 
-@section('title', '401-unauthorized.hgn')
+@section('title', '401 Unauthorized')
+@section('current-node-title', '401 Unauthorized')
 
-@section('content')
-    <div class="node-list" style="margin-bottom: 100px;">
-        <div style="text-align:center; margin: 20px 0;">
-            <h1 class="head1">
-                401 Unauthorized
-            </h1>
+@section('nodes')
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">アクセス拒否</h2>
+            <span class="node-pt">●</span>
         </div>
-
-
-        <div class="node node-center">
-            <div class="text-node">
-                指定のネットワークまたはノードへのアクセスはできません。
-            </div>
+        <div class="node-content basic">
+            <p>
+                指定のページへのアクセスはできません。<br>
+                認証が必要です。
+            </p>
         </div>
-    </div>
+    </section>
 
-    @include('footer')
+    <section class="node tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">近道</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <span class="node-pt main-node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
 @endsection

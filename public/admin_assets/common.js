@@ -1,18 +1,18 @@
 function filterAdminLinkList()
 {
-    $('#admin-link-list-filter').val().toLowerCase().trim().split(/\s+/).forEach((filterText) => {
-        $('#admin-link-list').children().each((index, element) => {
-            const linkText = $(element).text().toLowerCase();
-            if (linkText.includes(filterText)) {
-                $(element).show();
-            } else {
-                $(element).hide();
-            }
-        });
+    let filterTexts = $('#admin-link-list-filter').val().toLowerCase().trim().split(/\s+/);
+
+    $('#admin-link-list').children().each((index, element) => {
+        const linkText = $(element).text().toLowerCase();
+        if (filterTexts.every(text => linkText.includes(text))) {
+            $(element).show();
+        } else {
+            $(element).hide();
+        }
     });
 }
 
-$(()=>{
+$(()=> {
     let adminLinkListFilter = $('#admin-link-list-filter');
     let adminLinkListFilterTimer = null;
     adminLinkListFilter.on('input', function (e) {
@@ -31,7 +31,6 @@ $(()=>{
         filterAdminLinkList();
     }
 
-
     let adminLinkPlatformFilter = $('#admin-link-platform-filter');
     if (adminLinkPlatformFilter.length > 0) {
         adminLinkPlatformFilter.select2({placeholder: "プラットフォーム"});
@@ -41,7 +40,7 @@ $(()=>{
             // selectedIdsでループ
             if (selectedIds) {
                 $('.list-group-item').hide();
-                selectedIds.forEach(function(value) {
+                selectedIds.forEach(function (value) {
                     $('.list-group-item[data-platform="' + value + '"]').show();
                 });
             } else {
@@ -49,11 +48,66 @@ $(()=>{
             }
         });
     }
+
+    $('textarea').each(function () {
+        $(this).on('input', function () {
+            setTextareaHeight(this);
+        });
+
+        setTextareaHeight(this);
+    });
+
+    // テキストエリアの高さを自動調整
+    function setTextareaHeight(e) {
+        let elem = $(e);
+        const height = e.scrollHeight;
+        const clientHeight = e.clientHeight;
+        if (clientHeight < height && height < 400) {
+            elem.css('height', (height + 5) + 'px');
+        }
+    }
+
+    $('.description-source-tool-a').click(function (e) {
+        e.preventDefault();
+        $('#description_source').val('<a href="" target="_blank" rel="external"></a>');
+    });
+
+    $('.description-source-tool-a-shop').click(function (e) {
+        e.preventDefault();
+        $('#description_source').val('<a href="" target="_blank" rel="external"><i class="bi bi-shop"></i></a>');
+    });
+
+
+    $(".game-tree").jstree({
+        "plugins": ["types"],
+        "core": {
+            "themes": {
+                "responsive": false,
+                "icons": false,
+            },
+            "check_callback": true, // 基本的に全ての操作を許可
+            "dblclick_toggle": false // ダブルクリックで展開しない
+        },
+        "types": {
+            //"default": { "icon": "fa fa-folder text-warning fa-lg" },
+            //"file": { "icon": "fa fa-file text-dark fa-lg" }
+        },
+    });
+
+    $(".game-tree").on("select_node.jstree", function(e,data) {
+        var link = $("#" + data.selected).find("a");
+        if (link.attr("href") != "#" && link.attr("href") != "javascript:;" && link.attr("href") != "") {
+            if (link.attr("target") == "_blank") {
+                link.attr("href").target = "_blank";
+            }
+            document.location.href = link.attr("href");
+            return false;
+        }
+    });
 });
 
 
-function descriptionFormat(type, name)
-{
+function descriptionFormat(type, name) {
     let format = '';
     switch (type) {
         case 'wikipedia':
@@ -62,4 +116,8 @@ function descriptionFormat(type, name)
     }
 
     $('#' + name).val(format);
+}
+
+function clipboardCopy(text) {
+    navigator.clipboard.writeText(text);
 }
