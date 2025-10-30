@@ -25,6 +25,12 @@
         </td>
     </tr>
     <tr>
+        <th>ノード表示用の名前</th>
+        <td>
+            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
+        </td>
+    </tr>
+    <tr>
         <th>key</th>
         <td>
             <x-admin.input name="key" :model="$model" required maxlength="50" />
@@ -40,13 +46,6 @@
         <th>俗称</th>
         <td>
             <x-admin.textarea name="synonymsStr" :model="$model" />
-        </td>
-    </tr>
-    <tr>
-        <th>ノード表示用の名前</th>
-        <td>
-            <x-admin.textarea name="node_name" :model="$model" required maxlength="200" />
-            <x-admin.node-input-support />
         </td>
     </tr>
     <tr>

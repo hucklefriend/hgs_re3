@@ -16,8 +16,8 @@
         <div class="node-content basic">
             @if (app()->isDownForMaintenance())
                 <p>
-                    現在、システムメンテナンスを実施しております。<br>
-                    @if(isset($exception) && $exception->retryAfter)
+                    現在、メンテナンスを実施しております。<br>
+                    @if(isset($exception) && isset($exception->retryAfter))
                         {{ date('Y年m月d日 H:i', $exception->retryAfter) }} 頃に終了予定です。<br>
                     @endif
                     <br>

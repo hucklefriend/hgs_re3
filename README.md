@@ -8,3 +8,8 @@
 This project is licensed under the AGPL-3.0-or-later.
 
 This project is built with [Laravel Framework](https://laravel.com), which is licensed under the MIT license.
+
+
+## メモ
+
+2003.9.28 open

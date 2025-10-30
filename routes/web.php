@@ -125,8 +125,6 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
-                Route::get('{' . $prefix . '}/edit-net', [$class, 'editNetwork'])->name("{$basename}.EditNetwork");
-                Route::post('{' . $prefix . '}/edit-net', [$class, 'saveNetwork'])->name("{$basename}.SaveNetwork");
             });
 
             // タイトル
