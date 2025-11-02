@@ -24,7 +24,7 @@ abstract class Controller
     public function __construct()
     {
         if (App::environment('local')) {
-            Auth::guard('admin')->attempt(['email' => 'webmaster@horragame.net', 'password' => 'huckle'], true);
+            //Auth::guard('admin')->attempt(['email' => 'webmaster@horragame.net', 'password' => 'huckle'], true);
         }
 
         // 現在のURLにクエリ文字列でover18=1があったら、cookieにover18=1をセットする
@@ -115,10 +115,17 @@ abstract class Controller
      *
      * @param Throwable $e
      * @param Request $request
-     * @return JsonResponse|View|Response
+     * @return JsonResponse|View|Response|null
      */
-    public static function handleGlobalException(Throwable $e, Request $request): JsonResponse|View|Response
+    public static function handleGlobalException(Throwable $e, Request $request): JsonResponse|View|Response|null
     {
+        // APP_URL/admin配下の場合はLaravelのデフォルト処理に委譲
+        $appUrl = rtrim(config('app.url'), '/');
+        $adminUrl = $appUrl . '/admin';
+        if (str_starts_with($request->url(), $adminUrl)) {
+            return null;
+        }
+
         // 例外の種類に応じてステータスコードとビューを決定
         $statusCode = 500;
         $viewName = 'errors.500';

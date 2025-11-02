@@ -1,0 +1,17 @@
+---
+description: コマンド実行のルール
+alwaysApply: true
+---
+
+# コマンド実行を行う必要がある際のルール
+
+## sudoは実行しない
+
+- sudoの実行はユーザーが行う
+- 実行したいコマンドだけ表示してユーザーが実行するのを待つ
+
+
+## composerの実行
+
+- composerコマンドはインストールされていない
+- `php composer.phar`で実行する

@@ -63,4 +63,21 @@ class GameSeries extends Model
             return self::orderBy('id', 'asc')->first();
         }
     }
+
+    /**
+     * タイトルから設定するパラメーター
+     *
+     * @return self
+     */
+    public function setTitleParam(): self
+    {
+        $this->first_release_int = 99999999;
+        foreach ($this->titles as $title) {
+            if ($title->first_release_int < $this->first_release_int) {
+                $this->first_release_int = $title->first_release_int;
+            }
+        }
+
+        return $this;
+    }
 }

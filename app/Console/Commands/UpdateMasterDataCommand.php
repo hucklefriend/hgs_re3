@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\GameFranchise;
 use App\Models\GameMaker;
 use App\Models\GameTitle;
+use App\Models\GameSeries;
 use Illuminate\Console\Command;
 
 class UpdateMasterDataCommand extends Command
@@ -29,17 +30,22 @@ class UpdateMasterDataCommand extends Command
     public function handle()
     {
         foreach (GameFranchise::all() as $franchise) {
-            $franchise->setRating();
+            $franchise->setTitleParam();
             $franchise->save();
         }
 
-        foreach (GameMaker::all() as $maker) {
-            $maker->setRating();
-            $maker->save();
-        }
+        // foreach (GameMaker::all() as $maker) {
+        //     $maker->setRating();
+        //     $maker->save();
+        // }
 
         foreach (GameTitle::all() as $title) {
             $title->setFirstReleaseInt()->save();
+        }
+
+        foreach (GameSeries::all() as $series) {
+            $series->setTitleParam();
+            $series->save();
         }
     }
 }

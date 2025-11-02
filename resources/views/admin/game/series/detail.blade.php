@@ -33,6 +33,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>シリーズ最初のリリース日(数値)</th>
+                    <td>
+                        <div class="d-inline-block text-center">
+                            {!! $model->first_release_int !!}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
                     <th>説明</th>
                     <td>
                         @include('common.description', ['model' => $model])
