@@ -166,6 +166,11 @@ class PackageController extends AbstractAdminController
                     if ($franchise !== null) {
                         $updateFranchises[$franchise->id] = $franchise;
                     }
+                    $series = $title->series;
+                    if ($series !== null) {
+                        $series->setTitleParam();
+                        $series->save();
+                    }
                 }
             }
         }
@@ -239,6 +244,12 @@ class PackageController extends AbstractAdminController
             if ($franchise !== null) {
                 $franchises[$franchise->id] = $franchise;
             }
+
+            $series = $title->series;
+            if ($series !== null) {
+                $series->setTitleParam();
+                $series->save();
+            }
         }
         
         foreach ($franchises as $franchise) {
@@ -288,6 +299,11 @@ class PackageController extends AbstractAdminController
                 if (!isset($updatedTitles[$title->id])) {
                     $title->setFirstReleaseInt()->save();
                     $updatedTitles[$title->id] = true;
+                    $series = $title->series;
+                    if ($series !== null) {
+                        $series->setTitleParam();
+                        $series->save();
+                    }
                 }
             }
         }
@@ -343,6 +359,19 @@ class PackageController extends AbstractAdminController
             if ($originalPackage) {
                 foreach ($originalPackage->packageGroups as $packageGroup) {
                     $package->packageGroups()->attach($packageGroup->id);
+                    foreach ($packageGroup->titles as $title) {
+                        $title->setFirstReleaseInt()->save();
+                        $series = $title->series;
+                        if ($series !== null) {
+                            $series->setTitleParam();
+                            $series->save();
+                        }
+                        $franchise = $title->getFranchise();
+                        if ($franchise !== null) {
+                            $franchise->setTitleParam();
+                            $franchise->save();
+                        }
+                    }
                 }
             }
 
@@ -537,6 +566,16 @@ class PackageController extends AbstractAdminController
                 if (!isset($titles[$title->id])) {
                     $title->setFirstReleaseInt()->save();
                     $titles[$title->id] = true;
+                    $series = $title->series;
+                    if ($series !== null) {
+                        $series->setTitleParam();
+                        $series->save();
+                    }
+                    $franchise = $title->getFranchise();
+                    if ($franchise !== null) {
+                        $franchise->setTitleParam();
+                        $franchise->save();
+                    }
                 }
             }
         }
