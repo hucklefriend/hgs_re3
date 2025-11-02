@@ -14,7 +14,7 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
-            @foreach ($franchise->series as $series)
+            @foreach ($franchise->series->sortBy('first_release_int') as $series)
                 <section class="node tree-node" id="{{ $series->key }}-tree-node">
                     <div class="node-head">
                         <h3 class="node-head-text">{{ $series->name }}シリーズ</h3>
@@ -34,7 +34,7 @@
             @endforeach
 
             @if ($franchise->titles->count() > 0)
-                @foreach ($franchise->titles as $title)
+                @foreach ($franchise->titles->sortBy('first_release_int') as $title)
                 <section class="node link-node" id="{{ $title->key }}-link-node">
                     <div class="node-head">
                         <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>

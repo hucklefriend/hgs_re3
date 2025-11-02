@@ -191,6 +191,16 @@ class PackageGroupController extends AbstractAdminController
         $packageGroup->titles()->sync($request->validated('game_title_ids'));
         foreach ($packageGroup->titles as $title) {
             $title->setFirstReleaseInt()->save();
+            $series = $title->series;
+            if ($series !== null) {
+                $series->setTitleParam();
+                $series->save();
+            }
+            $franchise = $title->franchise;
+            if ($franchise !== null) {
+                $franchise->setTitleParam();
+                $franchise->save();
+            }
         }
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
     }
@@ -223,6 +233,19 @@ class PackageGroupController extends AbstractAdminController
     public function syncPackage(LinkMultiPackageRequest $request, GamePackageGroup $packageGroup): RedirectResponse
     {
         $packageGroup->packages()->sync($request->validated('game_package_ids'));
+        foreach ($packageGroup->titles as $title) {
+            $title->setFirstReleaseInt()->save();
+            $series = $title->series;
+            if ($series !== null) {
+                $series->setTitleParam();
+                $series->save();
+            }
+            $franchise = $title->getFranchise();
+            if ($franchise !== null) {
+                $franchise->setTitleParam();
+                $franchise->save();
+            }
+        }
         return redirect()->route('Admin.Game.PackageGroup.Detail', $packageGroup);
     }
 
@@ -266,6 +289,16 @@ class PackageGroupController extends AbstractAdminController
                 $package->sort_order = $sortOrder[$id] ?? 99999999;
                 $package->rating = $rating[$id] ?? $package->rating;
                 $package->save();
+            }
+        }
+
+        foreach ($packageGroup->titles as $title) {
+            $franchise = $title->getFranchise();
+            $franchise->setTitleParam()->save();
+            $series = $title->series;
+            if ($series !== null) {
+                $series->setTitleParam();
+                $series->save();
             }
         }
 
