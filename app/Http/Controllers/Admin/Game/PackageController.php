@@ -153,6 +153,27 @@ class PackageController extends AbstractAdminController
             $maker->setRating()->save();
         }
 
+        // パッケージグループからタイトルを辿って、タイトルの初期リリース日を更新
+        // 同一タイトルが処理されないように配列に格納しておく
+        $updatedTitles = [];
+        $updateFranchises = [];
+        foreach ($package->packageGroups as $packageGroup) {
+            foreach ($packageGroup->titles as $title) {
+                if (!isset($updatedTitles[$title->id])) {
+                    $updatedTitles[$title->id] = true;
+                    $title->setFirstReleaseInt()->save();
+                    $franchise = $title->getFranchise();
+                    if ($franchise !== null) {
+                        $updateFranchises[$franchise->id] = $franchise;
+                    }
+                }
+            }
+        }
+
+        foreach ($updateFranchises as $franchise) {
+            $franchise->setTitleParam()->save();
+        }
+
         if ($linked['title_id'] !== null) {
             return redirect()->route('Admin.Game.Title.Detail', ['title' => $linked['title_id']]);
         } else if ($linked['package_group_id'] !== null) {
@@ -188,6 +209,9 @@ class PackageController extends AbstractAdminController
         $relelaseAt = $request->validated(['release_at']);
         $sortOrder = $request->validated(['sort_order']);
         $rating = $request->validated(['rating']);
+
+        $titles = [];
+
         foreach ($ids as $id) {
             $package = GamePackage::find($id);
             if ($package !== null) {
@@ -197,7 +221,28 @@ class PackageController extends AbstractAdminController
                 $package->sort_order = $sortOrder[$id] ?? 99999999;
                 $package->rating = $rating[$id] ?? $package->rating;
                 $package->save();
+
+                foreach ($package->packageGroups as $packageGroup) {
+                    foreach ($packageGroup->titles as $title) {
+                        if (!isset($titles[$title->id])) {
+                            $titles[$title->id] = $title;
+                        }
+                    }
+                }
             }
+        }
+
+        $franchises = [];
+        foreach ($titles as $title) {
+            $title->setFirstReleaseInt()->save();
+            $franchise = $title->getFranchise();
+            if ($franchise !== null) {
+                $franchises[$franchise->id] = $franchise;
+            }
+        }
+        
+        foreach ($franchises as $franchise) {
+            $franchise->setTitleParam()->save();
         }
 
         return redirect()->back();

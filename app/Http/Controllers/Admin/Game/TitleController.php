@@ -6,19 +6,12 @@ use App\Defines\AdminDefine;
 use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Requests\Admin\Game\LinkMultiMediaMixRequest;
 use App\Http\Requests\Admin\Game\LinkMultiPackageGroupRequest;
-use App\Http\Requests\Admin\Game\LinkMultiPackageRequest;
 use App\Http\Requests\Admin\Game\LinkMultiRelatedProductRequest;
-use App\Http\Requests\Admin\Game\PackageMultiUpdateRequest;
-use App\Http\Requests\Admin\Game\TitleMultiPackageGroupUpdateRequest;
-use App\Http\Requests\Admin\Game\TitleMultiPackageUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\TitleRequest;
 use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
-use App\Models\GamePackage;
-use App\Models\GamePackageGroup;
 use App\Models\GameTitle;
-use App\Models\OgpCache;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -128,8 +121,14 @@ class TitleController extends AbstractAdminController
 
         $franchise = $title->getFranchise();
         if ($franchise !== null) {
-            $franchise->setRating();
+            $franchise->setTitleParam();
             $franchise->save();
+        }
+
+        $series = $title->series;
+        if ($series !== null) {
+            $series->setTitleParam();
+            $series->save();
         }
 
         return redirect()->route('Admin.Game.Title.Detail', $title);
@@ -167,8 +166,14 @@ class TitleController extends AbstractAdminController
 
             $franchise = $model->getFranchise();
             if ($franchise !== null) {
-                $franchise->setRating();
+                $franchise->setTitleParam();
                 $franchise->save();
+            }
+
+            $series = $model->series;
+            if ($series !== null) {
+                $series->setTitleParam();
+                $series->save();
             }
         }
 
@@ -206,8 +211,14 @@ class TitleController extends AbstractAdminController
 
         $franchise = $title->getFranchise();
         if ($franchise !== null) {
-            $franchise->setRating();
+            $franchise->setTitleParam();
             $franchise->save();
+        }
+
+        $series = $title->series;
+        if ($series !== null) {
+            $series->setTitleParam();
+            $series->save();
         }
 
         return redirect()->route('Admin.Game.Title.Detail', $title);
@@ -230,8 +241,14 @@ class TitleController extends AbstractAdminController
         $title->delete();
 
         if ($franchise !== null) {
-            $franchise->setRating();
+            $franchise->setTitleParam();
             $franchise->save();
+        }
+
+        $series = $title->series;
+        if ($series !== null) {
+            $series->setTitleParam();
+            $series->save();
         }
 
         return redirect()->route('Admin.Game.Title');
@@ -264,8 +281,17 @@ class TitleController extends AbstractAdminController
      */
     public function syncPackageGroup(LinkMultiPackageGroupRequest $request, GameTitle $title): RedirectResponse
     {
-        $title->packageGroups()->sync($request->validated('game_package_group_ids'));
-        $title->setFirstReleaseInt()->save();
+        $title->packageGroups()
+              ->sync($request->validated('game_package_group_ids'));
+        $title->setFirstReleaseInt()
+              ->save();
+
+        $series = $title->series;
+        if ($series !== null) {
+            $series->setTitleParam();
+            $series->save();
+        }
+
         return redirect()->route('Admin.Game.Title.Detail', $title);
     }
 

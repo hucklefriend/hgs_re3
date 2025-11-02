@@ -116,36 +116,21 @@ class GameFranchise extends Model
         return $num;
     }
 
-    public function setRating(): void
-    {
-        foreach ($this->series as $series) {
-            foreach ($series->titles as $title) {
-                if ($title->rating == Rating::R18A) {
-                    $this->rating = Rating::R18A;
-                    break 2;
-                }
-            }
-        }
-
-        if ($this->rating == Rating::None) {
-            foreach ($this->titles as $title) {
-                if ($title->rating == Rating::R18A) {
-                    $this->rating = Rating::R18A;
-                    break;
-                }
-            }
-        }
-    }
-
     /**
-     * 保存
+     * タイトルから設定するパラメーター
      *
-     * @throws \Throwable
+     * @return self
      */
-    public function save(array $options = []): void
+    public function setTitleParam(): self
     {
-        $this->setRating();
+        $this->rating = Rating::None;
+        foreach ($this->titles as $title) {
+            if ($title->rating == Rating::R18A) {
+                $this->rating = Rating::R18A;
+                break;
+            }
+        }
 
-        parent::save($options);
+        return $this;
     }
 }

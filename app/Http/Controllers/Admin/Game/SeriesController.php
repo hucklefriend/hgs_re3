@@ -13,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SeriesController extends AbstractAdminController
 {
@@ -124,8 +125,21 @@ class SeriesController extends AbstractAdminController
      */
     public function update(SeriesRequest $request, GameSeries $series): RedirectResponse
     {
+        $oldFranchise = $series->franchise;
+
         $series->fill($request->validated());
         $series->save();
+
+        $franchise = $series->franchise;
+        if ($franchise !== null) {
+            $franchise->setTitleParam();
+            $franchise->save();
+        }
+        
+        if ($oldFranchise !== null) {
+            $oldFranchise->setTitleParam();
+            $oldFranchise->save();
+        }
 
         return redirect()->route('Admin.Game.Series.Detail', $series);
     }
@@ -139,11 +153,18 @@ class SeriesController extends AbstractAdminController
      */
     public function delete(\App\Models\GameSeries $series): RedirectResponse
     {
+        $oldFranchise = $series->franchise;
+
         foreach ($series->titles as $title) {
             $title->game_series_id = null;
             $title->save();
         }
         $series->delete();
+
+        if ($oldFranchise !== null) {
+            $oldFranchise->setTitleParam();
+            $oldFranchise->save();
+        }
 
         return redirect()->route('Admin.Game.Series');
     }
@@ -174,16 +195,35 @@ class SeriesController extends AbstractAdminController
      */
     public function syncTitle(LinkMultiTitleRequest $request, GameSeries $series): RedirectResponse
     {
-        foreach ($series->titles as $title) {
-            $title->game_series_id = null;
-            $title->save();
+        try {
+            DB::beginTransaction();
+
+            foreach ($series->titles as $title) {
+                $title->game_series_id = null;
+                $title->save();
+            }
+            foreach ($request->validated('game_title_ids') as $titleId) {
+                $title = \App\Models\GameTitle::find($titleId);
+                $title->game_franchise_id = null;
+                $title->game_series_id = $series->id;
+                $title->save();
+            }
+
+            $franchise = $series->franchise;
+            if ($franchise !== null) {
+                $franchise->setTitleParam();
+                $franchise->save();
+            }
+
+            $series->setTitleParam();
+            $series->save();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        foreach ($request->validated('game_title_ids') as $titleId) {
-            $title = \App\Models\GameTitle::find($titleId);
-            $title->game_franchise_id = null;
-            $title->game_series_id = $series->id;
-            $title->save();
-        }
+
         return redirect()->route('Admin.Game.Series.Detail', $series);
     }
 }

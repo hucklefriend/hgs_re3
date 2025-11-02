@@ -147,6 +147,7 @@ class FranchiseController extends AbstractAdminController
             if ($model !== null) {
                 $model->node_name = $nodeName;
                 $model->key = $keys[$id];
+                $model->setTitleParam();
                 $model->save();
             }
         }
@@ -178,6 +179,7 @@ class FranchiseController extends AbstractAdminController
     public function update(FranchiseRequest $request, \App\Models\GameFranchise $franchise): RedirectResponse
     {
         $franchise->fill($request->validated());
+        $franchise->setTitleParam();
         $franchise->save();
 
         return redirect()->route('Admin.Game.Franchise.Detail', $franchise);
@@ -265,6 +267,9 @@ class FranchiseController extends AbstractAdminController
                 $series->save();
             }
 
+            $franchise->setTitleParam();
+            $franchise->save();
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -318,6 +323,9 @@ class FranchiseController extends AbstractAdminController
                 $title->game_franchise_id = $franchise->id;
                 $title->save();
             }
+
+            $franchise->setTitleParam();
+            $franchise->save();
 
             DB::commit();
         } catch (\Exception $e) {
