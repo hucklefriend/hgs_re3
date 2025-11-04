@@ -9,6 +9,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use App\Models\User;
+use App\Enums\UserRole;
+use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AccountController extends Controller
 {
@@ -60,6 +65,50 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('Root');
+    }
+
+    /**
+     * 新規登録画面表示
+     *
+     * @return JsonResponse|Application|Factory|View|RedirectResponse
+     */
+    public function register(): JsonResponse|Application|Factory|View|RedirectResponse
+    {
+        // 既にログインしている場合はトップページにリダイレクト
+        if (Auth::check()) {
+            return redirect()->route('Root');
+        }
+
+        return $this->tree(view('account.register'));
+    }
+
+    /**
+     * 新規登録処理
+     *
+     * @param RegisterRequest $request
+     * @return RedirectResponse
+     */
+    public function store(RegisterRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        // show_idが重複しないように生成
+        do {
+            $showId = Str::random(8);
+        } while (User::where('show_id', $showId)->exists());
+
+        // ユーザー作成
+        User::create([
+            'show_id' => $showId,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => UserRole::USER->value,
+            'hgs12_user' => 0,
+            'sign_up_at' => now(),
+        ]);
+
+        return redirect()->route('Account.Login')->with('success', 'アカウントが作成されました。ログインしてください。');
     }
 }
 

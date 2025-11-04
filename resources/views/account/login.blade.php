@@ -37,6 +37,10 @@
                     {{ $message }}
                 </div>
             @enderror
+
+            <p>
+                アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。
+            </p>
         </div>
     </section>
 

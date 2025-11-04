@@ -107,6 +107,12 @@
                     <span class="node-pt">●</span>
                 </div>
             </section>
+            <section class="node link-node" id="login-link-node">
+                <div class="node-head">
+                    <a href="{{ route('Account.Register') }}" class="node-head-text">新規登録</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
             @else
             <section class="node link-node" id="logout-link-node">
                 <div class="node-head">

@@ -24,6 +24,8 @@ Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
 Route::get('/login', [AccountController::class, 'login'])->name('Account.Login');
 Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
 Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
+Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
+Route::post('/register', [AccountController::class, 'store'])->name('Account.Register.Store');
 
 use App\Http\Controllers\Admin;
 // 管理用
