@@ -93,7 +93,31 @@
             @endif
         </div>
     </section>
-    
+
+    <section class="node tree-node" id="account-tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">アカウント</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            @if (!Auth::check())
+            <section class="node link-node" id="login-link-node">
+                <div class="node-head">
+                    <a href="{{ route('Account.Login') }}" class="node-head-text">ログイン</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            @else
+            <section class="node link-node" id="logout-link-node">
+                <div class="node-head">
+                    <a href="{{ route('Account.Logout') }}" class="node-head-text">ログアウト</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            @endif
+        </div>
+    </section>
+
     <section class="node link-node" id="about-node">
         <div class="node-head">
             <a href="{{ route('About') }}" class="node-head-text" id="about-a">このサイトについて</a>

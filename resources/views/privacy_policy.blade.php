@@ -63,9 +63,12 @@
         </div>
         <div class="node-content basic">
             <p>
-                現在ユーザー登録機能を停止しているため、個人情報は取得していません。<br>
-                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報は現在も保持しており、ユーザー登録機能再開時にそのまま利用してもらえる予定です。<br>
-                その際に取得する個人情報については、後日プライバシーポリシーに記載します。
+                現在ユーザー登録機能を停止しているため、個人情報は取得していません。
+            </p>
+            <p>
+                休止前のHGS/HGNへ登録いただいていた方のメールアドレスやSNSのID情報も削除しております。<br>
+                長らく休止状態にあったため、当サイトへ登録していることをお忘れの方もおられると思い、個人情報保護の観点からアカウント情報をリセットすることにしました。<br>
+                大変お手数ですが、改めてアカウントの新規登録をお願いします。
             </p>
         </div>
     </section>
@@ -267,18 +270,5 @@
         </div>
     </section>
 
-    <section class="node tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">近道</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            <section class="node link-node">
-                <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
-                    <span class="node-pt main-node-pt">●</span>
-                </div>
-            </section>
-        </div>
-    </section>
+    @include('common.shortcut')
 @endsection

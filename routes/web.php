@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
 use Illuminate\Support\Facades\App;
@@ -18,6 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HgnController::class, 'root'])->name('Root');
 Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
+
+// アカウント（ログイン系）
+Route::get('/login', [AccountController::class, 'login'])->name('Account.Login');
+Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
+Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
 
 use App\Http\Controllers\Admin;
 // 管理用
