@@ -24,6 +24,8 @@ class User extends Authenticatable
         'role',
         'hgs12_user',
         'sign_up_at',
+        'email_verification_token',
+        'email_verification_sent_at',
     ];
 
     /**
@@ -45,6 +47,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_sent_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

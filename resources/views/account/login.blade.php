@@ -38,20 +38,23 @@
                 </div>
             @enderror
 
+            @if(session('success'))
+                <div class="alert alert-success mt-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger mt-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。
             </p>
         </div>
     </section>
-
-
-
-
-
-
-
-
-
 
     @include('common.shortcut')
 @endsection
