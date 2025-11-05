@@ -48,7 +48,7 @@ class AccountController extends Controller
         if (Auth::guard('web')->attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
             $request->session()->regenerate();
-            return redirect()->intended(route('Root'));
+            return redirect()->intended(route('User.MyNode.Top'));
         } else {
             // 認証に失敗したときの処理
             return back()->withInput()->withErrors(['login' => 'メールアドレスまたはパスワードが正しくありません。']);

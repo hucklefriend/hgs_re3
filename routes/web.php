@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
+use App\Http\Controllers\User\MyNodeController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,13 @@ Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logou
 Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
 Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:5,10')->name('Account.Register.Store');
 Route::get('/verify-email/{token}', [AccountController::class, 'verifyEmail'])->name('Account.VerifyEmail');
+
+Route::group(['prefix' => 'user'], function () {
+    // マイページ（認証が必要）
+    Route::middleware('auth')->group(function () {
+        Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
+    });
+});
 
 use App\Http\Controllers\Admin;
 // 管理用
