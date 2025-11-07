@@ -16,6 +16,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
 
 abstract class Controller
 {
@@ -68,6 +69,7 @@ abstract class Controller
 
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
+            $viewData = $view->getData();
             $rendered = $view->renderSections();
             return response()->json([
                 'title'              => $rendered['title'],
@@ -76,7 +78,7 @@ abstract class Controller
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
                 'url'                => $url,
-                'hasError'           => false,
+                'colorState'         => $viewData['colorState'] ?? '',
             ]);
         }
 
@@ -126,6 +128,11 @@ abstract class Controller
             return null;
         }
 
+        // ValidationExceptionの場合はLaravelのデフォルト処理に委譲（リダイレクトしてエラーメッセージを表示）
+        if ($e instanceof ValidationException) {
+            return null;
+        }
+
         // 例外の種類に応じてステータスコードとビューを決定
         $statusCode = 500;
         $viewName = 'errors.500';
@@ -146,8 +153,13 @@ abstract class Controller
         // ビュー名の決定（対応するビューが存在する場合）
         $viewName = "errors.{$statusCode}";
         if (!view()->exists($viewName)) {
-            $viewName = 'errors.500';
-            $statusCode = 500;
+            // 429エラーの場合は429ビューを使用（存在する場合）
+            if ($statusCode === 429 && view()->exists('errors.429')) {
+                $viewName = 'errors.429';
+            } else {
+                $viewName = 'errors.500';
+                $statusCode = 500;
+            }
         }
 
         // ログに記録（500系エラーのみ）
@@ -189,7 +201,7 @@ abstract class Controller
 
         /** @var View $view */
         $view = view($viewName, compact('errorMessage', 'errorFile', 'errorLine', 'errorTrace'))
-            ->with('hasError', true);
+            ->with('colorState', 'error');
 
         // Ajaxリクエストの場合はJSONで返す
         if ($isAjax) {
@@ -201,7 +213,7 @@ abstract class Controller
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
                 'url'                => '',
-                'hasError'           => true,
+                'colorState'         => 'error',
                 'statusCode'         => $statusCode,
             ], $statusCode);
         }

@@ -11,39 +11,22 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
+            @error('email')
+                <div class="alert alert-warning my-3">
+                    {!! nl2br(e($message)) !!}
+                </div>
+            @enderror
+
             <form id="register-form" action="{{ route('Account.Register.Store') }}" method="POST" data-child-only="0">
                 @csrf
                 <div class="form-group mb-3">
-                    <label for="name" class="form-label">名前</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="名前" value="{{ old('name') }}" required autofocus>
-                    @error('name')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="form-group mb-3">
                     <label for="email" class="form-label">メールアドレス</label>
-                    <input type="email" name="email" class="form-control" id="email" placeholder="メールアドレス" value="{{ old('email') }}" required>
-                    @error('email')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="form-group mb-3">
-                    <label for="password" class="form-label">パスワード</label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="パスワード（8文字以上）" required>
-                    @error('password')
-                        <div class="text-danger mt-1">{{ $message }}</div>
-                    @enderror
+                    <input type="email" name="email" class="form-control" id="email" placeholder="メールアドレス" value="{{ old('email') }}" required autofocus>
                 </div>
                 <div class="form-group" style="margin-top: 20px;">
                     <button type="submit" class="btn btn-success">新規登録</button>
                 </div>
             </form>
-        
-            @if(session('success'))
-                <div class="alert alert-success mt-3">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             <p>
                 すでにアカウントをお持ちの方は<a href="{{ route('Account.Login') }}">こちら</a>からログインしてください。

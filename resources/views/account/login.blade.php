@@ -11,6 +11,19 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
+
+            @if(session('success'))
+                <div class="alert alert-success mt-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger mt-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form id="login-form" action="{{ route('Account.Auth') }}" method="POST" data-child-only="0">
                 @csrf
                 <div class="form-group mb-3">
@@ -37,18 +50,6 @@
                     {{ $message }}
                 </div>
             @enderror
-
-            @if(session('success'))
-                <div class="alert alert-success mt-3">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger mt-3">
-                    {{ session('error') }}
-                </div>
-            @endif
 
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。

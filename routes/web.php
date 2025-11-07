@@ -26,8 +26,9 @@ Route::get('/login', [AccountController::class, 'login'])->name('Account.Login')
 Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
 Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
 Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
-Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:5,10')->name('Account.Register.Store');
-Route::get('/verify-email/{token}', [AccountController::class, 'verifyEmail'])->name('Account.VerifyEmail');
+Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:10,10')->name('Account.Register.Store');
+Route::get('/register/complete/{token}', [AccountController::class, 'showCompleteRegistration'])->name('Account.Register.Complete');
+Route::post('/register/complete/{token}', [AccountController::class, 'completeRegistration'])->name('Account.Register.Complete.Store');
 
 Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
