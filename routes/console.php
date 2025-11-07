@@ -16,3 +16,6 @@ Schedule::command(\App\Console\Commands\CloseResolvedContacts::class)
 
 Schedule::command(\App\Console\Commands\InvalidateUnverifiedUsers::class)
     ->everyFiveMinutes();
+
+Schedule::command(\App\Console\Commands\PurgeWithdrawnUsersCommand::class)
+    ->dailyAt('03:30');

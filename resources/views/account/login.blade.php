@@ -23,6 +23,12 @@
                     {{ session('error') }}
                 </div>
             @endif
+        
+            @error('login')
+                <div class="alert alert-danger mt-3">
+                    {{ $message }}
+                </div>
+            @enderror
 
             <form id="login-form" action="{{ route('Account.Auth') }}" method="POST" data-child-only="0">
                 @csrf
@@ -44,12 +50,6 @@
                     <button type="submit" class="btn btn-success">ログイン</button>
                 </div>
             </form>
-        
-            @error('login')
-                <div class="alert alert-danger mt-3">
-                    {{ $message }}
-                </div>
-            @enderror
 
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。

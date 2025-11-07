@@ -49,6 +49,13 @@ class AccountController extends Controller
         $credentials = $request->only('email', 'password');
         $rememberMe = $request->input('remember_me', 0);
 
+        $user = User::where('email', $credentials['email'])->first();
+        if ($user && $user->withdrawn_at && Hash::check($credentials['password'], $user->password)) {
+            return back()->withInput()->withErrors([
+                'login' => 'メールアドレスまたはパスワードが正しくありません。',
+            ]);
+        }
+
         if (Auth::guard('web')->attempt($credentials, $rememberMe == 1)) {
             // 認証に成功したときの処理
             $request->session()->regenerate();

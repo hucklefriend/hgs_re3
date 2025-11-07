@@ -34,6 +34,8 @@ Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
     Route::middleware('auth')->group(function () {
         Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
+            Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
+            Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
     });
 });
 
