@@ -4,7 +4,6 @@
 @section('current-node-title', '仮登録を受け付けました')
 
 @section('nodes')
-
     <section class="node" id="register-pending-node">
         <div class="node-head">
             <h2 class="node-head-text">メールを送信しました</h2>

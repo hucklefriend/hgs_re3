@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
@@ -157,7 +158,11 @@ class AccountController extends Controller
 
                     // レスポンスを返した後にメール送信
                     Bus::dispatchAfterResponse(function () use ($email, $registrationUrl) {
-                        Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
+                        try {
+                            Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
+                        } catch (\Exception $e) {
+                            report($e);
+                        }
                     });
 
                     return $this->tree(view('account.register-pending'));
@@ -189,7 +194,11 @@ class AccountController extends Controller
 
         // レスポンスを返した後にメール送信
         Bus::dispatchAfterResponse(function () use ($email, $registrationUrl) {
-            Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
+            try {
+                Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
+            } catch (\Exception $e) {
+                report($e);
+            }
         });
 
         return $this->tree(view('account.register-pending'));
@@ -288,6 +297,54 @@ class AccountController extends Controller
         $temporaryRegistration->delete();
 
         return redirect()->route('Account.Login')->with('success', '登録が完了しました。ログインしてください。');
+    }
+
+    /**
+     * ローカル環境専用：仮登録メールのURL取得API
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getRegistrationUrlForTest(Request $request): JsonResponse
+    {
+        if (!app()->environment('local')) {
+            abort(404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'email'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => '無効な入力です。',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $email = $validator->validated()['email'];
+
+        $temporaryRegistration = TemporaryRegistration::where('email', $email)->first();
+
+        if (!$temporaryRegistration) {
+            return response()->json([
+                'message' => '登録用URLが見つかりません。',
+            ], 404);
+        }
+
+        if ($temporaryRegistration->isExpired()) {
+            $temporaryRegistration->delete();
+
+            return response()->json([
+                'message' => '登録用URLの有効期限が切れています。',
+            ], 404);
+        }
+
+        return response()->json([
+            'email' => $temporaryRegistration->email,
+            'registration_url' => route('Account.Register.Complete', ['token' => $temporaryRegistration->token]),
+            'expires_at' => $temporaryRegistration->expires_at,
+        ]);
     }
 }
 
