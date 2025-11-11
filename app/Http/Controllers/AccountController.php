@@ -36,7 +36,7 @@ class AccountController extends Controller
             return redirect()->route('Root');
         }
 
-        return $this->tree(view('account.login'));
+        return $this->tree(view('account.login'), url: route('Account.Login'));
     }
 
     /**

@@ -23,7 +23,7 @@ class MyNodeController extends Controller
     {
         $user = Auth::user();
         
-        return $this->tree(view('user.my_node.top', compact('user')));
+        return $this->tree(view('user.my_node.top', compact('user')), url: route('User.MyNode.Top'));
     }
 
     /**
