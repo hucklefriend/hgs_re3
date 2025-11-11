@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'crypto';
+import { waitForTreeAppeared } from './support/utils';
 
 test('新規登録して、ログインしマイページが表示される', async ({ page, request }) =>
 {
@@ -26,12 +27,8 @@ test('新規登録して、ログインしマイページが表示される', as
   });
   
   await page.goto('register');
-  
-  // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
   await page.waitForLoadState('networkidle');
-  
-  // アニメーションや遅延実行されるスクリプトのために追加で待機
-  await page.waitForTimeout(1000);
+  await waitForTreeAppeared(page);
   
   await page.fill('#email', email);
   const registerResponsePromise = page.waitForResponse((res) =>
@@ -42,8 +39,7 @@ test('新規登録して、ログインしマイページが表示される', as
     page.getByRole('button', { name: '新規登録' }).click(),
   ]);
   
-  // メール送信のために追加で待機
-  await page.waitForTimeout(1000);
+  await waitForTreeAppeared(page);
   await expect(page.locator('#register-pending-node')).toBeVisible();
 
   const registrationPayload = await (async () =>
@@ -74,7 +70,7 @@ test('新規登録して、ログインしマイページが表示される', as
 
   await page.goto(registrationPath);
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(1000);
+  await waitForTreeAppeared(page);
 
   await page.fill('#name', userName);
   await page.fill('#password', password);
@@ -82,16 +78,20 @@ test('新規登録して、ログインしマイページが表示される', as
     page.getByRole('button', { name: '登録を完了する' }).click(),
   ]);
 
-  await page.waitForTimeout(1000);
+  await waitForTreeAppeared(page);
   await expect(page.locator('.alert-success')).toContainText('登録が完了しました。');
 
   await page.fill('#email', email);
   await page.fill('#password', password);
+  const loginResponsePromise = page.waitForResponse((response) =>
+    response.url().includes('/auth') && response.request().method() === 'POST'
+  );
   await Promise.all([
+    loginResponsePromise,
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
 
-  await page.waitForTimeout(1000);
+  await waitForTreeAppeared(page);
   await expect(page.locator('#mypage-welcome-node')).toContainText(userName);
   
 
