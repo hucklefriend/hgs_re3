@@ -237,7 +237,7 @@ class AccountController extends Controller
         // バリデーションルール
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'max:100'],
         ];
 
         // バリデーション実行

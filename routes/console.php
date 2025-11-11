@@ -19,3 +19,6 @@ Schedule::command(\App\Console\Commands\InvalidateUnverifiedUsers::class)
 
 Schedule::command(\App\Console\Commands\PurgeWithdrawnUsersCommand::class)
     ->dailyAt('03:30');
+
+Schedule::command(\App\Console\Commands\CleanupExpiredEmailChangeRequests::class)
+    ->everyFifteenMinutes();

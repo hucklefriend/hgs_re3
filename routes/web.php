@@ -34,9 +34,14 @@ Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
     Route::middleware('auth')->group(function () {
         Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
-            Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
-            Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
+        Route::get('my-node/email', [MyNodeController::class, 'email'])->name('User.MyNode.Email');
+        Route::post('my-node/email', [MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
+        Route::get('my-node/password', [MyNodeController::class, 'password'])->name('User.MyNode.Password');
+        Route::post('my-node/password', [MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
+        Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
+        Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
     });
+    Route::get('my-node/email/verify/{token}', [MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 });
 
 use App\Http\Controllers\Admin;
