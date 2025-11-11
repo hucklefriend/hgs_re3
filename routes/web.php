@@ -70,6 +70,13 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('contact/{contact}', [Admin\Manage\ContactController::class, 'show'])->name('Admin.Manage.Contact.Show');
             Route::post('contact/{contact}/response', [Admin\Manage\ContactController::class, 'storeResponse'])->name('Admin.Manage.Contact.StoreResponse');
             Route::post('contact/{contact}/status', [Admin\Manage\ContactController::class, 'updateStatus'])->name('Admin.Manage.Contact.UpdateStatus');
+
+            // ユーザー
+            Route::get('user', [Admin\Manage\UserController::class, 'index'])->name('Admin.Manage.User');
+            Route::get('user/{user}', [Admin\Manage\UserController::class, 'show'])->name('Admin.Manage.User.Show');
+            Route::get('user/{user}/password', [Admin\Manage\UserController::class, 'editPassword'])->name('Admin.Manage.User.Password');
+            Route::post('user/{user}/password', [Admin\Manage\UserController::class, 'updatePassword'])->name('Admin.Manage.User.Password.Update');
+            Route::delete('user/{user}', [Admin\Manage\UserController::class, 'destroy'])->name('Admin.Manage.User.Destroy');
         });
 
         // マスター

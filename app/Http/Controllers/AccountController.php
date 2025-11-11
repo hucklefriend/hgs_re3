@@ -110,8 +110,8 @@ class AccountController extends Controller
                 'required',
                 'email',
                 'max:255',
-                // 既に登録済み（email_verified_atがNULLでない）のメールアドレスのみ重複チェック
-                Rule::unique('users', 'email')->whereNotNull('email_verified_at'),
+                // 既に登録済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
+                Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
         ];
 
@@ -153,17 +153,7 @@ class AccountController extends Controller
                         'resend_count' => $existingRegistration->resend_count + 1,
                     ]);
 
-                    // 登録URLを生成
-                    $registrationUrl = route('Account.Register.Complete', ['token' => $token]);
-
-                    // レスポンスを返した後にメール送信
-                    Bus::dispatchAfterResponse(function () use ($email, $registrationUrl) {
-                        try {
-                            Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
-                        } catch (\Exception $e) {
-                            report($e);
-                        }
-                    });
+                    $this->dispatchRegistrationInvitation($email, $token);
 
                     return $this->tree(view('account.register-pending'));
                 } else {
@@ -189,17 +179,7 @@ class AccountController extends Controller
             'resend_count' => 0,
         ]);
 
-        // 登録URLを生成
-        $registrationUrl = route('Account.Register.Complete', ['token' => $token]);
-
-        // レスポンスを返した後にメール送信
-        Bus::dispatchAfterResponse(function () use ($email, $registrationUrl) {
-            try {
-                Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
-            } catch (\Exception $e) {
-                report($e);
-            }
-        });
+        $this->dispatchRegistrationInvitation($email, $token);
 
         return $this->tree(view('account.register-pending'));
     }
@@ -290,7 +270,6 @@ class AccountController extends Controller
             'role' => UserRole::USER->value,
             'hgs12_user' => 0,
             'sign_up_at' => now(),
-            'email_verified_at' => now(), // メールアドレスは既に確認済みとして扱う
         ]);
 
         // 仮登録レコードを削除
@@ -345,6 +324,26 @@ class AccountController extends Controller
             'registration_url' => route('Account.Register.Complete', ['token' => $temporaryRegistration->token]),
             'expires_at' => $temporaryRegistration->expires_at,
         ]);
+    }
+    
+    /**
+     * 仮登録メール送信処理を非同期で実行する
+     *
+     * @param string $email
+     * @param string $token
+     * @return void
+     */
+    private function dispatchRegistrationInvitation(string $email, string $token): void
+    {
+        $registrationUrl = route('Account.Register.Complete', ['token' => $token]);
+
+        Bus::dispatchAfterResponse(function () use ($email, $registrationUrl) {
+            try {
+                Mail::to($email)->send(new RegistrationInvitation($email, $registrationUrl));
+            } catch (\Exception $e) {
+                report($e);
+            }
+        });
     }
 }
 

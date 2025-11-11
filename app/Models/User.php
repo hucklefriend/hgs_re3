@@ -47,7 +47,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'sign_up_at' => 'datetime',
             'email_verification_sent_at' => 'datetime',
             'withdrawn_at' => 'datetime',
             'password' => 'hashed',

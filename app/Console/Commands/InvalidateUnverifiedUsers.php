@@ -29,7 +29,7 @@ class InvalidateUnverifiedUsers extends Command
         $tenMinutesAgo = now()->subMinutes(10);
 
         // メール確認が完了しておらず、10分以上経過しているアカウントを取得
-        $users = User::whereNull('email_verified_at')
+        $users = User::whereNull('sign_up_at')
             ->whereNotNull('email_verification_sent_at')
             ->where('email_verification_sent_at', '<=', $tenMinutesAgo)
             ->get();

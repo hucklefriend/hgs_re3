@@ -30,8 +30,8 @@ class RegisterRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                // 確認済み（email_verified_atがNULLでない）のメールアドレスのみ重複チェック
-                Rule::unique('users', 'email')->whereNotNull('email_verified_at'),
+                // 確認済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
+                Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
             'password' => ['required', 'string', 'min:8'],
         ];

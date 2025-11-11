@@ -29,8 +29,8 @@ class TemporaryRegisterRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                // 既に登録済み（email_verified_atがNULLでない）のメールアドレスのみ重複チェック
-                Rule::unique('users', 'email')->whereNotNull('email_verified_at'),
+                // 既に登録済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
+                Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
         ];
     }
