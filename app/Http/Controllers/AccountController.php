@@ -20,7 +20,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller
 {
@@ -113,12 +112,14 @@ class AccountController extends Controller
                 // 既に登録済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
                 Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
+            'name' => ['nullable', 'max:0'],
         ];
 
         // カスタムメッセージ
         $messages = [
             'email.unique' => "このメールアドレスで新規登録はできません。
 別のメールアドレスを入力してください。",
+            'name.max' => '不正な入力が検出されました。再度お試しください。',
         ];
 
         // バリデーション実行
@@ -133,6 +134,8 @@ class AccountController extends Controller
         }
 
         $validated = $validator->validated();
+        unset($validated['name']);
+
         $email = $validated['email'];
 
         // 既存の仮登録レコードを確認
@@ -345,5 +348,6 @@ class AccountController extends Controller
             }
         });
     }
+
 }
 
