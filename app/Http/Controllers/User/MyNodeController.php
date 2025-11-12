@@ -35,6 +35,66 @@ class MyNodeController extends Controller
     }
 
     /**
+     * プロフィール編集画面表示
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function profile(): JsonResponse|Application|Factory|View
+    {
+        $user = Auth::user();
+
+        return $this->tree(view('user.my_node.profile', [
+            'user' => $user,
+        ]));
+    }
+
+    /**
+     * プロフィール更新処理
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function profileUpdate(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'show_id' => [
+                'required',
+                'string',
+                'min:1',
+                'max:30',
+                'regex:/^[A-Za-z0-9_-]+$/',
+                Rule::unique('users', 'show_id')->ignore($user->id),
+            ],
+        ], [
+            'name.required' => '表示名を入力してください。',
+            'name.string' => '表示名は文字列で入力してください。',
+            'name.max' => '表示名は255文字以内で入力してください。',
+            'show_id.required' => 'ユーザーIDを入力してください。',
+            'show_id.string' => 'ユーザーIDは文字列で入力してください。',
+            'show_id.min' => 'ユーザーIDは1文字以上で入力してください。',
+            'show_id.max' => 'ユーザーIDは30文字以内で入力してください。',
+            'show_id.regex' => 'ユーザーIDに使用できるのは英数字・ハイフン・アンダースコアのみです。',
+            'show_id.unique' => 'このユーザーIDは既に使用されています。',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
+
+        $user->name = $validated['name'];
+        $user->show_id = $validated['show_id'];
+        $user->save();
+
+        return redirect()->route('User.MyNode.Top')->with('success', 'プロフィールを更新しました。');
+    }
+
+    /**
      * 退会画面表示
      *
      * @return JsonResponse|Application|Factory|View

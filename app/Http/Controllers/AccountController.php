@@ -35,7 +35,13 @@ class AccountController extends Controller
             return redirect()->route('Root');
         }
 
-        return $this->tree(view('account.login'), url: route('Account.Login'));
+        /** @var ViewErrorBag $errors */
+        $errors = session('errors');
+        if ($errors && $errors->any()) {
+            $colorState = 'warning';
+        }
+
+        return $this->tree(view('account.login', ['colorState' => $colorState ?? '']), url: route('Account.Login'));
     }
 
     /**
@@ -92,7 +98,17 @@ class AccountController extends Controller
             return redirect()->route('Root');
         }
 
-        return $this->tree(view('account.register'));
+        /** @var ViewErrorBag $errors */
+        $errors = session('errors');
+        if ($errors && $errors->any()) {
+            $colorState = 'warning';
+        }
+        if (session()->has('error')) {
+            $colorState = 'error';
+        }
+
+
+        return $this->tree(view('account.register', ['colorState' => $colorState ?? '']), url: route('Account.Register'));
     }
 
     /**

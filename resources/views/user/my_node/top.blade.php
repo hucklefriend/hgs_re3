@@ -3,6 +3,16 @@
 @section('title', 'マイページ')
 @section('current-node-title', 'マイページ')
 
+@section('current-node-content')
+
+@if (session('success'))
+<div class="alert alert-success mt-3">
+    {{ session('success') }}
+</div>
+@endif
+
+@endsection
+
 @section('nodes')
     <section class="node tree-node" id="mypage-welcome-node">
         <div class="node-head">
@@ -10,11 +20,6 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic" id="user-account-setting-basic-node">
-            @if (session('success'))
-                <div class="alert alert-success mt-3">
-                    {{ session('success') }}
-                </div>
-            @endif
             <p>{{ $user->name }}さんようこそ</p>
         </div>
         <div class="node-content tree" id="user-account-setting-tree-node">
@@ -24,6 +29,12 @@
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
+                    <section class="node link-node" id="user-account-profile-edit-link-node">
+                        <div class="node-head">
+                            <a href="{{ route('User.MyNode.Profile') }}" class="node-head-text">プロフィール設定</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
                     <section class="node link-node" id="user-account-email-change-link-node">
                         <div class="node-head">
                             <a href="{{ route('User.MyNode.Email') }}" class="node-head-text">メールアドレス変更</a>
