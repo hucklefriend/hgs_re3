@@ -22,6 +22,16 @@ body.has-error {
     --connection-line-shadow: #ff6666;
 }
 
+body.has-warning {
+    --node-pt-light: #FFEB3B;
+    --node-pt-light-shadow: #FFD700;
+    --node-pt-dark: #F9A825;
+    --sub-node-pt: #F57F17;
+    --sub-node-pt-light: #F9A825;
+    --connection-line-color: #FFEB3B;
+    --connection-line-shadow: #FFD700;
+}
+
 html {
     padding: 0;
     margin: 0;
@@ -831,5 +841,11 @@ form {
 
     .required {
         color: #c00;
+    }
+}
+
+#account-register-form {
+    > .form-group:nth-child(3) {
+        display: none;
     }
 }

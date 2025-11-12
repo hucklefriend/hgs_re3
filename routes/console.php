@@ -13,3 +13,12 @@ Schedule::command(\App\Console\Commands\UpdateOgpCachesCommand::class)
 
 Schedule::command(\App\Console\Commands\CloseResolvedContacts::class)
     ->dailyAt('04:00');
+
+Schedule::command(\App\Console\Commands\InvalidateUnverifiedUsers::class)
+    ->everyFiveMinutes();
+
+Schedule::command(\App\Console\Commands\PurgeWithdrawnUsersCommand::class)
+    ->dailyAt('03:30');
+
+Schedule::command(\App\Console\Commands\CleanupExpiredEmailChangeRequests::class)
+    ->everyFifteenMinutes();

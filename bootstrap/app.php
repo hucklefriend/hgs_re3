@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('Admin.Login');
             }
 
+            if ($request->routeIs('User.MyNode.*')) {
+                return route('Account.Login');
+            }
+
             return route('Root');
         });
 

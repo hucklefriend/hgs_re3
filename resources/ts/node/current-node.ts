@@ -51,7 +51,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
         this._homewardNode = null;
-        document.body.classList.remove('has-error');
+        document.body.classList.remove('has-error', 'has-warning');
 
         if (!this._isChildOnly) {
             this._currentNodeContentElement!.innerHTML = '';
@@ -212,8 +212,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
             this.dispose();
 
-            if (this._nextNodeCache.hasError) {
-                document.body.classList.add('has-error');
+            if (this._nextNodeCache.colorState) {
+                document.body.classList.add('has-' + this._nextNodeCache.colorState);
             }
 
             if (this._tmpStateData) {
@@ -226,7 +226,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             }
 
             if (!this._isChildOnly) {
-                document.title = this._nextNodeCache.title;
+                document.title = this._nextNodeCache.title + ' | ' + (window as any).siteName;
                 this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
                 if (this._currentNodeContentElement) {
                     this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;

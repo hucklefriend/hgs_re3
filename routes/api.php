@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\GameMakerController as GameMakerApi;
@@ -13,3 +14,9 @@ Route::middleware(['gpts.api_key'])->group(function () {
         Route::apiResource('game-makers', GameMakerApi::class);
     });
 });
+
+if (app()->environment('local')) {
+    Route::get('test/registration-url', [AccountController::class, 'getRegistrationUrlForTest'])->name('api.test.registration-url');
+}
+
+

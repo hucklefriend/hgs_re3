@@ -15,7 +15,11 @@ alwaysApply: true
   - ❌ 誤り: `page.goto('/')`
   - ❌ 誤り: `page.goto('/about')`
 
-## 理由
+### 理由
 
 - `baseURL`が設定されている場合、先頭に`/`があるとbaseURLが無効になってしまう
 - 環境ごとにbaseURLを変更できる柔軟性を保つため
+
+## page.waitForNavigation()は使えない
+
+- Ajaxで通信してDOMを書き換えているため、ブラウザのナビゲーションが発生しない
