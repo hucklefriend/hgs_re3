@@ -34,6 +34,8 @@ Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
     Route::middleware('auth')->group(function () {
         Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
+        Route::get('my-node/profile', [MyNodeController::class, 'profile'])->name('User.MyNode.Profile');
+        Route::post('my-node/profile', [MyNodeController::class, 'profileUpdate'])->name('User.MyNode.Profile.Update');
         Route::get('my-node/email', [MyNodeController::class, 'email'])->name('User.MyNode.Email');
         Route::post('my-node/email', [MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
         Route::get('my-node/password', [MyNodeController::class, 'password'])->name('User.MyNode.Password');
