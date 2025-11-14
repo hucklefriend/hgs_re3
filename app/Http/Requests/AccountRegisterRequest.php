@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
 
-class TemporaryRegisterRequest extends BaseWebRequest
+class AccountRegisterRequest extends BaseWebRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,7 +19,7 @@ class TemporaryRegisterRequest extends BaseWebRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
@@ -31,18 +31,22 @@ class TemporaryRegisterRequest extends BaseWebRequest
                 // 既に登録済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
                 Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
+            'name' => ['nullable', 'max:0'],
         ];
     }
 
     /**
-     * Get custom messages for validator errors.
+     * バリデーションメッセージの定義
      *
      * @return array
      */
     public function messages(): array
     {
         return [
-            'email.unique' => 'このメールアドレスで新規登録はできません。',
+            'email.unique' => "このメールアドレスで新規登録はできません。\n別のメールアドレスを入力してください。",
+            'name.max' => '不正な入力が検出されました。再度お試しください。',
         ];
     }
+
 }
+

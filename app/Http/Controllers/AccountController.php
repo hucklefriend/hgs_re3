@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountRegisterRequest;
+use App\Http\Requests\CompleteRegisterRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ViewErrorBag;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AccountController extends Controller
 {
@@ -117,39 +119,9 @@ class AccountController extends Controller
      * @param Request $request
      * @return JsonResponse|Application|Factory|View|RedirectResponse
      */
-    public function store(Request $request): JsonResponse|Application|Factory|View|RedirectResponse
+    public function store(AccountRegisterRequest $request): JsonResponse|Application|Factory|View|RedirectResponse
     {
-        // バリデーションルール
-        $rules = [
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                // 既に登録済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
-                Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
-            ],
-            'name' => ['nullable', 'max:0'],
-        ];
-
-        // カスタムメッセージ
-        $messages = [
-            'email.unique' => "このメールアドレスで新規登録はできません。
-別のメールアドレスを入力してください。",
-            'name.max' => '不正な入力が検出されました。再度お試しください。',
-        ];
-
-        // バリデーション実行
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        // バリデーションエラーがある場合
-        if ($validator->fails()) {
-            // エラーメッセージをビューに渡して$this->tree()で返す
-            $errors = new ViewErrorBag();
-            $errors->put('default', $validator->errors());
-            return $this->tree(view('account.register', ['colorState' => 'warning'])->with('errors', $errors));
-        }
-
-        $validated = $validator->validated();
+        $validated = $request->validated();
         unset($validated['name']);
 
         $email = $validated['email'];
@@ -227,20 +199,30 @@ class AccountController extends Controller
             return redirect()->route('Account.Register')->with('error', '登録リンクの有効期限が切れています。再度登録してください。');
         }
 
+        /** @var ViewErrorBag $errors */
+        $errors = session('errors');
+        if ($errors && $errors->any()) {
+            $colorState = 'warning';
+        }
+        if (session()->has('error')) {
+            $colorState = 'error';
+        }
+
         return $this->tree(view('account.complete-register', [
             'token' => $token,
             'email' => $temporaryRegistration->email,
+            'colorState' => $colorState ?? '',
         ]));
     }
 
     /**
      * 登録完了処理
      *
-     * @param Request $request
+     * @param CompleteRegisterRequest $request
      * @param string $token
      * @return JsonResponse|Application|Factory|View|RedirectResponse
      */
-    public function completeRegistration(Request $request, string $token): JsonResponse|Application|Factory|View|RedirectResponse
+    public function completeRegistration(CompleteRegisterRequest $request, string $token): JsonResponse|Application|Factory|View|RedirectResponse
     {
         $temporaryRegistration = TemporaryRegistration::where('token', $token)->first();
 
@@ -253,27 +235,17 @@ class AccountController extends Controller
             return redirect()->route('Account.Register')->with('error', '登録リンクの有効期限が切れています。再度登録してください。');
         }
 
-        // バリデーションルール
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'max:100'],
-        ];
-
-        // バリデーション実行
-        $validator = Validator::make($request->all(), $rules);
-
-        // バリデーションエラーがある場合
-        if ($validator->fails()) {
-            // エラーメッセージをビューに渡して$this->tree()で返す
+        try {
+            $validated = $request->validated();
+        } catch (HttpResponseException $e) {
+            // バリデーションエラーがある場合、$this->tree()で返す
             $errors = new ViewErrorBag();
-            $errors->put('default', $validator->errors());
+            $errors->put('default', $request->errors());
             return $this->tree(view('account.complete-register', [
                 'token' => $token,
                 'email' => $temporaryRegistration->email,
             ])->with('errors', $errors));
         }
-
-        $validated = $validator->validated();
 
         // show_idが重複しないように生成
         do {

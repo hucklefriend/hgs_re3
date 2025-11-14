@@ -3,10 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Enums\ContactCategory;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
-class ContactSubmitRequest extends FormRequest
+class ContactSubmitRequest extends BaseWebRequest
 {
     /**
      * Determine if the user is authorized to make this request.
