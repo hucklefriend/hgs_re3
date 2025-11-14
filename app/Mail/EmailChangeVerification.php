@@ -30,7 +30,7 @@ class EmailChangeVerification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'メールアドレス変更の確認',
+            subject: 'メールアドレス変更の確認【' . config('app.name') . '】',
         );
     }
 
