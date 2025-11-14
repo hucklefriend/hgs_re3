@@ -173,8 +173,8 @@ abstract class Controller
                 'url' => $request->fullUrl(),
                 'user_agent' => $request->userAgent(),
             ]);
-        } else {
-            // 400系エラーは警告レベルで記録
+        } else if ($statusCode != 404) {
+            // 404を除き400系エラーは警告レベルで記録
             Log::warning('Client error occurred', [
                 'status_code' => $statusCode,
                 'message' => $e->getMessage(),
