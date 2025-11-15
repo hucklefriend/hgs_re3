@@ -202,8 +202,9 @@ class MyNodeController extends Controller
     public function withdraw(): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
+        $colorState = $this->getColorState();
 
-        return $this->tree(view('user.my_node.withdraw', compact('user')));
+        return $this->tree(view('user.my_node.withdraw', compact('user', 'colorState')));
     }
 
     /**
@@ -229,6 +230,11 @@ class MyNodeController extends Controller
 
     /**
      * メール変更確認メール送信を非同期で実行
+     * 
+     * @param User $user
+     * @param string $newEmail
+     * @param string $verificationUrl
+     * @return void
      */
     private function dispatchEmailChangeVerification(User $user, string $newEmail, string $verificationUrl): void
     {
