@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountRegisterRequest;
 use App\Http\Requests\CompleteRegisterRequest;
+use App\Http\Requests\AccountPasswordResetRequest;
+use App\Http\Requests\AccountPasswordResetCompleteRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -14,7 +16,9 @@ use Illuminate\Http\JsonResponse;
 use App\Models\User;
 use App\Enums\UserRole;
 use App\Mail\RegistrationInvitation;
+use App\Mail\PasswordReset as PasswordResetMail;
 use App\Models\TemporaryRegistration;
+use App\Models\PasswordReset as PasswordResetModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Bus;
@@ -37,13 +41,9 @@ class AccountController extends Controller
             return redirect()->route('Root');
         }
 
-        /** @var ViewErrorBag $errors */
-        $errors = session('errors');
-        if ($errors && $errors->any()) {
-            $colorState = 'warning';
-        }
+        $colorState = $this->getColorState();
 
-        return $this->tree(view('account.login', ['colorState' => $colorState ?? '']), url: route('Account.Login'));
+        return $this->tree(view('account.login', compact('colorState')), url: route('Account.Login'));
     }
 
     /**
@@ -100,17 +100,9 @@ class AccountController extends Controller
             return redirect()->route('Root');
         }
 
-        /** @var ViewErrorBag $errors */
-        $errors = session('errors');
-        if ($errors && $errors->any()) {
-            $colorState = 'warning';
-        }
-        if (session()->has('error')) {
-            $colorState = 'error';
-        }
+        $colorState = $this->getColorState();
 
-
-        return $this->tree(view('account.register', ['colorState' => $colorState ?? '']), url: route('Account.Register'));
+        return $this->tree(view('account.register', compact('colorState')), url: route('Account.Register'));
     }
 
     /**
@@ -228,17 +220,7 @@ class AccountController extends Controller
             return redirect()->route('Account.Register')->with('error', '登録リンクの有効期限が切れています。再度登録してください。');
         }
 
-        try {
-            $validated = $request->validated();
-        } catch (HttpResponseException $e) {
-            // バリデーションエラーがある場合、$this->tree()で返す
-            $errors = new ViewErrorBag();
-            $errors->put('default', $request->errors());
-            return $this->tree(view('account.complete-register', [
-                'token' => $token,
-                'email' => $temporaryRegistration->email,
-            ])->with('errors', $errors));
-        }
+        $validated = $request->validated();
 
         // show_idが重複しないように生成
         do {
@@ -262,53 +244,6 @@ class AccountController extends Controller
         return redirect()->route('Account.Login')->with('success', '登録が完了しました。ログインしてください。');
     }
 
-    /**
-     * ローカル環境専用：仮登録メールのURL取得API
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getRegistrationUrlForTest(Request $request): JsonResponse
-    {
-        if (!app()->environment('local')) {
-            abort(404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'email'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => '無効な入力です。',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $email = $validator->validated()['email'];
-
-        $temporaryRegistration = TemporaryRegistration::where('email', $email)->first();
-
-        if (!$temporaryRegistration) {
-            return response()->json([
-                'message' => '登録用URLが見つかりません。',
-            ], 404);
-        }
-
-        if ($temporaryRegistration->isExpired()) {
-            $temporaryRegistration->delete();
-
-            return response()->json([
-                'message' => '登録用URLの有効期限が切れています。',
-            ], 404);
-        }
-
-        return response()->json([
-            'email' => $temporaryRegistration->email,
-            'registration_url' => route('Account.Register.Complete', ['token' => $temporaryRegistration->token]),
-            'expires_at' => $temporaryRegistration->expires_at,
-        ]);
-    }
     
     /**
      * 仮登録メール送信処理を非同期で実行する
@@ -330,5 +265,172 @@ class AccountController extends Controller
         });
     }
 
+    /**
+     * パスワードリセット申請画面表示
+     *
+     * @return JsonResponse|Application|Factory|View|RedirectResponse
+     */
+    public function showPasswordReset(): JsonResponse|Application|Factory|View|RedirectResponse
+    {
+        // 既にログインしている場合はトップページにリダイレクト
+        if (Auth::check()) {
+            return redirect()->route('Root');
+        }
+
+        $colorState = $this->getColorState();
+
+        return $this->tree(view('account.password-reset', compact('colorState')), url: route('Account.PasswordReset'));
+    }
+
+    /**
+     * パスワードリセット申請処理（メール送信）
+     *
+     * @param AccountPasswordResetRequest $request
+     * @return JsonResponse|Application|Factory|View|RedirectResponse
+     */
+    public function storePasswordReset(AccountPasswordResetRequest $request): JsonResponse|Application|Factory|View|RedirectResponse
+    {
+        $validated = $request->validated();
+        $email = $validated['email'];
+
+        // ユーザーが存在するか確認（退会済みユーザーは除外）
+        $user = User::where('email', $email)->whereNull('withdrawn_at')->first();
+
+        // セキュリティ上の理由で、ユーザーが存在しない場合でも成功メッセージを表示
+        if (!$user) {
+            return $this->tree(view('account.password-reset-sent'));
+        }
+
+        // 既存のパスワードリセットレコードを確認
+        $existingPasswordReset = PasswordResetModel::where('email', $email)->first();
+
+        if ($existingPasswordReset) {
+            // 有効期限内の場合は既存のトークンを使用
+            if (!$existingPasswordReset->isExpired()) {
+                $token = $existingPasswordReset->token;
+            } else {
+                // 有効期限切れの場合は削除して新規作成
+                $existingPasswordReset->delete();
+                $token = Str::random(64);
+                PasswordResetModel::create([
+                    'email' => $email,
+                    'token' => $token,
+                    'expires_at' => now()->addMinutes(15),
+                ]);
+            }
+        } else {
+            // 新規作成
+            $token = Str::random(64);
+            PasswordResetModel::create([
+                'email' => $email,
+                'token' => $token,
+                'expires_at' => now()->addMinutes(15),
+            ]);
+        }
+
+        $this->dispatchPasswordReset($email, $token);
+
+        return $this->tree(view('account.password-reset-sent'));
+    }
+
+    /**
+     * パスワードリセット画面表示（トークンから）
+     *
+     * @param string $token
+     * @return JsonResponse|Application|Factory|View|RedirectResponse
+     */
+    public function showPasswordResetComplete(string $token): JsonResponse|Application|Factory|View|RedirectResponse
+    {
+        // 既にログインしている場合はトップページにリダイレクト
+        if (Auth::check()) {
+            return redirect()->route('Root');
+        }
+
+        $passwordReset = PasswordResetModel::where('token', $token)->first();
+
+        if (!$passwordReset) {
+            return redirect()->route('Account.PasswordReset')->with('error', '無効なパスワードリセットリンクです。');
+        }
+
+        if ($passwordReset->isExpired()) {
+            $passwordReset->delete();
+            return redirect()->route('Account.PasswordReset')->with('error', 'パスワードリセットリンクの有効期限が切れています。再度申請してください。');
+        }
+
+        $email = $passwordReset->email;
+        $colorState = $this->getColorState();
+
+        return $this->tree(view('account.password-reset-complete', compact('token', 'email', 'colorState')));
+    }
+
+    /**
+     * パスワードリセット処理
+     *
+     * @param AccountPasswordResetCompleteRequest $request
+     * @param string $token
+     * @return JsonResponse|Application|Factory|View|RedirectResponse
+     */
+    public function completePasswordReset(AccountPasswordResetCompleteRequest $request, string $token): JsonResponse|Application|Factory|View|RedirectResponse
+    {
+        $passwordReset = PasswordResetModel::where('token', $token)->first();
+
+        if (!$passwordReset) {
+            return redirect()->route('Account.PasswordReset')->with('error', '無効なパスワードリセットリンクです。');
+        }
+
+        if ($passwordReset->isExpired()) {
+            $passwordReset->delete();
+            return redirect()->route('Account.PasswordReset')->with('error', 'パスワードリセットリンクの有効期限が切れています。再度申請してください。');
+        }
+
+        try {
+            $validated = $request->validated();
+        } catch (HttpResponseException $e) {
+            // バリデーションエラーがある場合、$this->tree()で返す
+            $errors = new ViewErrorBag();
+            $errors->put('default', $request->errors());
+            $email = $passwordReset->email;
+            $colorState = $this->getColorState();
+            return $this->tree(view('account.password-reset-complete', compact('token', 'email', 'colorState'))->with('errors', $errors));
+        }
+
+        // ユーザーを取得
+        $user = User::where('email', $passwordReset->email)->whereNull('withdrawn_at')->first();
+
+        if (!$user) {
+            $passwordReset->delete();
+            return redirect()->route('Account.PasswordReset')->with('error', '対象のユーザーが見つかりません。');
+        }
+
+        // パスワードを更新
+        $user->password = Hash::make($validated['password']);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
+
+        // パスワードリセットレコードを削除
+        $passwordReset->delete();
+
+        return redirect()->route('Account.Login')->with('success', 'パスワードを変更しました。ログインしてください。');
+    }
+
+    /**
+     * パスワードリセットメール送信処理を非同期で実行する
+     *
+     * @param string $email
+     * @param string $token
+     * @return void
+     */
+    private function dispatchPasswordReset(string $email, string $token): void
+    {
+        $resetUrl = route('Account.PasswordReset.Complete', ['token' => $token]);
+
+        Bus::dispatchAfterResponse(function () use ($email, $resetUrl) {
+            try {
+                Mail::to($email)->send(new PasswordResetMail($email, $resetUrl));
+            } catch (\Exception $e) {
+                report($e);
+            }
+        });
+    }
 }
 

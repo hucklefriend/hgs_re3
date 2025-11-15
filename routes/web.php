@@ -29,6 +29,10 @@ Route::get('/register', [AccountController::class, 'register'])->name('Account.R
 Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:10,10')->name('Account.Register.Store');
 Route::get('/register/complete/{token}', [AccountController::class, 'showCompleteRegistration'])->name('Account.Register.Complete');
 Route::post('/register/complete/{token}', [AccountController::class, 'completeRegistration'])->name('Account.Register.Complete.Store');
+Route::get('/password-reset', [AccountController::class, 'showPasswordReset'])->name('Account.PasswordReset');
+Route::post('/password-reset', [AccountController::class, 'storePasswordReset'])->middleware('throttle:10,10')->name('Account.PasswordReset.Store');
+Route::get('/password-reset/complete/{token}', [AccountController::class, 'showPasswordResetComplete'])->name('Account.PasswordReset.Complete');
+Route::post('/password-reset/complete/{token}', [AccountController::class, 'completePasswordReset'])->name('Account.PasswordReset.Complete.Store');
 
 Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
