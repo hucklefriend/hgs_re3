@@ -29,6 +29,11 @@
                     {{ $message }}
                 </div>
             @enderror
+            
+            <p class="alert alert-info">
+                休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
+                2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、再度登録をお願いします。
+            </p>
 
             <form id="login-form" action="{{ route('Account.Auth') }}" method="POST" data-child-only="0">
                 @csrf
@@ -53,6 +58,9 @@
 
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。
+            </p>
+            <p>
+                <a href="{{ route('Account.PasswordReset') }}">パスワードをお忘れの方はこちら</a>
             </p>
         </div>
     </section>

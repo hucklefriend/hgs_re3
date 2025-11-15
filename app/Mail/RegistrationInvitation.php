@@ -28,7 +28,7 @@ class RegistrationInvitation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '新規登録のご案内',
+            subject: '新規登録のご案内【' . config('app.name') . '】',
         );
     }
 

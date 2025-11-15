@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-success">確認メールを送信する</button>
+                    <button type="submit" class="btn btn-success">確認メールを送信</button>
                 </div>
             </form>
         </div>

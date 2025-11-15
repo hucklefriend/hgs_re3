@@ -2,10 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class RegisterRequest extends FormRequest
+class AccountPasswordResetRequest extends BaseWebRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,15 +22,25 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'email',
                 'max:255',
-                // 確認済み（sign_up_atがNULLでない）のメールアドレスのみ重複チェック
-                Rule::unique('users', 'email')->whereNotNull('sign_up_at'),
             ],
-            'password' => ['required', 'string', 'min:8'],
+        ];
+    }
+
+    /**
+     * バリデーションメッセージの定義
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'メールアドレスは必須です。',
+            'email.email' => 'メールアドレスの形式が正しくありません。',
+            'email.max' => 'メールアドレスは255文字以内で入力してください。',
         ];
     }
 }

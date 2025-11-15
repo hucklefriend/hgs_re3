@@ -5,8 +5,21 @@ alwaysApply: true
 # リクエストの処理
 
 
-## コントローラーでのバリデーション
+## Admin系コントローラーでのバリデーション
 
-- Controllers/Adminフォルダ以下に置いているコントローラーでは、バリデーションルールはコントローラーに書かない
-- app/Http/Reuestにリクエストの処理を書く
-- Controllers/Admin以外のコントローラーではコントローラー内でバリデーションルールを書く
+- Controllers/Adminフォルダ以下に置いているコントローラーをAdmin系コントローラーと呼ぶ
+- Requestはapp/Http/Requests/Adminに設置する
+- LaravelのFormRequestクラスを継承する
+
+## 通常のコントローラーでのバリデーション
+
+- Controllers/Adminフォルダ以外に置いているコントローラーを通常のコントローラーと呼ぶ
+- Requestはapp/Http/Requestsに設置する
+- クラス名は"コントローラー名メソッド名Request"とする
+ - AccountControllerのregisterメソッドなら、"AccountRegisterRequest"
+- RequestはBaseWebRequestクラスを継承する
+
+# バリデーションエラーの表示
+
+- バリデーションエラーはWarning扱いとします
+- 画面でバリデーションエラーメッセージを表示する場所は、warningに準拠する表現をします

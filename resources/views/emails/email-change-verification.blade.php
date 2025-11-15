@@ -15,10 +15,12 @@
 
 {{ $verificationUrl }}
 
-※このメールに心当たりがない場合は、リンクを開かずこのメールを破棄してください。
+このメールに心当たりがない場合は、リンクを開かずこのメールを破棄してください。  
+何度もメールが送られてくる場合は、当サイトの問い合わせフォームよりご連絡ください。
 
 Thanks,<br>
-{{ config('app.name') }}
+{{ config('app.name') }}<br>
+<a href="https://horrorgame.net/">https://horrorgame.net/</a>
 </x-mail::message>
 
 

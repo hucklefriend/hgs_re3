@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class ContactResponseRequest extends FormRequest
+class ContactResponseRequest extends BaseWebRequest
 {
     /**
      * Determine if the user is authorized to make this request.

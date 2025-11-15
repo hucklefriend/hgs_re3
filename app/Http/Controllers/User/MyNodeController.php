@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MyNodeEmailUpdateRequest;
+use App\Http\Requests\MyNodePasswordUpdateRequest;
+use App\Http\Requests\MyNodeProfileUpdateRequest;
+use App\Http\Requests\MyNodeWithdrawStoreRequest;
 use App\Mail\EmailChangeVerification;
 use App\Models\EmailChangeRequest;
 use App\Models\User;
@@ -30,7 +32,7 @@ class MyNodeController extends Controller
     public function top(): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
-        
+
         return $this->tree(view('user.my_node.top', compact('user')), url: route('User.MyNode.Top'));
     }
 
@@ -42,50 +44,23 @@ class MyNodeController extends Controller
     public function profile(): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
+        $colorState = $this->getColorState();
 
-        return $this->tree(view('user.my_node.profile', [
-            'user' => $user,
-        ]));
+        return $this->tree(view('user.my_node.profile', compact('user', 'colorState')));
     }
 
     /**
      * プロフィール更新処理
      *
-     * @param Request $request
+     * @param MyNodeProfileUpdateRequest $request
      * @return RedirectResponse
      */
-    public function profileUpdate(Request $request): RedirectResponse
+    public function profileUpdate(MyNodeProfileUpdateRequest $request): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'show_id' => [
-                'required',
-                'string',
-                'min:1',
-                'max:30',
-                'regex:/^[A-Za-z0-9_-]+$/',
-                Rule::unique('users', 'show_id')->ignore($user->id),
-            ],
-        ], [
-            'name.required' => '表示名を入力してください。',
-            'name.string' => '表示名は文字列で入力してください。',
-            'name.max' => '表示名は255文字以内で入力してください。',
-            'show_id.required' => 'ユーザーIDを入力してください。',
-            'show_id.string' => 'ユーザーIDは文字列で入力してください。',
-            'show_id.min' => 'ユーザーIDは1文字以上で入力してください。',
-            'show_id.max' => 'ユーザーIDは30文字以内で入力してください。',
-            'show_id.regex' => 'ユーザーIDに使用できるのは英数字・ハイフン・アンダースコアのみです。',
-            'show_id.unique' => 'このユーザーIDは既に使用されています。',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        $validated = $validator->validated();
+        $validated = $request->validated();
 
         $user->name = $validated['name'];
         $user->show_id = $validated['show_id'];
@@ -95,75 +70,31 @@ class MyNodeController extends Controller
     }
 
     /**
-     * 退会画面表示
-     *
-     * @return JsonResponse|Application|Factory|View
-     */
-    public function withdraw(): JsonResponse|Application|Factory|View
-    {
-        $user = Auth::user();
-
-        return $this->tree(view('user.my_node.withdraw', compact('user')));
-    }
-
-    /**
-     * パスワード変更画面表示
-     *
-     * @return JsonResponse|Application|Factory|View
-     */
-    public function password(): JsonResponse|Application|Factory|View
-    {
-        $user = Auth::user();
-
-        return $this->tree(view('user.my_node.password', compact('user')));
-    }
-
-    /**
      * メールアドレス変更画面表示
+     * 
+     * @return JsonResponse|Application|Factory|View
      */
     public function email(): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
+        $colorState = $this->getColorState();
 
-        return $this->tree(view('user.my_node.email', [
-            'user' => $user,
-        ]));
+        return $this->tree(view('user.my_node.email', compact('user', 'colorState')));
     }
 
     /**
      * メールアドレス変更処理（確認メール送信）
+     *
+     * @param MyNodeEmailUpdateRequest $request
+     * @return RedirectResponse
      */
-    public function emailUpdate(Request $request): RedirectResponse
+    public function emailUpdate(MyNodeEmailUpdateRequest $request): RedirectResponse
     {
         /** @var User $user */
         $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'new_email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
-            ],
-        ], [
-            'new_email.required' => '新しいメールアドレスを入力してください。',
-            'new_email.email' => '正しい形式のメールアドレスを入力してください。',
-            'new_email.max' => 'メールアドレスは255文字以内で入力してください。',
-            'new_email.unique' => 'すでに使用されているメールアドレスです。',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        $validated = $validator->validated();
+        $validated = $request->validated();
         $newEmail = $validated['new_email'];
-
-        if ($newEmail === $user->email) {
-            return back()->withErrors([
-                'new_email' => '現在登録されているメールアドレスと同じです。',
-            ])->withInput();
-        }
 
         EmailChangeRequest::where('user_id', $user->id)->delete();
         EmailChangeRequest::where('new_email', $newEmail)->delete();
@@ -186,43 +117,11 @@ class MyNodeController extends Controller
     }
 
     /**
-     * パスワード変更処理
+     * メールアドレス変更確定
      *
      * @param Request $request
+     * @param string $token
      * @return RedirectResponse
-     */
-    public function passwordUpdate(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'current_password' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:8', 'max:100', 'confirmed'],
-        ]);
-
-        $user = Auth::user();
-
-        if (!Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors([
-                'current_password' => '現在のパスワードが一致しません。',
-            ])->withInput();
-        }
-
-        if ($request->input('current_password') === $request->input('password')) {
-            return back()->withErrors([
-                'password' => '現在のパスワードと異なるパスワードを設定してください。',
-            ])->withInput($request->except(['password', 'password_confirmation']));
-        }
-
-        $user->password = Hash::make($request->input('password'));
-        $user->setRememberToken(Str::random(60));
-        $user->save();
-
-        $request->session()->regenerateToken();
-
-        return redirect()->route('User.MyNode.Top')->with('success', 'パスワードを変更しました。');
-    }
-
-    /**
-     * メールアドレス変更確定
      */
     public function emailVerify(Request $request, string $token): RedirectResponse
     {
@@ -239,14 +138,12 @@ class MyNodeController extends Controller
 
         /** @var User|null $user */
         $user = $emailChangeRequest->user;
-
         if (!$user) {
             $emailChangeRequest->delete();
             return redirect()->route('Account.Login')->with('error', '対象のユーザーが見つかりません。');
         }
 
         $newEmail = $emailChangeRequest->new_email;
-
         if (User::where('email', $newEmail)->where('id', '!=', $user->id)->exists()) {
             $emailChangeRequest->delete();
             return redirect()->route('Account.Login')->with('error', 'すでに使用されているメールアドレスです。');
@@ -265,24 +162,60 @@ class MyNodeController extends Controller
     }
 
     /**
-     * 退会処理
+     * パスワード変更画面表示
      *
-     * @param Request $request
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function password(): JsonResponse|Application|Factory|View
+    {
+        $user = Auth::user();
+        $colorState = $this->getColorState();
+
+        return $this->tree(view('user.my_node.password', compact('user', 'colorState')));
+    }
+
+    /**
+     * パスワード変更処理
+     *
+     * @param MyNodePasswordUpdateRequest $request
      * @return RedirectResponse
      */
-    public function withdrawStore(Request $request): RedirectResponse
+    public function passwordUpdate(MyNodePasswordUpdateRequest $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'string'],
-        ]);
-
         $user = Auth::user();
 
-        if (!Hash::check($request->input('password'), $user->password)) {
-            return back()->withErrors([
-                'password' => 'パスワードが一致しません。',
-            ])->withInput();
-        }
+        $validated = $request->validated();
+        $user->password = Hash::make($validated['password']);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('User.MyNode.Top')->with('success', 'パスワードを変更しました。');
+    }
+
+    /**
+     * 退会画面表示
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function withdraw(): JsonResponse|Application|Factory|View
+    {
+        $user = Auth::user();
+        $colorState = $this->getColorState();
+
+        return $this->tree(view('user.my_node.withdraw', compact('user', 'colorState')));
+    }
+
+    /**
+     * 退会処理
+     *
+     * @param MyNodeWithdrawStoreRequest $request
+     * @return RedirectResponse
+     */
+    public function withdrawStore(MyNodeWithdrawStoreRequest $request): RedirectResponse
+    {
+        $user = Auth::user();
 
         $user->withdrawn_at = now();
         $user->save();
@@ -297,6 +230,11 @@ class MyNodeController extends Controller
 
     /**
      * メール変更確認メール送信を非同期で実行
+     * 
+     * @param User $user
+     * @param string $newEmail
+     * @param string $verificationUrl
+     * @return void
      */
     private function dispatchEmailChangeVerification(User $user, string $newEmail, string $verificationUrl): void
     {

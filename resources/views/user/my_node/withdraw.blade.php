@@ -11,8 +11,8 @@
         </div>
         <div class="node-content basic">
             @if ($user->withdrawn_at)
-                <div class="alert alert-warning mt-3">
-                    すでに退会手続きが完了しています（退会日時: {{ $user->withdrawn_at->format('Y-m-d H:i') }}）。
+                <div class="alert alert-danger mt-3">
+                    すでに退会手続きが完了しています。
                 </div>
             @else
                 <p>
@@ -28,18 +28,19 @@
                     </div>
 
                     @error('password')
-                        <div class="alert alert-danger mt-3">
+                        <div class="alert alert-warning mt-3">
                             {{ $message }}
                         </div>
                     @enderror
 
                     <div class="form-group" style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-danger">退会する</button>
+                        <button type="submit" class="btn btn-danger">退会</button>
                     </div>
                 </form>
             @endif
         </div>
     </section>
+    @include('common.shortcut')
 @endsection
 
 

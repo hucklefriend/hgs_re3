@@ -2,14 +2,13 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EmailVerification extends Mailable
+class PasswordReset extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,8 +16,8 @@ class EmailVerification extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public User $user,
-        public string $verificationUrl
+        public string $email,
+        public string $resetUrl
     )
     {
     }
@@ -29,7 +28,7 @@ class EmailVerification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'メールアドレスの確認',
+            subject: 'パスワードリセットのご案内【' . config('app.name') . '】',
         );
     }
 
@@ -39,7 +38,7 @@ class EmailVerification extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.email-verification',
+            markdown: 'emails.password-reset',
         );
     }
 
