@@ -22,6 +22,11 @@ abstract class Controller
 {
     protected bool $isOver18 = false;
 
+    /**
+     * コンストラクタ
+     *
+     * @return void
+     */
     public function __construct()
     {
         if (App::environment('local')) {
@@ -239,5 +244,29 @@ abstract class Controller
             503 => 'サービスが一時的に利用できません。',
             default => 'システムエラーが発生しました。',
         };
+    }
+
+    /**
+     * カラーステートを取得
+     * セッションにerrorがあればerror、warningがあればwarning、errorsがあればwarning、それ以外は空文字列を返す
+     *
+     * @return string
+     */
+    protected function getColorState(): string
+    {
+        if (session()->has('error')) {
+            return 'error';
+        }
+        if (session()->has('warning')) {
+            return 'warning';
+        }
+
+        /** @var ViewErrorBag $errors */
+        $errors = session('errors');
+        if ($errors && $errors->any()) {
+            return 'warning';
+        }
+
+        return '';
     }
 }

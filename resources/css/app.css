@@ -842,6 +842,16 @@ form {
     .required {
         color: #c00;
     }
+
+    .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+.text-muted {
+    color: #888888;
 }
 
 #account-register-form {

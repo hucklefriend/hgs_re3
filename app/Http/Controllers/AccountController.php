@@ -199,14 +199,7 @@ class AccountController extends Controller
             return redirect()->route('Account.Register')->with('error', '登録リンクの有効期限が切れています。再度登録してください。');
         }
 
-        /** @var ViewErrorBag $errors */
-        $errors = session('errors');
-        if ($errors && $errors->any()) {
-            $colorState = 'warning';
-        }
-        if (session()->has('error')) {
-            $colorState = 'error';
-        }
+        $colorState = $this->getColorState();
 
         return $this->tree(view('account.complete-register', [
             'token' => $token,

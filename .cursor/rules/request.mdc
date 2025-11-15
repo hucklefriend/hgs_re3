@@ -18,3 +18,8 @@ alwaysApply: true
 - クラス名は"コントローラー名メソッド名Request"とする
  - AccountControllerのregisterメソッドなら、"AccountRegisterRequest"
 - RequestはBaseWebRequestクラスを継承する
+
+# バリデーションエラーの表示
+
+- バリデーションエラーはWarning扱いとします
+- 画面でバリデーションエラーメッセージを表示する場所は、warningに準拠する表現をします

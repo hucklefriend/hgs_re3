@@ -22,7 +22,7 @@
                     <label for="current_password" class="form-label">現在のパスワード</label>
                     <input type="password" name="current_password" id="current_password" class="form-control" required>
                     @error('current_password')
-                        <div class="alert alert-danger mt-3">
+                        <div class="alert alert-warning mt-3">
                             {{ $message }}
                         </div>
                     @enderror
@@ -32,7 +32,7 @@
                     <label for="password" class="form-label">新しいパスワード</label>
                     <input type="password" name="password" id="password" class="form-control" required>
                     @error('password')
-                        <div class="alert alert-danger mt-3">
+                        <div class="alert alert-warning mt-3">
                             {{ $message }}
                         </div>
                     @enderror
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-success">変更する</button>
+                    <button type="submit" class="btn btn-success">変更</button>
                 </div>
             </form>
         </div>
