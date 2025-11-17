@@ -27,6 +27,7 @@ class User extends Authenticatable
         'email_verification_token',
         'email_verification_sent_at',
         'withdrawn_at',
+        'privacy_policy_accepted_version',
     ];
 
     /**

@@ -36,6 +36,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
         this._currentNodeContentElement = document.getElementById('current-node-content');
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
+        this.setupFormEvents();
     }
 
     public start(): void
@@ -230,6 +231,8 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
                 this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
                 if (this._currentNodeContentElement) {
                     this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
+
+                    this.setupFormEvents();
                 }
             }
             if (this._treeContentElement) {
@@ -243,6 +246,50 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             
             this.appear();
         }
+    }
+
+    /**
+     * フォームのイベントを設定する
+     */
+    private setupFormEvents(): void
+    {
+        if (this._currentNodeContentElement) {
+            const forms = Array.from(this._currentNodeContentElement.querySelectorAll('form')) as HTMLFormElement[];
+            forms.forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    this.submitCurrentNodeContentForm(form, e);
+                    return false;
+                });
+            });
+        }
+    }
+
+    /**
+     * フォームの送信
+     * 
+     * @param form 送信したフォーム
+     * @param e 送信イベント
+     */
+    private submitCurrentNodeContentForm(form: HTMLFormElement, e: SubmitEvent): void
+    {
+        e.preventDefault();
+
+        if (!AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
+            return;
+        }
+
+        const isChildOnly = form.dataset.childOnly === '1';
+
+        if (form.method.toUpperCase() !== 'POST') {
+            const params = new URLSearchParams(new FormData(form) as any);
+            this.moveNode(form.action + '?' + params.toString(), false, isChildOnly);
+        } else {
+            const isNoPushState = form.dataset.noPushState === '1';
+            const formData = new FormData(form);
+            this.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
+        }
+
+        this.disappear();
     }
 
 

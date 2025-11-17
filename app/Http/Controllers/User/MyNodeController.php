@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\HgnController;
+use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -32,8 +34,14 @@ class MyNodeController extends Controller
     public function top(): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
+        
+        $privacyPolicyRevisionDate = Carbon::parse(HgnController::PRIVACY_POLICY_REVISION_DATE);
+        $privacyPolicyVersion = (int)$privacyPolicyRevisionDate->format('Ymd');
+        
+        $acceptedVersion = $user->privacy_policy_accepted_version ?? 0;
+        $needsAcceptance = $acceptedVersion < $privacyPolicyVersion;
 
-        return $this->tree(view('user.my_node.top', compact('user')), url: route('User.MyNode.Top'));
+        return $this->tree(view('user.my_node.top', compact('user', 'needsAcceptance')), url: route('User.MyNode.Top'));
     }
 
     /**

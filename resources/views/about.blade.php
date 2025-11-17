@@ -195,5 +195,21 @@
         </div>
     </section>
 
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">オープンソース</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトは<a href="https://github.com/hucklefriend/hgs_re3" target="_blank" rel="external">GitHub</a>にてオープンソースとして公開しています。<br>
+                ライセンスは<a href="https://github.com/hucklefriend/hgs_re3/blob/develop/LICENSE" target="_blank" rel="external">AGPL-3.0-or-later</a>です。<br>
+                <br>
+                基本的にプルリクエスト等は受け付けておりません。<br>
+                不具合の報告は<a href="{{ route('Contact') }}" rel="internal">問い合わせ</a>からお願いします。<br>
+            </p>
+        </div>
+    </section>
+
     @include('common.shortcut')
 @endsection
