@@ -324,6 +324,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
+Route::post('privacy/accept', [$class, 'acceptPrivacyPolicy'])->name('PrivacyPolicy.Accept');
 Route::get('about', [$class, 'about'])->name('About');
 Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
 Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');

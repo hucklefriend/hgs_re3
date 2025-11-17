@@ -6,14 +6,26 @@
 
 @section('current-node-content')
     <p style="font-size: 13px; padding-bottom: 30px;">
-        最終改定日：2025年11月11日
+        最終改定日：{{ $privacyPolicyRevisionDate->format('Y年n月j日') }}
     </p>
+    @if ($needsAcceptance ?? false)
+    <p class="alert alert-warning">
+        プライバシーポリシーが改定されています。<br>
+        内容を確認し、同意できる場合は「同意」ボタンを押してください。<br>
+        同意できない場合、個人情報を取り扱えないためサイトをご利用いただくことができなくなります。
+    </p>
+        
+    <form method="POST" action="{{ route('PrivacyPolicy.Accept') }}" style="padding-bottom: 30px;" data-no-push-state="1" data-child-only="0">
+        @csrf
+        <button type="submit" class="btn btn-default">同意</button>
+    </form>
+    @endif
 @endsection
 
 @section('nodes')
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">Intended for users in Japan only</span>
+            <h2 class="node-head-text">Intended for users in Japan only</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -30,7 +42,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">法令遵守</span>
+            <h2 class="node-head-text">法令遵守</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -42,7 +54,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">アクセスログ</span>
+            <h2 class="node-head-text">アクセスログ</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -58,7 +70,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">個人情報の取得</span>
+            <h2 class="node-head-text">個人情報の取得</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -75,7 +87,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">個人情報の安全管理措置</span>
+            <h2 class="node-head-text">個人情報の安全管理措置</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -90,7 +102,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">個人情報の開示・訂正・削除について</span>
+            <h2 class="node-head-text">個人情報の開示・訂正・削除について</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -109,7 +121,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">Cookieの利用</span>
+            <h2 class="node-head-text">Cookieの利用</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -135,7 +147,7 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">アフィリエイト</span>
+            <h2 class="node-head-text">アフィリエイト</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -151,42 +163,41 @@
     </section>
 
 
-    {{--
-    <section>
-        <h2><i class="bi bi-octagon"></i>年齢確認</h2>
-        <p>
-            ユーザー登録後、18歳以上かどうかを設定できる項目があります。<br>
-            こちらの設定は必須ではありませんが、R-18ゲームや関連コンテンツの表示のために利用しています。<br>
-        </p>
-        <ul>
-            <li>当サイトのユーザーとして登録している</li>
-            <li>ユーザーの設定で、「18歳以上で、かつ暴力または性的な表現があっても問題ありません」を有効にしている</li>
-        </ul>
-        <p>
-            また、R-18にも2種類あり、それぞれ以下のように表記しています。
-        </p>
-        <ul>
-            <li>
-                R-18Z: CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
-                また過激なグロテスク表現のある関連商品や二次創作。<br>
-                年齢設定をしていない場合、画面上に警告文が表示されます。
-            </li>
-            <li>
-                R-18A: アダルトゲーム、いわゆるエロゲ。<br>
-                また、性表現がある関連商品や二次創作。<br>
-                年齢設定をしていない場合、パッケージ画像や二次創作が非表示となりレビューや二次創作の投稿が行えません。<br>
-                ただし、全年齢版など表現規制版のパッケージがある場合はレビューや二次創作の投稿は行えます。
-            </li>
-        </ul>
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">年齢確認</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                18歳以上向けコンテンツ(R-18)の制御のため、18歳以上か未満かの区分情報のみを保存する場合があります。<br>
+                <br>
+                未登録ユーザーはCookieに区分情報を保存しています。<br>
+                登録ユーザーはCookieとデータベースに区分情報を保存しています。
+            </p>
+            <p>
+                また、R-18にも2種類あり、それぞれ以下のように表記しています。
+            </p>
+            <ul>
+                <li>
+                    R-18Z: CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
+                    また過激なグロテスク表現のある関連商品や二次創作。<br>
+                    年齢設定をしていない場合、画面上に警告文が表示されます。
+                </li>
+                <li>
+                    R-18A: アダルトゲーム、いわゆるエロゲ。<br>
+                    また、性表現がある関連商品や二次創作。<br>
+                    年齢設定をしていない場合、パッケージ画像や二次創作が非表示となりレビューや二次創作の投稿が行えません。<br>
+                    ただし、全年齢版など表現規制版のパッケージがある場合はレビューや二次創作の投稿は行えます。
+                </li>
+            </ul>
+        </div>
     </section>
-    --}}
-
-
 
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">免責事項</span>
+            <h2 class="node-head-text">免責事項</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -201,20 +212,21 @@
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">プライバシーポリシーの改定</span>
+            <h2 class="node-head-text">プライバシーポリシーの改定</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
             <p>
                 本ポリシーの内容は、法令の改正や運営方針の変更等により、予告なく改定することがあります。<br>
-                重要な変更がある場合は、当サイト上でお知らせします。
+                重要な変更がある場合は、当サイト上でお知らせします。<br>
+                過去の改定は全て<a href="https://github.com/hucklefriend/hgs_re3/commits/develop/resources/views/privacy_policy.blade.php" target="_blank" rel="external">GitHub</a>のソースから確認ください。
             </p>
         </div>
     </section>
 
     <section class="node">
         <div class="node-head">
-            <span class="node-head-text">問い合わせ</span>
+            <h2 class="node-head-text">問い合わせ</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">

@@ -5,6 +5,14 @@
 
 @section('current-node-content')
 
+@if ($needsAcceptance)
+<div class="alert alert-warning mt-3">
+    <p>
+        <a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>が改定されています。<br>
+        <a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>にて内容を確認し「同意」の実行をお願いします。
+    </p>
+</div>
+@endif
 @if (session('success'))
 <div class="alert alert-success mt-3">
     {{ session('success') }}
