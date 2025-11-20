@@ -30,8 +30,42 @@
         <div class="node-content basic" id="user-account-setting-basic-node">
             <p>{{ $user->name }}さんようこそ</p>
         </div>
-        <div class="node-content tree" id="user-account-setting-tree-node">
-            <section class="node tree-node" id="media-mix-tree-node">
+        <div class="node-content tree" id="user-tree-node">
+            <section class="node tree-node" id="user-data-tree-node">
+                <div class="node-head">
+                    <h3 class="node-head-text">フォロー/お気に入り</h3>
+                    <span class="node-pt">●</span>
+                </div>
+                <div class="node-content tree">
+                    <section class="node link-node" id="user-favorite-title-link-node">
+                        <div class="node-head">
+                            <a href="{{ route('User.Follow.FavoriteTitles') }}" class="node-head-text">お気に入りタイトル</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
+                    <section class="node link-node" id="user-follow-franchise-link-node">
+                        <div class="node-head">
+                            <a href="#" class="node-head-text">フォローフランチャイズ(開発予定)</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
+                    <section class="node link-node" id="user-follow-user-link-node">
+                        <div class="node-head">
+                            <a href="#" class="node-head-text">フォローユーザー(開発予定)</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
+                    <section class="node link-node" id="user-followed-user-link-node">
+                        <div class="node-head">
+                            <a href="#" class="node-head-text">フォロワーユーザー(開発予定)</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+
+            <section class="node tree-node" id="user-account-tree-node">
                 <div class="node-head">
                     <h3 class="node-head-text">アカウント</h3>
                     <span class="node-pt">●</span>

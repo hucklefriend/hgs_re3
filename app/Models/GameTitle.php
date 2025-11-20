@@ -133,6 +133,16 @@ class GameTitle extends Model
     }
 
     /**
+     * お気に入りに登録しているユーザーを取得
+     *
+     * @return BelongsToMany
+     */
+    public function favoritedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, UserFavoriteGameTitle::class, 'game_title_id', 'user_id');
+    }
+
+    /**
      * 紐づいているパッケージから最初の発売日を設定
      *
      * @return self

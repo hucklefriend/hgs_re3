@@ -11,6 +11,10 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
+            <p class="alert alert-info">
+                最新の<a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
+            </p>
+
             @error('email')
                 <div class="alert alert-warning my-3">
                     {!! nl2br(e($message)) !!}

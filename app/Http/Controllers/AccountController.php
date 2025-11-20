@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Carbon\Carbon;
 
 class AccountController extends Controller
 {
@@ -227,6 +228,10 @@ class AccountController extends Controller
             $showId = Str::random(8);
         } while (User::where('show_id', $showId)->exists());
 
+        // プライバシーポリシーの改定バージョンを取得
+        // 新規登録時は最新のプライバシーポリシーに同意しているものとみなす
+        $privacyPolicyRevisionVer = Carbon::parse(HgnController::PRIVACY_POLICY_REVISION_DATE)->format('Ymd');
+
         // ユーザー作成
         $user = User::create([
             'show_id' => $showId,
@@ -236,6 +241,7 @@ class AccountController extends Controller
             'role' => UserRole::USER->value,
             'hgs12_user' => 0,
             'sign_up_at' => now(),
+            'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
         ]);
 
         // 仮登録レコードを削除
