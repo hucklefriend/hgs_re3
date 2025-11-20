@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
+use App\Http\Controllers\User\FollowController;
 use App\Http\Controllers\User\MyNodeController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('my-node/password', [MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
         Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
         Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
+
+        // フォロー/お気に入り
+        Route::get('follow/favorite-titles', [FollowController::class, 'favoriteTitles'])->name('User.Follow.FavoriteTitles');
     });
     Route::get('my-node/email/verify/{token}', [MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 });
