@@ -68,6 +68,11 @@ export class BasicNode extends NodeBase
 
         const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
         forms.forEach(form => {
+            // コンポーネント側で処理するやつは無視
+            if (form.dataset.componentUse === '1') {
+                return;
+            }
+
             form.addEventListener('submit', (e) => {
                 this.submitForm(form, e);
                 return false;

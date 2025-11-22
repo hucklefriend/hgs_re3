@@ -820,6 +820,35 @@ p.rating-warning {
     text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(189, 189, 189, 0.4);
 }
 
+.btn-favorite {
+    background: none;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    padding: 8px 12px;
+    color: yellow;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline;
+    line-height: inherit;
+    vertical-align: baseline;
+    border-radius: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.btn-favorite:hover {
+    color: yellow;
+    border-color: rgba(255, 255, 0, 0.5);
+}
+
+.btn-favorite.is-favorite {
+    border-color: rgba(255, 255, 0, 0.5);
+}
+
+.btn-favorite.is-favorite:hover {
+    border-color: rgba(128, 128, 128, 0.5);
+}
+
 form {
     div.form-group {
         margin-bottom: 20px;
@@ -860,12 +889,7 @@ form {
     }
 }
 
-.favorite-indicator {
-    cursor: pointer;
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: yellow;
-}
+
 
 .title-users-info-bar {
     display: flex;

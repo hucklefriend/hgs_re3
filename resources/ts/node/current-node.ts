@@ -7,6 +7,7 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
 import { AccordionTreeNode } from "./accordion-tree-node";
 import { HorrorGameNetwork } from "../horror-game-network";
+import { ComponentManager } from "../component-manager";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {
@@ -42,6 +43,9 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public start(): void
     {
         this._nodeContentTree.loadNodes(this);
+        const componentManager = ComponentManager.getInstance();
+        componentManager.initializeComponents((window as any).components as { [key: string]: any | null });
+        (window as any).components = {};
     }
 
     /**
@@ -211,6 +215,9 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private changeNode(): void
     {
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
+            const componentManager = ComponentManager.getInstance();
+            
+            componentManager.disposeComponents();
             this.dispose();
 
             if (this._nextNodeCache.colorState) {
@@ -241,6 +248,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
             this._nodeContentTree.loadNodes(this);
             this.resize();
+
+            // コンポーネント初期化
+            componentManager.initializeComponents(this._nextNodeCache.components);
+
             this._nextNodeCache = null;
             this._isChanging = false;
             
@@ -256,6 +267,11 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         if (this._currentNodeContentElement) {
             const forms = Array.from(this._currentNodeContentElement.querySelectorAll('form')) as HTMLFormElement[];
             forms.forEach(form => {
+                // コンポーネント側で処理するやつは無視
+                if (form.dataset.componentUse === '1') {
+                    return;
+                }
+
                 form.addEventListener('submit', (e) => {
                     this.submitCurrentNodeContentForm(form, e);
                     return false;
