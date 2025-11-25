@@ -238,7 +238,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
                 this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
                 if (this._currentNodeContentElement) {
                     this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
-
+                    
                     this.setupFormEvents();
                 }
             }

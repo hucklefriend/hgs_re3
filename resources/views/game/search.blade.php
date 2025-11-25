@@ -4,8 +4,8 @@
 @section('current-node-title', 'タイトル検索')
 
 @section('current-node-content')
-<form id="search-form" method="GET" action="{{ route('Game.Search') }}" rel="internal" data-child-only="1">
-    <input type="text" id="search-input" value="{{ $text }}">
+<form id="search-form" method="GET" action="{{ route('Game.Search') }}" data-child-only="1">
+    <input type="text" id="search-input" name="text" value="{{ $text }}">
     <button type="submit">検索</button>
 </form>
 @endsection
