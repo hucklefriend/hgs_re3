@@ -251,7 +251,11 @@ class GameController extends Controller
                 ->exists();
         }
 
-        return $this->tree(view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite')), $ratingCheck);
+        return $this->tree(
+            view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite')),
+            $ratingCheck,
+            components: ['TitleDetailFavorite' => []]
+        );
     }
 
     /**

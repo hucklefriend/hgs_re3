@@ -8,6 +8,7 @@ export class NextNodeCache
     public popup: string;
     public url: string;
     public colorState: string;
+    public components: { [key: string]: any | null };
 
     public constructor()
     {
@@ -18,5 +19,6 @@ export class NextNodeCache
         this.popup = '';
         this.url = '';
         this.colorState = '';
+        this.components = {};
     }
 }

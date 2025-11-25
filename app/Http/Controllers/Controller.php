@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
@@ -59,12 +58,14 @@ abstract class Controller
      * @param View $view
      * @param bool $ratingCheck
      * @param string $url
+     * @param array $components
      * @return JsonResponse|View
      * @throws \Throwable
      */
-    protected function tree(View $view, bool $ratingCheck = false, string $url = ''): JsonResponse|View
+    protected function tree(View $view, bool $ratingCheck = false, string $url = '', array $components = []): JsonResponse|View
     {
-        $view->with('isOver18', $this->isOver18);
+        $view->with('isOver18', $this->isOver18)
+             ->with('components', $components);
 
         if ($ratingCheck) {
             if (!$this->isOver18) {
@@ -84,6 +85,7 @@ abstract class Controller
                 'popup'              => $rendered['popup'] ?? '',
                 'url'                => $url,
                 'colorState'         => $viewData['colorState'] ?? '',
+                'components'         => $components,
             ]);
         }
 

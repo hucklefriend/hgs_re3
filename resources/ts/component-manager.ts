@@ -1,0 +1,59 @@
+import { Component } from "./component";
+import { TitleDetailFavorite } from "./components/title_detail_favorite";
+
+/**
+ * コンポーネント管理クラス
+ */
+export class ComponentManager
+{
+    private static _instance: ComponentManager;
+    private _components: Component[] = [];
+    private _componentMap: { [key: string]: new (...args: any[]) => Component } = {
+        'TitleDetailFavorite': TitleDetailFavorite,
+    };
+
+    /**
+     * インスタンスを返す
+     */
+    public static getInstance(): ComponentManager
+    {
+        if (!ComponentManager._instance) {
+            ComponentManager._instance = new ComponentManager();
+        }
+        return ComponentManager._instance;
+    }
+
+    /**
+     * コンストラクタ
+     */
+    private constructor()
+    {
+    }
+
+    /**
+     * コンポーネントを初期化する
+     * @param components コンポーネント名と初期化パラメーターのオブジェクト
+     */
+    public initializeComponents(components: { [componentName: string]: any | null }): void
+    {
+        Object.keys(components).forEach(componentName => {
+            const ComponentClass = this._componentMap[componentName];
+            if (ComponentClass) {
+                const params = components[componentName];
+                const instance = new ComponentClass(params);
+                this._components.push(instance);
+            }
+        });
+    }
+
+    /**
+     * コンポーネントを破棄する
+     */
+    public disposeComponents(): void
+    {
+        this._components.forEach(component => {
+            component.dispose();
+        });
+        this._components = [];
+    }
+}

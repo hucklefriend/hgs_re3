@@ -17,82 +17,20 @@
 
     @if (Auth::check())
         <div class="title-users-info-bar">
-            <div class="favorite-indicator" data-game-title-id="{{ $title->id }}" data-processing="false" onclick="toggleFavorite(this)" style="cursor: pointer;">
-                @if ($isFavorite)
-                    ★
-                @else
-                    ☆
-                @endif
+            <div class="favorite-indicator">
+                <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form" data-component-use="1">
+                    @csrf
+                    <input type="hidden" name="game_title_id" value="{{ $title->id }}">
+                    <button type="submit" class="btn btn-favorite{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">
+                        @if ($isFavorite)
+                            ★
+                        @else
+                            ☆
+                        @endif
+                    </button>
+                </form>
             </div>
         </div>
-        <script>
-        // 既存の関数を上書きしてメモリリークを防ぐ
-        window.toggleFavorite = async function(element) {
-            if (element.getAttribute('data-processing') === 'true') return;
-
-            element.setAttribute('data-processing', 'true');
-            const gameTitleId = element.getAttribute('data-game-title-id');
-            const apiUrl = '{{ route("api.user.favorite.toggle") }}';
-            const currentText = element.textContent.trim();
-            const isCurrentlyFavorite = currentText === '★';
-            
-            // 即座に表示を切り替え
-            element.textContent = isCurrentlyFavorite ? '☆' : '★';
-
-            try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                };
-                
-                // CSRFトークンを追加
-                if (window.Laravel && window.Laravel.csrfToken) {
-                    headers['X-CSRF-TOKEN'] = window.Laravel.csrfToken;
-                }
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    credentials: 'same-origin',
-                    body: JSON.stringify({
-                        game_title_id: parseInt(gameTitleId)
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('API request failed');
-                }
-
-                // CSRFトークンを更新（レスポンスヘッダーから取得）
-                const newCsrfToken = response.headers.get('X-CSRF-TOKEN');
-                if (newCsrfToken && window.Laravel) {
-                    window.Laravel.csrfToken = newCsrfToken;
-                }
-
-                const data = await response.json();
-                
-                // レスポンスのステータスに応じて表示を確定
-                if (data.status === 1) {
-                    // 登録された
-                    element.textContent = '★';
-                } else if (data.status === 2) {
-                    // 解除された
-                    element.textContent = '☆';
-                } else {
-                    // 予期しないステータスの場合は元に戻す
-                    element.textContent = currentText;
-                    throw new Error('Unexpected status');
-                }
-            } catch (error) {
-                // エラー時は元の表示に戻す
-                element.textContent = currentText;
-                alert('お気に入りの登録・解除に失敗しました。');
-            } finally {
-                element.setAttribute('data-processing', 'false');
-            }
-        };
-        </script>
     @endif
 
 @endsection
