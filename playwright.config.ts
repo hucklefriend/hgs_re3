@@ -25,7 +25,7 @@ export default defineConfig({
   /* 共通設定 */
   use: {
     /* ベースURL */
-    baseURL: 'http://localhost/hgs_re3/public/',
+    baseURL: 'https://stg.horrorgame.net/',
     
     /* 失敗時のスクリーンショット */
     screenshot: 'only-on-failure',
