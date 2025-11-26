@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class AccountController
+class AccountController extends BaseTestController
 {
     /**
      * ローカル環境専用：仮登録メールのURL取得API
@@ -18,10 +18,6 @@ class AccountController
      */
     public function getRegistrationUrlForTest(Request $request): JsonResponse
     {
-        if (!app()->environment('local')) {
-            abort(404);
-        }
-
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'email'],
         ]);
@@ -66,10 +62,6 @@ class AccountController
      */
     public function getPasswordResetUrlForTest(Request $request): JsonResponse
     {
-        if (!app()->environment('local')) {
-            abort(404);
-        }
-
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'email'],
         ]);
