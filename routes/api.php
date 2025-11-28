@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\Test\AccountController;
 use App\Http\Controllers\Api\UserFavoriteController;
 use Illuminate\Support\Facades\Route;
 
-if (app()->environment('local')) {
+if (!app()->environment('production')) {
     Route::get('test/registration-url', [AccountController::class, 'getRegistrationUrlForTest'])->name('api.test.registration-url');
     Route::get('test/password-reset-url', [AccountController::class, 'getPasswordResetUrlForTest'])->name('api.test.password-reset-url');
 }

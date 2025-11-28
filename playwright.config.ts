@@ -35,18 +35,8 @@ export default defineConfig({
   
   /* 共通設定 */
   use: {
-    /* ベースURL */
-    baseURL: 'https://stg.horrorgame.net/',
-    
-    /* HTTP認証（Basic/Digest認証） */
-    ...(process.env.PLAYWRIGHT_DIGEST_USERNAME && process.env.PLAYWRIGHT_DIGEST_PASSWORD
-      ? {
-          httpCredentials: {
-            username: process.env.PLAYWRIGHT_DIGEST_USERNAME,
-            password: process.env.PLAYWRIGHT_DIGEST_PASSWORD,
-          },
-        }
-      : {}),
+    /* ベースURL（デフォルトはlocalhost） */
+    baseURL: 'http://localhos',
     
     /* 失敗時のスクリーンショット */
     screenshot: 'only-on-failure',
@@ -62,7 +52,29 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL */
+        baseURL: 'http://localhost/hgs_re3/public/',
+      },
+    },
+    {
+      name: 'stg',
+      testMatch: /(account|basic-pages)\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL（ステージング環境） */
+        baseURL: 'https://stg.horrorgame.net/',
+        /* HTTP認証（Basic/Digest認証） */
+        ...(process.env.PLAYWRIGHT_DIGEST_USERNAME && process.env.PLAYWRIGHT_DIGEST_PASSWORD
+          ? {
+              httpCredentials: {
+                username: process.env.PLAYWRIGHT_DIGEST_USERNAME,
+                password: process.env.PLAYWRIGHT_DIGEST_PASSWORD,
+              },
+            }
+          : {}),
+      },
     },
   ],
 });
