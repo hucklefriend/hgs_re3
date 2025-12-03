@@ -16,7 +16,7 @@
         window.baseUrl = '{{ url('/') }}';
         window.lazyCss = @json([]);
         window.siteName = '{{ $siteName }}';
-        window.components = @json($components);
+        window.components = @json($components ?? []);
     </script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
