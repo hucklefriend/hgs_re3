@@ -36,7 +36,7 @@ export default defineConfig({
   /* 共通設定 */
   use: {
     /* ベースURL（デフォルトはlocalhost） */
-    baseURL: 'http://localhos',
+    baseURL: 'http://localhost/hgs_re3/public/',
     
     /* 失敗時のスクリーンショット */
     screenshot: 'only-on-failure',
@@ -52,6 +52,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /master\/.*\.spec\.ts$/,
       use: {
         ...devices['Desktop Chrome'],
         /* ベースURL */
@@ -60,7 +61,7 @@ export default defineConfig({
     },
     {
       name: 'stg',
-      testMatch: /(account|basic-pages)\.spec\.ts/,
+      testIgnore: /master\/.*\.spec\.ts$/,
       use: {
         ...devices['Desktop Chrome'],
         /* ベースURL（ステージング環境） */
@@ -74,6 +75,15 @@ export default defineConfig({
               },
             }
           : {}),
+      },
+    },
+    {
+      name: 'master',
+      testDir: './tests/e2e/master',
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL */
+        baseURL: 'http://localhost/hgs_re3/public/',
       },
     },
   ],
