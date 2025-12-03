@@ -10,6 +10,7 @@
         "test:e2e:ui": "playwright test --project=chromium --ui",
         "test:e2e:debug": "playwright test --project=chromium --debug",
         "test:e2e:report": "playwright show-report",
+        "test:local": "playwright test --project=chromium",
         "test:stg": "playwright test --project=stg",
         "test:master": "playwright test --project=master"
     },
