@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Test;
 
+use App\Models\EmailChangeRequest;
 use App\Models\PasswordReset as PasswordResetModel;
 use App\Models\TemporaryRegistration;
 use App\Models\User;
@@ -165,6 +166,50 @@ class AccountController extends BaseTestController
         return response()->json([
             'message' => 'パスワードをリセットしました。',
             'email' => $email,
+        ]);
+    }
+
+    /**
+     * ローカル環境専用：メールアドレス変更確認メールのURL取得API
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getEmailChangeUrlForTest(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'new_email' => ['required', 'email'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => '無効な入力です。',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $newEmail = $validator->validated()['new_email'];
+
+        $emailChangeRequest = EmailChangeRequest::where('new_email', $newEmail)->first();
+
+        if (!$emailChangeRequest) {
+            return response()->json([
+                'message' => 'メールアドレス変更用URLが見つかりません。',
+            ], 404);
+        }
+
+        if ($emailChangeRequest->isExpired()) {
+            $emailChangeRequest->delete();
+
+            return response()->json([
+                'message' => 'メールアドレス変更用URLの有効期限が切れています。',
+            ], 404);
+        }
+
+        return response()->json([
+            'new_email' => $emailChangeRequest->new_email,
+            'email_change_url' => route('User.MyNode.Email.Verify', ['token' => $emailChangeRequest->token]),
+            'expires_at' => $emailChangeRequest->expires_at,
         ]);
     }
 }
