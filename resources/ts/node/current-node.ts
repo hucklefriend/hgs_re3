@@ -224,6 +224,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
                 document.body.classList.add('has-' + this._nextNodeCache.colorState);
             }
 
+            if (this._nextNodeCache.csrfToken && this._nextNodeCache.csrfToken.length > 0) {
+                (window as any).Laravel.csrfToken = this._nextNodeCache.csrfToken;
+            }
+
             if (this._tmpStateData) {
                 if (this._nextNodeCache.url.length > 0) {
                     this._tmpStateData.url = this._nextNodeCache.url;

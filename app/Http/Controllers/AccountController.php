@@ -44,7 +44,7 @@ class AccountController extends Controller
 
         $colorState = $this->getColorState();
 
-        return $this->tree(view('account.login', compact('colorState')), url: route('Account.Login'));
+        return $this->tree(view('account.login', compact('colorState')), options: ['url' => route('Account.Login')]);
     }
 
     /**
@@ -103,7 +103,7 @@ class AccountController extends Controller
 
         $colorState = $this->getColorState();
 
-        return $this->tree(view('account.register', compact('colorState')), url: route('Account.Register'));
+        return $this->tree(view('account.register', compact('colorState')), options: ['url' => route('Account.Register')]);
     }
 
     /**
@@ -285,7 +285,7 @@ class AccountController extends Controller
 
         $colorState = $this->getColorState();
 
-        return $this->tree(view('account.password-reset', compact('colorState')), url: route('Account.PasswordReset'));
+        return $this->tree(view('account.password-reset', compact('colorState')), options: ['url' => route('Account.PasswordReset')]);
     }
 
     /**
