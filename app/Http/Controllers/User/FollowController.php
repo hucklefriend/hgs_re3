@@ -21,7 +21,7 @@ class FollowController extends Controller
         $user = Auth::user();
         $favoriteTitles = $user->favoriteGameTitles()->orderBy('created_at', 'desc')->get();
 
-        return $this->tree(view('user.follow.favorite_titles', compact('favoriteTitles')), url: route('User.Follow.FavoriteTitles'));
+        return $this->tree(view('user.follow.favorite_titles', compact('favoriteTitles')), options: ['url' => route('User.Follow.FavoriteTitles')]);
     }
 }
 

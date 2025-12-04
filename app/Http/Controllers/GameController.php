@@ -113,7 +113,7 @@ class GameController extends Controller
         return $this->tree(view('game.maker_detail', [
             'maker'  => $maker,
             'titles' => $titles,
-        ]), $ratingCheck);
+        ]), options: ['ratingCheck' => $ratingCheck]);
     }
 
     /**
@@ -225,7 +225,7 @@ class GameController extends Controller
         return $this->tree(view('game.franchise_detail', [
             'franchise'   => $franchise,
             'titles'      => $titles,
-        ]), $ratingCheck);
+        ]), options: ['ratingCheck' => $ratingCheck]);
     }
 
     /**
@@ -253,8 +253,10 @@ class GameController extends Controller
 
         return $this->tree(
             view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite')),
-            $ratingCheck,
-            components: ['TitleDetailFavorite' => []]
+            options: [
+                'ratingCheck' => $ratingCheck,
+                'components' => ['TitleDetailFavorite' => []]
+            ],
         );
     }
 
@@ -283,6 +285,6 @@ class GameController extends Controller
         return $this->tree(view('game.media_mix_detail', [
             'mediaMix' => $mediaMix,
             'relatedNetworks' => $relatedNetworks,
-        ]), $mediaMix->rating == Rating::R18A);
+        ]), options: ['ratingCheck' => $mediaMix->rating == Rating::R18A]);
     }
 }

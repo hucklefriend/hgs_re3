@@ -9,6 +9,7 @@ export class NextNodeCache
     public url: string;
     public colorState: string;
     public components: { [key: string]: any | null };
+    public csrfToken: string;
 
     public constructor()
     {
@@ -20,5 +21,6 @@ export class NextNodeCache
         this.url = '';
         this.colorState = '';
         this.components = {};
+        this.csrfToken = '';
     }
 }

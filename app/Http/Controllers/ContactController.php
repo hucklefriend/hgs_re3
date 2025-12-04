@@ -59,7 +59,7 @@ class ContactController extends Controller
         $url = route('Contact.Show', ['token' => $contact->token]);
 
         // 完了画面を表示
-        return $this->tree(view('contact.complete', compact('contact')), url: $url);
+        return $this->tree(view('contact.complete', compact('contact')), options: ['url' => $url]);
     }
 
     /**
@@ -137,7 +137,7 @@ class ContactController extends Controller
 
         // 見つからない場合、またはクローズ済みの場合
         if (!$contact || $contact->status === ContactStatus::CLOSED) {
-            return $this->tree(view('contact.form'), url: route('Contact'));
+            return $this->tree(view('contact.form'), options: ['url' => route('Contact')]);
         }
 
         // PENDINGの場合のみ取り消し可能
@@ -149,6 +149,6 @@ class ContactController extends Controller
         // ステータスを取り消しに変更
         $contact->update(['status' => ContactStatus::CANCELLED]);
 
-        return $this->tree(view('contact.form'), url: route('Contact'));
+        return $this->tree(view('contact.form'), options: ['url' => route('Contact')]);
     }
 }

@@ -35,7 +35,7 @@ class HgnController extends Controller
             ->limit(3)
             ->get();
 
-        return $this->tree(view('root', compact('infoList')), url: route('Root'));
+        return $this->tree(view('root', compact('infoList')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
     }
 
     /**
