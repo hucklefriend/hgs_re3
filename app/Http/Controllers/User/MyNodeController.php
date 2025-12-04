@@ -29,9 +29,10 @@ class MyNodeController extends Controller
     /**
      * マイページトップ表示
      *
+     * @param Request $request
      * @return JsonResponse|Application|Factory|View
      */
-    public function top(): JsonResponse|Application|Factory|View
+    public function top(Request $request): JsonResponse|Application|Factory|View
     {
         $user = Auth::user();
         
@@ -40,8 +41,16 @@ class MyNodeController extends Controller
         
         $acceptedVersion = $user->privacy_policy_accepted_version ?? 0;
         $needsAcceptance = $acceptedVersion < $privacyPolicyVersion;
+        
+        $request->session()->regenerateToken();
 
-        return $this->tree(view('user.my_node.top', compact('user', 'needsAcceptance')), url: route('User.MyNode.Top'));
+        return $this->tree(
+            view('user.my_node.top', compact('user', 'needsAcceptance')), 
+            options: [
+                'url' => route('User.MyNode.Top'),
+                'csrfToken' => csrf_token(),
+            ]
+        );
     }
 
     /**

@@ -56,18 +56,16 @@ abstract class Controller
      * ツリーの生成
      *
      * @param View $view
-     * @param bool $ratingCheck
-     * @param string $url
-     * @param array $components
+     * @param array $options
      * @return JsonResponse|View
      * @throws \Throwable
      */
-    protected function tree(View $view, bool $ratingCheck = false, string $url = '', array $components = []): JsonResponse|View
+    protected function tree(View $view, array $options = []): JsonResponse|View
     {
         $view->with('isOver18', $this->isOver18)
-             ->with('components', $components);
+             ->with('components', $options['components'] ?? []);
 
-        if ($ratingCheck) {
+        if ($options['ratingCheck'] ?? false) {
             if (!$this->isOver18) {
                 $view = $this->ratingCheck(request()->fullUrl());
             }
@@ -83,9 +81,10 @@ abstract class Controller
                 'currentNodeContent' => $rendered['current-node-content'] ?? '',
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
-                'url'                => $url,
+                'url'                => $options['url'] ?? '',
                 'colorState'         => $viewData['colorState'] ?? '',
-                'components'         => $components,
+                'components'         => $options['components'] ?? [],
+                'csrfToken'          => $options['csrfToken'] ?? '',
             ]);
         }
 
