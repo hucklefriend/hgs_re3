@@ -39,22 +39,44 @@ class ContactController extends Controller
     {
         $validated = $request->validated();
 
-        // お問い合わせ内容を保存
-        $contact = Contact::create([
-            'name' => $validated['name'] ?? 'No Name',
-            'category' => $validated['category'] ?? null,
-            'message' => $validated['message'],
-            'status' => ContactStatus::PENDING,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'user_id' => null,
-            'token' => '', // 一旦空で保存
-        ]);
+        // スパム対策：メッセージに全角ひらがなまたは全角カタカナが1文字以上含まれているかチェック
+        $message = $validated['message'];
+        $hasHiraganaOrKatakana = preg_match('/[\x{3041}-\x{3096}\x{30A1}-\x{30F6}]/u', $message);
 
-        // ID + タイムスタンプからtokenを生成してupdate
-        $tokenSource = $contact->id . '_' . $contact->created_at->timestamp;
-        $token = hash('sha256', $tokenSource);
-        $contact->update(['token' => $token]);
+        if (!$hasHiraganaOrKatakana) {
+            // スパムと判断された場合：DBには登録せず、ダミーのトークンを生成
+            $tokenSource = 'Not registered due to spam prevention';
+            $token = base64_encode($tokenSource);
+            
+            // 完了画面で使用するためのダミーオブジェクトを作成
+            $contact = new Contact([
+                'name' => $validated['name'] ?? 'No Name',
+                'category' => $validated['category'] ?? null,
+                'message' => $message,
+                'status' => ContactStatus::PENDING,
+                'token' => $token,
+                'created_at' => now(),
+            ]);
+            // IDがないとエラーになる可能性があるので、ダミーIDを設定
+            $contact->id = 0;
+        } else {
+            // お問い合わせ内容を保存
+            $contact = Contact::create([
+                'name' => $validated['name'] ?? 'No Name',
+                'category' => $validated['category'] ?? null,
+                'message' => $validated['message'],
+                'status' => ContactStatus::PENDING,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'user_id' => null,
+                'token' => '', // 一旦空で保存
+            ]);
+
+            // ID + タイムスタンプからtokenを生成してupdate
+            $tokenSource = $contact->id . '_' . $contact->created_at->timestamp;
+            $token = hash('sha256', $tokenSource);
+            $contact->update(['token' => $token]);
+        }
 
         $url = route('Contact.Show', ['token' => $contact->token]);
 
