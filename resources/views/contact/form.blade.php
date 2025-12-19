@@ -5,7 +5,7 @@
 
 @section('nodes')
 
-    <section class="node" id="contact-form-node">
+    <section class="node" id="contact-about-node">
         <div class="node-head">
             <h2 class="node-head-text">問い合わせについて</h2>
             <span class="node-pt">●</span>

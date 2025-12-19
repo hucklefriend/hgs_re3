@@ -49,8 +49,8 @@
         @endif
         <div class="node-content tree" id="response-node-content">
             @if($responses->count() > 0)
-                @foreach($responses as $response)
-                <section class="node" id="response-form-node">
+                @foreach($responses as $idx => $response)
+                <section class="node" id="response-node-{{ $idx }}">
                     <div class="node-head">
                         <h3 class="node-head-text">
                             {{ $response->responder_name }}
