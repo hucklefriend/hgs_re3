@@ -321,6 +321,9 @@ export class BasicNode extends NodeBase
         this.disappearStart();
     }
 
+    /**
+     * 消滾アニメーション開始
+     */
     public disappearStart(): void
     {
         const headPos = this.nodeHead.getConnectionPoint();
@@ -357,7 +360,7 @@ export class BasicNode extends NodeBase
         } else {
             const isNoPushState = form.dataset.noPushState === '1';
             const formData = new FormData(form);
-            currentNode.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
+            currentNode.postData(form.action, formData, isChildOnly, isNoPushState);
         }
 
         this.disappearStart();

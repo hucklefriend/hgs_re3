@@ -4,20 +4,16 @@
 @section('current-node-title', '問い合わせ')
 @section('current-node-content')
     @if($contact->status->value === 2)
-        <section class="node">
-            <div class="node-content basic">
-                <div class="alert alert-warning">
-                    <p>
-                        ⚠️ 対応完了のお知らせ
-                    </p>
-                    <p>
-                        この問い合わせへの対応は完了したものとしています。<br>
-                        特に追加の投稿がない場合、本問い合わせは<strong>2週間後に自動でクローズ</strong>され、閲覧できなくなります。<br>
-                        追加でご連絡したいことがある場合は、下記の返信フォームからご投稿ください。
-                    </p>
-                </div>
-            </div>
-        </section>
+        <div class="alert alert-warning">
+            <p>
+                ⚠️ 対応完了のお知らせ
+            </p>
+            <p>
+                この問い合わせへの対応は完了したものとしています。<br>
+                特に追加の投稿がない場合、本問い合わせは<strong>2週間後に自動でクローズ</strong>され、閲覧できなくなります。<br>
+                追加でご連絡したいことがある場合は、下記の返信フォームからご投稿ください。
+            </p>
+        </div>
     @endif
 
     <div class="alert alert-info">
@@ -53,8 +49,8 @@
         @endif
         <div class="node-content tree" id="response-node-content">
             @if($responses->count() > 0)
-                @foreach($responses as $response)
-                <section class="node" id="response-form-node">
+                @foreach($responses as $idx => $response)
+                <section class="node" id="response-node-{{ $idx }}">
                     <div class="node-head">
                         <h3 class="node-head-text">
                             {{ $response->responder_name }}
@@ -77,7 +73,12 @@
                     <div class="alert alert-info">
                         <strong>💡 個人情報保護機能について</strong>
                         <p>
-                            メールアドレスや電話番号などの個人情報は、<code>/*</code>と<code>*/</code>で囲むことで、管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
+                            メールアドレスやSNSのIDなどの個人情報を送信したい場合は、<code>/*</code>と<code>*/</code>で囲んでください。<br>
+                            囲まれた部分は管理者にのみ表示され、確認画面では<strong>■で伏せ字</strong>として表示されます。
+                        </p>
+                        <p class="alert-secondary">
+                            <strong>例：</strong> 私のメールアドレスは /*example@example.com*/ です。<br>
+                            → 確認画面では「私のメールアドレスは <strong>■■■■■■■■■■■■■■■■■■■■■</strong> です。」と表示されます。
                         </p>
                     </div>
                     
