@@ -7,7 +7,7 @@
 
     <section class="node" id="contact-form-node">
         <div class="node-head">
-            <h2 class="node-head-text">問い合わせフォーム</h2>
+            <h2 class="node-head-text">問い合わせについて</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
@@ -32,7 +32,14 @@
                     → 確認画面では「私のメールアドレスは <strong>■■■■■■■■■■■■■■■■■■■■■</strong> です。」と表示されます。
                 </p>
             </div>
-
+        </div>
+    </section>
+    <section class="node" id="contact-form-node">
+        <div class="node-head">
+            <h2 class="node-head-text">問い合わせフォーム</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul style="margin: 0; padding-left: 20px;">
