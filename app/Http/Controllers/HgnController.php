@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HgnPrivacyPolicyAcceptRequest;
 use App\Models\Information;
+use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class HgnController extends Controller
 {
+    /**
+     * プライバシーポリシーの最終改定日
+     */
+    public const PRIVACY_POLICY_REVISION_DATE = '2025-11-18';
+
     /**
      * トップページ
      *
@@ -26,7 +35,7 @@ class HgnController extends Controller
             ->limit(3)
             ->get();
 
-        return $this->tree(view('root', compact('infoList')));
+        return $this->tree(view('root', compact('infoList')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
     }
 
     /**
@@ -77,7 +86,39 @@ class HgnController extends Controller
      */
     public function privacyPolicy(): JsonResponse|Application|Factory|View
     {
-        return $this->tree(view('privacy_policy'));
+        $privacyPolicyRevisionDate = Carbon::parse(self::PRIVACY_POLICY_REVISION_DATE);
+        $privacyPolicyVersion = (int)$privacyPolicyRevisionDate->format('Ymd');
+        
+        $needsAcceptance = false;
+        if (Auth::check()) {
+            $user = Auth::user();
+            $acceptedVersion = $user->privacy_policy_accepted_version ?? 0;
+            $needsAcceptance = $acceptedVersion < $privacyPolicyVersion;
+        }
+        
+        return $this->tree(view('privacy_policy', compact('privacyPolicyRevisionDate', 'privacyPolicyVersion', 'needsAcceptance')));
+    }
+
+    /**
+     * プライバシーポリシー承認
+     *
+     * @param HgnPrivacyPolicyAcceptRequest $request
+     * @return RedirectResponse
+     */
+    public function acceptPrivacyPolicy(HgnPrivacyPolicyAcceptRequest $request): RedirectResponse
+    {
+        if (!Auth::check()) {
+            return redirect()->route('PrivacyPolicy');
+        }
+
+        $user = Auth::user();
+        $privacyPolicyRevisionDate = Carbon::parse(self::PRIVACY_POLICY_REVISION_DATE);
+        $privacyPolicyVersion = (int)$privacyPolicyRevisionDate->format('Ymd');
+
+        $user->privacy_policy_accepted_version = $privacyPolicyVersion;
+        $user->save();
+
+        return redirect()->route('PrivacyPolicy')->with('success', 'プライバシーポリシーを確認しました。');
     }
 
     /**

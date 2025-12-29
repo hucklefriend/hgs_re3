@@ -14,6 +14,25 @@
     @endif
 
     @include('common.current-node-ogp', ['model' => $title])
+
+    @if (Auth::check())
+        <div class="title-users-info-bar">
+            <div class="favorite-indicator">
+                <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form" data-component-use="1">
+                    @csrf
+                    <input type="hidden" name="game_title_id" value="{{ $title->id }}">
+                    <button type="submit" class="btn btn-favorite{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">
+                        @if ($isFavorite)
+                            ★
+                        @else
+                            ☆
+                        @endif
+                    </button>
+                </form>
+            </div>
+        </div>
+    @endif
+
 @endsection
 
 @section('nodes')

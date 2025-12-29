@@ -1,15 +1,21 @@
 <?php
 
-use App\Http\Controllers\GameController;
+use App\Http\Controllers\Api\Test\AccountController;
+use App\Http\Controllers\Api\UserFavoriteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\GameMakerController as GameMakerApi;
 
-Route::get('/', [GameController::class, 'searchHorrorGame'])->name('Api.Game.SearchHorrorGame');
 
-Route::middleware(['gpts.api_key'])->group(function () {
-    // V1
-    Route::prefix('v1')->name('api.v1.')->group(function () {
-        // ゲームメーカー
-        Route::apiResource('game-makers', GameMakerApi::class);
-    });
+if (!app()->environment('production')) {
+    Route::get('test/registration-url', [AccountController::class, 'getRegistrationUrlForTest'])->name('api.test.registration-url');
+    Route::get('test/password-reset-url', [AccountController::class, 'getPasswordResetUrlForTest'])->name('api.test.password-reset-url');
+    Route::get('test/email-change-url', [AccountController::class, 'getEmailChangeUrlForTest'])->name('api.test.email-change-url');
+    Route::post('test/expire-registration', [AccountController::class, 'expireRegistrationForTest'])->name('api.test.expire-registration');
+    Route::post('test/reset-webmaster-password', [AccountController::class, 'resetWebmasterPasswordForTest'])->name('api.test.reset-webmaster-password');
+}
+
+// 認証が必要なAPI
+Route::middleware(['web', 'auth:web'])->group(function () {
+    Route::post('user/favorite/toggle', [UserFavoriteController::class, 'toggle'])->name('api.user.favorite.toggle');
 });
+
+

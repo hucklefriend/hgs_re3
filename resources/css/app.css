@@ -22,6 +22,16 @@ body.has-error {
     --connection-line-shadow: #ff6666;
 }
 
+body.has-warning {
+    --node-pt-light: #FFEB3B;
+    --node-pt-light-shadow: #FFD700;
+    --node-pt-dark: #F9A825;
+    --sub-node-pt: #F57F17;
+    --sub-node-pt-light: #F9A825;
+    --connection-line-color: #FFEB3B;
+    --connection-line-shadow: #FFD700;
+}
+
 html {
     padding: 0;
     margin: 0;
@@ -81,13 +91,13 @@ main {
 
 a {
     text-decoration: none;
-    color: lightgray;
+    color: #AABBAA;
     text-decoration: none;
     transition: color 0.3s ease, text-shadow 0.3s ease;
     
     &:hover {
         color: white;
-        text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+        text-shadow: 0 0 5px var(--node-pt-light-shadow), 0 0 15px var(--node-pt-light-shadow) !important;
     }
 }
 
@@ -810,6 +820,35 @@ p.rating-warning {
     text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 20px rgba(189, 189, 189, 0.4);
 }
 
+.btn-favorite {
+    background: none;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    padding: 8px 12px;
+    color: yellow;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline;
+    line-height: inherit;
+    vertical-align: baseline;
+    border-radius: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.btn-favorite:hover {
+    color: yellow;
+    border-color: rgba(255, 255, 0, 0.5);
+}
+
+.btn-favorite.is-favorite {
+    border-color: rgba(255, 255, 0, 0.5);
+}
+
+.btn-favorite.is-favorite:hover {
+    border-color: rgba(128, 128, 128, 0.5);
+}
+
 form {
     div.form-group {
         margin-bottom: 20px;
@@ -832,4 +871,28 @@ form {
     .required {
         color: #c00;
     }
+
+    .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+.text-muted {
+    color: #888888;
+}
+
+#account-register-form {
+    > .form-group:nth-child(3) {
+        display: none;
+    }
+}
+
+
+
+.title-users-info-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }

@@ -20,7 +20,21 @@ export class LinkNodeMixin
 
     public get anchor(): HTMLAnchorElement
     {
-        return this._parentInstance._nodeHead.titleElement as HTMLAnchorElement;
+        const titleElement = this._parentInstance._nodeHead.titleElement;
+        
+        // titleElementが<a>タグの場合はそのまま返す
+        if (titleElement instanceof HTMLAnchorElement) {
+            return titleElement;
+        }
+        
+        // titleElementが<span>などの場合は、子要素の<a>タグを探す
+        const anchor = titleElement.querySelector('a');
+        if (anchor) {
+            return anchor;
+        }
+        
+        // フォールバック: 型アサーションで返す（通常はここには到達しない）
+        return titleElement as HTMLAnchorElement;
     }
 
     public get nodeHead(): NodeHeadClickable

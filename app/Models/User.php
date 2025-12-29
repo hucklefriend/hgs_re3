@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -17,9 +18,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'show_id',
         'name',
         'email',
         'password',
+        'role',
+        'hgs12_user',
+        'sign_up_at',
+        'email_verification_token',
+        'email_verification_sent_at',
+        'withdrawn_at',
+        'privacy_policy_accepted_version',
     ];
 
     /**
@@ -40,8 +49,20 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'sign_up_at' => 'datetime',
+            'email_verification_sent_at' => 'datetime',
+            'withdrawn_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * お気に入りゲームタイトルを取得
+     *
+     * @return BelongsToMany
+     */
+    public function favoriteGameTitles(): BelongsToMany
+    {
+        return $this->belongsToMany(GameTitle::class, UserFavoriteGameTitle::class, 'user_id', 'game_title_id');
     }
 }

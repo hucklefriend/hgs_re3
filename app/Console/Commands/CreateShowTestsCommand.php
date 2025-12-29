@@ -155,7 +155,7 @@ class CreateShowTestsCommand extends Command
         $testContent = $this->generateFranchiseTestFile($routes);
         
         // tests/e2e/franchise-pages.spec.ts に保存
-        $testFilePath = base_path('tests/e2e/franchise-pages.spec.ts');
+        $testFilePath = base_path('tests/e2e/master/franchise-pages.spec.ts');
         File::put($testFilePath, $testContent);
         
         $this->info("テストファイルを生成しました: {$testFilePath}");
@@ -382,7 +382,7 @@ TS;
         $testContent = $this->generateMakerTestFile($routes);
         
         // tests/e2e/maker-pages.spec.ts に保存
-        $testFilePath = base_path('tests/e2e/maker-pages.spec.ts');
+        $testFilePath = base_path('tests/e2e/master/maker-pages.spec.ts');
         File::put($testFilePath, $testContent);
         
         $this->info("テストファイルを生成しました: {$testFilePath}");
@@ -489,7 +489,7 @@ TS;
         $testContent = $this->generatePlatformTestFile($routes);
         
         // tests/e2e/platform-pages.spec.ts に保存
-        $testFilePath = base_path('tests/e2e/platform-pages.spec.ts');
+        $testFilePath = base_path('tests/e2e/master/platform-pages.spec.ts');
         File::put($testFilePath, $testContent);
         
         $this->info("テストファイルを生成しました: {$testFilePath}");
@@ -584,7 +584,7 @@ TS;
         $testContent = $this->generateTitleTestFile($routes);
         
         // tests/e2e/title-pages.spec.ts に保存
-        $testFilePath = base_path('tests/e2e/title-pages.spec.ts');
+        $testFilePath = base_path('tests/e2e/master/title-pages.spec.ts');
         File::put($testFilePath, $testContent);
         
         $this->info("テストファイルを生成しました: {$testFilePath}");

@@ -7,6 +7,7 @@ import { TreeNodeInterface } from "./interface/tree-node-interface";
 import { NodeType } from "../common/type";
 import { AccordionTreeNode } from "./accordion-tree-node";
 import { HorrorGameNetwork } from "../horror-game-network";
+import { ComponentManager } from "../component-manager";
 
 export class CurrentNode extends NodeBase implements TreeNodeInterface
 {
@@ -36,11 +37,15 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
         this._currentNodeContentElement = document.getElementById('current-node-content');
         this._nodeContentTree = new NodeContentTree(this._treeContentElement as HTMLElement, this);
+        this.setupFormEvents();
     }
 
     public start(): void
     {
         this._nodeContentTree.loadNodes(this);
+        const componentManager = ComponentManager.getInstance();
+        componentManager.initializeComponents((window as any).components as { [key: string]: any | null });
+        (window as any).components = {};
     }
 
     /**
@@ -51,7 +56,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         this._nodeContentTree.disposeNodes();
         this._accordionGroups = {};
         this._homewardNode = null;
-        document.body.classList.remove('has-error');
+        document.body.classList.remove('has-error', 'has-warning');
 
         if (!this._isChildOnly) {
             this._currentNodeContentElement!.innerHTML = '';
@@ -210,10 +215,17 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     private changeNode(): void
     {
         if (this._nextNodeCache && this._appearStatus === AppearStatus.DISAPPEARED) {
+            const componentManager = ComponentManager.getInstance();
+            
+            componentManager.disposeComponents();
             this.dispose();
 
-            if (this._nextNodeCache.hasError) {
-                document.body.classList.add('has-error');
+            if (this._nextNodeCache.colorState) {
+                document.body.classList.add('has-' + this._nextNodeCache.colorState);
+            }
+
+            if (this._nextNodeCache.csrfToken && this._nextNodeCache.csrfToken.length > 0) {
+                (window as any).Laravel.csrfToken = this._nextNodeCache.csrfToken;
             }
 
             if (this._tmpStateData) {
@@ -226,10 +238,12 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
             }
 
             if (!this._isChildOnly) {
-                document.title = this._nextNodeCache.title;
+                document.title = this._nextNodeCache.title + ' | ' + (window as any).siteName;
                 this._nodeHead.title = this._nextNodeCache.currentNodeTitle;
                 if (this._currentNodeContentElement) {
                     this._currentNodeContentElement.innerHTML = this._nextNodeCache.currentNodeContent;
+                    
+                    this.setupFormEvents();
                 }
             }
             if (this._treeContentElement) {
@@ -238,11 +252,64 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
 
             this._nodeContentTree.loadNodes(this);
             this.resize();
+
+            // コンポーネント初期化
+            componentManager.initializeComponents(this._nextNodeCache.components);
+
             this._nextNodeCache = null;
             this._isChanging = false;
             
             this.appear();
         }
+    }
+
+    /**
+     * フォームのイベントを設定する
+     */
+    private setupFormEvents(): void
+    {
+        if (this._currentNodeContentElement) {
+            const forms = Array.from(this._currentNodeContentElement.querySelectorAll('form')) as HTMLFormElement[];
+            forms.forEach(form => {
+                // コンポーネント側で処理するやつは無視
+                if (form.dataset.componentUse === '1') {
+                    return;
+                }
+
+                form.addEventListener('submit', (e) => {
+                    this.submitCurrentNodeContentForm(form, e);
+                    return false;
+                });
+            });
+        }
+    }
+
+    /**
+     * フォームの送信
+     * 
+     * @param form 送信したフォーム
+     * @param e 送信イベント
+     */
+    private submitCurrentNodeContentForm(form: HTMLFormElement, e: SubmitEvent): void
+    {
+        e.preventDefault();
+
+        if (!AppearStatus.isAppeared(this._nodeContentTree.appearStatus)) {
+            return;
+        }
+
+        const isChildOnly = form.dataset.childOnly === '1';
+
+        if (form.method.toUpperCase() !== 'POST') {
+            const params = new URLSearchParams(new FormData(form) as any);
+            this.moveNode(form.action + '?' + params.toString(), false, isChildOnly);
+        } else {
+            const isNoPushState = form.dataset.noPushState === '1';
+            const formData = new FormData(form);
+            this.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
+        }
+
+        this.disappear();
     }
 
 

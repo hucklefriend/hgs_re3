@@ -41,7 +41,6 @@
                 @csrf
                 {{ method_field('PUT') }}
 
-                <x-admin.node-input-support />
                 <table class="table table-hover">
                     <thead>
                     <tr>

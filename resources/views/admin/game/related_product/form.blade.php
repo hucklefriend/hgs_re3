@@ -86,7 +86,6 @@
         <th>ノード表示用の名前</th>
         <td>
             <x-admin.input name="node_name" :model="$model" required maxlength="200" />
-            <x-admin.node-input-support />
         </td>
     </tr>
     <tr>

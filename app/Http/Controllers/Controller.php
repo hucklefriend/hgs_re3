@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
@@ -16,11 +15,17 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
 
 abstract class Controller
 {
     protected bool $isOver18 = false;
 
+    /**
+     * コンストラクタ
+     *
+     * @return void
+     */
     public function __construct()
     {
         if (App::environment('local')) {
@@ -51,16 +56,16 @@ abstract class Controller
      * ツリーの生成
      *
      * @param View $view
-     * @param bool $ratingCheck
-     * @param string $url
+     * @param array $options
      * @return JsonResponse|View
      * @throws \Throwable
      */
-    protected function tree(View $view, bool $ratingCheck = false, string $url = ''): JsonResponse|View
+    protected function tree(View $view, array $options = []): JsonResponse|View
     {
-        $view->with('isOver18', $this->isOver18);
+        $view->with('isOver18', $this->isOver18)
+             ->with('components', $options['components'] ?? []);
 
-        if ($ratingCheck) {
+        if ($options['ratingCheck'] ?? false) {
             if (!$this->isOver18) {
                 $view = $this->ratingCheck(request()->fullUrl());
             }
@@ -68,6 +73,7 @@ abstract class Controller
 
         // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
         if (self::isAjax()) {
+            $viewData = $view->getData();
             $rendered = $view->renderSections();
             return response()->json([
                 'title'              => $rendered['title'],
@@ -75,8 +81,10 @@ abstract class Controller
                 'currentNodeContent' => $rendered['current-node-content'] ?? '',
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
-                'url'                => $url,
-                'hasError'           => false,
+                'url'                => $options['url'] ?? '',
+                'colorState'         => $viewData['colorState'] ?? '',
+                'components'         => $options['components'] ?? [],
+                'csrfToken'          => $options['csrfToken'] ?? '',
             ]);
         }
 
@@ -126,6 +134,11 @@ abstract class Controller
             return null;
         }
 
+        // ValidationExceptionの場合はLaravelのデフォルト処理に委譲（リダイレクトしてエラーメッセージを表示）
+        if ($e instanceof ValidationException) {
+            return null;
+        }
+
         // 例外の種類に応じてステータスコードとビューを決定
         $statusCode = 500;
         $viewName = 'errors.500';
@@ -146,8 +159,13 @@ abstract class Controller
         // ビュー名の決定（対応するビューが存在する場合）
         $viewName = "errors.{$statusCode}";
         if (!view()->exists($viewName)) {
-            $viewName = 'errors.500';
-            $statusCode = 500;
+            // 429エラーの場合は429ビューを使用（存在する場合）
+            if ($statusCode === 429 && view()->exists('errors.429')) {
+                $viewName = 'errors.429';
+            } else {
+                $viewName = 'errors.500';
+                $statusCode = 500;
+            }
         }
 
         // ログに記録（500系エラーのみ）
@@ -161,8 +179,8 @@ abstract class Controller
                 'url' => $request->fullUrl(),
                 'user_agent' => $request->userAgent(),
             ]);
-        } else {
-            // 400系エラーは警告レベルで記録
+        } else if ($statusCode != 404) {
+            // 404を除き400系エラーは警告レベルで記録
             Log::warning('Client error occurred', [
                 'status_code' => $statusCode,
                 'message' => $e->getMessage(),
@@ -189,7 +207,7 @@ abstract class Controller
 
         /** @var View $view */
         $view = view($viewName, compact('errorMessage', 'errorFile', 'errorLine', 'errorTrace'))
-            ->with('hasError', true);
+            ->with('colorState', 'error');
 
         // Ajaxリクエストの場合はJSONで返す
         if ($isAjax) {
@@ -201,7 +219,7 @@ abstract class Controller
                 'nodes'              => $rendered['nodes'],
                 'popup'              => $rendered['popup'] ?? '',
                 'url'                => '',
-                'hasError'           => true,
+                'colorState'         => 'error',
                 'statusCode'         => $statusCode,
             ], $statusCode);
         }
@@ -227,5 +245,29 @@ abstract class Controller
             503 => 'サービスが一時的に利用できません。',
             default => 'システムエラーが発生しました。',
         };
+    }
+
+    /**
+     * カラーステートを取得
+     * セッションにerrorがあればerror、warningがあればwarning、errorsがあればwarning、それ以外は空文字列を返す
+     *
+     * @return string
+     */
+    protected function getColorState(): string
+    {
+        if (session()->has('error')) {
+            return 'error';
+        }
+        if (session()->has('warning')) {
+            return 'warning';
+        }
+
+        /** @var ViewErrorBag $errors */
+        $errors = session('errors');
+        if ($errors && $errors->any()) {
+            return 'warning';
+        }
+
+        return '';
     }
 }

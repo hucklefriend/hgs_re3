@@ -1,4 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// 現在のファイルのディレクトリを取得
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// .env.playwright.local または .env.playwright から環境変数を読み込む
+dotenv.config({ path: join(__dirname, '.env.playwright.local') });
+dotenv.config({ path: join(__dirname, '.env.playwright') });
 
 /**
  * Playwright設定ファイル
@@ -24,7 +35,7 @@ export default defineConfig({
   
   /* 共通設定 */
   use: {
-    /* ベースURL */
+    /* ベースURL（デフォルトはlocalhost） */
     baseURL: 'http://localhost/hgs_re3/public/',
     
     /* 失敗時のスクリーンショット */
@@ -41,15 +52,40 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      testIgnore: /master\/.*\.spec\.ts$/,
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL */
+        baseURL: 'http://localhost/hgs_re3/public/',
+      },
+    },
+    {
+      name: 'stg',
+      testIgnore: /master\/.*\.spec\.ts$/,
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL（ステージング環境） */
+        baseURL: 'https://stg.horrorgame.net/',
+        /* HTTP認証（Basic/Digest認証） */
+        ...(process.env.PLAYWRIGHT_DIGEST_USERNAME && process.env.PLAYWRIGHT_DIGEST_PASSWORD
+          ? {
+              httpCredentials: {
+                username: process.env.PLAYWRIGHT_DIGEST_USERNAME,
+                password: process.env.PLAYWRIGHT_DIGEST_PASSWORD,
+              },
+            }
+          : {}),
+      },
+    },
+    {
+      name: 'master',
+      testDir: './tests/e2e/master',
+      use: {
+        ...devices['Desktop Chrome'],
+        /* ベースURL */
+        baseURL: 'http://localhost/hgs_re3/public/',
+      },
     },
   ],
-
-  /* 開発サーバー設定（必要に応じて） */
-  // webServer: {
-  //   command: 'php artisan serve',
-  //   url: 'http://localhost:8000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });
 

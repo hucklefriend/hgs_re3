@@ -12,11 +12,13 @@ use App\Models\GameTitlePackageGroupLink;
 use App\Models\GamePlatform;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
+use App\Models\UserFavoriteGameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller
 {
@@ -111,7 +113,7 @@ class GameController extends Controller
         return $this->tree(view('game.maker_detail', [
             'maker'  => $maker,
             'titles' => $titles,
-        ]), $ratingCheck);
+        ]), options: ['ratingCheck' => $ratingCheck]);
     }
 
     /**
@@ -223,7 +225,7 @@ class GameController extends Controller
         return $this->tree(view('game.franchise_detail', [
             'franchise'   => $franchise,
             'titles'      => $titles,
-        ]), $ratingCheck);
+        ]), options: ['ratingCheck' => $ratingCheck]);
     }
 
     /**
@@ -241,7 +243,21 @@ class GameController extends Controller
         $ratingCheck = $title->rating == Rating::R18A;
         $franchise = $title->getFranchise();
 
-        return $this->tree(view('game.title_detail', compact('title', 'ratingCheck', 'franchise')), $ratingCheck);
+        // ログイン状態ならお気に入りに入っているか確認
+        $isFavorite = false;
+        if (Auth::check()) {
+            $isFavorite = UserFavoriteGameTitle::where('user_id', Auth::id())
+                ->where('game_title_id', $title->id)
+                ->exists();
+        }
+
+        return $this->tree(
+            view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite')),
+            options: [
+                'ratingCheck' => $ratingCheck,
+                'components' => ['TitleDetailFavorite' => []]
+            ],
+        );
     }
 
     /**
@@ -269,6 +285,6 @@ class GameController extends Controller
         return $this->tree(view('game.media_mix_detail', [
             'mediaMix' => $mediaMix,
             'relatedNetworks' => $relatedNetworks,
-        ]), $mediaMix->rating == Rating::R18A);
+        ]), options: ['ratingCheck' => $mediaMix->rating == Rating::R18A]);
     }
 }

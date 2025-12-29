@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
+use App\Http\Controllers\User\FollowController;
+use App\Http\Controllers\User\MyNodeController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +21,38 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HgnController::class, 'root'])->name('Root');
 Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
+
+// アカウント（ログイン系）
+Route::get('/login', [AccountController::class, 'login'])->name('Account.Login');
+Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
+Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
+Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
+Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:10,10')->name('Account.Register.Store');
+Route::get('/register/complete/{token}', [AccountController::class, 'showCompleteRegistration'])->name('Account.Register.Complete');
+Route::post('/register/complete/{token}', [AccountController::class, 'completeRegistration'])->name('Account.Register.Complete.Store');
+Route::get('/password-reset', [AccountController::class, 'showPasswordReset'])->name('Account.PasswordReset');
+Route::post('/password-reset', [AccountController::class, 'storePasswordReset'])->middleware('throttle:10,10')->name('Account.PasswordReset.Store');
+Route::get('/password-reset/complete/{token}', [AccountController::class, 'showPasswordResetComplete'])->name('Account.PasswordReset.Complete');
+Route::post('/password-reset/complete/{token}', [AccountController::class, 'completePasswordReset'])->name('Account.PasswordReset.Complete.Store');
+
+Route::group(['prefix' => 'user'], function () {
+    // マイページ（認証が必要）
+    Route::middleware('auth')->group(function () {
+        Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
+        Route::get('my-node/profile', [MyNodeController::class, 'profile'])->name('User.MyNode.Profile');
+        Route::post('my-node/profile', [MyNodeController::class, 'profileUpdate'])->name('User.MyNode.Profile.Update');
+        Route::get('my-node/email', [MyNodeController::class, 'email'])->name('User.MyNode.Email');
+        Route::post('my-node/email', [MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
+        Route::get('my-node/password', [MyNodeController::class, 'password'])->name('User.MyNode.Password');
+        Route::post('my-node/password', [MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
+        Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
+        Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
+
+        // フォロー/お気に入り
+        Route::get('follow/favorite-titles', [FollowController::class, 'favoriteTitles'])->name('User.Follow.FavoriteTitles');
+    });
+    Route::get('my-node/email/verify/{token}', [MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
+});
 
 use App\Http\Controllers\Admin;
 // 管理用
@@ -50,6 +85,13 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('contact/{contact}', [Admin\Manage\ContactController::class, 'show'])->name('Admin.Manage.Contact.Show');
             Route::post('contact/{contact}/response', [Admin\Manage\ContactController::class, 'storeResponse'])->name('Admin.Manage.Contact.StoreResponse');
             Route::post('contact/{contact}/status', [Admin\Manage\ContactController::class, 'updateStatus'])->name('Admin.Manage.Contact.UpdateStatus');
+
+            // ユーザー
+            Route::get('user', [Admin\Manage\UserController::class, 'index'])->name('Admin.Manage.User');
+            Route::get('user/{user}', [Admin\Manage\UserController::class, 'show'])->name('Admin.Manage.User.Show');
+            Route::get('user/{user}/password', [Admin\Manage\UserController::class, 'editPassword'])->name('Admin.Manage.User.Password');
+            Route::post('user/{user}/password', [Admin\Manage\UserController::class, 'updatePassword'])->name('Admin.Manage.User.Password.Update');
+            Route::delete('user/{user}', [Admin\Manage\UserController::class, 'destroy'])->name('Admin.Manage.User.Destroy');
         });
 
         // マスター
@@ -286,6 +328,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
+Route::post('privacy/accept', [$class, 'acceptPrivacyPolicy'])->name('PrivacyPolicy.Accept');
 Route::get('about', [$class, 'about'])->name('About');
 Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
 Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');

@@ -68,6 +68,11 @@ export class BasicNode extends NodeBase
 
         const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
         forms.forEach(form => {
+            // コンポーネント側で処理するやつは無視
+            if (form.dataset.componentUse === '1') {
+                return;
+            }
+
             form.addEventListener('submit', (e) => {
                 this.submitForm(form, e);
                 return false;
@@ -316,6 +321,9 @@ export class BasicNode extends NodeBase
         this.disappearStart();
     }
 
+    /**
+     * 消滾アニメーション開始
+     */
     public disappearStart(): void
     {
         const headPos = this.nodeHead.getConnectionPoint();
@@ -352,7 +360,7 @@ export class BasicNode extends NodeBase
         } else {
             const isNoPushState = form.dataset.noPushState === '1';
             const formData = new FormData(form);
-            currentNode.changeChildNodesWithData(form.action, formData, isChildOnly, isNoPushState);
+            currentNode.postData(form.action, formData, isChildOnly, isNoPushState);
         }
 
         this.disappearStart();

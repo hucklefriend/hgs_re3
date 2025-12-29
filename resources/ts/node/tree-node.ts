@@ -120,6 +120,7 @@ export class TreeNode extends BasicNode implements TreeNodeInterface
         this._appearAnimationFunc = this.homewardDisappearAnimation;
         this._animationStartTime = (window as any).hgn.timestamp;
         this._nodeHead.disappear();
+        this.disappearContents();
     }
 
     public homewardDisappearAnimation(): void
