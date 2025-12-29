@@ -24,40 +24,19 @@
 @section('nodes')
     <section class="node tree-node" id="mypage-welcome-node">
         <div class="node-head">
-            <h2 class="node-head-text">ようこそ</h2>
+            <h2 class="node-head-text">設定・管理</h2>
             <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic" id="user-account-setting-basic-node">
-            <p>{{ $user->name }}さんようこそ</p>
         </div>
         <div class="node-content tree" id="user-tree-node">
             <section class="node tree-node" id="user-data-tree-node">
                 <div class="node-head">
-                    <h3 class="node-head-text">フォロー/お気に入り</h3>
+                    <h3 class="node-head-text">お気に入り</h3>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node link-node" id="user-favorite-title-link-node">
                         <div class="node-head">
                             <a href="{{ route('User.Follow.FavoriteTitles') }}" class="node-head-text">お気に入りタイトル</a>
-                            <span class="node-pt">●</span>
-                        </div>
-                    </section>
-                    <section class="node link-node" id="user-follow-franchise-link-node">
-                        <div class="node-head">
-                            <a href="#" class="node-head-text">フォローフランチャイズ(開発予定)</a>
-                            <span class="node-pt">●</span>
-                        </div>
-                    </section>
-                    <section class="node link-node" id="user-follow-user-link-node">
-                        <div class="node-head">
-                            <a href="#" class="node-head-text">フォローユーザー(開発予定)</a>
-                            <span class="node-pt">●</span>
-                        </div>
-                    </section>
-                    <section class="node link-node" id="user-followed-user-link-node">
-                        <div class="node-head">
-                            <a href="#" class="node-head-text">フォロワーユーザー(開発予定)</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>
