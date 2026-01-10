@@ -57,16 +57,19 @@ class TitleController extends AbstractAdminController
 
             // 俗称も探す
             // $words配列の中にある文字列にsynonym関数を適用する
-            array_walk($words, function ($value, $key){
-                return synonym($value);
-            });
+            $synonymWords = [];
+            foreach ($words as $word) {
+                $synonymWords[] = synonym($word);
+            }
 
-            // サブクエリで、game_maker_synonymsテーブルのsynonymが一致するgame_maker_id
-            $titles->orWhereIn('id', function ($query) use ($words) {
-                $query->select('game_title_id')
-                    ->from('game_title_synonyms')
-                    ->whereIn('synonym', $words);
-            });
+            // title_synonymsカラム内の改行区切り文字列から検索
+            if (!empty($synonymWords)) {
+                $titles->orWhere(function ($query) use ($synonymWords) {
+                    foreach ($synonymWords as $synonymWord) {
+                        $query->orWhere('search_synonyms', 'LIKE', '%' . $synonymWord . '%');
+                    }
+                });
+            }
         }
 
         $this->saveSearchSession($search);
@@ -85,7 +88,6 @@ class TitleController extends AbstractAdminController
      */
     public function detail(GameTitle $title): Application|Factory|View
     {
-        $title->loadSynonyms();
         return view('admin.game.title.detail', [
             'model' => $title,
             'tree'  => GameTree::getTree($title),
@@ -115,7 +117,6 @@ class TitleController extends AbstractAdminController
     {
         $title = new GameTitle();
         $title->fill($request->validated());
-        $title->synonymsStr = $request->post('synonymsStr', '');
         $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
@@ -188,7 +189,6 @@ class TitleController extends AbstractAdminController
      */
     public function edit(GameTitle $title): Application|Factory|View
     {
-        $title->loadSynonyms();
         return view('admin.game.title.edit', [
             'model' => $title
         ]);
@@ -205,7 +205,6 @@ class TitleController extends AbstractAdminController
     public function update(TitleRequest $request, GameTitle $title): RedirectResponse
     {
         $title->fill($request->validated());
-        $title->synonymsStr = $request->post('synonymsStr', '');
         $title->setOgpInfo($request->post('ogp_url'));
         $title->save();
 
@@ -236,7 +235,6 @@ class TitleController extends AbstractAdminController
         
         $title->packages()->detach();
         $title->packageGroups()->detach();
-        $title->synonyms()->delete();
         $title->relatedProducts()->detach();
         $title->delete();
 
