@@ -58,7 +58,7 @@
                 </tr>
                 <tr>
                     <th>俗称</th>
-                    <td>{!! nl2br(e($model->synonymsStr)); !!}</td>
+                    <td>{!! nl2br(e($model->search_synonyms ?? '')); !!}</td>
                 </tr>
                 <tr>
                     <th>ノード表示用名称</th>

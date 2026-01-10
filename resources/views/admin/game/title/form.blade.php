@@ -45,7 +45,7 @@
     <tr>
         <th>俗称</th>
         <td>
-            <x-admin.textarea name="synonymsStr" :model="$model" />
+            <x-admin.textarea name="search_synonyms" :model="$model" />
         </td>
     </tr>
     <tr>
