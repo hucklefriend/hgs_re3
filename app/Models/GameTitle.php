@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class GameTitle extends Model
 {
     use KeyFindTrait;
     use OgpTrait;
+    use Searchable;
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
@@ -179,5 +181,32 @@ class GameTitle extends Model
             // idが最小のデータを取得
             return self::orderBy('id', 'asc')->first();
         }
+    }
+
+    /**
+     * 検索可能な配列を取得
+     *
+     * @return array
+     */
+    public function toSearchableArray(): array
+    {
+        $array = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'phonetic' => $this->phonetic,
+        ];
+
+        // search_synonymsを改行で分割して配列に追加
+        if (!empty($this->search_synonyms)) {
+            $synonyms = preg_split('/\r\n|\r|\n/', $this->search_synonyms);
+            $synonyms = array_filter(array_map('trim', $synonyms), function ($synonym) {
+                return !empty($synonym);
+            });
+            $array['search_synonyms'] = array_values($synonyms);
+        } else {
+            $array['search_synonyms'] = [];
+        }
+
+        return $array;
     }
 }

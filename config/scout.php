@@ -143,6 +143,9 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
+            'game_titles' => [
+                'searchableAttributes' => ['name', 'phonetic', 'search_synonyms'],
+            ],
         ],
     ],
 
