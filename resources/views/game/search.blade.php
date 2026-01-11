@@ -5,8 +5,10 @@
 
 @section('current-node-content')
 <form id="search-form" method="GET" action="{{ route('Game.Search') }}" data-child-only="1">
-    <input type="text" id="search-input" name="text" value="{{ $text }}">
-    <button type="submit">検索</button>
+    <div class="form-row" style="max-width: 400px;">
+        <input type="text" id="search-input" name="text" value="{{ $text }}" class="input input-default">
+        <button type="submit" class="btn btn-default btn-sm">検索</button>
+    </div>
 </form>
 
 @endsection

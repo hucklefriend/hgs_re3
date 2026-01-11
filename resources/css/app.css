@@ -214,9 +214,10 @@ div.connection-line {
 }
 
 #current-node-content {
+    margin-top: 25px;
     margin-bottom: 25px;
     min-height: 10px;
-    padding-left: 30px;
+    padding-left: 28px;
     transition: opacity 0.2s ease-in;
     opacity: 0;
 
@@ -755,6 +756,11 @@ p.rating-warning {
     text-align: center;
 }
 
+.btn-sm {
+    padding: 9px 15px;
+    font-size: 14px;
+}
+
 .btn-success {
     color: #d0d0d0;
     border-color: #2e7d32;
@@ -895,4 +901,94 @@ form {
     display: flex;
     justify-content: center;
     gap: 10px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Input Styles */
+.input {
+    padding: 8px;
+    border: 1px solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.input:focus {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.input-default {
+    background-color: #1a1a1a;
+    color: white;
+    border-color: #616161;
+}
+
+.input-default:focus {
+    border-color: #bdbdbd;
+    box-shadow: 0 0 10px rgba(189, 189, 189, 0.3);
+}
+
+.input-success {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: #d0d0d0;
+    border-color: #2e7d32;
+}
+
+.input-success:focus {
+    border-color: #66bb6a;
+    color: white;
+    box-shadow: 0 0 10px rgba(102, 187, 106, 0.4);
+}
+
+.input-info {
+    background-color: rgba(25, 118, 210, 0.1);
+    color: #d0d0d0;
+    border-color: #1976d2;
+}
+
+.input-info:focus {
+    border-color: #42a5f5;
+    color: white;
+    box-shadow: 0 0 10px rgba(66, 165, 245, 0.4);
+}
+
+.input-warning {
+    background-color: rgba(245, 124, 0, 0.1);
+    color: #d0d0d0;
+    border-color: #f57c00;
+}
+
+.input-warning:focus {
+    border-color: #ffb74d;
+    color: white;
+    box-shadow: 0 0 10px rgba(255, 183, 77, 0.4);
+}
+
+.input-danger {
+    background-color: rgba(198, 40, 40, 0.1);
+    color: #d0d0d0;
+    border-color: #c62828;
+}
+
+.input-danger:focus {
+    border-color: #ef5350;
+    color: white;
+    box-shadow: 0 0 10px rgba(239, 83, 80, 0.4);
+}
+
+.form-row .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-row .btn {
+    flex-shrink: 0;
 }
