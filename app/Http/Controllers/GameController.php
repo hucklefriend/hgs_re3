@@ -32,15 +32,43 @@ class GameController extends Controller
      */
     public function search(Request $request): JsonResponse|Application|Factory|View
     {
-        $text = $request->input('text', '');
+        $text = trim($request->input('text', ''));
 
         if (empty($text)) {
             return $this->tree(view('game.search', compact('text')));
         }
 
+        // 全角文字を半角に変換
+        $text = mb_convert_kana($text, 'a');
+
+        // 半角スペースで分割して各単語で検索
+        $words = array_filter(explode(' ', $text), function ($word) {
+            return !empty(trim($word));
+        });
+        
+        $searchResultIds = [];
+        foreach ($words as $word) {
+            $word = trim($word);
+            if (empty($word)) {
+                continue;
+            }
+            
+            // 各単語でMeilisearch検索
+            $searchResults = GameTitle::search($word)->get();
+            $ids = $searchResults->pluck('id')->toArray();
+            
+            // 検索結果のIDを追加（重複は後で除去）
+            $searchResultIds = array_merge($searchResultIds, $ids);
+        }
+        
+        // 重複を除去（順序は保持）
+        $searchResultIds = array_values(array_unique($searchResultIds));
+        
+        // 検索結果からIDを取得し、必要なカラムのみを取得（検索結果の順序を保持）
         $titles = GameTitle::select(['id', 'key', 'name', 'game_series_id', 'game_franchise_id', 'rating'])
-            ->where('name', 'like', '%' . $text . '%')
-            ->get();
+            ->whereIn('id', $searchResultIds)
+            ->get()
+            ->values();
 
         // series_idがnullでないものを取得
         $seriesIds = $titles->whereNotNull('game_series_id')
@@ -48,14 +76,16 @@ class GameController extends Controller
             ->pluck('game_series_id')
             ->toArray();
 
-        // seriesを取得
-        $series = GameSeries::whereIn('id', $seriesIds)->get();
+        // seriesを取得（idが配列のキーになるように）
+        $series = GameSeries::whereIn('id', $seriesIds)->get()->keyBy('id');
+        $franchiseIds = [];
+        foreach ($series as $s) {
+            $s->searchTitles = [];
+            $franchiseIds[] = $s->game_franchise_id;
+        }
 
-        $franchiseIds = $series->pluck('game_franchise_id')
-            ->unique('game_franchise_id')
-            ->toArray();
-
-        $franchiseIds = array_merge($franchiseIds, 
+        $franchiseIds = array_merge(
+            $franchiseIds, 
             $titles->whereNotNull('game_franchise_id')
                 ->pluck('game_franchise_id')
                 ->unique('game_franchise_id')
@@ -63,15 +93,38 @@ class GameController extends Controller
         );
 
         // franchiseを取得
-        $franchises = GameFranchise::whereIn('id', $franchiseIds)->get();
+        $franchises = GameFranchise::whereIn('id', $franchiseIds)->get()->keyBy('id');
 
         // franchiseに$seriesと$titlesInFranchiseを紐づけ
         foreach ($franchises as $franchise) {
-            $franchise->series = $series->where('game_franchise_id', $franchise->id);
-            $franchise->titles = $titles->where('game_franchise_id', $franchise->id);
+            $franchise->searchTitles = [];
+            $franchise->searchSeries = [];
         }
 
-        return $this->tree(view('game.search', compact('text', 'franchises', 'franchiseIds', 'series', 'titles')));
+        foreach ($titles as $title) {
+            if (!empty($title->game_series_id)) {
+                $s = $series[$title->game_series_id];
+                $searchTitles = $s->searchTitles ?? [];
+                $searchTitles[] = $title;
+                $s->searchTitles = $searchTitles;
+            } else if (!empty($title->game_franchise_id)) {
+                $f = $franchises[$title->game_franchise_id];
+                $searchTitles = $f->searchTitles ?? [];
+                $searchTitles[] = $title;
+                $f->searchTitles = $searchTitles;
+            }
+        }
+        foreach ($series as $s) {
+            if (isset($franchises[$s->game_franchise_id])) {
+                $f = $franchises[$s->game_franchise_id];
+                $searchSeries = $f->searchSeries ?? [];
+                $searchSeries[] = $s;
+                $f->searchSeries = $searchSeries;
+            }
+        }
+
+        return $this->tree(view('game.search',
+            compact('text', 'franchises', 'franchiseIds', 'series', 'titles', 'searchResultIds')));
     }
 
     /**

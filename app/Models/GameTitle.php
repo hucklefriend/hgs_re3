@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
-use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
 use App\Models\Extensions\KeyFindTrait;
 use App\Models\Extensions\OgpTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class GameTitle extends Model
 {
     use KeyFindTrait;
     use OgpTrait;
+    use Searchable;
 
-    protected $guarded = ['id', 'synonymsStr'];
+    protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $casts = [
@@ -65,31 +64,6 @@ class GameTitle extends Model
         } else {
             return $this->franchise;
         }
-    }
-
-    /**
-     * @var string 俗称の改行区切り文字列
-     */
-    public string $synonymsStr = '';
-
-    /**
-     * 俗称
-     *
-     * @return HasMany
-     */
-    public function synonyms(): HasMany
-    {
-        return $this->hasMany(GameTitleSynonym::class, 'game_title_id');
-    }
-
-    /**
-     * 俗称の読み取り
-     *
-     * @return void
-     */
-    public function loadSynonyms(): void
-    {
-        $this->synonymsStr = $this->synonyms()->pluck('synonym')->implode("\r\n");
     }
 
     /**
@@ -174,30 +148,7 @@ class GameTitle extends Model
             $this->game_series_id = null;
         }
 
-        try {
-            DB::beginTransaction();
-
-            parent::save($options);
-
-            // synonymsから一旦全部削除して再登録する
-            $this->synonyms()->delete();
-            foreach (explode("\r\n", $this->synonymsStr) as $synonym) {
-                $synonym = trim($synonym);
-                if (empty($synonym)) {
-                    continue;
-                }
-
-                $this->synonyms()->create([
-                    'game_title_id' => $this->id,
-                    'synonym' => synonym($synonym),
-                ]);
-            }
-
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        parent::save($options);
     }
 
     /**
@@ -230,5 +181,32 @@ class GameTitle extends Model
             // idが最小のデータを取得
             return self::orderBy('id', 'asc')->first();
         }
+    }
+
+    /**
+     * 検索可能な配列を取得
+     *
+     * @return array
+     */
+    public function toSearchableArray(): array
+    {
+        $array = [
+            'id' => $this->id,
+            'name' => $this->name,
+            'phonetic' => $this->phonetic,
+        ];
+
+        // search_synonymsを改行で分割して配列に追加
+        if (!empty($this->search_synonyms)) {
+            $synonyms = preg_split('/\r\n|\r|\n/', $this->search_synonyms);
+            $synonyms = array_filter(array_map('trim', $synonyms), function ($synonym) {
+                return !empty($synonym);
+            });
+            $array['search_synonyms'] = array_values($synonyms);
+        } else {
+            $array['search_synonyms'] = [];
+        }
+
+        return $array;
     }
 }

@@ -5,9 +5,12 @@
 
 @section('current-node-content')
 <form id="search-form" method="GET" action="{{ route('Game.Search') }}" data-child-only="1">
-    <input type="text" id="search-input" name="text" value="{{ $text }}">
-    <button type="submit">検索</button>
+    <div class="form-row" style="max-width: 400px;">
+        <input type="text" id="search-input" name="text" value="{{ $text }}" class="input input-default">
+        <button type="submit" class="btn btn-default btn-sm">検索</button>
+    </div>
 </form>
+
 @endsection
 
 @section('nodes')
@@ -26,14 +29,14 @@
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
-                    @foreach ($franchise->series as $series)
+                    @foreach ($franchise->searchSeries as $series)
                     <section class="node tree-node">
                         <div class="node-head">
                             <h3 class="node-head-text">{{ $series->name }} シリーズ</h3>
                             <span class="node-pt">●</span>
                         </div>
                         <div class="node-content tree">
-                            @foreach ($series->titles as $title)
+                            @foreach ($series->searchTitles as $title)
                             <section class="node link-node" id="{{ $title->key }}-link-node">
                                 <div class="node-head">
                                     <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
@@ -44,7 +47,7 @@
                         </div>
                     </section>
                     @endforeach
-                    @foreach ($franchise->titles as $title)
+                    @foreach ($franchise->searchTitles as $title)
                     <section class="node link-node" id="{{ $title->key }}-link-node">
                         <div class="node-head">
                             <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
