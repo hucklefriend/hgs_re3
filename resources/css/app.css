@@ -992,3 +992,10 @@ form {
 .form-row .btn {
     flex-shrink: 0;
 }
+
+.fear-meter-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #d0d0d0;
+    margin-right: 10px;
+}

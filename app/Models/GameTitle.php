@@ -117,6 +117,16 @@ class GameTitle extends Model
     }
 
     /**
+     * 怖さメーター統計を取得
+     *
+     * @return HasOne
+     */
+    public function fearMeterStatistic(): HasOne
+    {
+        return $this->hasOne(GameTitleFearMeterStatistic::class, 'game_title_id');
+    }
+
+    /**
      * 紐づいているパッケージから最初の発売日を設定
      *
      * @return self

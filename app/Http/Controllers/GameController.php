@@ -12,6 +12,7 @@ use App\Models\GameTitlePackageGroupLink;
 use App\Models\GamePlatform;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
+use App\Models\GameTitleFearMeterStatistic;
 use App\Models\UserFavoriteGameTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -304,8 +305,11 @@ class GameController extends Controller
                 ->exists();
         }
 
+        // 怖さメーター統計データを取得（集計されていなかったらnull）
+        $fearMeter = GameTitleFearMeterStatistic::find($title->id);
+
         return $this->tree(
-            view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite')),
+            view('game.title_detail', compact('title', 'ratingCheck', 'franchise', 'isFavorite', 'fearMeter')),
             options: [
                 'ratingCheck' => $ratingCheck,
                 'components' => ['TitleDetailFavorite' => []]
