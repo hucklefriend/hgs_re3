@@ -1,0 +1,30 @@
+
+:root {
+    --node-pt-light: #66ff66;
+    --node-pt-light-shadow: #00ff00;
+    --node-pt-dark: #55AA55;
+    --sub-node-pt: #003300;
+    --sub-node-pt-light: #006600;
+    --connection-line-color: #66ff66;
+    --connection-line-shadow: #66ff66;
+}
+
+body.has-error {
+    --node-pt-light: #ff6666;
+    --node-pt-light-shadow: #ff0000;
+    --node-pt-dark: #AA5555;
+    --sub-node-pt: #330000;
+    --sub-node-pt-light: #660000;
+    --connection-line-color: #ff6666;
+    --connection-line-shadow: #ff6666;
+}
+
+body.has-warning {
+    --node-pt-light: #FFEB3B;
+    --node-pt-light-shadow: #FFD700;
+    --node-pt-dark: #F9A825;
+    --sub-node-pt: #F57F17;
+    --sub-node-pt-light: #F9A825;
+    --connection-line-color: #FFEB3B;
+    --connection-line-shadow: #FFD700;
+}

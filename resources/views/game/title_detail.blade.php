@@ -15,27 +15,45 @@
 
     @include('common.current-node-ogp', ['model' => $title])
 
-    @if (Auth::check())
-        <div class="title-users-info-bar">
-            <div class="favorite-indicator">
-                <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form" data-component-use="1">
-                    @csrf
-                    <input type="hidden" name="game_title_id" value="{{ $title->id }}">
-                    <button type="submit" class="btn btn-favorite{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">
-                        @if ($isFavorite)
-                            ★
-                        @else
-                            ☆
-                        @endif
-                    </button>
-                </form>
-            </div>
-        </div>
-    @endif
 
+    <div class="title-users-info">
+        <div>
+            @if (Auth::check())
+            <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form" data-component-use="1">
+                @csrf
+                <input type="hidden" name="game_title_id" value="{{ $title->id }}">
+                <button type="submit" class="btn btn-favorite{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">
+                    @if ($isFavorite)
+                        ★
+                    @else
+                        ☆
+                    @endif
+                </button>
+            </form>
+            @endif
+        </div>
+    </div>
 @endsection
 
 @section('nodes')
+    <section class="node" id="title-review-node">
+        <div class="node-head">
+            <h2 class="node-head-text">評判</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <div class="title-fear-meter">
+                <label>怖さメーター</label>
+                <div>□■■■■</div>
+                @if (Auth::check())
+                <div>
+                    <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key]) }}" rel="internal">あなたの怖さメーター</a>
+                </div>
+                @endif
+            </div>
+        </div>
+    </section>
+
     @if ($title->packageGroups()->exists())
         <section class="node tree-node" id="pkg-lineup-tree-node">
             <div class="node-head">

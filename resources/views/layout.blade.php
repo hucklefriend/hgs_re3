@@ -20,7 +20,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
-<body class="@isset($colorState) has-{{ $colorState }} @endisset">
+<body class="@isset($colorState) has-{{ $colorState }} @endisset py-4">
     <main>
         <section class="node" id="current-node">
             <div class="node-head">

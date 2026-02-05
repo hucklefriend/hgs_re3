@@ -23,8 +23,8 @@ enum FearMeter: int
         return match($this) {
             FearMeter::NotScary => '全く怖くない',
             FearMeter::SomewhatScary => 'ところどころ怖く感じるところはある',
-            FearMeter::ModerateFear => '程よい緊張感がある怖さ',
-            FearMeter::VeryScary => '恐怖で叫びながらもクリアまでたどり着いた',
+            FearMeter::ModerateFear => '程よい怖さ',
+            FearMeter::VeryScary => 'めちゃくちゃ怖かった',
             FearMeter::TooScary => '怖すぎて途中でやめた',
         };
     }
@@ -37,10 +37,10 @@ enum FearMeter: int
     public function label(): string
     {
         return match($this) {
-            FearMeter::NotScary => '零',
-            FearMeter::SomewhatScary => '一',
-            FearMeter::ModerateFear => '二',
-            FearMeter::VeryScary => '三',
+            FearMeter::NotScary => '0',
+            FearMeter::SomewhatScary => '1',
+            FearMeter::ModerateFear => '2',
+            FearMeter::VeryScary => '3',
             FearMeter::TooScary => '死',
         };
     }
