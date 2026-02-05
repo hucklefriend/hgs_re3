@@ -1,0 +1,429 @@
+#current-node {
+    position: relative;
+
+    > .node-head {
+        margin-bottom: 0px !important;
+    }
+}
+
+div.connection-line {
+    position: absolute;
+    left: 14px;
+    top: 24px;
+    height: 0;
+    width: 2px;
+    background: var(--connection-line-color);
+    box-shadow: 0 0 10px var(--connection-line-shadow);
+    transition: background 0.1s ease, box-shadow 0.05s ease;
+    visibility: hidden;
+    z-index: -1;
+
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &.fade-out, &.fade-out-fast {
+        background: transparent;
+        box-shadow: 0 0 0;
+    }
+
+    &.fade-out-fast {
+        transition: background 0.1s ease, box-shadow 0.05s ease;
+    }
+}
+
+.node-pt {
+    color: var(--node-pt-light);
+    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow);
+    display: inline-block;
+    line-height: 1.0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    width: 20px;
+    min-width: 20px;
+    /*transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;*/
+    opacity: 0;
+
+    &.visible {
+        opacity: 1;
+    }
+
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.current-node-pt {
+    font-size: 13px !important;
+    width: 25px !important;
+    min-width: 25px !important;
+    color: var(--node-pt-light) !important;
+    text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#current-node-content {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    min-height: 10px;
+    padding-left: 28px;
+    transition: opacity 0.2s ease-in;
+    opacity: 0;
+
+    &.content-fade-in {
+        opacity: 1;
+    }
+
+    &.content-fade-out {
+        opacity: 0;
+    }
+}
+
+
+.node-head-text {
+    mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40%, black 100%);
+
+    mask-size: 200% 100%;
+    -webkit-mask-size: 200% 100%;
+
+    mask-position: 200% 0;
+    -webkit-mask-position: 200% 0;
+
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+
+    opacity: 1;
+    line-height: 1.5;
+}
+
+/* 右側から透明になるアニメーション用のクラス */
+.head-reveal-out {
+    mask-position: 100% 0;
+    -webkit-mask-position: 0% 0;
+
+    animation: head-reveal-out-mask 0.5s forwards;
+}
+.head-reveal-in {
+    mask-position: 200% 0;
+    -webkit-mask-position: 200% 0;
+
+    animation: head-reveal-in-mask 0.5s forwards;
+}
+
+/* 右側から透明になるアニメーション */
+@keyframes head-reveal-out-mask {
+    0% {
+        mask-position: 100% 0;
+        -webkit-mask-position: 0% 0;
+      }
+      100% {
+        mask-position: 200% 0;
+        -webkit-mask-position: 200% 0;
+      }
+}
+
+/* 右側から透明になるアニメーション */
+@keyframes head-reveal-in-mask {
+    0% {
+        mask-position: 200% 0;
+        -webkit-mask-position: 200% 0;
+      }
+      100% {
+        mask-position: 0% 0;
+        -webkit-mask-position: 0% 0;
+      }
+}
+
+.head-fade-out {
+    transition: opacity 0.2s ease-in;
+    opacity: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+}
+
+
+
+.node {
+    position: relative;
+    contain: layout;
+
+    > .node-head {
+        display: flex;
+        align-items: center;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        min-height: 40px;
+
+        transition: all 0.3s ease-out;
+        margin-bottom: 20px;
+
+        &.node-head-small-margin {
+            margin-bottom: 0px !important;
+        }
+    }
+    
+
+    > .node-content {
+        padding-right: 1rem;
+    }
+}
+
+.node-content.basic {
+    margin-left: 20px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+
+    &.content-fade-in {
+        opacity: 1;
+    }
+
+    &.content-fade-out {
+        opacity: 0;
+    }
+}
+
+.tree {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 20px;
+
+    > section.node {
+        padding-left: 20px;
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .accordion-node-container
+        {
+            transition: all 0.3s ease;
+            opacity: 0.5;
+
+            &.hover {
+                opacity: 1;
+            }
+        }
+
+        .accordion-node-container,
+        .accordion-tree-node-container {
+            overflow: hidden;
+            transition: height 0.3s ease, opacity 0.3s ease;
+            height: 0;
+
+            &.closed {
+                transition: height 0.3s ease, opacity 0.3s ease;
+                opacity: 0;
+                height: 0 !important;
+            }
+        }
+    }
+
+    > section.content-node {
+        padding-left: 40px;
+    }
+}
+
+.behind
+{
+    position: relative;
+    padding-left: 40px;
+    height: 0px;
+    font-size: 13px;
+    z-index: -10;
+    pointer-events: none;
+
+    > .behind-node {
+        filter: blur(2px);
+        display: flex;
+        padding: 20px 0;
+        transition: all 0.3s ease;
+        visibility: hidden;
+
+        &.visible {
+            visibility: visible;
+        }
+
+        > .node-pt {
+            transition: all 0.3s ease;
+            text-shadow: none;
+        }
+
+        &:nth-child(1) {
+            color: rgb(100, 100, 100);
+
+            > .node-pt {
+                color: #003000;
+            }
+        }
+
+        &:nth-child(2) {
+            color: rgba(80, 80, 80, 0.6);
+
+            > .node-pt {
+                color: #002000;
+            }
+        }
+
+        &:nth-child(3) {
+            color: rgba(80, 80, 80, 0.4);
+
+            > .node-pt {
+                color: #001500;
+            }
+        }
+
+        &:nth-child(4) {
+            color: rgba(80, 80, 80, 0.3);
+
+            > .node-pt {
+                color: #001000;
+            }
+        }
+    }
+
+    &.hover {
+        > .behind-node {
+            filter: blur(1px);
+
+            &:nth-child(1) {
+                color: rgb(120, 120, 120);
+
+                > .node-pt {
+                    color: #005000;
+                }
+            }
+
+            &:nth-child(2) {
+                color: rgba(100, 100, 100, 0.6);
+
+                > .node-pt {
+                    color: #004000;
+                }
+            }
+
+            &:nth-child(3) {
+                color: rgba(100, 100, 100, 0.4);
+
+                > .node-pt {
+                    color: #002500;
+                }
+            }
+
+            &:nth-child(4) {
+                color: rgba(100, 100, 100, 0.3);
+
+                > .node-pt {
+                    color: #001500;
+                }
+            }
+        }
+    }
+}
+
+.link-node, .link-tree-node {
+    .node-head-text {
+        & + .node-pt {
+            color: var(--node-pt-dark);
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+
+        }
+
+        &.hover, &.active {
+            & + .node-pt {
+                color: var(--node-pt-light);
+                text-shadow: 0 0 10px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow) !important;
+                transition: color 0.3s ease, text-shadow 0.3s ease;
+            }
+        }
+    }
+}
+
+.node {
+    position: relative;
+}
+
+#bg1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+canvas.node-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 400px;
+    z-index: -100;
+    pointer-events: none;
+    contain: layout style paint;
+    position: absolute;
+    transform: translateZ(0);
+}
+
+.blur {
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.5s ease;
+}
+
+.blur.blur-active {
+    backdrop-filter: blur(2px);
+}
+
+div.free-pt {
+    display: inline;
+    position: absolute;
+    font-size: 10px;
+    text-shadow: 0 0 20px var(--node-pt-light-shadow), 0 0 30px var(--node-pt-light-shadow), 0 0 60px var(--node-pt-light-shadow);
+    color: var(--node-pt-light);
+    text-align: center;
+    line-height: 1.0;
+    visibility: hidden;
+    user-select: none;
+
+    &.visible {
+        visibility: visible;
+    }
+}
+
+
+.accordion {
+    > .node-head {
+        > button.node-head-text {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0 !important;
+            font: inherit;
+            cursor: pointer;
+            outline: none;
+            box-shadow: none;
+            text-decoration: none;
+            display: inline;
+            line-height: inherit;
+            vertical-align: baseline;
+            color: white;
+        }
+    }
+
+    > .node-content.tree, > .node-content.basic {
+        opacity: 0;
+        position: absolute;
+
+        &.open {
+            opacity: 1;
+            position: static;
+        }
+    }
+}
