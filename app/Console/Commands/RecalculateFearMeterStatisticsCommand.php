@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\FearMeterStatisticsRunLog;
 use App\Models\GameTitleFearMeterStatistic;
 use App\Models\UserGameTitleFearMeter;
 use Illuminate\Console\Command;
@@ -21,22 +22,30 @@ class RecalculateFearMeterStatisticsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'UserGameTitleFearMeterに登録されている全てのゲームタイトルの怖さメーター統計を再集計する';
+    protected $description = 'UserGameTitleFearMeterに登録されている全てのゲームタイトルの怖さメーター統計を再集計する（前回実行以降に更新があったもののみ対象）';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        // UserGameTitleFearMeterから重複なしのgame_title_idを取得
-        $gameTitleIds = UserGameTitleFearMeter::distinct()
-            ->pluck('game_title_id')
-            ->toArray();
+        $runLog = FearMeterStatisticsRunLog::first();
+        $lastCompletedAt = $runLog?->last_completed_at;
+
+        // 前回集計以降に更新があったgame_title_idのみ取得（初回は全件）
+        $query = UserGameTitleFearMeter::query()->distinct();
+        if ($lastCompletedAt !== null) {
+            $query->where('updated_at', '>', $lastCompletedAt);
+        }
+        $gameTitleIds = $query->pluck('game_title_id')->toArray();
 
         if (empty($gameTitleIds)) {
-            $message = '評価データが存在しないため、再集計する対象がありません。';
+            $message = '再集計する対象がありません。';
             $this->info($message);
             Log::info($message);
+
+            $this->updateRunLog();
+
             return 0;
         }
 
@@ -53,11 +62,8 @@ class RecalculateFearMeterStatisticsCommand extends Command
 
         foreach ($gameTitleIds as $gameTitleId) {
             try {
-                // インスタンスを作成または取得
                 $statistic = GameTitleFearMeterStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
                 $statistic->game_title_id = $gameTitleId;
-                
-                // 再集計
                 $statistic->recalculate();
                 $successCount++;
             } catch (\Exception $e) {
@@ -92,6 +98,22 @@ class RecalculateFearMeterStatisticsCommand extends Command
             Log::warning($errorMessage, ['error_count' => $errorCount]);
         }
 
+        $this->updateRunLog();
+
         return 0;
+    }
+
+    /**
+     * 集計完了時刻を run_log に記録する
+     */
+    private function updateRunLog(): void
+    {
+        $runLog = FearMeterStatisticsRunLog::first();
+        if ($runLog === null) {
+            FearMeterStatisticsRunLog::create(['last_completed_at' => now()]);
+            return;
+        }
+        $runLog->last_completed_at = now();
+        $runLog->save();
     }
 }
