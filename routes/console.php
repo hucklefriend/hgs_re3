@@ -24,4 +24,4 @@ Schedule::command(\App\Console\Commands\CleanupExpiredEmailChangeRequests::class
     ->everyFifteenMinutes();
 
 Schedule::command(\App\Console\Commands\RecalculateFearMeterStatisticsCommand::class)
-    ->dailyAt('04:00');
+    ->everyFourHours();
