@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Api\Test;
 
+use App\Http\Controllers\HgnController;
 use App\Models\EmailChangeRequest;
 use App\Models\PasswordReset as PasswordResetModel;
 use App\Models\TemporaryRegistration;
 use App\Models\User;
+use App\Enums\UserRole;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class AccountController extends BaseTestController
@@ -140,6 +144,49 @@ class AccountController extends BaseTestController
             'email' => $temporaryRegistration->email,
             'expires_at' => $temporaryRegistration->expires_at,
         ]);
+    }
+
+    /**
+     * ローカル環境専用：テスト用の有効なアカウントを作成するAPI
+     * メールアドレスは「ランダムな文字列@horrorgame.net」、パスワードは「testtest」
+     *
+     * @return JsonResponse
+     */
+    public function createTestAccount(): JsonResponse
+    {
+        $localPart = Str::random(12);
+        $email = $localPart . '@horrorgame.net';
+        $password = 'testtest';
+
+        if (User::where('email', $email)->exists()) {
+            return response()->json([
+                'message' => 'このメールアドレスは既に使用されています。',
+                'email' => $email,
+            ], 409);
+        }
+
+        do {
+            $showId = Str::random(8);
+        } while (User::where('show_id', $showId)->exists());
+
+        $privacyPolicyRevisionVer = Carbon::parse(HgnController::PRIVACY_POLICY_REVISION_DATE)->format('Ymd');
+
+        $user = User::create([
+            'show_id' => $showId,
+            'name' => 'Test User',
+            'email' => $email,
+            'password' => Hash::make($password),
+            'role' => UserRole::USER->value,
+            'hgs12_user' => 0,
+            'sign_up_at' => now(),
+            'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
+        ]);
+
+        return response()->json([
+            'message' => 'テスト用アカウントを作成しました。',
+            'email' => $email,
+            'password' => $password,
+        ], 201);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\User;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -11,7 +10,6 @@ use App\Http\Requests\FearMeterStoreRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\GameTitle;
-use App\Models\GameTitleFearMeterStatistic;
 use App\Models\UserGameTitleFearMeter;
 use App\Models\UserGameTitleFearMeterLog;
 use Illuminate\Http\RedirectResponse;
