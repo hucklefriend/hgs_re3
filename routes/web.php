@@ -3,8 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HgnController;
-use App\Http\Controllers\User\FollowController;
-use App\Http\Controllers\User\MyNodeController;
+use App\Http\Controllers\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -38,20 +37,24 @@ Route::post('/password-reset/complete/{token}', [AccountController::class, 'comp
 Route::group(['prefix' => 'user'], function () {
     // マイページ（認証が必要）
     Route::middleware('auth')->group(function () {
-        Route::get('my-node', [MyNodeController::class, 'top'])->name('User.MyNode.Top');
-        Route::get('my-node/profile', [MyNodeController::class, 'profile'])->name('User.MyNode.Profile');
-        Route::post('my-node/profile', [MyNodeController::class, 'profileUpdate'])->name('User.MyNode.Profile.Update');
-        Route::get('my-node/email', [MyNodeController::class, 'email'])->name('User.MyNode.Email');
-        Route::post('my-node/email', [MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
-        Route::get('my-node/password', [MyNodeController::class, 'password'])->name('User.MyNode.Password');
-        Route::post('my-node/password', [MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
-        Route::get('my-node/withdraw', [MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
-        Route::post('my-node/withdraw', [MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
+        Route::get('my-node', [User\MyNodeController::class, 'top'])->name('User.MyNode.Top');
+        Route::get('my-node/profile', [User\MyNodeController::class, 'profile'])->name('User.MyNode.Profile');
+        Route::post('my-node/profile', [User\MyNodeController::class, 'profileUpdate'])->name('User.MyNode.Profile.Update');
+        Route::get('my-node/email', [User\MyNodeController::class, 'email'])->name('User.MyNode.Email');
+        Route::post('my-node/email', [User\MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
+        Route::get('my-node/password', [User\MyNodeController::class, 'password'])->name('User.MyNode.Password');
+        Route::post('my-node/password', [User\MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
+        Route::get('my-node/withdraw', [User\MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
+        Route::post('my-node/withdraw', [User\MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
 
         // フォロー/お気に入り
-        Route::get('follow/favorite-titles', [FollowController::class, 'favoriteTitles'])->name('User.Follow.FavoriteTitles');
+        Route::get('follow/favorite-titles', [User\FollowController::class, 'favoriteTitles'])->name('User.Follow.FavoriteTitles');
     });
-    Route::get('my-node/email/verify/{token}', [MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
+    Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
+
+    // 怖さメーター
+    Route::get('fear-meter/{titleKey}/form', [User\FearMeterController::class, 'form'])->name('User.FearMeter.Form');
+    Route::post('fear-meter', [User\FearMeterController::class, 'store'])->name('User.FearMeter.Form.Store');
 });
 
 use App\Http\Controllers\Admin;

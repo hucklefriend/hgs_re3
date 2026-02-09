@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -64,5 +65,15 @@ class User extends Authenticatable
     public function favoriteGameTitles(): BelongsToMany
     {
         return $this->belongsToMany(GameTitle::class, UserFavoriteGameTitle::class, 'user_id', 'game_title_id');
+    }
+
+    /**
+     * 怖さメーター評価を取得
+     *
+     * @return HasMany
+     */
+    public function fearMeters(): HasMany
+    {
+        return $this->hasMany(UserGameTitleFearMeter::class, 'user_id');
     }
 }
