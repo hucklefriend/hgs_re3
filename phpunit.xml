@@ -27,6 +27,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="DB_DATABASE" value="hgs_re3_test"/>
     </php>
     <extensions>
         <bootstrap class="Tests\Extension"/>

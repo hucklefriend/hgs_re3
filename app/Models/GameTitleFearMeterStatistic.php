@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class GameTitleFearMeterStatistic extends Model
 {
+    public const CREATED_AT = null;
+
     protected $primaryKey = 'game_title_id';
     public $incrementing = false;
     protected $hidden = ['updated_at'];

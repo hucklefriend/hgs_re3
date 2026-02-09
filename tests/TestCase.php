@@ -15,12 +15,31 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
+        // スキーマ復元はテスト用DB（hgs_re3_test）に対してのみ実行する
+        $connection = DB::connection();
+        $databaseName = $connection->getDatabaseName();
+        if ($databaseName !== 'hgs_re3_test') {
+            throw new \RuntimeException(
+                "テストはデータベース 'hgs_re3_test' に対してのみ実行してください。"
+                . " 現在の接続先は '{$databaseName}' です。"
+                . " 設定キャッシュが有効な場合は 'php artisan config:clear' を実行し、"
+                . " phpunit.xml の DB_DATABASE=hgs_re3_test が効くようにしてください。"
+            );
+        }
+
         // テスト開始時にスキーマファイルからテーブルを復元
         $schemaPath = database_path('schema/mariadb-schema.sql');
         if (file_exists($schemaPath)) {
             $sql = file_get_contents($schemaPath);
             DB::unprepared($sql);
+        }
+
+        // テスト用初期データを登録（SQLファイルがあれば実行）
+        $testSeedPath = database_path('schema/test-seed.sql');
+        if (file_exists($testSeedPath)) {
+            $seedSql = file_get_contents($testSeedPath);
+            DB::unprepared($seedSql);
         }
     }
 

@@ -27,3 +27,4 @@ composer.lock
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/database/schema/test-seed.sql

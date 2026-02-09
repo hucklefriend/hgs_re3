@@ -2,6 +2,13 @@
 
 @section('title', '怖さメーター')
 @section('current-node-title', '怖さメーター')
+@section('current-node-content')
+    @if (session('success'))
+        <div class="alert alert-success mt-3">
+            {!! nl2br(e(session('success'))) !!}
+        </div>
+    @endif
+@endsection
 
 @section('nodes')
     <section class="node" id="password-change-form-node">
@@ -10,12 +17,6 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
-            @if (session('success'))
-                <div class="alert alert-success mt-3">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <form action="{{ route('User.FearMeter.Form.Store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="title_key" value="{{ $title->key }}">

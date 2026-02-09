@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\User;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -11,8 +10,9 @@ use App\Http\Requests\FearMeterStoreRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\GameTitle;
-use App\Models\GameTitleFearMeterStatistic;
 use App\Models\UserGameTitleFearMeter;
+use App\Models\UserGameTitleFearMeterLog;
+use Illuminate\Http\RedirectResponse;
 
 class FearMeterController extends Controller
 {
@@ -38,6 +38,7 @@ class FearMeterController extends Controller
             view('user.fear_meter.form', compact('user', 'title', 'fearMeter')), 
             options: [
                 'csrfToken' => csrf_token(),
+                'url' => route('User.FearMeter.Form', ['titleKey' => $title->key]),
             ]
         );
     }
@@ -46,28 +47,37 @@ class FearMeterController extends Controller
      * 怖さメーターを保存
      *
      * @param FearMeterStoreRequest $request
-     * @return JsonResponse
+     * @return RedirectResponse
      */
-    public function store(FearMeterStoreRequest $request): JsonResponse
+    public function store(FearMeterStoreRequest $request): RedirectResponse
     {
         $user = Auth::user();
         $title = GameTitle::findByKey($request->validated('title_key'));
+        $newFearMeter = (int) $request->validated('fear_meter');
 
-        UserGameTitleFearMeter::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'game_title_id' => $title->id,
-            ],
-            [
-                'fear_meter' => $request->validated('fear_meter'),
-            ]
-        );
+        $fearMeter = UserGameTitleFearMeter::firstOrNew([
+            'user_id' => $user->id,
+            'game_title_id' => $title->id,
+        ]);
+        $oldFearMeter = $fearMeter->exists ? $fearMeter->fear_meter->value : null;
+        if ($fearMeter->exists) {
+            UserGameTitleFearMeter::where('user_id', $user->id)
+                ->where('game_title_id', $title->id)
+                ->update(['fear_meter' => $newFearMeter]);
+        } else {
+            $fearMeter->fear_meter = $newFearMeter;
+            $fearMeter->save();
+        }
 
-        $statistic = GameTitleFearMeterStatistic::firstOrNew(['game_title_id' => $title->id]);
-        $statistic->game_title_id = $title->id;
-        $statistic->recalculate();
+        UserGameTitleFearMeterLog::create([
+            'user_id' => $user->id,
+            'game_title_id' => $title->id,
+            'old_fear_meter' => $oldFearMeter,
+            'new_fear_meter' => $newFearMeter,
+        ]);
 
-        return response()->json(['success' => true]);
+        return redirect()->route('User.FearMeter.Form', ['titleKey' => $title->key])
+            ->with('success', "怖さメーターを登録しました。\r\nゲームタイトルへの反映はしばらく時間がかかります。\r\n時間をおいてから再度ご確認ください。");
     }
 }
 
