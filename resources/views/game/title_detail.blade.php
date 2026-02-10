@@ -44,13 +44,25 @@
         <div class="node-content basic">
             <div class="title-fear-meter">
                 <label>怖さメーター</label>
-                <div>□■■■■</div>
-                @if (Auth::check())
+                @if ($fearMeter)    
                 <div>
-                    <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key]) }}" rel="internal">あなたの怖さメーター</a>
+                    @for ($i = 0; $i < $fearMeter->fear_meter->value; $i++)
+                    ■
+                    @endfor
+                    @for ($i = 0; $i < 4 - $fearMeter->fear_meter->value; $i++)
+                    □
+                    @endfor
+                    {{ $fearMeter->average_rating }} ({{ $fearMeter->fear_meter->text() }})
                 </div>
+                @else
+                <div></div>
                 @endif
             </div>
+            @if (Auth::check())
+            <div style="margin-left: 20px;">
+                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key]) }}" rel="internal">あなたの怖さメーター</a>
+            </div>
+            @endif
         </div>
     </section>
 

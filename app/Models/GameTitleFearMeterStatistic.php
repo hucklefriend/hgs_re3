@@ -70,8 +70,8 @@ class GameTitleFearMeterStatistic extends Model
         }
         $averageRating = $totalCount > 0 ? round($sum / $totalCount, 2) : 0.00;
         
-        // 小数点以下を切り捨てた値をfear_meterに設定
-        $fearMeterValue = (int) floor($averageRating);
+        // 四捨五入した値をfear_meterに設定
+        $fearMeterValue = (int) round($averageRating);
         $fearMeterValue = max(0, min(4, $fearMeterValue));
 
         // インスタンスの属性を更新して保存
