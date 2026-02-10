@@ -15,7 +15,7 @@ class RecalculateFearMeterStatisticsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'fear-meter:recalculate-statistics';
+    protected $signature = 'fear-meter:recalculate-statistics {--force-full : 強制全部再集計（全データを再集計する）} {--no-progress : プログレスバーを表示しない（API等から呼び出す場合に使用）}';
 
     /**
      * The console command description.
@@ -31,6 +31,10 @@ class RecalculateFearMeterStatisticsCommand extends Command
     {
         $runLog = FearMeterStatisticsRunLog::first();
         $lastCompletedAt = $runLog?->last_completed_at;
+
+        if ($this->option('force-full')) {
+            $lastCompletedAt = null;
+        }
 
         // 前回集計以降に更新があったgame_title_idのみ取得（初回は全件）
         $query = UserGameTitleFearMeter::query()->distinct();
@@ -54,8 +58,11 @@ class RecalculateFearMeterStatisticsCommand extends Command
         $this->info($message);
         Log::info($message);
 
-        $bar = $this->output->createProgressBar($totalCount);
-        $bar->start();
+        $useProgressBar = !$this->option('no-progress');
+        $bar = $useProgressBar ? $this->output->createProgressBar($totalCount) : null;
+        if ($bar !== null) {
+            $bar->start();
+        }
 
         $successCount = 0;
         $errorCount = 0;
@@ -78,11 +85,15 @@ class RecalculateFearMeterStatisticsCommand extends Command
                 ]);
             }
 
-            $bar->advance();
+            if ($bar !== null) {
+                $bar->advance();
+            }
         }
 
-        $bar->finish();
-        $this->newLine(2);
+        if ($bar !== null) {
+            $bar->finish();
+            $this->newLine(2);
+        }
 
         $completionMessage = "再集計が完了しました。成功: {$successCount} 件";
         $this->info("再集計が完了しました。");
