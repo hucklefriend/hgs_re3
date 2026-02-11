@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Test\AccountController;
+use App\Http\Controllers\Api\Test\FearMeterController;
 use App\Http\Controllers\Api\UserFavoriteController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,8 @@ if (!app()->environment('production')) {
     Route::post('test/expire-registration', [AccountController::class, 'expireRegistrationForTest'])->name('api.test.expire-registration');
     Route::post('test/reset-webmaster-password', [AccountController::class, 'resetWebmasterPasswordForTest'])->name('api.test.reset-webmaster-password');
     Route::post('test/create-test-account', [AccountController::class, 'createTestAccount'])->name('api.test.create-test-account');
+    Route::post('test/fear-meter/recalculate', [FearMeterController::class, 'recalculate'])->name('api.test.fear-meter.recalculate');
+    Route::get('test/fear-meter/statistics', [FearMeterController::class, 'statistics'])->name('api.test.fear-meter.statistics');
 }
 
 // 認証が必要なAPI

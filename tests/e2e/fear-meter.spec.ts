@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { waitForTreeAppeared } from './support/utils';
 
+/** 怖さメーターの選択肢の値（0-4） */
+const FEAR_METER_VALUES = [0, 1, 2, 3, 4];
+
 /**
  * 怖さメーターのE2Eテスト
  * 未ログイン時はゲームタイトル照会画面で「あなたの怖さメーター」リンクが表示されないことを確認する
@@ -36,4 +39,101 @@ test('未ログイン時、ゲームタイトル照会画面で「あなたの�
 
   // 未ログイン状態では「あなたの怖さメーター」リンクが表示されないことを確認
   await expect(page.getByRole('link', { name: 'あなたの怖さメーター' })).not.toBeVisible();
+});
+
+/**
+ * ログイン後にIdentity Vのタイトル画面へ遷移し、
+ * 「あなたの怖さメーター」リンクをクリックして入力・送信し、成功メッセージを確認する
+ */
+test('ログイン後、怖さメーターを入力して成功メッセージが表示される', async ({ page, request }) =>
+{
+  test.setTimeout(90000);
+
+  // テスト用アカウントを作成
+  const createResponse = await request.post('api/test/create-test-account');
+  if (!createResponse.ok()) {
+    throw new Error('テスト用アカウントの作成に失敗しました。' + createResponse.status());
+  }
+  const { email, password } = await createResponse.json();
+
+  // ログイン
+  await page.goto('login');
+  await page.waitForLoadState('networkidle');
+  await waitForTreeAppeared(page);
+
+  await page.fill('#email', email);
+  await page.fill('#password', password);
+  const loginResponsePromise = page.waitForResponse((response) =>
+    response.url().includes('/auth') && response.request().method() === 'POST'
+  );
+  await Promise.all([
+    loginResponsePromise,
+    page.getByRole('button', { name: 'ログイン' }).click(),
+  ]);
+  await waitForTreeAppeared(page);
+
+  // Identity Vのタイトル画面へ遷移
+  await page.goto('game/title/identity-v');
+  await page.waitForLoadState('networkidle');
+  await waitForTreeAppeared(page);
+
+  // 「あなたの怖さメーター」リンクが存在することを確認
+  const fearMeterLink = page.getByRole('link', { name: 'あなたの怖さメーター' });
+  await expect(fearMeterLink).toBeVisible();
+
+  // リンクをクリック
+  await fearMeterLink.click();
+  await page.waitForLoadState('networkidle');
+  await waitForTreeAppeared(page);
+
+  // 入力項目をランダムで選択（0-4のいずれか）
+  const randomValue = FEAR_METER_VALUES[Math.floor(Math.random() * FEAR_METER_VALUES.length)];
+  await page.locator(`#fear_meter_${randomValue}`).check();
+
+  // 送信
+  const submitResponsePromise = page.waitForResponse((response) =>
+    response.url().includes('/fear-meter') && response.request().method() === 'POST'
+  );
+  await Promise.all([
+    submitResponsePromise,
+    page.getByRole('button', { name: '入力' }).click(),
+  ]);
+  await waitForTreeAppeared(page);
+
+  // 成功メッセージが表示されることを確認
+  await expect(page.locator('.alert-success')).toContainText('怖さメーターを登録しました。');
+
+  // 再集計を実行
+  const recalcResponse = await request.post('api/test/fear-meter/recalculate');
+  if (!recalcResponse.ok()) {
+    throw new Error('怖さメーター再集計APIの呼び出しに失敗しました。' + recalcResponse.status());
+  }
+
+  // 集計結果を取得（表示内容の検証用）
+  let statisticsResponse = await request.get('api/test/fear-meter/statistics', {
+    params: { title_key: 'identity-v' },
+  });
+  // 集計が未作成の場合は強制全件再集計して再取得
+  if (statisticsResponse.status() === 404) {
+    await request.post('api/test/fear-meter/recalculate', {
+      data: { force_full: true },
+    });
+    statisticsResponse = await request.get('api/test/fear-meter/statistics', {
+      params: { title_key: 'identity-v' },
+    });
+  }
+  if (!statisticsResponse.ok()) {
+    throw new Error('怖さメーター集計結果の取得に失敗しました。' + statisticsResponse.status());
+  }
+  const statistic = await statisticsResponse.json();
+
+  // タイトル画面に戻る
+  await page.goto('game/title/identity-v');
+  await page.waitForLoadState('networkidle');
+  await waitForTreeAppeared(page);
+
+  // 集計結果が画面に反映されていることを確認
+  const titleFearMeter = page.locator('.title-fear-meter');
+  await expect(titleFearMeter).toContainText(statistic.fear_meter_text);
+  await expect(titleFearMeter).toContainText(String(statistic.average_rating));
 });
