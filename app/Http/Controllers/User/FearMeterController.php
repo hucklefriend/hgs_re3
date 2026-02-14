@@ -34,8 +34,28 @@ class FearMeterController extends Controller
             ->where('game_title_id', $title->id)
             ->first();
 
+        $franchise = $title->getFranchise();
+        $shortcutRoute = [
+            'title-detail-node' => [
+                'title' => $title->name,
+                'url' => route('Game.TitleDetail', ['titleKey' => $title->key]),
+                'children' => [
+                    'franchise-detail-node' => [
+                        'title' => $franchise->name . "フランチャイズ",
+                        'url' => route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]),
+                        'children' => [
+                            'root-node' => [
+                                'title' => 'トップ',
+                                'url' => route('Root'),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
         return $this->tree(
-            view('user.fear_meter.form', compact('user', 'title', 'fearMeter')), 
+            view('user.fear_meter.form', compact('user', 'title', 'fearMeter', 'shortcutRoute')), 
             options: [
                 'csrfToken' => csrf_token(),
                 'url' => route('User.FearMeter.Form', ['titleKey' => $title->key]),

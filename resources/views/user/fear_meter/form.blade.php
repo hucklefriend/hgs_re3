@@ -34,7 +34,7 @@
             </form>
         </div>
     </section>
-    @include('common.shortcut')
+    @include('common.shortcut', ['shortcutRoute' => $shortcutRoute])
 @endsection
 
 

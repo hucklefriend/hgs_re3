@@ -5,6 +5,7 @@
     </div>
     <div class="node-content tree">
         @isset($shortcutRoute)
+            @include('common.shortcut_node', ['nodes' => $shortcutRoute])
         @else
             <section class="node link-node">
                 <div class="node-head">
