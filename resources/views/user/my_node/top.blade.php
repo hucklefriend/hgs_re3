@@ -30,13 +30,19 @@
         <div class="node-content tree" id="user-tree-node">
             <section class="node tree-node" id="user-data-tree-node">
                 <div class="node-head">
-                    <h3 class="node-head-text">お気に入り</h3>
+                    <h3 class="node-head-text">ゲーム</h3>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node link-node" id="user-favorite-title-link-node">
                         <div class="node-head">
                             <a href="{{ route('User.Follow.FavoriteTitles') }}" class="node-head-text">お気に入りタイトル</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
+                    <section class="node link-node" id="user-fear-meter-index-link-node">
+                        <div class="node-head">
+                            <a href="{{ route('User.FearMeter.Index') }}" class="node-head-text">怖さメーター</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>

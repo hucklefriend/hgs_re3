@@ -2,13 +2,6 @@
 
 @section('title', '怖さメーター')
 @section('current-node-title', '怖さメーター')
-@section('current-node-content')
-    @if (session('success'))
-        <div class="alert alert-success mt-3">
-            {!! nl2br(e(session('success'))) !!}
-        </div>
-    @endif
-@endsection
 
 @section('nodes')
     <section class="node" id="password-change-form-node">
@@ -20,6 +13,9 @@
             <form action="{{ route('User.FearMeter.Form.Store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="title_key" value="{{ $title->key }}">
+                @if (!empty($from))
+                <input type="hidden" name="from" value="{{ $from }}">
+                @endif
 
                 @foreach (\App\Enums\FearMeter::cases() as $case)
                 <div class="mb-3 flex items-center gap-2">
@@ -34,7 +30,7 @@
             </form>
         </div>
     </section>
-    @include('common.shortcut')
+    @include('common.shortcut', ['shortcutRoute' => $shortcutRoute])
 @endsection
 
 

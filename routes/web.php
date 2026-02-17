@@ -53,6 +53,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 
     // 怖さメーター
+    Route::get('fear-meter', [User\FearMeterController::class, 'index'])->name('User.FearMeter.Index');
     Route::get('fear-meter/{titleKey}/form', [User\FearMeterController::class, 'form'])->name('User.FearMeter.Form');
     Route::post('fear-meter', [User\FearMeterController::class, 'store'])->name('User.FearMeter.Form.Store');
 });
