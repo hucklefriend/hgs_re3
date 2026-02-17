@@ -88,8 +88,10 @@ class FearMeterController extends Controller
             ],
         ];
 
+        $from = request()->query('from');
+
         return $this->tree(
-            view('user.fear_meter.form', compact('user', 'title', 'fearMeter', 'shortcutRoute', 'myNodeShortcutRoute')), 
+            view('user.fear_meter.form', compact('user', 'title', 'fearMeter', 'shortcutRoute', 'myNodeShortcutRoute', 'from')),
             options: [
                 'csrfToken' => csrf_token(),
                 'url' => route('User.FearMeter.Form', ['titleKey' => $title->key]),
@@ -130,8 +132,16 @@ class FearMeterController extends Controller
             'new_fear_meter' => $newFearMeter,
         ]);
 
-        return redirect()->route('User.FearMeter.Form', ['titleKey' => $title->key])
-            ->with('success', "怖さメーターを登録しました。\r\nゲームタイトルへの反映はしばらく時間がかかります。\r\n時間をおいてから再度ご確認ください。");
+        $successMessage = "怖さメーターを登録しました。\r\nゲームタイトルへの反映はしばらく時間がかかります。\r\n時間をおいてから再度ご確認ください。";
+        $from = $request->input('from');
+
+        if ($from === 'title-detail') {
+            return redirect()->route('Game.TitleDetail', ['titleKey' => $title->key])
+                ->with('success', $successMessage);
+        }
+
+        return redirect()->route('User.FearMeter.Index')
+            ->with('success', $successMessage);
     }
 }
 

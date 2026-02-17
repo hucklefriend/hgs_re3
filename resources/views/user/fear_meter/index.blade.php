@@ -4,6 +4,12 @@
 @section('current-node-title', '怖さメーター一覧')
 
 @section('current-node-content')
+@if (session('success'))
+    <div class="alert alert-success mt-3 relative pr-10">
+        <button type="button" class="absolute top-0 right-0 p-2 border-0 bg-transparent cursor-pointer" style="line-height: 1;" onclick="this.closest('.alert').style.display='none'" aria-label="閉じる"><i class="bi bi-x"></i></button>
+        {!! nl2br(e(session('success'))) !!}
+    </div>
+@endif
 @if ($fearMeters->isEmpty())
     <p>入力した怖さメーターはありません。</p>
 @else
@@ -25,7 +31,7 @@
                             <td class="border border-gray-500 px-3 py-2">{{ $fearMeter->gameTitle->name }}</td>
                             <td class="border border-gray-500 px-3 py-2">{{ $fearMeter->fear_meter->text() }}</td>
                             <td class="border border-gray-500 px-3 py-2">
-                                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fearMeter->gameTitle->key]) }}" rel="internal"><i class="bi bi-pencil"></i></a>
+                                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fearMeter->gameTitle->key, 'from' => 'fear-meter-list']) }}" rel="internal"><i class="bi bi-pencil"></i></a>
                             </td>
                         </tr>
                     @endforeach
