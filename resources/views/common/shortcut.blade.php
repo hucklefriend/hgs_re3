@@ -16,12 +16,16 @@
         @endisset
 
         @if (Auth::check())
-        <section class="node link-node">
-            <div class="node-head">
-                <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイページ</a>
-                <span class="node-pt">●</span>
-            </div>
-        </section>
+        @isset ($myNodeShortcutRoute)
+            @include('common.shortcut_node', ['nodes' => $myNodeShortcutRoute])
+        @else
+            <section class="node link-node">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイページ</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+        @endisset
         @else
         <section class="node link-node">
             <div class="node-head">

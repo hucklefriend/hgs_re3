@@ -17,6 +17,27 @@ use Illuminate\Http\RedirectResponse;
 class FearMeterController extends Controller
 {
     /**
+     * 怖さメーター一覧表示
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function index(): JsonResponse|Application|Factory|View
+    {
+        $user = Auth::user();
+        $fearMeters = UserGameTitleFearMeter::where('user_id', $user->id)
+            ->with('gameTitle')
+            ->orderBy('updated_at', 'desc')
+            ->paginate(30);
+
+        return $this->tree(
+            view('user.fear_meter.index', compact('fearMeters')),
+            options: [
+                'url' => route('User.FearMeter.Index'),
+            ]
+        );
+    }
+
+    /**
      * 怖さメーター入力画面表示
      *
      * @param string $titleKey
@@ -54,8 +75,21 @@ class FearMeterController extends Controller
             ],
         ];
 
+        $myNodeShortcutRoute = [
+            'fear-meter-list-node' => [
+                'title' => '怖さメーター一覧',
+                'url' => route('User.FearMeter.Index'),
+                'children' => [
+                    'mynode' => [
+                        'title' => 'マイノード',
+                        'url' => route('User.MyNode.Top'),
+                    ],
+                ],
+            ],
+        ];
+
         return $this->tree(
-            view('user.fear_meter.form', compact('user', 'title', 'fearMeter', 'shortcutRoute')), 
+            view('user.fear_meter.form', compact('user', 'title', 'fearMeter', 'shortcutRoute', 'myNodeShortcutRoute')), 
             options: [
                 'csrfToken' => csrf_token(),
                 'url' => route('User.FearMeter.Form', ['titleKey' => $title->key]),
