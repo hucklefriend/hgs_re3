@@ -6,6 +6,13 @@
 
 @section('current-node-content')
 
+    @if (session('success'))
+        <div class="alert alert-success mt-3 relative pr-10">
+            <button type="button" class="absolute top-0 right-0 p-2 border-0 bg-transparent cursor-pointer" style="line-height: 1;" onclick="this.closest('.alert').style.display='none'" aria-label="閉じる"><i class="bi bi-x"></i></button>
+            {!! nl2br(e(session('success'))) !!}
+        </div>
+    @endif
+
     @if (!$isOver18 && $title->rating == \App\Enums\Rating::R18Z)
         <p class="rating-warning">
             CERO-Z相当の年齢指定があるパッケージが含まれます。<br>
@@ -60,7 +67,7 @@
             </div>
             @if (Auth::check())
             <div style="margin-left: 20px;">
-                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key]) }}" rel="internal">あなたの怖さメーター</a>
+                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}" rel="internal">あなたの怖さメーター</a>
             </div>
             @endif
         </div>
