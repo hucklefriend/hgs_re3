@@ -1,5 +1,23 @@
 <?php
 
+use App\Enums\UserRole;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+
+/**
+ * ログインユーザーが管理者かどうかを判定する
+ *
+ * @return bool 管理者ならtrue、未ログインまたは管理者以外ならfalse
+ */
+function is_admin_user(): bool
+{
+    if (!Auth::check()) {
+        return false;
+    }
+
+    return Auth::user()->role === UserRole::ADMIN;
+}
+
 /**
  * メニューのアクティブ状態を設定
  *
