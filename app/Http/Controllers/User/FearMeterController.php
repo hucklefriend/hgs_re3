@@ -66,7 +66,7 @@ class FearMeterController extends Controller
                         'url' => route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]),
                         'children' => [
                             'root-node' => [
-                                'title' => 'トップ',
+                                'title' => 'ルート',
                                 'url' => route('Root'),
                             ],
                         ],
