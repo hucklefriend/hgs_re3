@@ -19,9 +19,21 @@
                     <td>{!! $model->head !!}</td>
                 </tr>
                 <tr>
-                    <th>本文</th>
-                    <td>{!! nl2br($model->body) !!}</td>
+                    <th>ヘッダテキスト</th>
+                    <td>{!! $model->header_text ? nl2br(e($model->header_text)) : '' !!}</td>
                 </tr>
+                @for ($i = 1; $i <= 10; $i++)
+                    @if (!empty($model->{'sub_title_' . $i}) || !empty($model->{'sub_text_' . $i}))
+                <tr>
+                    <th>サブタイトル{{ $i }}</th>
+                    <td>{{ $model->{'sub_title_' . $i} ?? '' }}</td>
+                </tr>
+                <tr>
+                    <th>サブテキスト{{ $i }}</th>
+                    <td>{!! $model->{'sub_text_' . $i} ? nl2br(e($model->{'sub_text_' . $i})) : '' !!}</td>
+                </tr>
+                    @endif
+                @endfor
                 <tr>
                     <th>優先度</th>
                     <td>{{ $model->priority }}</td>

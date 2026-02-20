@@ -22,8 +22,8 @@ class Information extends Model
      * @var array デフォルト値
      */
     protected $attributes = [
-        'head'     => '',
-        'body'     => '',
-        'priority' => 100,
+        'head'        => '',
+        'header_text' => '',
+        'priority'    => 100,
     ];
 }

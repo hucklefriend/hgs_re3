@@ -24,13 +24,20 @@ class InformationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'head'     => 'required',
-            'body'     => 'required',
-            'priority' => 'required|integer',
-            'open_at'  => 'required|date_format:Y-m-d\TH:i',
-            'no_end'   => 'nullable',
-            'close_at' => 'required_without:no_end|nullable|date_format:Y-m-d\TH:i',
+        $rules = [
+            'head'        => 'required',
+            'header_text' => 'nullable',
+            'priority'    => 'required|integer',
+            'open_at'     => 'required|date_format:Y-m-d\TH:i',
+            'no_end'      => 'nullable',
+            'close_at'    => 'required_without:no_end|nullable|date_format:Y-m-d\TH:i',
         ];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $rules['sub_title_' . $i] = 'nullable|string|max:255';
+            $rules['sub_text_' . $i]  = 'nullable|string';
+        }
+
+        return $rules;
     }
 }

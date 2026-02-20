@@ -14,11 +14,31 @@
         </td>
     </tr>
     <tr>
-        <th>本文</th>
+        <th>ヘッダテキスト</th>
         <td>
-            <x-admin.textarea name="body" :model="$model" required />
+            <x-admin.textarea name="header_text" :model="$model" />
         </td>
     </tr>
+    @for ($i = 1; $i <= 10; $i++)
+    <tr>
+        <th>サブタイトル{{ $i }}</th>
+        <td>
+            <input name="sub_title_{{ $i }}" type="text" value="{{ old('sub_title_' . $i, $model->{'sub_title_' . $i} ?? '') }}" class="form-control {{ $errors->has('sub_title_' . $i) ? 'is-invalid' : '' }}" id="sub_title_{{ $i }}" maxlength="255">
+            @error('sub_title_' . $i)
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </td>
+    </tr>
+    <tr>
+        <th>サブテキスト{{ $i }}</th>
+        <td>
+            <textarea name="sub_text_{{ $i }}" class="form-control {{ $errors->has('sub_text_' . $i) ? 'is-invalid' : '' }}" id="sub_text_{{ $i }}" rows="4">{{ old('sub_text_' . $i, $model->{'sub_text_' . $i} ?? '') }}</textarea>
+            @error('sub_text_' . $i)
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </td>
+    </tr>
+    @endfor
     <tr>
         <th>優先度</th>
         <td>
