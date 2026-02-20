@@ -15,7 +15,11 @@
         @foreach ($informations as $info)
         <section class="node link-node" id="info-{{ $info->id }}-link-node">
             <div class="node-head">
-                <a href="{{ route('InformationDetail', $info) }}" class="node-head-text">{{ $info->head }}</a>
+                <a href="{{ route('InformationDetail', $info) }}" class="node-head-text">
+                    <span class="text-sm">[{!! nl2br($info->open_at->format('Y-m-d H:i')) !!}]</span>&nbsp;
+                    {{ $info->head }}
+                </a>
+                
                 <span class="node-pt">●</span>
             </div>
         </section>

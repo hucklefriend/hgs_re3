@@ -50,7 +50,7 @@
                     <tr>
                         <td>{{ $info->id }}</td>
                         <td>{{ $info->head }}</td>
-                        <td>{{ \Carbon\Carbon::parse($info->open_at)->format('Y-m-d H:i') }} ～ @if(\Carbon\Carbon::parse($info->close_at)->format('Y-m-d H:i') !== '2099-12-31 23:59'){{ \Carbon\Carbon::parse($info->close_at)->format('Y-m-d H:i') }}@endif</td>
+                        <td>{{ $info->open_at->format('Y-m-d H:i') }} ～ @if($info->close_at->format('Y-m-d H:i') !== '2099-12-31 23:59'){{ $info->close_at->format('Y-m-d H:i') }}@endif</td>
                         <td class="text-center">
                             <a href="{{ route('Admin.Manage.Information.Show', $info) }}" class="btn btn-default"><i class="fas fa-info-circle"></i> Detail</a>
                         </td>
