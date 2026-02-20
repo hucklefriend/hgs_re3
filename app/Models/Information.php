@@ -11,6 +11,14 @@ class Information extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
+     * @var array キャスト
+     */
+    protected $casts = [
+        'open_at'  => 'datetime',
+        'close_at' => 'datetime',
+    ];
+
+    /**
      * @var array デフォルト値
      */
     protected $attributes = [

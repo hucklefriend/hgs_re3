@@ -28,13 +28,31 @@
     <tr>
         <th>掲載開始日時</th>
         <td>
-            <x-admin.datetime name="open_at" :model="$model" required />
+            <input name="open_at" type="datetime-local" step="60" value="{{ old('open_at', $model->open_at ? $model->open_at->format('Y-m-d\TH:i') : '') }}" class="form-control w-auto {{ $errors->has('open_at') ? 'is-invalid' : '' }}" id="open_at" autocomplete="off">
+            @error('open_at')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </td>
     </tr>
     <tr>
         <th>掲載終了日時</th>
         <td>
-            <x-admin.datetime name="close_at" :model="$model" required />
+            @php
+                $isNoEnd = old('no_end', $model->close_at && $model->close_at->format('Y-m-d H:i') === '2099-12-31 23:59');
+            @endphp
+            <div class="form-check mb-2">
+                <input type="checkbox" name="no_end" value="1" class="form-check-input" id="no_end" {{ $isNoEnd ? 'checked' : '' }} autocomplete="off">
+                <label class="form-check-label" for="no_end">終了なし</label>
+            </div>
+            <input name="close_at" type="datetime-local" step="60" value="{{ old('close_at', $model->close_at ? $model->close_at->format('Y-m-d\TH:i') : '') }}" class="form-control w-auto {{ $errors->has('close_at') ? 'is-invalid' : '' }}" id="close_at" autocomplete="off" {{ $isNoEnd ? 'disabled' : '' }}>
+            @error('close_at')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <script>
+                document.getElementById('no_end').addEventListener('change', function() {
+                    document.getElementById('close_at').disabled = this.checked;
+                });
+            </script>
         </td>
     </tr>
 </table>
