@@ -379,4 +379,14 @@ form {
     flex-shrink: 0;
 }
 
+ul {
+    @apply list-disc pl-5 my-5;
+}
 
+div > dl {
+    @apply mb-5;
+}
+
+div > dl:last-child {
+    @apply mb-0;
+}

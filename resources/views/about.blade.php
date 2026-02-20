@@ -113,6 +113,35 @@
             </p>
         </div>
     </section>
+
+
+    <section class="node">
+        <div class="node-head">
+            <h2 class="node-head-text">サイトの用語</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <p>
+                当サイトはツリー構造的なデザインを採用しており、それに合わせて独特な表現をしています。
+            </p>
+
+            <dl>
+                <dt>【ルート】</dt>
+                <dd>
+                    一般的なWEBサイトのトップページのことを指します。
+                </dd>
+            </dl>
+
+            <dl>
+                <dt>【ノード】</dt>
+                <dd>
+                    ツリー構造における1つの「節」のことです。<br>
+                    それぞれのページや、左側の緑の線で枝分かれしている1つのコンテンツのことをノードと呼称しています。<br>
+                </dd>
+            </dl>
+        </div>
+    </section>
+
     <section class="node">
         <div class="node-head">
             <h2 class="node-head-text">問い合わせ先</h2>
@@ -157,9 +186,9 @@
             <dl>
                 <dt>【プログラム生成】</dt>
                 <dd>
-                    当サイトのプログラムの一部はCursor・ChatGPTによるコード生成です。<br>
+                    当サイトのプログラムの一部はCursor・ChatGPT・Claudeによるコード生成です。<br>
                     生成AIが生成した部分を示すものは残していません。<br>
-                    （生成AIによるコードは全体の30～40%くらいかなと思います）<br>
+                    （生成AIによるコードは全体の50%くらいかなと思います）<br>
                     また、アルゴリズムの検討や変数・メソッドの命名検討でAIに意見を聞きながら実装しています。
                 </dd>
             </dl>
@@ -167,14 +196,14 @@
             <dl>
                 <dt>【サーバー構築】</dt>
                 <dd>
-                    サーバー構築時の不明点の調査などでChatGPTに質問し問題解決のサポートをしてもらっています。
+                    サーバー構築時の不明点の調査などでChatGPT・Claudeに質問し問題解決のサポートをしてもらっています。
                 </dd>
             </dl>
 
             <dl>
                 <dt>【ホラーゲームの情報収集】</dt>
                 <dd>
-                    ホラーゲームの情報収集のため、ChatGPTやGrokを利用しています。
+                    ホラーゲームの情報収集のため、ChatGPT・Claude・Grok・Geminiを利用しています。
                 </dd>
             </dl>
         </div>

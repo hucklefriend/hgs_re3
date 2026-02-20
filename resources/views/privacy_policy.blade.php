@@ -175,22 +175,27 @@
                 未登録ユーザーはCookieに区分情報を保存しています。<br>
                 登録ユーザーはCookieとデータベースに区分情報を保存しています。
             </p>
-            <p>
+            <p class="mb-5">
                 また、R-18にも2種類あり、それぞれ以下のように表記しています。
             </p>
-            <ul>
-                <li>
-                    R-18Z: CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
+
+            <dl>
+                <dt>【R-18Z】</dt>
+                <dd>
+                    CERO-ZやSteamで成人指定されている、いわゆるZ指定ゲーム。<br>
                     また過激なグロテスク表現のある関連商品や二次創作。<br>
                     年齢設定をしていない場合、画面上に警告文が表示されます。
-                </li>
-                <li>
-                    R-18A: アダルトゲーム、いわゆるエロゲ。<br>
+                </dd>
+            </dl>
+            <dl>
+                <dt>【R-18A】</dt>
+                <dd>
+                    いわゆるエロゲ。<br>
                     また、性表現がある関連商品や二次創作。<br>
                     年齢設定をしていない場合、パッケージ画像や二次創作が非表示となりレビューや二次創作の投稿が行えません。<br>
                     ただし、全年齢版など表現規制版のパッケージがある場合はレビューや二次創作の投稿は行えます。
-                </li>
-            </ul>
+                </dd>
+            </dl>
         </div>
     </section>
 
@@ -219,7 +224,7 @@
             <p>
                 本ポリシーの内容は、法令の改正や運営方針の変更等により、予告なく改定することがあります。<br>
                 重要な変更がある場合は、当サイト上でお知らせします。<br>
-                過去の改定は全て<a href="https://github.com/hucklefriend/hgs_re3/commits/develop/resources/views/privacy_policy.blade.php" target="_blank" rel="external">GitHub</a>のソースから確認ください。
+                過去の改定は<a href="https://github.com/hucklefriend/hgs_re3/commits/develop/resources/views/privacy_policy.blade.php" target="_blank" rel="external">GitHub</a>のコミット履歴から確認ください。
             </p>
         </div>
     </section>
