@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <th>掲載期間</th>
-                    <td>{{ $model->open_at }} ～ {{ $model->close_at }}</td>
+                    <td>{{ $model->open_at->format('Y-m-d H:i') }} ～ @if($model->close_at->format('Y-m-d H:i') !== '2099-12-31 23:59'){{ $model->close_at->format('Y-m-d H:i') }}@endif</td>
                 </tr>
             </table>
         </div>

@@ -8,8 +8,8 @@
         {!! nl2br($info->body) !!}
     </p>
     <div style="margin-top: 30px;font-size: 13px;">
-        【掲載期間】<br>
-        {{ $info->open_at }} ～ {{ $info->close_at }}
+        掲載日時：{{ $info->open_at->format('Y-m-d H:i') }}<br>
+        @if($info->close_at->format('Y-m-d H:i') !== '2099-12-31 23:59')掲載終了日時：{{ $info->close_at->format('Y-m-d H:i') }}@endif
     </div>
 @endsection
 

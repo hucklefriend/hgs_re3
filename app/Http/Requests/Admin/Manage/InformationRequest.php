@@ -29,7 +29,8 @@ class InformationRequest extends FormRequest
             'body'     => 'required',
             'priority' => 'required|integer',
             'open_at'  => 'required|date_format:Y-m-d\TH:i',
-            'close_at' => 'required|date_format:Y-m-d\TH:i',
+            'no_end'   => 'nullable',
+            'close_at' => 'required_without:no_end|nullable|date_format:Y-m-d\TH:i',
         ];
     }
 }
