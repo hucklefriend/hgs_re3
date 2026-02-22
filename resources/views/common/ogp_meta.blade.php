@@ -15,3 +15,8 @@
 <meta property="og:image" content="{{ $ogpImage }}">
 @endif
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $ogpTitle }}">
+<meta name="twitter:description" content="{{ $ogpDescription }}">
+@if(!empty($ogpImage))
+<meta name="twitter:image" content="{{ $ogpImage }}">
+@endif
