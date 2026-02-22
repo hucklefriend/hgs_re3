@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('title', 'ロゴ')
-@section('current-node-title', 'ロゴ')
+@section('current-node-title', '')
 @section('current-node-content')
 <style>
 
@@ -17,12 +17,6 @@
 }
 
 </style>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 @endsection
 
 @section('nodes')
@@ -30,19 +24,13 @@
     
     <section class="node" style="padding-top:0px;padding-bottom:0px;margin-bottom:0px;" id="logo1-node">
         <div class="node-head" style="margin-bottom:0px;">
-            <h2 class="node-head-text" style="font-size: 30px;margin:0;">HORROR</h2>
+            <h2 class="node-head-text" style="font-size: 30px;margin:0;"></h2>
             <span class="node-pt">●</span>
         </div>
     </section>
     <section class="node" style="padding-top:0px;padding-bottom:0px;margin-bottom:0px;" id="logo2-node">
         <div class="node-head" style="margin-bottom:0px;">
-            <h2 class="node-head-text" style="font-size: 30px;margin:0;">GAME</h2>
-            <span class="node-pt">●</span>
-        </div>
-    </section>
-    <section class="node" style="padding-top:0px;padding-bottom:0px;margin-bottom:0px;" id="logo3-node">
-        <div class="node-head" style="margin-bottom:0px;">
-            <h2 class="node-head-text" style="font-size: 30px;margin:0;">NETWORK</h2>
+            <h2 class="node-head-text" style="font-size: 30px;margin:0;"></h2>
             <span class="node-pt">●</span>
         </div>
     </section>

@@ -2,7 +2,7 @@
     $siteName = 'ホラーゲームネットワーク(α)';
     $ogpTitle = $ogpTitle ?? $siteName;
     $ogpDescription = $ogpDescription ?? 'ホラーゲーム好きのためのコミュニティサイトです。レビューや二次創作など、みなさんの「好き」を共有し、より深くホラーゲームを楽しんでほしいという想いで運営しています。';
-    $ogpImage = $ogpImage ?? '/images/ogp.png';
+    $ogpImage = $ogpImage ?? '/img/ogp.png';
     $ogpUrl = $ogpUrl ?? url()->current();
     $ogpType = $ogpType ?? 'website';
 @endphp
@@ -24,7 +24,11 @@
             'ogpType' => $ogpType,
         ])
     @endif
-    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
     {{-- <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('assets/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
     <script>
