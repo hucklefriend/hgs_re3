@@ -2,7 +2,7 @@
     $siteName = 'ホラーゲームネットワーク(α)';
     $ogpTitle = $ogpTitle ?? $siteName;
     $ogpDescription = $ogpDescription ?? 'ホラーゲーム好きのためのコミュニティサイトです。レビューや二次創作など、みなさんの「好き」を共有し、より深くホラーゲームを楽しんでほしいという想いで運営しています。';
-    $ogpImage = $ogpImage ?? asset('images/ogp.png');
+    $ogpImage = $ogpImage ?? '/images/ogp.png';
     $ogpUrl = $ogpUrl ?? url()->current();
     $ogpType = $ogpType ?? 'website';
 @endphp

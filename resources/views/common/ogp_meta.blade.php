@@ -2,7 +2,10 @@
     $siteName = $siteName ?? 'ホラーゲームネットワーク(α)';
     $ogpTitle = $ogpTitle ?? $siteName;
     $ogpDescription = $ogpDescription ?? '';
-    $ogpImage = $ogpImage ?? asset('images/ogp.png');
+    $ogpImage = $ogpImage ?? '/images/ogp.png';
+    if (!empty($ogpImage) && str_starts_with($ogpImage, '/')) {
+        $ogpImage = url($ogpImage);
+    }
     $ogpUrl = $ogpUrl ?? url()->current();
     $ogpType = $ogpType ?? 'website';
 @endphp
