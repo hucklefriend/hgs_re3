@@ -2,7 +2,7 @@
     $siteName = $siteName ?? 'ホラーゲームネットワーク(α)';
     $ogpTitle = $ogpTitle ?? $siteName;
     $ogpDescription = $ogpDescription ?? '';
-    $ogpImage = $ogpImage ?? '/images/ogp.png';
+    $ogpImage = $ogpImage ?? '/img/ogp.png';
     if (!empty($ogpImage) && str_starts_with($ogpImage, '/')) {
         $ogpImage = url($ogpImage);
     }
