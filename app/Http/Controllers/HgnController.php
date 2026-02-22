@@ -75,7 +75,10 @@ class HgnController extends Controller
      */
     public function about(): JsonResponse|Application|Factory|View
     {
-        return $this->tree(view('about'));
+        return $this->tree(view('about', [
+            'ogpTitle' => 'このサイトについて',
+            'ogpDescription' => 'ホラーゲーム好きのためのコミュニティサイトです。レビューや二次創作など、みなさんの「好き」を共有し、より深くホラーゲームを楽しんでほしいという想いで運営しています。',
+        ]));
     }
 
     /**

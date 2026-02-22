@@ -79,7 +79,7 @@
         <div class="node-content tree">
             <section class="node link-node">
                 <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text">トップ</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

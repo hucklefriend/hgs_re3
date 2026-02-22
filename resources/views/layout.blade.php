@@ -1,11 +1,29 @@
 @php
     $siteName = 'ホラーゲームネットワーク(α)';
+    $ogpTitle = $ogpTitle ?? $siteName;
+    $ogpDescription = $ogpDescription ?? 'ホラーゲーム好きのためのコミュニティサイトです。レビューや二次創作など、みなさんの「好き」を共有し、より深くホラーゲームを楽しんでほしいという想いで運営しています。';
+    $ogpImage = $ogpImage ?? asset('images/ogp.png');
+    $ogpUrl = $ogpUrl ?? url()->current();
+    $ogpType = $ogpType ?? 'website';
 @endphp
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>@yield('title', '') | {{ $siteName }}</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    {{-- OGP: ビューで @section('ogp') を定義するか、$ogpTitle / $ogpDescription / $ogpImage / $ogpUrl / $ogpType を渡すと上書き --}}
+    @hasSection('ogp')
+        @yield('ogp')
+    @else
+        @include('common.ogp_meta', [
+            'siteName' => $siteName,
+            'ogpTitle' => $ogpTitle,
+            'ogpDescription' => $ogpDescription,
+            'ogpImage' => $ogpImage,
+            'ogpUrl' => $ogpUrl,
+            'ogpType' => $ogpType,
+        ])
+    @endif
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon">
     {{-- <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('assets/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">

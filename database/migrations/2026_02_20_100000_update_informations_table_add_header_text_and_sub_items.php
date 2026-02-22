@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,11 +13,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('information', function (Blueprint $table) {
-            $table->renameColumn('body', 'header_text');
-        });
+        $driver = Schema::getConnection()->getDriverName();
+        $tableName = 'information';
 
-        Schema::table('information', function (Blueprint $table) {
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            DB::statement("ALTER TABLE {$tableName} CHANGE body header_text TEXT NULL");
+        } else {
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->renameColumn('body', 'header_text');
+            });
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->text('header_text')->nullable()->change();
+            });
+        }
+
+        Schema::table($tableName, function (Blueprint $table) {
             $table->string('sub_title_1', 255)->nullable()->after('header_text');
             $table->text('sub_text_1')->nullable()->after('sub_title_1');
             $table->string('sub_title_2', 255)->nullable()->after('sub_text_1');
@@ -38,10 +49,6 @@ return new class extends Migration
             $table->string('sub_title_10', 255)->nullable()->after('sub_text_9');
             $table->text('sub_text_10')->nullable()->after('sub_title_10');
         });
-
-        Schema::table('information', function (Blueprint $table) {
-            $table->text('header_text')->nullable()->change();
-        });
     }
 
     /**
@@ -49,11 +56,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('information', function (Blueprint $table) {
-            $table->text('header_text')->nullable(false)->change();
-        });
+        $tableName = 'information';
+        $driver = Schema::getConnection()->getDriverName();
 
-        Schema::table('information', function (Blueprint $table) {
+        Schema::table($tableName, function (Blueprint $table) {
             $table->dropColumn([
                 'sub_title_1', 'sub_text_1', 'sub_title_2', 'sub_text_2',
                 'sub_title_3', 'sub_text_3', 'sub_title_4', 'sub_text_4',
@@ -63,8 +69,15 @@ return new class extends Migration
             ]);
         });
 
-        Schema::table('information', function (Blueprint $table) {
-            $table->renameColumn('header_text', 'body');
-        });
+        if ($driver === 'mysql' || $driver === 'mariadb') {
+            DB::statement("ALTER TABLE {$tableName} CHANGE header_text body TEXT NOT NULL");
+        } else {
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->text('header_text')->nullable(false)->change();
+            });
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->renameColumn('header_text', 'body');
+            });
+        }
     }
 };
