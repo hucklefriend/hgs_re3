@@ -14,7 +14,7 @@
 @if(!empty($ogpImage))
 <meta property="og:image" content="{{ $ogpImage }}">
 @endif
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="{{ $ogpTitle }}">
 <meta name="twitter:description" content="{{ $ogpDescription }}">
 @if(!empty($ogpImage))
