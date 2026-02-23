@@ -15,6 +15,11 @@
                 最新の<a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
             </p>
 
+            <div class="mb-3">
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHubで登録</a>
+            </div>
+            <p class="text-muted small mb-3">または</p>
+
             @if(session('error'))
                 <div class="alert alert-danger mt-3">
                     {{ session('error') }}

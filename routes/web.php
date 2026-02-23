@@ -25,6 +25,8 @@ Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
 Route::get('/login', [AccountController::class, 'login'])->name('Account.Login');
 Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
 Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
+Route::get('/auth/github', [AccountController::class, 'redirectToGitHub'])->middleware('throttle:10,10')->name('Account.GitHub.Redirect');
+Route::get('/auth/github/callback', [AccountController::class, 'handleGitHubCallback'])->middleware('throttle:10,10')->name('Account.GitHub.Callback');
 Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
 Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:10,10')->name('Account.Register.Store');
 Route::get('/register/complete/{token}', [AccountController::class, 'showCompleteRegistration'])->name('Account.Register.Complete');

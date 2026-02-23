@@ -10,6 +10,7 @@
         "laravel/framework": "^12.0",
         "laravel/scout": "^10.23",
         "laravel/slack-notification-channel": "^3.5",
+        "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.9",
         "meilisearch/meilisearch-php": "^1.16",
         "spatie/laravel-html": "^3.9"

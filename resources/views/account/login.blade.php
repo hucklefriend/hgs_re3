@@ -56,6 +56,10 @@
                 </div>
             </form>
 
+            <div class="mt-3 mb-3">
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHubでログイン</a>
+            </div>
+
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。
             </p>

@@ -36,4 +36,10 @@ return [
         'test_error_webhook_url' => env('SLACK_TEST_ERROR_WEBHOOK_URL'),
     ],
 
+    'github' => [
+        'client_id' => env('GITHUB_CLIENT_ID'),
+        'client_secret' => env('GITHUB_CLIENT_SECRET'),
+        'redirect' => env('GITHUB_REDIRECT_URI', rtrim(env('APP_URL', 'http://localhost'), '/').'/auth/github/callback'),
+    ],
+
 ];

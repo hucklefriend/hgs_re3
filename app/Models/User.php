@@ -78,4 +78,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserGameTitleFearMeter::class, 'user_id');
     }
+
+    /**
+     * ソーシャルアカウント連携を取得
+     *
+     * @return HasMany
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
 }
