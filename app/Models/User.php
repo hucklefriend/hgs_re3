@@ -88,4 +88,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(SocialAccount::class);
     }
+
+    /**
+     * OAuthのみで登録し、まだパスワードを設定していないか
+     *
+     * @return bool
+     */
+    public function needsPasswordSet(): bool
+    {
+        return $this->password === null && $this->socialAccounts()->exists();
+    }
 }

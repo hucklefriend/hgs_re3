@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MyNodeEmailUpdateRequest;
+use App\Http\Requests\MyNodePasswordSetRequest;
 use App\Http\Requests\MyNodePasswordUpdateRequest;
 use App\Http\Requests\MyNodeProfileUpdateRequest;
 use App\Http\Requests\MyNodeWithdrawStoreRequest;
@@ -185,10 +186,40 @@ class MyNodeController extends Controller
      */
     public function password(): JsonResponse|Application|Factory|View
     {
+        /** @var User $user */
         $user = Auth::user();
         $colorState = $this->getColorState();
 
+        if ($user->needsPasswordSet()) {
+            return $this->tree(view('user.my_node.password_set', compact('user', 'colorState')));
+        }
+
         return $this->tree(view('user.my_node.password', compact('user', 'colorState')));
+    }
+
+    /**
+     * パスワード設定処理（OAuthユーザー向け・現在のパスワード不要）
+     *
+     * @param MyNodePasswordSetRequest $request
+     * @return RedirectResponse
+     */
+    public function passwordSetUpdate(MyNodePasswordSetRequest $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user->needsPasswordSet()) {
+            return redirect()->route('User.MyNode.Password');
+        }
+
+        $validated = $request->validated();
+        $user->password = Hash::make($validated['password']);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('User.MyNode.Top')->with('success', 'パスワードを設定しました。');
     }
 
     /**

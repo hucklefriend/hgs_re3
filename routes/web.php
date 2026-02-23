@@ -46,6 +46,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('my-node/email', [User\MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
         Route::get('my-node/password', [User\MyNodeController::class, 'password'])->name('User.MyNode.Password');
         Route::post('my-node/password', [User\MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
+        Route::post('my-node/password-set', [User\MyNodeController::class, 'passwordSetUpdate'])->name('User.MyNode.PasswordSet.Update');
         Route::get('my-node/withdraw', [User\MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
         Route::post('my-node/withdraw', [User\MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
 
