@@ -2,8 +2,24 @@
 
 @section('title', '新規登録')
 @section('current-node-title', '新規登録')
+@section('current-node-content')
+    <p class="alert alert-info">
+        最新の<a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
+    </p>
+@endsection
 
 @section('nodes')
+    <section class="node" id="register-form-node">
+        <div class="node-head">
+            <h2 class="node-head-text">外部サービスで登録</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <div class="mb-3">
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHub</a>
+            </div>
+        </div>
+    </section>
 
     <section class="node" id="register-form-node">
         <div class="node-head">
@@ -11,10 +27,6 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content basic">
-            <p class="alert alert-info">
-                最新の<a href="{{ route('PrivacyPolicy') }}" rel="internal">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
-            </p>
-
             @if(session('error'))
                 <div class="alert alert-danger mt-3">
                     {{ session('error') }}
@@ -45,10 +57,6 @@
                     <button type="submit" class="btn btn-success">新規登録</button>
                 </div>
             </form>
-
-            <p>
-                すでにアカウントをお持ちの方は<a href="{{ route('Account.Login') }}">こちら</a>からログインしてください。
-            </p>
         </div>
     </section>
 

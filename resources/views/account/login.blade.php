@@ -2,8 +2,26 @@
 
 @section('title', 'ログイン')
 @section('current-node-title', 'ログイン')
+@section('current-node-content')
+<p class="alert alert-warning">
+    休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
+    2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、<br>
+    改めて<a href="{{ route('Account.Register') }}" rel="internal">新規登録</a>をお願いします。
+</p>
+@endsection
 
 @section('nodes')
+    <section class="node" id="login-form-node">
+        <div class="node-head">
+            <h2 class="node-head-text">外部サービスでログイン</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content basic">
+            <div class="mt-3 mb-3">
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHub</a>
+            </div>
+        </div>
+    </section>
 
     <section class="node" id="login-form-node">
         <div class="node-head">
@@ -30,10 +48,6 @@
                 </div>
             @enderror
             
-            <p class="alert alert-info">
-                休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
-                2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、再度登録をお願いします。
-            </p>
 
             <form id="login-form" action="{{ route('Account.Auth') }}" method="POST" data-child-only="0">
                 @csrf
@@ -55,6 +69,8 @@
                     <button type="submit" class="btn btn-success">ログイン</button>
                 </div>
             </form>
+
+
 
             <p>
                 アカウントをお持ちでない方は<a href="{{ route('Account.Register') }}">こちら</a>から新規登録してください。

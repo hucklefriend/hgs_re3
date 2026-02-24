@@ -175,6 +175,10 @@ div.connection-line {
     }
 }
 
+.node-content {
+    width: 100%;
+}
+
 .node-content.basic {
     margin-left: 20px;
     opacity: 0;

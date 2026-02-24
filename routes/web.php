@@ -25,6 +25,8 @@ Route::get('/logo', [HgnController::class, 'logo'])->name('Logo');
 Route::get('/login', [AccountController::class, 'login'])->name('Account.Login');
 Route::post('/auth', [AccountController::class, 'auth'])->name('Account.Auth');
 Route::get('/logout', [AccountController::class, 'logout'])->name('Account.Logout');
+Route::get('/auth/github', [AccountController::class, 'redirectToGitHub'])->middleware('throttle:10,10')->name('Account.GitHub.Redirect');
+Route::get('/auth/github/callback', [AccountController::class, 'handleGitHubCallback'])->middleware('throttle:10,10')->name('Account.GitHub.Callback');
 Route::get('/register', [AccountController::class, 'register'])->name('Account.Register');
 Route::post('/register', [AccountController::class, 'store'])->middleware('throttle:10,10')->name('Account.Register.Store');
 Route::get('/register/complete/{token}', [AccountController::class, 'showCompleteRegistration'])->name('Account.Register.Complete');
@@ -44,6 +46,10 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('my-node/email', [User\MyNodeController::class, 'emailUpdate'])->name('User.MyNode.Email.Update');
         Route::get('my-node/password', [User\MyNodeController::class, 'password'])->name('User.MyNode.Password');
         Route::post('my-node/password', [User\MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
+        Route::post('my-node/password-set', [User\MyNodeController::class, 'passwordSetUpdate'])->name('User.MyNode.PasswordSet.Update');
+        Route::get('my-node/social-accounts', [User\MyNodeController::class, 'socialAccounts'])->name('User.MyNode.SocialAccounts');
+        Route::get('my-node/social-accounts/link/{provider}', [User\MyNodeController::class, 'redirectToLinkProvider'])->name('User.MyNode.SocialAccounts.Link');
+        Route::post('my-node/social-accounts/unlink', [User\MyNodeController::class, 'unlinkSocialAccount'])->name('User.MyNode.SocialAccounts.Unlink');
         Route::get('my-node/withdraw', [User\MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
         Route::post('my-node/withdraw', [User\MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
 
