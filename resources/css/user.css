@@ -1,0 +1,45 @@
+/* 外部サービス連携リスト #social_accounts のみでスタイル */
+#social_accounts {
+    width: 100%;
+    @apply block list-none p-0 m-0 max-w-full box-border overflow-hidden rounded-md border border-[rgba(170,187,170,0.3)];
+
+    > li {
+        @apply flex justify-between items-center gap-2 px-4 py-3 border-b border-b-[rgba(170,187,170,0.2)];
+
+        &:last-child {
+            @apply border-b-0;
+        }
+
+        /* 左: サービス名 + 連携済み/未連携 */
+        > div:first-of-type {
+            @apply flex items-center gap-2;
+        }
+
+        /* 右: 連携解除 or 連携するボタンのみ */
+        > div:last-of-type {
+            @apply shrink-0;
+
+            > form {
+                @apply inline;
+            }
+
+            > form > button {
+                @apply inline-block px-3 py-1.5 text-sm font-medium rounded cursor-pointer bg-transparent text-red-600 border border-red-600 transition-colors hover:bg-red-600 hover:text-white;
+            }
+
+            > a {
+                @apply inline-block px-3 py-1.5 text-sm font-medium rounded no-underline bg-transparent text-blue-400 border border-blue-400 transition-colors hover:bg-blue-400 hover:text-white;
+            }
+        }
+
+        /* 連携済みのときのバッジ（左側 div の2つ目の span、li 内に form がある） */
+        &:has(form) > div:first-of-type > span:last-child {
+            @apply inline-block py-1 px-2 text-xs font-medium rounded text-white bg-green-600;
+        }
+
+        /* 未連携のときのバッジ（左側 div の2つ目の span、li 内に a がある） */
+        &:has(a) > div:first-of-type > span:last-child {
+            @apply inline-block py-1 px-2 text-xs font-medium rounded text-white bg-gray-500;
+        }
+    }
+}

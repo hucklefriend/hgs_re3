@@ -6,8 +6,8 @@ alwaysApply: true
 
 ## CSSフレームワーク
 
-- Admin系のみ、ColorAdminというBootstrapのラップしたCSSフレームワークを使っています
-- Admin以外はなるべくCSSフレームワークは使わずにapp.cssに自作します
+- resources/views/admin 以下にあるビューのみ、ColorAdminというBootstrapのラップしたCSSフレームワークを使っています
+- それ以外はtailwindcssを使っています。
 
 ## ボタン
 

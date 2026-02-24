@@ -47,6 +47,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('my-node/password', [User\MyNodeController::class, 'password'])->name('User.MyNode.Password');
         Route::post('my-node/password', [User\MyNodeController::class, 'passwordUpdate'])->name('User.MyNode.Password.Update');
         Route::post('my-node/password-set', [User\MyNodeController::class, 'passwordSetUpdate'])->name('User.MyNode.PasswordSet.Update');
+        Route::get('my-node/social-accounts', [User\MyNodeController::class, 'socialAccounts'])->name('User.MyNode.SocialAccounts');
+        Route::get('my-node/social-accounts/link/{provider}', [User\MyNodeController::class, 'redirectToLinkProvider'])->name('User.MyNode.SocialAccounts.Link');
+        Route::post('my-node/social-accounts/unlink', [User\MyNodeController::class, 'unlinkSocialAccount'])->name('User.MyNode.SocialAccounts.Unlink');
         Route::get('my-node/withdraw', [User\MyNodeController::class, 'withdraw'])->name('User.MyNode.Withdraw');
         Route::post('my-node/withdraw', [User\MyNodeController::class, 'withdrawStore'])->name('User.MyNode.Withdraw.Store');
 

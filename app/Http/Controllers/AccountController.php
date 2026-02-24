@@ -311,6 +311,41 @@ class AccountController extends Controller
         $name = $githubUser->getName() ?: '';
         $accessToken = $githubUser->token;
 
+        // アカウント連携モード（ログイン済みユーザーが連携追加）
+        if (Auth::check() && session('social_link_intent')) {
+            session()->forget('social_link_intent');
+
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            $existingSocialAccount = SocialAccount::where('provider', SocialAccountProvider::GitHub)
+                ->where('provider_user_id', $providerUserId)
+                ->first();
+
+            if ($existingSocialAccount) {
+                if ($existingSocialAccount->user_id === $user->id) {
+                    $existingSocialAccount->update([
+                        'access_token' => $accessToken,
+                        'email' => $email,
+                    ]);
+
+                    return redirect()->route('User.MyNode.SocialAccounts')->with('success', 'GitHub連携を更新しました。');
+                }
+
+                return redirect()->route('User.MyNode.SocialAccounts')->with('error', 'このGitHubアカウントは別のユーザーに連携されています。');
+            }
+
+            SocialAccount::create([
+                'user_id' => $user->id,
+                'provider' => SocialAccountProvider::GitHub,
+                'provider_user_id' => $providerUserId,
+                'email' => $email,
+                'access_token' => $accessToken,
+            ]);
+
+            return redirect()->route('User.MyNode.SocialAccounts')->with('success', 'GitHubと連携しました。');
+        }
+
         // 既存の連携を検索
         $socialAccount = SocialAccount::where('provider', SocialAccountProvider::GitHub)
             ->where('provider_user_id', $providerUserId)

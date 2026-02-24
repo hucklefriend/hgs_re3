@@ -74,6 +74,12 @@
                             <span class="node-pt">●</span>
                         </div>
                     </section>
+                    <section class="node link-node" id="user-account-social-accounts-link-node">
+                        <div class="node-head">
+                            <a href="{{ route('User.MyNode.SocialAccounts') }}" class="node-head-text">外部サービス連携</a>
+                            <span class="node-pt">●</span>
+                        </div>
+                    </section>
                     <section class="node link-node" id="user-account-withdraw-link-node">
                         <div class="node-head">
                             <a href="{{ route('User.MyNode.Withdraw') }}" class="node-head-text">退会</a>

@@ -22,8 +22,11 @@ use App\Http\Requests\MyNodePasswordUpdateRequest;
 use App\Http\Requests\MyNodeProfileUpdateRequest;
 use App\Http\Requests\MyNodeWithdrawStoreRequest;
 use App\Mail\EmailChangeVerification;
+use App\Enums\SocialAccountProvider;
 use App\Models\EmailChangeRequest;
+use App\Models\SocialAccount;
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 
 class MyNodeController extends Controller
 {
@@ -240,6 +243,80 @@ class MyNodeController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('User.MyNode.Top')->with('success', 'パスワードを変更しました。');
+    }
+
+    /**
+     * アカウント連携一覧画面表示
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function socialAccounts(): JsonResponse|Application|Factory|View
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $user->load('socialAccounts');
+        $colorState = $this->getColorState();
+        $url = route('User.MyNode.SocialAccounts');
+
+        return $this->tree(view('user.my_node.social_accounts', compact('user', 'colorState')), options: ['url' => $url]);
+    }
+
+    /**
+     * アカウント連携開始（GitHubへリダイレクト）
+     *
+     * @param Request $request
+     * @param string $provider
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function redirectToLinkProvider(Request $request, string $provider)
+    {
+        if ($provider !== 'github') {
+            return redirect()->route('User.MyNode.SocialAccounts')->with('error', 'この連携は現在サポートされていません。');
+        }
+
+        $request->session()->put('social_link_intent', true);
+
+        /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+        $driver = Socialite::driver('github');
+
+        return $driver->scopes(['user', 'user:email'])->redirect();
+    }
+
+    /**
+     * アカウント連携解除
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function unlinkSocialAccount(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $providerValue = (int) $request->input('provider');
+        $provider = SocialAccountProvider::tryFrom($providerValue);
+
+        if (!$provider) {
+            return redirect()->route('User.MyNode.SocialAccounts')->with('error', '無効なプロバイダーです。');
+        }
+
+        $socialAccount = SocialAccount::where('user_id', $user->id)
+            ->where('provider', $provider)
+            ->first();
+
+        if (!$socialAccount) {
+            return redirect()->route('User.MyNode.SocialAccounts')->with('error', '連携情報が見つかりません。');
+        }
+
+        $socialAccountCount = $user->socialAccounts()->count();
+
+        if ($socialAccountCount <= 1 && $user->password === null) {
+            return redirect()->route('User.MyNode.SocialAccounts')->with('error', 'パスワードを設定してから連携解除するか、他の連携方法が残る状態で解除してください。');
+        }
+
+        $socialAccount->delete();
+
+        return redirect()->route('User.MyNode.SocialAccounts')->with('success', '連携を解除しました。GitHub側で設定を削除してください。');
     }
 
     /**
