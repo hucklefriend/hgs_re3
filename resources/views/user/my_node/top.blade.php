@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'マイページ')
-@section('current-node-title', 'マイページ')
+@section('title', 'マイノード')
+@section('current-node-title', 'マイノード')
 
 @section('current-node-content')
 

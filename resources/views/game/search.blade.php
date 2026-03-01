@@ -80,5 +80,7 @@
             </div>
         </section>
     </div>
+    
+    @include('common.shortcut_mynode')
 </section>
 @endsection

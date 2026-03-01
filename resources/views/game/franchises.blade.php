@@ -58,7 +58,9 @@
                 </div>
             </section>
         
-            @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+            @include('common.shortcut_mynode')
+        
+            @if (is_admin_user())
             <section class="node link-node">
                 <div class="node-head">
                     <a href="{{ route('Admin.Game.Franchise') }}" class="node-head-text" rel="external">管理</a>
