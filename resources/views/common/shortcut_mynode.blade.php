@@ -7,6 +7,12 @@
             <span class="node-pt">●</span>
         </div>
     </section>
+    <section class="node link-node" id="logout-link-node">
+        <div class="node-head">
+            <a href="{{ route('Account.Logout') }}" class="node-head-text">ログアウト</a>
+            <span class="node-pt">●</span>
+        </div>
+    </section>
     @endisset
 @else
 <section class="node link-node">

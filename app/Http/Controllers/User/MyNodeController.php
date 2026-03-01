@@ -31,7 +31,7 @@ use Laravel\Socialite\Facades\Socialite;
 class MyNodeController extends Controller
 {
     /**
-     * マイページトップ表示
+     * マイノードトップ表示
      *
      * @param Request $request
      * @return JsonResponse|Application|Factory|View

@@ -64,7 +64,9 @@
                 </div>
             </section>
 
-            @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+            @include('common.shortcut_mynode')
+        
+            @if (is_admin_user())
             <section class="node link-node" id="admin-link-node">
                 <div class="node-head">
                     <a href="{{ route('Admin.Game.MediaMix.Detail', $mediaMix) }}" class="node-head-text" rel="external">管理</a>
