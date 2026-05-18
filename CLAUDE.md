@@ -74,6 +74,14 @@ php artisan tinker                 # Interactive REPL
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md
 
+## Implementation Plans
+
+未実装・実装途中の機能の設計資料は `docs/plan/` 配下に置く。
+
+| 機能 | 資料 |
+|---|---|
+| タイムライン | `docs/plan/timeline.md` |
+
 ## Interaction Rules
 - プロンプトに全角の「？」が含まれる場合は、実装を行わず回答のみ行う。半角の「?」はこの対象外。
 

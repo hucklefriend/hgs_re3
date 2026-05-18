@@ -1,0 +1,45 @@
+<section class="node basic">
+    <div class="node-head">
+        <span class="node-head-text">
+            @if ($event['type'] === 'review_posted')
+                <i class="bi bi-file-text text-sky-400"></i> {{ $event['actor_name'] }} さんがレビューを投稿しました
+            @elseif ($event['type'] === 'game_title_updated')
+                <i class="bi bi-arrow-clockwise text-emerald-400"></i> {{ $event['game_title_name'] }} のデータが更新されました
+            @elseif ($event['type'] === 'fear_meter_posted')
+                <i class="bi bi-thermometer-half text-orange-400"></i> {{ $event['actor_name'] }} さんが怖さメーターを投稿しました
+            @elseif ($event['type'] === 'review_liked')
+                <i class="bi bi-hand-thumbs-up-fill text-blue-400"></i> {{ $event['actor_name'] }} さんがレビューにいいねしてくれました
+            @endif
+        </span>
+        <span class="node-pt">●</span>
+    </div>
+    <div class="node-content basic text-sm">
+        @if ($event['type'] === 'review_posted')
+            <div class="flex items-baseline gap-4">
+                <span class="text-slate-300">{{ $event['game_title_name'] }}</span>
+                @if ($event['total_score'] !== null)
+                    <span class="flex items-baseline gap-1">
+                        <span class="text-2xl font-bold text-slate-100 leading-none">{{ $event['total_score'] }}</span>
+                        <span class="text-xs text-slate-100">/ 100</span>
+                    </span>
+                @endif
+            </div>
+        @elseif ($event['type'] === 'fear_meter_posted')
+            <p class="text-slate-300">{{ $event['game_title_name'] }} <span class="text-base text-slate-100">{{ $event['fear_meter_label'] }}</span></p>
+        @elseif ($event['type'] === 'review_liked')
+            <p class="text-slate-300">{{ $event['game_title_name'] }}</p>
+        @endif
+        <p class="text-xs text-slate-500 mt-1">{{ $event['created_at']->format('Y-m-d H:i') }}</p>
+        <div class="mt-2 text-xs">
+            @if ($event['type'] === 'review_posted')
+                <a href="#" data-hgn-scope="full"><i class="bi bi-file-text"></i> レビュー詳細</a>
+            @elseif ($event['type'] === 'game_title_updated')
+                <a href="#" data-hgn-scope="full"><i class="bi bi-controller"></i> タイトル詳細</a>
+            @elseif ($event['type'] === 'fear_meter_posted')
+                <a href="#" data-hgn-scope="full"><i class="bi bi-controller"></i> タイトル詳細</a>
+            @elseif ($event['type'] === 'review_liked')
+                <a href="#" data-hgn-scope="full"><i class="bi bi-file-text"></i> レビュー詳細</a>
+            @endif
+        </div>
+    </div>
+</section>

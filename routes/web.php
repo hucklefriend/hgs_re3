@@ -77,6 +77,9 @@ Route::group(['prefix' => 'user'], function () {
 
         // いいねしたレビュー
         Route::get('my-node/review-likes', [User\FollowController::class, 'reviewLikes'])->name('User.MyNode.ReviewLikes');
+
+        // タイムライン
+        Route::get('my-node/timeline', [User\MyNodeController::class, 'timeline'])->name('User.MyNode.Timeline');
     });
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 

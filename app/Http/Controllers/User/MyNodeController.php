@@ -56,8 +56,10 @@ class MyNodeController extends Controller
 
         $request->session()->regenerateToken();
 
+        $timelineEvents = array_slice($this->dummyTimelineEvents(), 0, 5);
+
         return $this->tree(
-            view('user.my_node.top', compact('user', 'needsAcceptance', 'recoveryCodeRemaining')),
+            view('user.my_node.top', compact('user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents')),
             options: [
                 'url' => route('User.MyNode.Top'),
                 'csrfToken' => csrf_token(),
@@ -368,6 +370,119 @@ class MyNodeController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('Account.Login')->with('success', "退会が完了しました。\r\nご利用ありがとうございました。");
+    }
+
+    /**
+     * タイムライン表示（仮データ）
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function timeline(): JsonResponse|Application|Factory|View
+    {
+        $events = $this->dummyTimelineEvents();
+        return $this->tree(view('user.my_node.timeline', compact('events')));
+    }
+
+    private function dummyTimelineEvents(): array
+    {
+        return [
+            [
+                'type' => 'review_posted',
+                'actor_name' => 'ホラーファン太郎',
+                'actor_show_id' => 'horror_fan_taro',
+                'game_title_name' => 'バイオハザード RE:2',
+                'total_score' => 88,
+                'has_spoiler' => false,
+                'created_at' => now()->subHours(2),
+            ],
+            [
+                'type' => 'review_liked',
+                'actor_name' => 'ゾンビ愛好家',
+                'actor_show_id' => 'zombie_mania',
+                'game_title_name' => 'バイオハザード RE:2',
+                'created_at' => now()->subHours(3),
+            ],
+            [
+                'type' => 'game_title_updated',
+                'game_title_name' => 'サイレントヒル2 リメイク',
+                'created_at' => now()->subHours(5),
+            ],
+            [
+                'type' => 'fear_meter_posted',
+                'actor_name' => '恐怖の申し子',
+                'actor_show_id' => 'kyofu_ko',
+                'game_title_name' => 'DEAD SPACE',
+                'fear_meter_label' => 'かなり怖い',
+                'created_at' => now()->subDay(),
+            ],
+            [
+                'type' => 'game_title_updated',
+                'game_title_name' => 'バイオハザード ヴィレッジ',
+                'created_at' => now()->subDays(2),
+            ],
+            [
+                'type' => 'review_posted',
+                'actor_name' => 'ゾンビ愛好家',
+                'actor_show_id' => 'zombie_mania',
+                'game_title_name' => 'The Last of Us Part II',
+                'total_score' => 82,
+                'has_spoiler' => true,
+                'created_at' => now()->subDays(3),
+            ],
+            [
+                'type' => 'review_posted',
+                'actor_name' => '夜の探偵',
+                'actor_show_id' => 'yoru_tantei',
+                'game_title_name' => 'Outlast',
+                'total_score' => 75,
+                'has_spoiler' => false,
+                'created_at' => now()->subDays(4),
+            ],
+            [
+                'type' => 'game_title_updated',
+                'game_title_name' => 'Resident Evil Village',
+                'created_at' => now()->subDays(5),
+            ],
+            [
+                'type' => 'fear_meter_posted',
+                'actor_name' => 'ナイトウォーカー',
+                'actor_show_id' => 'night_walker',
+                'game_title_name' => 'Amnesia: The Dark Descent',
+                'fear_meter_label' => '極限の恐怖',
+                'created_at' => now()->subDays(6),
+            ],
+            [
+                'type' => 'review_posted',
+                'actor_name' => 'ホラーファン太郎',
+                'actor_show_id' => 'horror_fan_taro',
+                'game_title_name' => 'Alien: Isolation',
+                'total_score' => 92,
+                'has_spoiler' => false,
+                'created_at' => now()->subDays(7),
+            ],
+            [
+                'type' => 'game_title_updated',
+                'game_title_name' => 'The Evil Within 2',
+                'created_at' => now()->subDays(8),
+            ],
+            [
+                'type' => 'review_posted',
+                'actor_name' => '夜の探偵',
+                'actor_show_id' => 'yoru_tantei',
+                'game_title_name' => 'Until Dawn',
+                'total_score' => 68,
+                'has_spoiler' => true,
+                'created_at' => now()->subDays(9),
+            ],
+            [
+                'type' => 'fear_meter_posted',
+                'actor_name' => '恐怖の申し子',
+                'actor_show_id' => 'kyofu_ko',
+                'game_title_name' => 'Layers of Fear',
+                'fear_meter_label' => 'そこそこ怖い',
+                'created_at' => now()->subDays(10),
+            ],
+        ];
     }
 
     /**
