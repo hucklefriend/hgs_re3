@@ -20,6 +20,7 @@ class TimelineEvent extends Model
         'subject_id',
         'recipient_user_id',
         'payload',
+        'created_at',
     ];
 
     protected $casts = [

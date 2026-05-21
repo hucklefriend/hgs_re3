@@ -238,8 +238,11 @@
                 </div>
                 <div class="d-flex gap-2 align-items-center">
                     <div class="d-flex flex-column align-items-end gap-1">
-                        <form method="POST" action="{{ route('Admin.Game.Title.RecordTimeline', $model) }}" onsubmit="return confirm('タイムラインにデータ更新を登録します。よろしいですか？');">
+                        <form method="POST" action="{{ route('Admin.Game.Title.RecordTimeline', $model) }}">
                             @csrf
+                            <div class="mb-1">
+                                <textarea name="note" class="form-control form-control-sm" rows="3" style="width: 260px;" placeholder="コメント（省略可）"></textarea>
+                            </div>
                             <button class="btn btn-info" type="submit">
                                 <i class="fas fa-stream"></i><span class="d-none d-md-inline"> タイムラインに登録</span>
                             </button>

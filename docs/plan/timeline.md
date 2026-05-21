@@ -17,6 +17,7 @@
 | `fear_meter_updated` | 怖さメーターを更新しました | フォロー中ユーザーが怖さメーターを更新 |
 | `game_title_updated` | データが更新されました | お気に入りタイトルのデータが更新された |
 | `review_liked` | レビューにいいねしてくれました | 自分のレビューに誰かがいいねした |
+| `information_posted` | お知らせが投稿されました | 管理画面でお知らせが新規投稿された |
 
 ---
 
@@ -57,6 +58,7 @@
 | `fear_meter_updated` | 'user' | 投稿者 user_id | 'game_title' | game_title_id | NULL | `{"fear_meter_label": "めちゃくちゃ怖い"}` |
 | `game_title_updated` | 'system' | NULL | 'game_title' | game_title_id | NULL | — |
 | `review_liked` | 'user' | いいねした user_id | 'review' | review_id | レビュー所有者 user_id | — |
+| `information_posted` | 'system' | NULL | 'information' | information_id | NULL | — |
 
 #### インデックス
 
@@ -93,6 +95,8 @@ WHERE
         ))
     -- 自分への通知（いいねなど）
     OR te.recipient_user_id = :me
+    -- お知らせ（全ユーザー対象）
+    OR te.event_type = 'information_posted'
 ORDER BY te.created_at DESC
 LIMIT 20
 ```
@@ -136,6 +140,7 @@ $timelineEventService->recordFearMeterEvent(int $userId, int $gameTitleId, bool 
 | event_type | 実装予定箇所 |
 |---|---|
 | `review_liked` | `UserGameTitleReviewLike` 作成時のコントローラー |
+| `information_posted` | `Admin\Manage\InformationController::store()` |
 
 **10分以内の連続更新について：**
 

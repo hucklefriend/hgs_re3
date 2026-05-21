@@ -7,6 +7,7 @@ use App\Enums\TimelineActorType;
 use App\Enums\TimelineEventType;
 use App\Enums\TimelineSubjectType;
 use App\Models\GameTitle;
+use App\Models\Information;
 use App\Models\TimelineEvent;
 use App\Models\UserFavoriteGameTitle;
 use App\Models\UserGameTitleReview;
@@ -70,7 +71,8 @@ class TimelineEventService
                     $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
                         ->whereIn('subject_id', $favoriteGameTitleIds);
                 })
-                ->orWhere('recipient_user_id', $userId);
+                ->orWhere('recipient_user_id', $userId)
+                ->orWhere('event_type', TimelineEventType::InformationPosted->value);
             })
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -82,6 +84,9 @@ class TimelineEventService
         $gameTitleSubjectIds = $events
             ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)
             ->pluck('subject_id');
+        $informationSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)
+            ->pluck('subject_id');
 
         $reviews = UserGameTitleReview::with('gameTitle')
             ->whereIn('id', $reviewSubjectIds)
@@ -90,13 +95,17 @@ class TimelineEventService
         $gameTitles = GameTitle::whereIn('id', $gameTitleSubjectIds)
             ->get()
             ->keyBy('id');
+        $informations = Information::whereIn('id', $informationSubjectIds)
+            ->get()
+            ->keyBy('id');
 
-        return $events->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles))->all();
+        return $events->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, $informations))->all();
     }
 
     /** @param Collection<int, UserGameTitleReview> $reviews */
     /** @param Collection<int, GameTitle> $gameTitles */
-    private function toDisplayArray(TimelineEvent $event, Collection $reviews, Collection $gameTitles): array
+    /** @param Collection<int, Information> $informations */
+    private function toDisplayArray(TimelineEvent $event, Collection $reviews, Collection $gameTitles, Collection $informations): array
     {
         $actor = $event->actor;
         $actorName    = $actor?->withdrawn_at ? '（退会ユーザー）' : $actor?->name;
@@ -107,6 +116,7 @@ class TimelineEventService
             'actor_name'       => $actorName,
             'actor_show_id'    => $actorShowId,
             'fear_meter_label' => $event->payload['fear_meter_label'] ?? null,
+            'note'             => $event->payload['note'] ?? null,
             'created_at'       => $event->created_at,
         ];
 
@@ -114,25 +124,84 @@ class TimelineEventService
             $review    = $reviews[$event->subject_id] ?? null;
             $gameTitle = $review?->gameTitle;
             return array_merge($base, [
-                'game_title_name' => $gameTitle?->name,
-                'game_title_key'  => $gameTitle?->key,
-                'review_key'      => $review?->key,
-                'total_score'     => $review?->total_score,
-                'has_spoiler'     => $review?->has_spoiler ?? false,
+                'game_title_name'  => $gameTitle?->name,
+                'game_title_key'   => $gameTitle?->key,
+                'review_key'       => $review?->key,
+                'total_score'      => $review?->total_score,
+                'has_spoiler'      => $review?->has_spoiler ?? false,
+                'information_id'   => null,
+                'information_head' => null,
+            ]);
+        }
+
+        if ($event->subject_type === TimelineSubjectType::Information) {
+            $information = $informations[$event->subject_id] ?? null;
+            return array_merge($base, [
+                'game_title_name'  => null,
+                'game_title_key'   => null,
+                'review_key'       => null,
+                'total_score'      => null,
+                'has_spoiler'      => false,
+                'information_id'   => $information?->id,
+                'information_head' => $information?->head,
             ]);
         }
 
         $gameTitle = $gameTitles[$event->subject_id] ?? null;
         return array_merge($base, [
-            'game_title_name' => $gameTitle?->name,
-            'game_title_key'  => $gameTitle?->key,
-            'review_key'      => null,
-            'total_score'     => null,
-            'has_spoiler'     => false,
+            'game_title_name'  => $gameTitle?->name,
+            'game_title_key'   => $gameTitle?->key,
+            'review_key'       => null,
+            'total_score'      => null,
+            'has_spoiler'      => false,
+            'information_id'   => null,
+            'information_head' => null,
         ]);
     }
 
-    public function recordGameTitleUpdatedEvent(int $gameTitleId): void
+    /**
+     * ルートページ用タイムラインイベントを取得する。
+     * お知らせ・ゲームタイトル更新（全件対象）を返す。
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function fetchForRoot(int $limit = 5): array
+    {
+        $events = TimelineEvent::with('actor')
+            ->whereIn('event_type', [
+                TimelineEventType::InformationPosted->value,
+                TimelineEventType::GameTitleUpdated->value,
+            ])
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+
+        $gameTitleSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)
+            ->pluck('subject_id');
+        $informationSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)
+            ->pluck('subject_id');
+
+        $gameTitles = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $informations = Information::whereIn('id', $informationSubjectIds)->get()->keyBy('id');
+
+        return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, $informations))->all();
+    }
+
+    public function recordInformationEvent(int $informationId): void
+    {
+        TimelineEvent::create([
+            'event_type'   => TimelineEventType::InformationPosted,
+            'actor_type'   => TimelineActorType::System,
+            'actor_id'     => null,
+            'subject_type' => TimelineSubjectType::Information,
+            'subject_id'   => $informationId,
+            'created_at'   => now(),
+        ]);
+    }
+
+    public function recordGameTitleUpdatedEvent(int $gameTitleId, ?string $note = null): void
     {
         TimelineEvent::create([
             'event_type'   => TimelineEventType::GameTitleUpdated,
@@ -140,6 +209,7 @@ class TimelineEventService
             'actor_id'     => null,
             'subject_type' => TimelineSubjectType::GameTitle,
             'subject_id'   => $gameTitleId,
+            'payload'      => $note !== null ? ['note' => $note] : null,
             'created_at'   => now(),
         ]);
     }

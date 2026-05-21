@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HgnPrivacyPolicyAcceptRequest;
 use App\Models\Information;
+use App\Services\Timeline\TimelineEventService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -26,7 +27,7 @@ class HgnController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function root(): JsonResponse|Application|Factory|View
+    public function root(TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
     {
         $infoList = Information::select(['id', 'head'])
             ->where('open_at', '<', now())
@@ -36,7 +37,9 @@ class HgnController extends Controller
             ->limit(3)
             ->get();
 
-        return $this->tree(view('root', compact('infoList')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
+        $timelineEvents = $timelineEventService->fetchForRoot(5);
+
+        return $this->tree(view('root', compact('infoList', 'timelineEvents')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
     }
 
     /**

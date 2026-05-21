@@ -48,7 +48,7 @@
             @endforelse
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text" data-hgn-scope="full">残りを表示</a>
+                    <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text" data-hgn-scope="full">更新情報を見る</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

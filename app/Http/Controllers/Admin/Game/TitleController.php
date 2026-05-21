@@ -396,9 +396,10 @@ class TitleController extends AbstractAdminController
      * @param GameTitle $title
      * @return RedirectResponse
      */
-    public function recordTimeline(GameTitle $title): RedirectResponse
+    public function recordTimeline(Request $request, GameTitle $title): RedirectResponse
     {
-        $this->timelineEventService->recordGameTitleUpdatedEvent($title->id);
+        $note = trim($request->input('note', ''));
+        $this->timelineEventService->recordGameTitleUpdatedEvent($title->id, $note ?: null);
         return redirect()->route('Admin.Game.Title.Detail', $title)
             ->with('success', 'タイムラインに登録しました。');
     }

@@ -10,6 +10,7 @@ enum TimelineEventType: string
     case FearMeterUpdated = 'fear_meter_updated';
     case GameTitleUpdated = 'game_title_updated';
     case ReviewLiked = 'review_liked';
+    case InformationPosted = 'information_posted';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum TimelineEventType: string
             self::FearMeterUpdated => '怖さメーターを更新しました',
             self::GameTitleUpdated => 'データが更新されました',
             self::ReviewLiked => 'レビューにいいねしてくれました',
+            self::InformationPosted => 'お知らせが投稿されました',
         };
     }
 }
