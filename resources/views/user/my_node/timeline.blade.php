@@ -13,7 +13,7 @@
     @empty
         <section class="node basic">
             <div class="node-content basic">
-                <p>表示できる情報はまだありません。</p>
+                <p>更新情報はないようだ。</p>
             </div>
         </section>
     @endforelse

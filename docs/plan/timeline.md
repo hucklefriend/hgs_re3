@@ -110,6 +110,37 @@ LIMIT 20
 | `game_title_updated` | `GameTitle` 更新時 |
 | `review_liked` | `UserGameTitleReviewLike` 作成時 |
 
+### TimelineEventService による登録
+
+`App\Services\Timeline\TimelineEventService` に登録メソッドが実装済み。各書き込みタイミングでこのサービスを呼ぶ。
+
+```php
+// レビュー投稿・更新（review_posted / review_updated）
+$timelineEventService->recordReviewEvent(int $userId, int $reviewId, bool $isNew);
+
+// 怖さメーター投稿・更新（fear_meter_posted / fear_meter_updated）
+// ※ 怖さメーターの値が変わらない場合は呼ばない
+$timelineEventService->recordFearMeterEvent(int $userId, int $gameTitleId, bool $isNew, int $fearMeterValue);
+```
+
+**実装済みの呼び出し箇所：**
+
+| 呼び出し元 | 登録されるイベント |
+|---|---|
+| `User\ReviewController::publish()` | `review_posted` または `review_updated`（常に）+ `fear_meter_posted` または `fear_meter_updated`（値が変わった場合のみ） |
+| `User\FearMeterController::store()` | `fear_meter_posted` または `fear_meter_updated`（値が変わった場合のみ） |
+| `Admin\Game\TitleController::recordTimeline()` | `game_title_updated`（管理画面の「タイムラインに登録」ボタンから手動実行） |
+
+**未実装の呼び出し箇所：**
+
+| event_type | 実装予定箇所 |
+|---|---|
+| `review_liked` | `UserGameTitleReviewLike` 作成時のコントローラー |
+
+**10分以内の連続更新について：**
+
+更新系イベント（`review_updated` / `fear_meter_updated`）は、同じ actor + subject の組み合わせで過去10分以内にイベントが存在する場合は登録しない（`TimelineEventService::hasRecentEventForSubject()` で判定）。
+
 ### レビューと怖さメーターの同時発火
 
 怖さメーターはレビューとセットで動くケースがあり、以下の場合に複数イベントが同時生成される。
