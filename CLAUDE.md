@@ -33,10 +33,11 @@ npm run test:e2e:report            # View HTML test report
 
 ### Database
 ```bash
-php artisan migrate                # Run migrations
 php artisan db:seed                # Seed database
 php artisan tinker                 # Interactive REPL
 ```
+
+`php artisan migrate` およびロールバック等のマイグレーション操作（`migrate:rollback`, `migrate:reset`, `migrate:refresh`, `migrate:fresh` 等）は**コマンドを提示するのみとし、実行はユーザーに委ねる**。
 
 ## Architecture
 

@@ -19,6 +19,7 @@
 | `mail:test` | `TestMailCommand.php` | メール送信テストを実行する |
 | `test:create-show-tests [type]` | `CreateShowTestsCommand.php` | Playwright 用の基本ページアクセステストを生成する |
 | `shop:check-links` | `CheckShopLinksCommand.php` | ショップリンクの販売状況を10件ずつチェックし、販売終了リンクを記録する |
+| `rss:fetch [--source=X]` | `FetchRssFeedsCommand.php` | RSSフィードを取得してタイムラインに登録する。`--source` でソース指定（`4gamer`/`automaton`/`game_watch`/`game_spark`、デバッグ用） |
 
 ---
 

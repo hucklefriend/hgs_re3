@@ -11,6 +11,7 @@ enum TimelineEventType: string
     case GameTitleUpdated = 'game_title_updated';
     case ReviewLiked = 'review_liked';
     case InformationPosted = 'information_posted';
+    case RssArticlePosted = 'rss_article_posted';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum TimelineEventType: string
             self::GameTitleUpdated => 'データが更新されました',
             self::ReviewLiked => 'レビューにいいねしてくれました',
             self::InformationPosted => 'お知らせが投稿されました',
+            self::RssArticlePosted => 'ゲーム情報が公開されました',
         };
     }
 }

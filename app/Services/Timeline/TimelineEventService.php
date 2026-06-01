@@ -8,11 +8,14 @@ use App\Enums\TimelineEventType;
 use App\Enums\TimelineSubjectType;
 use App\Models\GameTitle;
 use App\Models\Information;
+use App\Models\OgpCache;
+use App\Models\RssArticle;
 use App\Models\TimelineEvent;
 use App\Models\UserFavoriteGameTitle;
 use App\Models\UserGameTitleReview;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class TimelineEventService
 {
@@ -65,14 +68,56 @@ class TimelineEventService
         $favoriteGameTitleIds = UserFavoriteGameTitle::where('user_id', $userId)
             ->pluck('game_title_id');
 
+        $franchiseIds = collect();
+        if ($favoriteGameTitleIds->isNotEmpty()) {
+            $favoriteTitles = GameTitle::with('franchise', 'series.franchise')
+                ->whereIn('id', $favoriteGameTitleIds)
+                ->get();
+            $franchiseIds = $favoriteTitles
+                ->map(fn ($t) => $t->getFranchise()?->id)
+                ->filter()
+                ->unique()
+                ->values();
+        }
+
+        $franchiseTitleIds = collect();
+        if ($franchiseIds->isNotEmpty()) {
+            $franchiseTitleIds = GameTitle::where(function ($q) use ($franchiseIds) {
+                $q->whereIn('game_franchise_id', $franchiseIds)
+                  ->orWhereHas('series', fn ($q2) => $q2->whereIn('game_franchise_id', $franchiseIds));
+            })->pluck('id');
+        }
+
         $events = TimelineEvent::with('actor')
-            ->where(function ($q) use ($userId, $favoriteGameTitleIds) {
+            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds, $franchiseTitleIds) {
                 $q->where(function ($q2) use ($favoriteGameTitleIds) {
                     $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
                         ->whereIn('subject_id', $favoriteGameTitleIds);
                 })
                 ->orWhere('recipient_user_id', $userId)
-                ->orWhere('event_type', TimelineEventType::InformationPosted->value);
+                ->orWhere('event_type', TimelineEventType::InformationPosted->value)
+                ->orWhere(function ($q2) use ($franchiseIds, $franchiseTitleIds) {
+                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
+                       ->where(function ($q3) use ($franchiseIds, $franchiseTitleIds) {
+                           $q3->whereIn('subject_id', function ($sub) {
+                               $sub->select('id')->from('rss_articles')->where('has_horror_keyword', true);
+                           });
+                           if ($franchiseTitleIds->isNotEmpty()) {
+                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseTitleIds) {
+                                   $sub->select('rss_article_id')
+                                       ->from('rss_article_matched_titles')
+                                       ->whereIn('game_title_id', $franchiseTitleIds->all());
+                               });
+                           }
+                           if ($franchiseIds->isNotEmpty()) {
+                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseIds) {
+                                   $sub->select('rss_article_id')
+                                       ->from('rss_article_matched_franchises')
+                                       ->whereIn('game_franchise_id', $franchiseIds->all());
+                               });
+                           }
+                       });
+                });
             })
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -87,6 +132,9 @@ class TimelineEventService
         $informationSubjectIds = $events
             ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)
             ->pluck('subject_id');
+        $rssArticleSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)
+            ->pluck('subject_id');
 
         $reviews = UserGameTitleReview::with('gameTitle')
             ->whereIn('id', $reviewSubjectIds)
@@ -98,14 +146,23 @@ class TimelineEventService
         $informations = Information::whereIn('id', $informationSubjectIds)
             ->get()
             ->keyBy('id');
+        $rssArticles = RssArticle::with('ogpCache')
+            ->whereIn('id', $rssArticleSubjectIds)
+            ->get()
+            ->keyBy('id');
 
-        return $events->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, $informations))->all();
+        $this->fetchMissingOgp($rssArticles);
+
+        return $events->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, $informations, $rssArticles))->all();
     }
 
-    /** @param Collection<int, UserGameTitleReview> $reviews */
-    /** @param Collection<int, GameTitle> $gameTitles */
-    /** @param Collection<int, Information> $informations */
-    private function toDisplayArray(TimelineEvent $event, Collection $reviews, Collection $gameTitles, Collection $informations): array
+    /**
+     * @param Collection<int, UserGameTitleReview> $reviews
+     * @param Collection<int, GameTitle> $gameTitles
+     * @param Collection<int, Information> $informations
+     * @param Collection<int, RssArticle> $rssArticles
+     */
+    private function toDisplayArray(TimelineEvent $event, Collection $reviews, Collection $gameTitles, Collection $informations, Collection $rssArticles = new Collection()): array
     {
         $actor = $event->actor;
         $actorName    = $actor?->withdrawn_at ? '（退会ユーザー）' : $actor?->name;
@@ -119,6 +176,25 @@ class TimelineEventService
             'note'             => $event->payload['note'] ?? null,
             'created_at'       => $event->created_at,
         ];
+
+        if ($event->subject_type === TimelineSubjectType::RssArticle) {
+            $article = $rssArticles[$event->subject_id] ?? null;
+            $ogp     = $article?->ogpCache;
+            return array_merge($base, [
+                'game_title_name'   => null,
+                'game_title_key'    => null,
+                'review_key'        => null,
+                'total_score'       => null,
+                'has_spoiler'       => false,
+                'information_id'    => null,
+                'information_head'  => null,
+                'rss_article_url'   => $article?->url,
+                'rss_source_label'  => $article?->rss_source?->label(),
+                'ogp_title'         => $ogp?->title,
+                'ogp_image'         => $ogp?->image,
+                'ogp_description'   => $ogp?->description,
+            ]);
+        }
 
         if ($event->subject_type === TimelineSubjectType::Review) {
             $review    = $reviews[$event->subject_id] ?? null;
@@ -161,7 +237,7 @@ class TimelineEventService
 
     /**
      * ルートページ用タイムラインイベントを取得する。
-     * お知らせ・ゲームタイトル更新（全件対象）を返す。
+     * お知らせ・ゲームタイトル更新・RSSゲーム情報（全件対象）を返す。
      *
      * @return array<int, array<string, mixed>>
      */
@@ -171,6 +247,7 @@ class TimelineEventService
             ->whereIn('event_type', [
                 TimelineEventType::InformationPosted->value,
                 TimelineEventType::GameTitleUpdated->value,
+                TimelineEventType::RssArticlePosted->value,
             ])
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -182,11 +259,20 @@ class TimelineEventService
         $informationSubjectIds = $events
             ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)
             ->pluck('subject_id');
+        $rssArticleSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)
+            ->pluck('subject_id');
 
-        $gameTitles = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $gameTitles   = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
         $informations = Information::whereIn('id', $informationSubjectIds)->get()->keyBy('id');
+        $rssArticles  = RssArticle::with('ogpCache')
+            ->whereIn('id', $rssArticleSubjectIds)
+            ->get()
+            ->keyBy('id');
 
-        return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, $informations))->all();
+        $this->fetchMissingOgp($rssArticles);
+
+        return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, $informations, $rssArticles))->all();
     }
 
     public function recordInformationEvent(int $informationId): void
@@ -197,6 +283,18 @@ class TimelineEventService
             'actor_id'     => null,
             'subject_type' => TimelineSubjectType::Information,
             'subject_id'   => $informationId,
+            'created_at'   => now(),
+        ]);
+    }
+
+    public function recordRssArticleEvent(int $rssArticleId): void
+    {
+        TimelineEvent::create([
+            'event_type'   => TimelineEventType::RssArticlePosted,
+            'actor_type'   => TimelineActorType::System,
+            'actor_id'     => null,
+            'subject_type' => TimelineSubjectType::RssArticle,
+            'subject_id'   => $rssArticleId,
             'created_at'   => now(),
         ]);
     }
@@ -223,6 +321,25 @@ class TimelineEventService
             ->first();
 
         return $event?->created_at;
+    }
+
+    /** @param Collection<int, RssArticle> $rssArticles */
+    private function fetchMissingOgp(Collection $rssArticles): void
+    {
+        foreach ($rssArticles as $article) {
+            if ($article->ogpCache !== null) {
+                continue;
+            }
+            try {
+                OgpCache::findOrNewByUrl($article->url)->fetch()->saveOrDelete();
+                $article->load('ogpCache');
+            } catch (\Exception $e) {
+                Log::warning('TimelineEventService: OGP on-demand fetch failed', [
+                    'rss_article_id' => $article->id,
+                    'error'          => $e->getMessage(),
+                ]);
+            }
+        }
     }
 
     private function hasRecentEventForSubject(int $userId, TimelineSubjectType $subjectType, int $subjectId): bool

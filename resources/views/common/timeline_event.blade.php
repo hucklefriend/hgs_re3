@@ -15,6 +15,8 @@
                 <i class="bi bi-hand-thumbs-up-fill text-blue-400"></i> {{ $event['actor_name'] }} さんがレビューにいいねしてくれました
             @elseif ($event['type'] === 'information_posted')
                 <i class="bi bi-megaphone text-yellow-400"></i> お知らせが投稿されました
+            @elseif ($event['type'] === 'rss_article_posted')
+                <i class="bi bi-newspaper text-violet-400"></i> {{ $event['rss_source_label'] }}の新着記事
             @endif
         </span>
         <span class="node-pt">●</span>
@@ -36,6 +38,26 @@
             <p class="text-slate-300">{{ $event['game_title_name'] }}</p>
         @elseif ($event['type'] === 'information_posted')
             <p class="text-slate-300">{{ $event['information_head'] }}</p>
+        @elseif ($event['type'] === 'rss_article_posted')
+            @php
+                $articleTitle = $event['ogp_title'] ?? (($event['rss_source_label'] ?? '') . 'の記事');
+            @endphp
+            @if (!empty($event['rss_article_url']))
+                <a href="{{ $event['rss_article_url'] }}" target="_blank" class="block mt-1">
+                    <div class="border border-slate-600 rounded overflow-hidden hover:border-slate-400 transition-colors">
+                        @if (!empty($event['ogp_image']))
+                            <img src="{{ $event['ogp_image'] }}" alt="{{ $articleTitle }}" class="w-full h-28 object-cover">
+                        @endif
+                        <div class="p-2">
+                            <p class="text-slate-100 text-sm font-medium line-clamp-2">{{ $articleTitle }}</p>
+                            @if (!empty($event['ogp_description']))
+                                <p class="text-slate-400 text-xs mt-1 line-clamp-2">{{ $event['ogp_description'] }}</p>
+                            @endif
+                            <p class="text-slate-500 text-xs mt-1">{{ $event['rss_source_label'] }}</p>
+                        </div>
+                    </div>
+                </a>
+            @endif
         @endif
         @if ($event['note'])
             <p class="text-slate-300 mt-1">{!! nl2br(e($event['note'])) !!}</p>
