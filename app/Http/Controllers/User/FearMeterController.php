@@ -11,6 +11,7 @@ use App\Http\Requests\FearMeterDraftSaveRequest;
 use App\Http\Requests\FearMeterStoreRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Services\Timeline\TimelineEventService;
 use App\Support\Pager;
 use App\Models\FearMeterStatisticsDirtyTitle;
 use App\Models\GameTitle;
@@ -27,6 +28,12 @@ use Illuminate\Support\Facades\Schema;
 
 class FearMeterController extends Controller
 {
+    public function __construct(
+        private readonly TimelineEventService $timelineEventService,
+    ) {
+        parent::__construct();
+    }
+
     /**
      * 怖さメーター一覧表示
      *
@@ -192,6 +199,7 @@ class FearMeterController extends Controller
         $existed = UserGameTitleFearMeter::where('user_id', $user->id)
             ->where('game_title_id', $title->id)
             ->first();
+        $oldValue = $existed?->fear_meter->value;
 
         if ($existed) {
             $oldValue = $existed->fear_meter->value;
@@ -228,6 +236,10 @@ class FearMeterController extends Controller
             ]);
 
             FearMeterStatisticsDirtyTitle::updateOrCreate(['game_title_id' => $title->id]);
+        }
+
+        if ($existed === null || $oldValue !== $newFearMeter) {
+            $this->timelineEventService->recordFearMeterEvent($user->id, $title->id, $existed === null, $newFearMeter);
         }
 
         UserGameTitleFearMeterDraft::where('user_id', $user->id)

@@ -77,6 +77,9 @@ Route::group(['prefix' => 'user'], function () {
 
         // いいねしたレビュー
         Route::get('my-node/review-likes', [User\FollowController::class, 'reviewLikes'])->name('User.MyNode.ReviewLikes');
+
+        // タイムライン
+        Route::get('my-node/timeline', [User\MyNodeController::class, 'timeline'])->name('User.MyNode.Timeline');
     });
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 
@@ -265,6 +268,7 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+                Route::post('{' . $prefix . '}/record_timeline', [$class, 'recordTimeline'])->name("{$basename}.RecordTimeline");
                 Route::delete('{' . $prefix . '}/fear-meter/{user}', [$class, 'deleteFearMeter'])->name("{$basename}.DeleteFearMeter");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });

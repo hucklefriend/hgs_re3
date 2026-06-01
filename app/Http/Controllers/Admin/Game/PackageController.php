@@ -251,7 +251,7 @@ class PackageController extends AbstractAdminController
                 $series->save();
             }
         }
-        
+
         foreach ($franchises as $franchise) {
             $franchise->setTitleParam()->save();
         }

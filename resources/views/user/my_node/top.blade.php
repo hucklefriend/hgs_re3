@@ -31,6 +31,29 @@
 
 @section('nodes')
 
+    <section class="node tree-node" id="timeline-node">
+        <div class="node-head">
+            <h2 class="node-head-text">更新情報</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            @forelse ($timelineEvents as $event)
+                @include('common.timeline_event', ['event' => $event])
+            @empty
+                <section class="node basic">
+                    <div class="node-content basic">
+                        <p>更新情報はないようだ。</p>
+                    </div>
+                </section>
+            @endforelse
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text" data-hgn-scope="full">更新情報を見る</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
     <section class="node tree-node" id="user-data-tree-node">
         <div class="node-head">
             <h3 class="node-head-text">ゲーム</h3>

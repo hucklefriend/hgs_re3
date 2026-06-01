@@ -39,3 +39,6 @@ Schedule::command(\App\Console\Commands\SendApachePhpErrorLogCommand::class)
 
 Schedule::command(\App\Console\Commands\CheckShopLinksCommand::class)
     ->cron('40 */2 * * *');
+
+Schedule::command(\App\Console\Commands\FetchRssFeedsCommand::class)
+    ->everyThirtyMinutes();

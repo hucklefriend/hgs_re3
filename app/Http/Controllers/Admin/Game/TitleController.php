@@ -16,6 +16,7 @@ use App\Models\GameTitle;
 use App\Models\User;
 use App\Models\UserGameTitleFearMeter;
 use App\Models\UserGameTitleFearMeterLog;
+use App\Services\Timeline\TimelineEventService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -27,6 +28,9 @@ use Throwable;
 
 class TitleController extends AbstractAdminController
 {
+    public function __construct(private readonly TimelineEventService $timelineEventService)
+    {
+    }
     /**
      * インデックス
      *
@@ -101,9 +105,10 @@ class TitleController extends AbstractAdminController
             ->paginate(30, ['*'], 'fear_meter_page');
 
         return view('admin.game.title.detail', [
-            'model' => $title,
-            'tree'  => GameTree::getTree($title),
-            'fearMeters' => $fearMeters,
+            'model'           => $title,
+            'tree'            => GameTree::getTree($title),
+            'fearMeters'      => $fearMeters,
+            'lastTimelineAt'  => $this->timelineEventService->getLastGameTitleUpdatedAt($title->id),
         ]);
     }
 
@@ -383,6 +388,20 @@ class TitleController extends AbstractAdminController
     {
         $title->mediaMixes()->sync($request->validated('game_media_mix_ids'));
         return redirect()->route('Admin.Game.Title.Detail', $title);
+    }
+
+    /**
+     * タイムラインに登録
+     *
+     * @param GameTitle $title
+     * @return RedirectResponse
+     */
+    public function recordTimeline(Request $request, GameTitle $title): RedirectResponse
+    {
+        $note = trim($request->input('note', ''));
+        $this->timelineEventService->recordGameTitleUpdatedEvent($title->id, $note ?: null);
+        return redirect()->route('Admin.Game.Title.Detail', $title)
+            ->with('success', 'タイムラインに登録しました。');
     }
 
     /**
