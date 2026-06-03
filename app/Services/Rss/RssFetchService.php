@@ -182,10 +182,6 @@ class RssFetchService
                 'created_at'         => now(),
             ]);
 
-            if (!empty($result->matchedTitleIds)) {
-                $article->matchedTitles()->attach($result->matchedTitleIds);
-            }
-
             if (!empty($result->matchedFranchiseIds)) {
                 $article->matchedFranchises()->attach($result->matchedFranchiseIds);
             }

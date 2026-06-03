@@ -43,17 +43,21 @@
                 $articleTitle = $event['ogp_title'] ?? (($event['rss_source_label'] ?? '') . 'の記事');
             @endphp
             @if (!empty($event['rss_article_url']))
-                <a href="{{ $event['rss_article_url'] }}" target="_blank" class="block mt-1">
-                    <div class="border border-slate-600 rounded overflow-hidden hover:border-slate-400 transition-colors">
-                        @if (!empty($event['ogp_image']))
-                            <img src="{{ $event['ogp_image'] }}" alt="{{ $articleTitle }}" class="w-full h-28 object-cover">
-                        @endif
-                        <div class="p-2">
+                <a href="{{ $event['rss_article_url'] }}" target="_blank" class="timeline-ogp-card block mt-1">
+                    <div class="border border-slate-600 rounded overflow-hidden">
+                        <div class="p-2 pb-1">
                             <p class="text-slate-100 text-sm font-medium line-clamp-2">{{ $articleTitle }}</p>
-                            @if (!empty($event['ogp_description']))
-                                <p class="text-slate-400 text-xs mt-1 line-clamp-2">{{ $event['ogp_description'] }}</p>
+                        </div>
+                        <div class="flex">
+                            @if (!empty($event['ogp_image']))
+                                <img src="{{ $event['ogp_image'] }}" alt="{{ $articleTitle }}" class="w-auto shrink-0 object-cover" style="max-height:200px">
                             @endif
-                            <p class="text-slate-500 text-xs mt-1">{{ $event['rss_source_label'] }}</p>
+                            <div class="p-2 flex flex-col justify-between min-w-0">
+                                @if (!empty($event['ogp_description']))
+                                    <p class="text-slate-400 text-xs line-clamp-5">{{ $event['ogp_description'] }}</p>
+                                @endif
+                                <p class="text-slate-500 text-xs mt-1">{{ $event['rss_source_label'] }}<br>{{ ($event['rss_published_at'] ?? $event['created_at'])->format('Y-m-d H:i') }}</p>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -62,7 +66,9 @@
         @if ($event['note'])
             <p class="text-slate-300 mt-1">{!! nl2br(e($event['note'])) !!}</p>
         @endif
-        <p class="text-xs text-slate-500 mt-1">{{ $event['created_at']->format('Y-m-d H:i') }}</p>
+        @if ($event['type'] !== 'rss_article_posted')
+            <p class="text-xs text-slate-500 mt-1">{{ $event['created_at']->format('Y-m-d H:i') }}</p>
+        @endif
         <div class="mt-2 text-xs">
             @if (in_array($event['type'], ['review_posted', 'review_updated', 'review_liked']) && $event['game_title_key'] && $event['review_key'])
                 <a href="{{ route('Game.TitleReview', ['titleKey' => $event['game_title_key'], 'reviewKey' => $event['review_key']]) }}" data-hgn-scope="full"><i class="bi bi-file-text"></i> レビュー詳細</a>

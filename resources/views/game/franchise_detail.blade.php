@@ -8,6 +8,26 @@
 @endsection
 
 @section('nodes')
+    @if (!empty($timelineEvents))
+    <section class="node tree-node" id="franchise-timeline-tree-node">
+        <div class="node-head">
+            <h2 class="node-head-text">新着情報</h2>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            @foreach ($timelineEvents as $event)
+                @include('common.timeline_event', ['event' => $event])
+            @endforeach
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('Game.FranchiseTimeline', ['franchiseKey' => $franchise->key]) }}" class="node-head-text" data-hgn-scope="full">新着情報をもっと見る</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
+    @endif
+
     <section class="node tree-node" id="title-lineup-tree-node">
         <div class="node-head">
             <h2 class="node-head-text">タイトルラインナップ</h2>

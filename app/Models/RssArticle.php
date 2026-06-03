@@ -20,11 +20,6 @@ class RssArticle extends Model
         'created_at'         => 'datetime',
     ];
 
-    public function matchedTitles(): BelongsToMany
-    {
-        return $this->belongsToMany(GameTitle::class, 'rss_article_matched_titles', 'rss_article_id', 'game_title_id');
-    }
-
     public function matchedFranchises(): BelongsToMany
     {
         return $this->belongsToMany(GameFranchise::class, 'rss_article_matched_franchises', 'rss_article_id', 'game_franchise_id');

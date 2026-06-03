@@ -42,6 +42,12 @@ class HgnController extends Controller
         return $this->tree(view('root', compact('infoList', 'timelineEvents')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
     }
 
+    public function timeline(TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
+    {
+        $events = $timelineEventService->fetchForRoot(20);
+        return $this->tree(view('timeline', compact('events')));
+    }
+
     /**
      * お知らせ一覧
      *

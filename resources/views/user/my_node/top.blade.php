@@ -33,7 +33,7 @@
 
     <section class="node tree-node" id="timeline-node">
         <div class="node-head">
-            <h2 class="node-head-text">更新情報</h2>
+            <h2 class="node-head-text">新着情報</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
@@ -100,6 +100,13 @@
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree" id="user-tree-node">
+
+            <section class="node basic" id="timeline-settings-link-node">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.TimelineSettings') }}" class="node-head-text" data-hgn-scope="full">タイムライン設定</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
 
             <section class="node tree-node" id="user-account-tree-node">
                 <div class="node-head">

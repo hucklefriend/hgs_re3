@@ -80,6 +80,11 @@ Route::group(['prefix' => 'user'], function () {
 
         // タイムライン
         Route::get('my-node/timeline', [User\MyNodeController::class, 'timeline'])->name('User.MyNode.Timeline');
+
+        // タイムライン設定
+        Route::get('my-node/timeline-settings', [User\TimelineSettingsController::class, 'show'])->name('User.MyNode.TimelineSettings');
+        Route::post('my-node/timeline-settings/mynode', [User\TimelineSettingsController::class, 'updateMyNode'])->name('User.MyNode.TimelineSettings.UpdateMyNode');
+        Route::post('my-node/timeline-settings/root', [User\TimelineSettingsController::class, 'updateRoot'])->name('User.MyNode.TimelineSettings.UpdateRoot');
     });
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 
@@ -404,6 +409,7 @@ $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::post('privacy/accept', [$class, 'acceptPrivacyPolicy'])->name('PrivacyPolicy.Accept');
 Route::get('about', [$class, 'about'])->name('About');
+Route::get('/timeline', [HgnController::class, 'timeline'])->name('Timeline');
 Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
 Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');
 Route::get('/contact', [ContactController::class, 'form'])->name('Contact');
@@ -417,6 +423,8 @@ Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // フランチャイズ詳細
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetail'])->name('Game.FranchiseDetail');
+    // フランチャイズ新着情報タイムライン
+    Route::get('/franchise/{franchiseKey}/timeline', [$class, 'franchiseTimeline'])->name('Game.FranchiseTimeline');
     // フランチャイズ
     Route::get('/franchises/{prefix?}', [$class, 'franchises'])->name('Game.Franchises');
     // ホラーゲームラインナップ
