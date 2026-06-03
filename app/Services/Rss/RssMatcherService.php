@@ -4,7 +4,6 @@ namespace App\Services\Rss;
 
 use App\Models\GameFranchise;
 use App\Models\GameSeries;
-use App\Models\GameTitle;
 use Illuminate\Support\Facades\Cache;
 
 class RssMatcherService
@@ -13,9 +12,6 @@ class RssMatcherService
     private const MIN_TERM_LENGTH = 3;
     private const CACHE_TTL = 3600; // 1時間
     private const CACHE_KEY = 'rss_matcher_terms';
-
-    /** @var array{id: int, term: string}[] */
-    private array $titleTerms = [];
 
     /** @var array{id: int, term: string}[] */
     private array $franchiseTerms = [];
@@ -35,30 +31,10 @@ class RssMatcherService
         $cached = Cache::get(self::CACHE_KEY);
 
         if ($cached !== null) {
-            $this->titleTerms    = $cached['titleTerms'];
             $this->franchiseTerms = $cached['franchiseTerms'];
             $this->built = true;
             return;
         }
-
-        $titleTerms = [];
-
-        GameTitle::select('id', 'name', 'search_synonyms')->each(function (GameTitle $title) use (&$titleTerms) {
-            $name = trim($title->name);
-            if ($name !== '' && mb_strlen($name) > self::MIN_TERM_LENGTH) {
-                $titleTerms[] = ['id' => $title->id, 'term' => $name];
-            }
-
-            if (!empty($title->search_synonyms)) {
-                $synonyms = preg_split('/\r\n|\r|\n/', $title->search_synonyms);
-                foreach ($synonyms as $synonym) {
-                    $synonym = trim($synonym);
-                    if ($synonym !== '' && mb_strlen($synonym) > self::MIN_TERM_LENGTH) {
-                        $titleTerms[] = ['id' => $title->id, 'term' => $synonym];
-                    }
-                }
-            }
-        });
 
         $franchiseTerms = [];
 
@@ -77,12 +53,10 @@ class RssMatcherService
             }
         });
 
-        $this->titleTerms    = $titleTerms;
         $this->franchiseTerms = $franchiseTerms;
         $this->built = true;
 
         Cache::put(self::CACHE_KEY, [
-            'titleTerms'    => $titleTerms,
             'franchiseTerms' => $franchiseTerms,
         ], self::CACHE_TTL);
     }
@@ -95,14 +69,7 @@ class RssMatcherService
     {
         $hasHorrorKeyword = str_contains($text, self::HORROR_KEYWORD);
 
-        $matchedTitleIds    = [];
         $matchedFranchiseIds = [];
-
-        foreach ($this->titleTerms as ['id' => $id, 'term' => $term]) {
-            if (str_contains($text, $term)) {
-                $matchedTitleIds[$id] = true;
-            }
-        }
 
         foreach ($this->franchiseTerms as ['id' => $id, 'term' => $term]) {
             if (str_contains($text, $term)) {
@@ -111,7 +78,6 @@ class RssMatcherService
         }
 
         return new MatchResult(
-            matchedTitleIds: array_keys($matchedTitleIds),
             matchedFranchiseIds: array_keys($matchedFranchiseIds),
             hasHorrorKeyword: $hasHorrorKeyword,
         );
@@ -124,7 +90,6 @@ class RssMatcherService
     {
         Cache::forget(self::CACHE_KEY);
         $this->built = false;
-        $this->titleTerms    = [];
         $this->franchiseTerms = [];
     }
 }

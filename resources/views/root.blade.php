@@ -76,7 +76,7 @@
     </section>
     <section class="node tree-node" id="root-timeline-node">
         <div class="node-head">
-            <h2 class="node-head-text">更新情報</h2>
+            <h2 class="node-head-text">新着情報</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
@@ -89,6 +89,12 @@
                     </div>
                 </section>
             @endforelse
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('Timeline') }}" class="node-head-text" data-hgn-scope="full">新着情報をもっと見る</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
         </div>
     </section>
 

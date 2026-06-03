@@ -80,35 +80,20 @@ class TimelineEventService
                 ->values();
         }
 
-        $franchiseTitleIds = collect();
-        if ($franchiseIds->isNotEmpty()) {
-            $franchiseTitleIds = GameTitle::where(function ($q) use ($franchiseIds) {
-                $q->whereIn('game_franchise_id', $franchiseIds)
-                  ->orWhereHas('series', fn ($q2) => $q2->whereIn('game_franchise_id', $franchiseIds));
-            })->pluck('id');
-        }
-
         $events = TimelineEvent::with('actor')
-            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds, $franchiseTitleIds) {
+            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds) {
                 $q->where(function ($q2) use ($favoriteGameTitleIds) {
                     $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
                         ->whereIn('subject_id', $favoriteGameTitleIds);
                 })
                 ->orWhere('recipient_user_id', $userId)
                 ->orWhere('event_type', TimelineEventType::InformationPosted->value)
-                ->orWhere(function ($q2) use ($franchiseIds, $franchiseTitleIds) {
+                ->orWhere(function ($q2) use ($franchiseIds) {
                     $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
-                       ->where(function ($q3) use ($franchiseIds, $franchiseTitleIds) {
+                       ->where(function ($q3) use ($franchiseIds) {
                            $q3->whereIn('subject_id', function ($sub) {
                                $sub->select('id')->from('rss_articles')->where('has_horror_keyword', true);
                            });
-                           if ($franchiseTitleIds->isNotEmpty()) {
-                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseTitleIds) {
-                                   $sub->select('rss_article_id')
-                                       ->from('rss_article_matched_titles')
-                                       ->whereIn('game_title_id', $franchiseTitleIds->all());
-                               });
-                           }
                            if ($franchiseIds->isNotEmpty()) {
                                $q3->orWhereIn('subject_id', function ($sub) use ($franchiseIds) {
                                    $sub->select('rss_article_id')
@@ -193,6 +178,7 @@ class TimelineEventService
                 'ogp_title'         => $ogp?->title,
                 'ogp_image'         => $ogp?->image,
                 'ogp_description'   => $ogp?->description,
+                'rss_published_at'  => $article?->published_at,
             ]);
         }
 
@@ -233,6 +219,58 @@ class TimelineEventService
             'information_id'   => null,
             'information_head' => null,
         ]);
+    }
+
+    /**
+     * フランチャイズ詳細ページ用タイムラインイベントを取得する。
+     * 対象フランチャイズに紐づいた RSS 記事と、フランチャイズ内タイトルの更新を返す。
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function fetchForFranchise(int $franchiseId, int $limit = 10): array
+    {
+        $franchiseTitleIds = GameTitle::where(function ($q) use ($franchiseId) {
+            $q->where('game_franchise_id', $franchiseId)
+              ->orWhereHas('series', fn ($q2) => $q2->where('game_franchise_id', $franchiseId));
+        })->pluck('id');
+
+        $events = TimelineEvent::with('actor')
+            ->where(function ($q) use ($franchiseId, $franchiseTitleIds) {
+                $q->where(function ($q2) use ($franchiseId) {
+                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
+                       ->whereIn('subject_id', function ($sub) use ($franchiseId) {
+                           $sub->select('rss_article_id')
+                               ->from('rss_article_matched_franchises')
+                               ->where('game_franchise_id', $franchiseId);
+                       });
+                });
+                if ($franchiseTitleIds->isNotEmpty()) {
+                    $q->orWhere(function ($q2) use ($franchiseTitleIds) {
+                        $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
+                           ->whereIn('subject_id', $franchiseTitleIds);
+                    });
+                }
+            })
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+
+        $gameTitleSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)
+            ->pluck('subject_id');
+        $rssArticleSubjectIds = $events
+            ->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)
+            ->pluck('subject_id');
+
+        $gameTitles  = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $rssArticles = RssArticle::with('ogpCache')
+            ->whereIn('id', $rssArticleSubjectIds)
+            ->get()
+            ->keyBy('id');
+
+        $this->fetchMissingOgp($rssArticles);
+
+        return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, collect(), $rssArticles))->all();
     }
 
     /**
