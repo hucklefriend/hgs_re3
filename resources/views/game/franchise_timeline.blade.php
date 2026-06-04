@@ -8,9 +8,11 @@
         @include('common.timeline_event', ['event' => $event])
     @empty
         <section class="node basic">
-            <div class="node-content basic">
-                <p>新着情報はないようだ。</p>
+            <div class="node-head">
+                <span class="node-head-text">新着情報はないようだ。</span>
+                <span class="node-pt">●</span>
             </div>
+            <div class="node-content basic"></div>
         </section>
     @endforelse
 
