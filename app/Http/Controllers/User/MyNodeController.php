@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\HgnController;
 use App\Services\Timeline\TimelineEventService;
+use App\Support\Pager;
 use App\Services\TwoFactorRecoveryCodeService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
@@ -388,8 +389,10 @@ class MyNodeController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $events = $this->timelineEventService->fetchForUser($user->id, 20);
-        return $this->tree(view('user.my_node.timeline', compact('events')));
+        $paginator = $this->timelineEventService->fetchForUserPaginated($user->id, 20);
+        $events = $paginator->items();
+        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'User.MyNode.Timeline');
+        return $this->tree(view('user.my_node.timeline', compact('events', 'pager')));
     }
 
     /**

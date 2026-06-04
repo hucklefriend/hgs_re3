@@ -48,11 +48,11 @@
                         <div class="p-2 pb-1">
                             <p class="text-slate-100 text-sm font-medium line-clamp-2">{{ $articleTitle }}</p>
                         </div>
-                        <div class="flex">
+                        <div class="block sm:flex">
                             @if (!empty($event['ogp_image']))
-                                <img src="{{ $event['ogp_image'] }}" alt="{{ $articleTitle }}" class="w-auto shrink-0 object-cover" style="max-height:200px">
+                                <img src="{{ $event['ogp_image'] }}" alt="{{ $articleTitle }}" class="w-full sm:w-auto sm:shrink-0 object-cover sm:max-h-[200px]">
                             @endif
-                            <div class="p-2 flex flex-col justify-between min-w-0">
+                            <div class="hidden sm:flex p-2 flex-col justify-between min-w-0">
                                 @if (!empty($event['ogp_description']))
                                     <p class="text-slate-400 text-xs line-clamp-5">{{ $event['ogp_description'] }}</p>
                                 @endif

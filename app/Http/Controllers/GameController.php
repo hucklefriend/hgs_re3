@@ -522,9 +522,11 @@ class GameController extends Controller
             abort(404);
         }
 
-        $events = $timelineEventService->fetchForFranchise($franchise->id, 20);
+        $paginator = $timelineEventService->fetchForFranchisePaginated($franchise->id, 20);
+        $events = $paginator->items();
+        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'Game.FranchiseTimeline', ['franchiseKey' => $franchise->key]);
 
-        return $this->tree(view('game.franchise_timeline', compact('franchise', 'events')));
+        return $this->tree(view('game.franchise_timeline', compact('franchise', 'events', 'pager')));
     }
 
     /**

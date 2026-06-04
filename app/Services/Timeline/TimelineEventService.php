@@ -13,6 +13,7 @@ use App\Models\RssArticle;
 use App\Models\TimelineEvent;
 use App\Models\UserFavoriteGameTitle;
 use App\Models\UserGameTitleReview;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -271,6 +272,138 @@ class TimelineEventService
         $this->fetchMissingOgp($rssArticles);
 
         return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, collect(), $rssArticles))->all();
+    }
+
+    public function fetchForRootPaginated(int $perPage = 20): LengthAwarePaginator
+    {
+        $paginator = TimelineEvent::with('actor')
+            ->whereIn('event_type', [
+                TimelineEventType::InformationPosted->value,
+                TimelineEventType::GameTitleUpdated->value,
+                TimelineEventType::RssArticlePosted->value,
+            ])
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+
+        $items = $paginator->getCollection();
+
+        $gameTitleSubjectIds   = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)->pluck('subject_id');
+        $informationSubjectIds = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)->pluck('subject_id');
+        $rssArticleSubjectIds  = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)->pluck('subject_id');
+
+        $gameTitles   = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $informations = Information::whereIn('id', $informationSubjectIds)->get()->keyBy('id');
+        $rssArticles  = RssArticle::with('ogpCache')->whereIn('id', $rssArticleSubjectIds)->get()->keyBy('id');
+
+        $this->fetchMissingOgp($rssArticles);
+
+        return $paginator->setCollection(
+            $items->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, $informations, $rssArticles))
+        );
+    }
+
+    public function fetchForFranchisePaginated(int $franchiseId, int $perPage = 20): LengthAwarePaginator
+    {
+        $franchiseTitleIds = GameTitle::where(function ($q) use ($franchiseId) {
+            $q->where('game_franchise_id', $franchiseId)
+              ->orWhereHas('series', fn ($q2) => $q2->where('game_franchise_id', $franchiseId));
+        })->pluck('id');
+
+        $paginator = TimelineEvent::with('actor')
+            ->where(function ($q) use ($franchiseId, $franchiseTitleIds) {
+                $q->where(function ($q2) use ($franchiseId) {
+                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
+                       ->whereIn('subject_id', function ($sub) use ($franchiseId) {
+                           $sub->select('rss_article_id')
+                               ->from('rss_article_matched_franchises')
+                               ->where('game_franchise_id', $franchiseId);
+                       });
+                });
+                if ($franchiseTitleIds->isNotEmpty()) {
+                    $q->orWhere(function ($q2) use ($franchiseTitleIds) {
+                        $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
+                           ->whereIn('subject_id', $franchiseTitleIds);
+                    });
+                }
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+
+        $items = $paginator->getCollection();
+
+        $gameTitleSubjectIds  = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)->pluck('subject_id');
+        $rssArticleSubjectIds = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)->pluck('subject_id');
+
+        $gameTitles  = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $rssArticles = RssArticle::with('ogpCache')->whereIn('id', $rssArticleSubjectIds)->get()->keyBy('id');
+
+        $this->fetchMissingOgp($rssArticles);
+
+        return $paginator->setCollection(
+            $items->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, collect(), $rssArticles))
+        );
+    }
+
+    public function fetchForUserPaginated(int $userId, int $perPage = 20): LengthAwarePaginator
+    {
+        $favoriteGameTitleIds = UserFavoriteGameTitle::where('user_id', $userId)->pluck('game_title_id');
+
+        $franchiseIds = collect();
+        if ($favoriteGameTitleIds->isNotEmpty()) {
+            $favoriteTitles = GameTitle::with('franchise', 'series.franchise')
+                ->whereIn('id', $favoriteGameTitleIds)
+                ->get();
+            $franchiseIds = $favoriteTitles
+                ->map(fn ($t) => $t->getFranchise()?->id)
+                ->filter()
+                ->unique()
+                ->values();
+        }
+
+        $paginator = TimelineEvent::with('actor')
+            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds) {
+                $q->where(function ($q2) use ($favoriteGameTitleIds) {
+                    $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
+                        ->whereIn('subject_id', $favoriteGameTitleIds);
+                })
+                ->orWhere('recipient_user_id', $userId)
+                ->orWhere('event_type', TimelineEventType::InformationPosted->value)
+                ->orWhere(function ($q2) use ($franchiseIds) {
+                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
+                       ->where(function ($q3) use ($franchiseIds) {
+                           $q3->whereIn('subject_id', function ($sub) {
+                               $sub->select('id')->from('rss_articles')->where('has_horror_keyword', true);
+                           });
+                           if ($franchiseIds->isNotEmpty()) {
+                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseIds) {
+                                   $sub->select('rss_article_id')
+                                       ->from('rss_article_matched_franchises')
+                                       ->whereIn('game_franchise_id', $franchiseIds->all());
+                               });
+                           }
+                       });
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+
+        $items = $paginator->getCollection();
+
+        $reviewSubjectIds      = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Review)->pluck('subject_id');
+        $gameTitleSubjectIds   = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)->pluck('subject_id');
+        $informationSubjectIds = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Information)->pluck('subject_id');
+        $rssArticleSubjectIds  = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::RssArticle)->pluck('subject_id');
+
+        $reviews      = UserGameTitleReview::with('gameTitle')->whereIn('id', $reviewSubjectIds)->get()->keyBy('id');
+        $gameTitles   = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+        $informations = Information::whereIn('id', $informationSubjectIds)->get()->keyBy('id');
+        $rssArticles  = RssArticle::with('ogpCache')->whereIn('id', $rssArticleSubjectIds)->get()->keyBy('id');
+
+        $this->fetchMissingOgp($rssArticles);
+
+        return $paginator->setCollection(
+            $items->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, $informations, $rssArticles))
+        );
     }
 
     /**
