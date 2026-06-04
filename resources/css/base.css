@@ -64,6 +64,25 @@ a {
     }
 }
 
+a.timeline-ogp-card {
+    color: inherit;
+    text-shadow: none;
+
+    > div {
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    &:hover {
+        color: inherit;
+        text-shadow: none !important;
+
+        > div {
+            border-color: var(--node-pt-light);
+            box-shadow: 0 0 5px var(--node-pt-light-shadow), 0 0 15px var(--node-pt-light-shadow);
+        }
+    }
+}
+
 h1 {
     font-size: 25px
 }

@@ -77,6 +77,14 @@ Route::group(['prefix' => 'user'], function () {
 
         // いいねしたレビュー
         Route::get('my-node/review-likes', [User\FollowController::class, 'reviewLikes'])->name('User.MyNode.ReviewLikes');
+
+        // タイムライン
+        Route::get('my-node/timeline', [User\MyNodeController::class, 'timeline'])->name('User.MyNode.Timeline');
+
+        // タイムライン設定
+        Route::get('my-node/timeline-settings', [User\TimelineSettingsController::class, 'show'])->name('User.MyNode.TimelineSettings');
+        Route::post('my-node/timeline-settings/mynode', [User\TimelineSettingsController::class, 'updateMyNode'])->name('User.MyNode.TimelineSettings.UpdateMyNode');
+        Route::post('my-node/timeline-settings/root', [User\TimelineSettingsController::class, 'updateRoot'])->name('User.MyNode.TimelineSettings.UpdateRoot');
     });
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 
@@ -161,6 +169,15 @@ Route::group(['prefix' => 'admin'], function () {
             // ショップリンク販売終了
             Route::get('shop-sold-out', [Admin\Manage\ShopSoldOutController::class, 'index'])->name('Admin.Manage.ShopSoldOut');
             Route::delete('shop-sold-out/{result}', [Admin\Manage\ShopSoldOutController::class, 'destroy'])->name('Admin.Manage.ShopSoldOut.Destroy');
+
+            // RSS記事
+            Route::get('rss-article', [Admin\Manage\RssArticleController::class, 'index'])->name('Admin.Manage.RssArticle');
+            Route::get('rss-article/fetch-log', [Admin\Manage\RssArticleController::class, 'fetchLog'])->name('Admin.Manage.RssArticle.FetchLog');
+            Route::post('rss-article/fetch', [Admin\Manage\RssArticleController::class, 'executeFetch'])->name('Admin.Manage.RssArticle.ExecuteFetch');
+            Route::get('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'show'])->name('Admin.Manage.RssArticle.Show');
+            Route::put('rss-article/{rssArticle}/franchises', [Admin\Manage\RssArticleController::class, 'updateFranchises'])->name('Admin.Manage.RssArticle.UpdateFranchises');
+            Route::delete('rss-article/{rssArticle}/timeline-event', [Admin\Manage\RssArticleController::class, 'destroyTimelineEvent'])->name('Admin.Manage.RssArticle.DestroyTimelineEvent');
+            Route::delete('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'destroy'])->name('Admin.Manage.RssArticle.Destroy');
         });
 
         // マスター
@@ -265,6 +282,7 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
+                Route::post('{' . $prefix . '}/record_timeline', [$class, 'recordTimeline'])->name("{$basename}.RecordTimeline");
                 Route::delete('{' . $prefix . '}/fear-meter/{user}', [$class, 'deleteFearMeter'])->name("{$basename}.DeleteFearMeter");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -400,6 +418,7 @@ $class = HgnController::class;
 Route::get('privacy', [$class, 'privacyPolicy'])->name('PrivacyPolicy');
 Route::post('privacy/accept', [$class, 'acceptPrivacyPolicy'])->name('PrivacyPolicy.Accept');
 Route::get('about', [$class, 'about'])->name('About');
+Route::get('/timeline', [HgnController::class, 'timeline'])->name('Timeline');
 Route::get('/info', [HgnController::class, 'infomations'])->name('Informations');
 Route::get('/info/{info}', [HgnController::class, 'infomationDetail'])->name('InformationDetail');
 Route::get('/contact', [ContactController::class, 'form'])->name('Contact');
@@ -413,6 +432,8 @@ Route::group(['prefix' => 'game'], function () {
     $class = \App\Http\Controllers\GameController::class;
     // フランチャイズ詳細
     Route::get('/franchise/{franchiseKey}', [$class, 'franchiseDetail'])->name('Game.FranchiseDetail');
+    // フランチャイズ新着情報タイムライン
+    Route::get('/franchise/{franchiseKey}/timeline', [$class, 'franchiseTimeline'])->name('Game.FranchiseTimeline');
     // フランチャイズ
     Route::get('/franchises/{prefix?}', [$class, 'franchises'])->name('Game.Franchises');
     // ホラーゲームラインナップ

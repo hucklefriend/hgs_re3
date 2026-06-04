@@ -74,23 +74,27 @@
             --}}
         </div>
     </section>
-    <section class="node basic" id="information-node">
+    <section class="node tree-node" id="root-timeline-node">
         <div class="node-head">
-            <a href="{{ route('Informations') }}" class="node-head-text">お知らせ</a>
+            <h2 class="node-head-text">新着情報タイムライン</h2>
             <span class="node-pt">●</span>
         </div>
-        <div class="node-content behind">
-            @if (!$infoList->isEmpty())
-                @foreach ($infoList as $info)
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>{{ $info->head }}</span>
+        <div class="node-content tree">
+            @forelse ($timelineEvents as $event)
+                @include('common.timeline_event', ['event' => $event])
+            @empty
+                <section class="node basic">
+                    <div class="node-content basic">
+                        <p>新着情報はないようだ。</p>
                     </div>
-                @endforeach
-            @else
-                <div class="behind-node">
-                    <span class="node-pt">●</span><span>現在、お知らせはありません。</span>
+                </section>
+            @endforelse
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('Timeline') }}" class="node-head-text" data-hgn-scope="full">新着情報をもっと見る</a>
+                    <span class="node-pt">●</span>
                 </div>
-            @endif
+            </section>
         </div>
     </section>
 
@@ -130,6 +134,25 @@
         </div>
     </section>
 
+    <section class="node basic" id="information-node">
+        <div class="node-head">
+            <a href="{{ route('Informations') }}" class="node-head-text">お知らせ</a>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content behind">
+            @if (!$infoList->isEmpty())
+                @foreach ($infoList as $info)
+                    <div class="behind-node">
+                        <span class="node-pt">●</span><span>{{ $info->head }}</span>
+                    </div>
+                @endforeach
+            @else
+                <div class="behind-node">
+                    <span class="node-pt">●</span><span>現在、お知らせはありません。</span>
+                </div>
+            @endif
+        </div>
+    </section>
     <section class="node basic" id="about-node">
         <div class="node-head">
             <a href="{{ route('About') }}" class="node-head-text" id="about-a">このサイトについて</a>
@@ -148,4 +171,13 @@
             <span class="node-pt">●</span>
         </div>
     </section>
+
+    @if (is_admin_user())
+    <section class="node basic">
+        <div class="node-head">
+            <a href="{{ route('Admin.Dashboard') }}" class="node-head-text" rel="external">管理</a>
+            <span class="node-pt">●</span>
+        </div>
+    </section>
+    @endif
 @endsection

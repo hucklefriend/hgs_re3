@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -126,5 +127,13 @@ class User extends Authenticatable
     public function hasTwoFactor(): bool
     {
         return $this->two_factor_method !== null;
+    }
+
+    /**
+     * タイムライン設定
+     */
+    public function timelineSetting(): HasOne
+    {
+        return $this->hasOne(UserTimelineSetting::class);
     }
 }

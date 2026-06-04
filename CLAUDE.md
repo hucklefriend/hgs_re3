@@ -33,10 +33,11 @@ npm run test:e2e:report            # View HTML test report
 
 ### Database
 ```bash
-php artisan migrate                # Run migrations
 php artisan db:seed                # Seed database
 php artisan tinker                 # Interactive REPL
 ```
+
+`php artisan migrate` およびロールバック等のマイグレーション操作（`migrate:rollback`, `migrate:reset`, `migrate:refresh`, `migrate:fresh` 等）は**コマンドを提示するのみとし、実行はユーザーに委ねる**。
 
 ## Architecture
 
@@ -73,6 +74,14 @@ php artisan tinker                 # Interactive REPL
 @docs/claude/discord-webhook.md
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md
+
+## Implementation Plans
+
+未実装・実装途中の機能の設計資料は `docs/plan/` 配下に置く。
+
+| 機能 | 資料 |
+|---|---|
+| タイムライン | `docs/plan/timeline.md` |
 
 ## Interaction Rules
 - プロンプトに全角の「？」が含まれる場合は、実装を行わず回答のみ行う。半角の「?」はこの対象外。

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\HgnController;
+use App\Services\Timeline\TimelineEventService;
+use App\Support\Pager;
 use App\Services\TwoFactorRecoveryCodeService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
@@ -31,6 +33,12 @@ use Laravel\Socialite\Facades\Socialite;
 
 class MyNodeController extends Controller
 {
+    public function __construct(
+        private readonly TimelineEventService $timelineEventService,
+    ) {
+        parent::__construct();
+    }
+
     /**
      * マイノードトップ表示
      *
@@ -56,8 +64,10 @@ class MyNodeController extends Controller
 
         $request->session()->regenerateToken();
 
+        $timelineEvents = $this->timelineEventService->fetchForUser($user->id, 5);
+
         return $this->tree(
-            view('user.my_node.top', compact('user', 'needsAcceptance', 'recoveryCodeRemaining')),
+            view('user.my_node.top', compact('user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents')),
             options: [
                 'url' => route('User.MyNode.Top'),
                 'csrfToken' => csrf_token(),
@@ -368,6 +378,21 @@ class MyNodeController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('Account.Login')->with('success', "退会が完了しました。\r\nご利用ありがとうございました。");
+    }
+
+    /**
+     * タイムライン表示
+     *
+     * @return JsonResponse|Application|Factory|View
+     */
+    public function timeline(): JsonResponse|Application|Factory|View
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $paginator = $this->timelineEventService->fetchForUserPaginated($user->id, 20);
+        $events = $paginator->items();
+        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'User.MyNode.Timeline');
+        return $this->tree(view('user.my_node.timeline', compact('events', 'pager')));
     }
 
     /**

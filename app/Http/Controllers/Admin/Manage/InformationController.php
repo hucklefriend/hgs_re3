@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AbstractAdminController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Manage\InformationRequest;
 use App\Models\Information;
+use App\Services\Timeline\TimelineEventService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -70,12 +71,14 @@ class InformationController extends AbstractAdminController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(InformationRequest $request)
+    public function store(InformationRequest $request, TimelineEventService $timelineEventService)
     {
         $validated = $this->applyNoEndCloseAt($request->validated());
         $info = new Information();
         $info->fill($this->normalizeInformationDatetimes($validated));
         $info->save();
+
+        $timelineEventService->recordInformationEvent($info->id);
 
         return redirect()->route('Admin.Manage.Information.Show', $info);
     }

@@ -24,6 +24,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Services\Timeline\TimelineEventService;
 use App\Support\Pager;
 use Illuminate\Support\Facades\Auth;
 
@@ -479,7 +480,7 @@ class GameController extends Controller
      * @return JsonResponse|Application|Factory|View
      * @throws \Throwable
      */
-    public function franchiseDetail(Request $request, string $franchiseKey): JsonResponse|Application|Factory|View
+    public function franchiseDetail(Request $request, string $franchiseKey, TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
     {
         $franchise = GameFranchise::findByKey($franchiseKey);
 
@@ -504,10 +505,28 @@ class GameController extends Controller
             }
         }
 
+        $timelineEvents = $timelineEventService->fetchForFranchise($franchise->id, 3);
+
         return $this->tree(view('game.franchise_detail', [
-            'franchise'   => $franchise,
-            'titles'      => $titles,
+            'franchise'      => $franchise,
+            'titles'         => $titles,
+            'timelineEvents' => $timelineEvents,
         ]), options: ['ratingCheck' => $ratingCheck]);
+    }
+
+    public function franchiseTimeline(Request $request, string $franchiseKey, TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
+    {
+        $franchise = GameFranchise::findByKey($franchiseKey);
+
+        if (!$franchise) {
+            abort(404);
+        }
+
+        $paginator = $timelineEventService->fetchForFranchisePaginated($franchise->id, 20);
+        $events = $paginator->items();
+        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'Game.FranchiseTimeline', ['franchiseKey' => $franchise->key]);
+
+        return $this->tree(view('game.franchise_timeline', compact('franchise', 'events', 'pager')));
     }
 
     /**

@@ -18,6 +18,7 @@ use App\Models\UserGameTitleReviewDraft;
 use App\Models\UserGameTitleReviewDraftPackage;
 use App\Models\UserGameTitleReviewLog;
 use App\Models\UserGameTitleReviewPackage;
+use App\Services\Timeline\TimelineEventService;
 use App\Support\Pager;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -30,6 +31,12 @@ use Illuminate\Support\Facades\DB;
 
 class ReviewController extends Controller
 {
+    public function __construct(
+        private readonly TimelineEventService $timelineEventService,
+    ) {
+        parent::__construct();
+    }
+
     /**
      * マイレビュー一覧
      *
@@ -220,6 +227,7 @@ class ReviewController extends Controller
             $existingFearMeter = UserGameTitleFearMeter::where('user_id', $user->id)
                 ->where('game_title_id', $title->id)
                 ->first();
+            $oldFearMeterValue = $existingFearMeter?->fear_meter->value;
 
             if ($existingFearMeter) {
                 $oldFearMeterValue = $existingFearMeter->fear_meter->value;
@@ -329,6 +337,12 @@ class ReviewController extends Controller
 
             // 7. dirty flag
             ReviewStatisticsDirtyTitle::updateOrCreate(['game_title_id' => $title->id]);
+
+            // 8. タイムラインイベント記録
+            if ($existingFearMeter === null || $oldFearMeterValue !== $fearMeterValue) {
+                $this->timelineEventService->recordFearMeterEvent($user->id, $title->id, $existingFearMeter === null, $fearMeterValue);
+            }
+            $this->timelineEventService->recordReviewEvent($user->id, $review->id, $existingReview === null);
         });
 
         $publishedReview = UserGameTitleReview::where('user_id', $user->id)

@@ -236,7 +236,21 @@
                         <a href="{{ route('Admin.Game.Title.Detail', $model->next()) }}" class="btn btn-default"><i class="fas fa-caret-right"></i></a>
                     @endif
                 </div>
-                <div class="text-end">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="d-flex flex-column align-items-end gap-1">
+                        <form method="POST" action="{{ route('Admin.Game.Title.RecordTimeline', $model) }}">
+                            @csrf
+                            <div class="mb-1">
+                                <textarea name="note" class="form-control form-control-sm" rows="3" style="width: 260px;" placeholder="コメント（省略可）"></textarea>
+                            </div>
+                            <button class="btn btn-info" type="submit">
+                                <i class="fas fa-stream"></i><span class="d-none d-md-inline"> タイムラインに登録</span>
+                            </button>
+                        </form>
+                        <small class="text-muted">
+                            前回登録: {{ $lastTimelineAt ? $lastTimelineAt->format('Y-m-d H:i') : '未登録' }}
+                        </small>
+                    </div>
                     @if ($model->packageGroups->count() === 0)
                         <form method="POST" action="{{ route('Admin.Game.Title.Delete', $model) }}" onsubmit="return confirm('削除します');">
                             @csrf
