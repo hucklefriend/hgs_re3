@@ -16,6 +16,8 @@
         </section>
     @endforelse
 
+    @include('common.pager', ['pager' => $pager])
+
     <section class="node tree-node" id="footer-tree-node">
         <div class="node-head">
             <h2 class="node-head-text">近道</h2>

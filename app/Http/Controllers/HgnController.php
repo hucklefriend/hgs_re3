@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\HgnPrivacyPolicyAcceptRequest;
 use App\Models\Information;
 use App\Services\Timeline\TimelineEventService;
+use App\Support\Pager;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -44,8 +45,10 @@ class HgnController extends Controller
 
     public function timeline(TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
     {
-        $events = $timelineEventService->fetchForRoot(20);
-        return $this->tree(view('timeline', compact('events')));
+        $paginator = $timelineEventService->fetchForRootPaginated(20);
+        $events = $paginator->items();
+        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'Timeline');
+        return $this->tree(view('timeline', compact('events', 'pager')));
     }
 
     /**
