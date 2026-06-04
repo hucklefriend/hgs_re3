@@ -76,7 +76,7 @@
     </section>
     <section class="node tree-node" id="root-timeline-node">
         <div class="node-head">
-            <h2 class="node-head-text">新着情報</h2>
+            <h2 class="node-head-text">新着情報タイムライン</h2>
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
@@ -85,7 +85,7 @@
             @empty
                 <section class="node basic">
                     <div class="node-content basic">
-                        <p>更新情報はないようだ。</p>
+                        <p>新着情報はないようだ。</p>
                     </div>
                 </section>
             @endforelse
@@ -171,4 +171,13 @@
             <span class="node-pt">●</span>
         </div>
     </section>
+
+    @if (is_admin_user())
+    <section class="node basic">
+        <div class="node-head">
+            <a href="{{ route('Admin.Dashboard') }}" class="node-head-text" rel="external">管理</a>
+            <span class="node-pt">●</span>
+        </div>
+    </section>
+    @endif
 @endsection

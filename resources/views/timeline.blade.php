@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', '新着情報')
-@section('current-node-title', '新着情報')
+@section('title', '新着情報タイムライン')
+@section('current-node-title', '新着情報タイムライン')
 
 @section('nodes')
     @forelse ($events as $event)
@@ -30,6 +30,14 @@
                     <span class="node-pt">●</span>
                 </div>
             </section>
+            @if (is_admin_user())
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('Admin.Manage.RssArticle') }}" class="node-head-text" rel="external">管理</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            @endif
         </div>
     </section>
 @endsection

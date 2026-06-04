@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 class RssMatcherService
 {
-    private const HORROR_KEYWORD = 'ホラーゲーム';
+    private const HORROR_KEYWORD = 'ホラー';
     private const MIN_TERM_LENGTH = 3;
     private const CACHE_TTL = 3600; // 1時間
     private const CACHE_KEY = 'rss_matcher_terms';
@@ -67,8 +67,6 @@ class RssMatcherService
      */
     public function match(string $text): MatchResult
     {
-        $hasHorrorKeyword = str_contains($text, self::HORROR_KEYWORD);
-
         $matchedFranchiseIds = [];
 
         foreach ($this->franchiseTerms as ['id' => $id, 'term' => $term]) {
@@ -76,6 +74,8 @@ class RssMatcherService
                 $matchedFranchiseIds[$id] = true;
             }
         }
+
+        $hasHorrorKeyword = empty($matchedFranchiseIds) && str_contains($text, self::HORROR_KEYWORD);
 
         return new MatchResult(
             matchedFranchiseIds: array_keys($matchedFranchiseIds),

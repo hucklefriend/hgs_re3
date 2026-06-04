@@ -24,7 +24,7 @@
                     <label class="d-flex align-items-center gap-2">
                         <input type="checkbox" name="show_horror_keyword_rss" value="1"
                             @checked(old('show_horror_keyword_rss', $setting->show_horror_keyword_rss))>
-                        「ホラーゲーム」キーワードでマッチしたメディア記事
+                        「ホラー」キーワードでマッチしたメディア記事
                     </label>
                 </div>
 

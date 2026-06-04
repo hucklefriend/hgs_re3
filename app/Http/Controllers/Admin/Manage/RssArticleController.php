@@ -6,6 +6,7 @@ use App\Defines\AdminDefine;
 use App\Enums\RssSource;
 use App\Enums\TimelineSubjectType;
 use App\Http\Controllers\Admin\AbstractAdminController;
+use App\Models\GameFranchise;
 use App\Models\RssArticle;
 use App\Models\RssFetchLog;
 use App\Models\TimelineEvent;
@@ -53,9 +54,25 @@ class RssArticleController extends AbstractAdminController
     {
         $rssArticle->load(['matchedFranchises', 'ogpCache', 'timelineEvents']);
 
+        $allFranchises = GameFranchise::orderBy('name')->get(['id', 'name']);
+
         return view('admin.manage.rss_article.detail', [
-            'article' => $rssArticle,
+            'article'       => $rssArticle,
+            'allFranchises' => $allFranchises,
         ]);
+    }
+
+    public function updateFranchises(Request $request, RssArticle $rssArticle): RedirectResponse
+    {
+        $franchiseIds = array_filter(
+            array_map('intval', (array) $request->input('franchise_ids', [])),
+            fn(int $id) => $id > 0,
+        );
+
+        $rssArticle->matchedFranchises()->sync($franchiseIds);
+
+        return redirect()->route('Admin.Manage.RssArticle.Show', $rssArticle)
+            ->with('success', 'フランチャイズマッチを更新しました。');
     }
 
     public function destroyTimelineEvent(RssArticle $rssArticle): RedirectResponse
