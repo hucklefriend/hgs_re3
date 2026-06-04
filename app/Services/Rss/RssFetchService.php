@@ -5,6 +5,7 @@ namespace App\Services\Rss;
 use App\Enums\RssSource;
 use App\Jobs\FetchRssArticleOgp;
 use App\Models\RssArticle;
+use App\Models\RssFetchLog;
 use App\Services\Timeline\TimelineEventService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -12,30 +13,52 @@ use Illuminate\Support\Facades\Log;
 
 class RssFetchService
 {
+    private int $newArticleCount = 0;
+
     public function __construct(
         private readonly RssMatcherService $matcher,
         private readonly TimelineEventService $timelineEventService,
     ) {}
 
     /**
-     * 全ソースを取得・処理する
+     * 全ソースを取得・処理する。新着記事数を返す。
      */
-    public function fetchAll(): void
+    public function fetchAll(?RssFetchLog $log = null): int
     {
+        $this->newArticleCount = 0;
         $this->matcher->buildTerms();
 
         foreach (RssSource::cases() as $source) {
             $this->fetchSource($source);
         }
+
+        if ($log !== null) {
+            $log->new_article_count = $this->newArticleCount;
+            $log->status            = 'success';
+            $log->finished_at       = now();
+            $log->save();
+        }
+
+        return $this->newArticleCount;
     }
 
     /**
-     * 指定ソースのみ取得・処理する
+     * 指定ソースのみ取得・処理する。新着記事数を返す。
      */
-    public function fetchBySource(RssSource $source): void
+    public function fetchBySource(RssSource $source, ?RssFetchLog $log = null): int
     {
+        $this->newArticleCount = 0;
         $this->matcher->buildTerms();
         $this->fetchSource($source);
+
+        if ($log !== null) {
+            $log->new_article_count = $this->newArticleCount;
+            $log->status            = 'success';
+            $log->finished_at       = now();
+            $log->save();
+        }
+
+        return $this->newArticleCount;
     }
 
     private function fetchSource(RssSource $source): void
@@ -189,6 +212,8 @@ class RssFetchService
             FetchRssArticleOgp::dispatch($article->id);
 
             $this->timelineEventService->recordRssArticleEvent($article->id);
+
+            $this->newArticleCount++;
         });
     }
 }

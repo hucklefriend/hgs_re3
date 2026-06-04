@@ -169,6 +169,14 @@ Route::group(['prefix' => 'admin'], function () {
             // ショップリンク販売終了
             Route::get('shop-sold-out', [Admin\Manage\ShopSoldOutController::class, 'index'])->name('Admin.Manage.ShopSoldOut');
             Route::delete('shop-sold-out/{result}', [Admin\Manage\ShopSoldOutController::class, 'destroy'])->name('Admin.Manage.ShopSoldOut.Destroy');
+
+            // RSS記事
+            Route::get('rss-article', [Admin\Manage\RssArticleController::class, 'index'])->name('Admin.Manage.RssArticle');
+            Route::get('rss-article/fetch-log', [Admin\Manage\RssArticleController::class, 'fetchLog'])->name('Admin.Manage.RssArticle.FetchLog');
+            Route::post('rss-article/fetch', [Admin\Manage\RssArticleController::class, 'executeFetch'])->name('Admin.Manage.RssArticle.ExecuteFetch');
+            Route::get('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'show'])->name('Admin.Manage.RssArticle.Show');
+            Route::delete('rss-article/{rssArticle}/timeline-event', [Admin\Manage\RssArticleController::class, 'destroyTimelineEvent'])->name('Admin.Manage.RssArticle.DestroyTimelineEvent');
+            Route::delete('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'destroy'])->name('Admin.Manage.RssArticle.Destroy');
         });
 
         // マスター

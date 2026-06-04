@@ -131,6 +131,9 @@
                         <div class="menu-item  {{ menu_active("Admin.Manage.ShopSoldOut") }}">
                             <a href="{{ route("Admin.Manage.ShopSoldOut") }}" class="menu-link"><div class="menu-text">Shop Sold Out</div></a>
                         </div>
+                        <div class="menu-item  {{ menu_active("Admin.Manage.RssArticle") }}">
+                            <a href="{{ route("Admin.Manage.RssArticle") }}" class="menu-link"><div class="menu-text">RSS Article</div></a>
+                        </div>
                     </div>
                 </div>
                 <div class="menu-item has-sub {{ menu_active("Admin.Game") }}">
