@@ -175,6 +175,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::get('rss-article/fetch-log', [Admin\Manage\RssArticleController::class, 'fetchLog'])->name('Admin.Manage.RssArticle.FetchLog');
             Route::post('rss-article/fetch', [Admin\Manage\RssArticleController::class, 'executeFetch'])->name('Admin.Manage.RssArticle.ExecuteFetch');
             Route::get('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'show'])->name('Admin.Manage.RssArticle.Show');
+            Route::put('rss-article/{rssArticle}/franchises', [Admin\Manage\RssArticleController::class, 'updateFranchises'])->name('Admin.Manage.RssArticle.UpdateFranchises');
             Route::delete('rss-article/{rssArticle}/timeline-event', [Admin\Manage\RssArticleController::class, 'destroyTimelineEvent'])->name('Admin.Manage.RssArticle.DestroyTimelineEvent');
             Route::delete('rss-article/{rssArticle}', [Admin\Manage\RssArticleController::class, 'destroy'])->name('Admin.Manage.RssArticle.Destroy');
         });

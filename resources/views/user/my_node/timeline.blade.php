@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', '更新情報タイムライン')
-@section('current-node-title', '更新情報タイムライン')
+@section('title', 'マイタイムライン')
+@section('current-node-title', 'マイタイムライン')
 
 @section('current-node-content')
 <p class="text-sm text-slate-400">お気に入りタイトルの更新やフォロー中のユーザーの活動を時系列で表示します。</p>
