@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Enums\RssSource;
+use App\Enums\TimelineSubjectType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RssArticle extends Model
@@ -31,6 +33,12 @@ class RssArticle extends Model
     public function ogpCache(): HasOne
     {
         return $this->hasOne(OgpCache::class, 'hash', 'url_hash');
+    }
+
+    public function timelineEvents(): HasMany
+    {
+        return $this->hasMany(TimelineEvent::class, 'subject_id')
+            ->where('subject_type', TimelineSubjectType::RssArticle->value);
     }
 
     public static function makeGuidHash(string $source, string $guid): string
