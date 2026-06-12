@@ -47,10 +47,18 @@ class FearMeterController extends Controller
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
 
+        $fearMeterComments = UserGameTitleFearMeterLog::where('user_id', $user->id)
+            ->whereIn('game_title_id', $fearMeters->pluck('game_title_id'))
+            ->where('is_deleted', false)
+            ->orderByDesc('id')
+            ->get()
+            ->unique('game_title_id')
+            ->keyBy('game_title_id');
+
         $pager = new Pager($fearMeters->currentPage(), $fearMeters->lastPage(), 'User.FearMeter.Index', [], 'children');
 
         return $this->tree(
-            view('user.fear_meter.index', compact('fearMeters', 'pager')),
+            view('user.fear_meter.index', compact('fearMeters', 'fearMeterComments', 'pager')),
             options: [
                 'url' => route('User.FearMeter.Index'),
             ]

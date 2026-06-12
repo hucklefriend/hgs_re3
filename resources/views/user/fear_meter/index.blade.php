@@ -19,45 +19,37 @@
 @endsection
 
 @section('nodes')
-    @if ($fearMeters->isNotEmpty())
-        <section class="node" id="fear-meter-list-node">
+    @foreach ($fearMeters as $fm)
+        @php $log = $fearMeterComments[$fm->game_title_id] ?? null; @endphp
+        <section class="node" id="fear-meter-{{ $fm->game_title_id }}-node">
             <div class="node-head">
-                <h2 class="node-head-text">怖さメーター</h2>
+                <span class="node-head-text">
+                    <a href="{{ route('Game.TitleDetail', ['titleKey' => $fm->gameTitle->key]) }}" data-hgn-scope="full">{{ $fm->gameTitle->name }}</a>
+                </span>
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content basic">
-                <table class="border border-gray-500 border-collapse">
-                    @foreach ($fearMeters as $fearMeter)
-                        <tr>
-                            <td class="border border-gray-500 px-3 py-2">{{ $fearMeter->gameTitle->name }}</td>
-                            <td class="border border-gray-500 px-3 py-2">
-                                @php
-                                    $fearMeterMax = 4;
-                                    $fearMeterPercent = ($fearMeter->fear_meter->value / $fearMeterMax) * 100;
-                                @endphp
-                                <div class="space-y-1">
-                                    <div class="h-3 w-48 overflow-hidden rounded-full bg-slate-700/60">
-                                        <div
-                                            class="h-full bg-gradient-to-r from-slate-800 via-sky-600 to-indigo-500"
-                                            style="width: {{ $fearMeterPercent }}%;"
-                                        ></div>
-                                    </div>
-                                    <div class="text-sm text-slate-200">
-                                        <span class="font-semibold">{{ $fearMeter->fear_meter->value }} / {{ $fearMeterMax }}</span>
-                                        <span class="text-slate-400">（{{ $fearMeter->fear_meter->text() }}）</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="border border-gray-500 px-3 py-2">
-                                <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fearMeter->gameTitle->key, 'from' => 'fear-meter-list']) }}" data-hgn-scope="full"><i class="bi bi-pencil"></i></a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </table>
-                @include('common.pager', ['pager' => $pager])
+                <div class="text-sm text-slate-200">
+                    {{ $fm->fear_meter->text() }}
+                    <span class="text-slate-500 text-xs ml-1">（{{ $fm->fear_meter->value }} / 4）</span>
+                </div>
+
+                @if ($log?->comment)
+                    <p class="mt-1 text-sm text-slate-300">{{ $log->comment }}</p>
+                @endif
+
+                <div class="mt-2 text-xs">
+                    <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fm->gameTitle->key, 'from' => 'fear-meter-list']) }}" data-hgn-scope="full"><i class="bi bi-pencil"></i> 編集</a>
+                </div>
             </div>
+
+            @if ($loop->last)
+                <div class="node-content basic" id="under-pager">
+                    @include('common.pager', ['pager' => $pager])
+                </div>
+            @endif
         </section>
-    @endif
+    @endforeach
 
     @include('common.shortcut')
 @endsection

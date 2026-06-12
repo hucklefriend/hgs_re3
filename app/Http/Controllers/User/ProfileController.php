@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserGameTitleFearMeter;
+use App\Models\UserGameTitleFearMeterLog;
 use App\Models\UserGameTitleReview;
 use App\Services\Timeline\TimelineEventService;
 use App\Support\Pager;
@@ -105,6 +106,27 @@ class ProfileController extends Controller
             ->orderByDesc('updated_at')
             ->paginate(self::PER_PAGE);
 
+        $fearMeterComments = UserGameTitleFearMeterLog::where('user_id', $profileUser->id)
+            ->whereIn('game_title_id', $fearMeters->pluck('game_title_id'))
+            ->where('is_deleted', false)
+            ->orderByDesc('id')
+            ->get()
+            ->unique('game_title_id')
+            ->keyBy('game_title_id');
+
+        $shortcutRoute = [
+            'profile-node' => [
+                'title'    => $profileUser->name . 'さんのプロフィール',
+                'url'      => route('User.Profile.Show', ['show_id' => $showId]),
+                'children' => [
+                    'root-node' => [
+                        'title' => 'ルート',
+                        'url'   => route('Root'),
+                    ],
+                ],
+            ],
+        ];
+
         $pager = new Pager(
             $fearMeters->currentPage(),
             $fearMeters->lastPage(),
@@ -114,7 +136,7 @@ class ProfileController extends Controller
         );
 
         return $this->tree(
-            view('user.profile.fear_meters', compact('profileUser', 'isBlocked', 'fearMeters', 'pager')),
+            view('user.profile.fear_meters', compact('profileUser', 'isBlocked', 'fearMeters', 'fearMeterComments', 'pager', 'shortcutRoute')),
             options: ['url' => route('User.Profile.FearMeters', ['show_id' => $showId])]
         );
     }
@@ -132,6 +154,11 @@ class ProfileController extends Controller
             ->orderByDesc('updated_at')
             ->paginate(self::PER_PAGE);
 
+        $fearMeters = UserGameTitleFearMeter::where('user_id', $profileUser->id)
+            ->whereIn('game_title_id', $reviews->pluck('game_title_id'))
+            ->get()
+            ->keyBy('game_title_id');
+
         $pager = new Pager(
             $reviews->currentPage(),
             $reviews->lastPage(),
@@ -140,8 +167,21 @@ class ProfileController extends Controller
             'children'
         );
 
+        $shortcutRoute = [
+            'profile-node' => [
+                'title'    => $profileUser->name . 'さんのプロフィール',
+                'url'      => route('User.Profile.Show', ['show_id' => $showId]),
+                'children' => [
+                    'root-node' => [
+                        'title' => 'ルート',
+                        'url'   => route('Root'),
+                    ],
+                ],
+            ],
+        ];
+
         return $this->tree(
-            view('user.profile.reviews', compact('profileUser', 'isBlocked', 'reviews', 'pager')),
+            view('user.profile.reviews', compact('profileUser', 'isBlocked', 'reviews', 'fearMeters', 'pager', 'shortcutRoute')),
             options: ['url' => route('User.Profile.Reviews', ['show_id' => $showId])]
         );
     }
