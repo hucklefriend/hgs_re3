@@ -23,6 +23,7 @@ use App\Models\TwoFactorAuthCode;
 use App\Http\Controllers\TwoFactorController;
 use App\Models\TemporaryRegistration;
 use App\Models\PasswordReset as PasswordResetModel;
+use App\Services\Timeline\TimelineEventService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Bus;
@@ -35,6 +36,10 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AccountController extends Controller
 {
+    public function __construct(private readonly TimelineEventService $timelineEventService)
+    {
+    }
+
     /**
      * ログイン画面表示
      *
@@ -292,6 +297,8 @@ class AccountController extends Controller
             'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
         ]);
 
+        $this->timelineEventService->recordUserRegisteredEvent($user->id, $user->sign_up_at);
+
         // 仮登録レコードを削除
         $temporaryRegistration->delete();
 
@@ -435,6 +442,8 @@ class AccountController extends Controller
                     'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
                 ]);
 
+                $this->timelineEventService->recordUserRegisteredEvent($user->id, $user->sign_up_at);
+
                 SocialAccount::create([
                     'user_id' => $user->id,
                     'provider' => SocialAccountProvider::GitHub,
@@ -547,6 +556,8 @@ class AccountController extends Controller
                 'sign_up_at' => now(),
                 'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
             ]);
+
+            $this->timelineEventService->recordUserRegisteredEvent($user->id, $user->sign_up_at);
 
             SocialAccount::create([
                 'user_id' => $user->id,
@@ -677,6 +688,8 @@ class AccountController extends Controller
                     'sign_up_at' => now(),
                     'privacy_policy_accepted_version' => $privacyPolicyRevisionVer,
                 ]);
+
+                $this->timelineEventService->recordUserRegisteredEvent($user->id, $user->sign_up_at);
 
                 SocialAccount::create([
                     'user_id' => $user->id,

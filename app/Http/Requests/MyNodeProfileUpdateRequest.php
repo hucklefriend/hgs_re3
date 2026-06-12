@@ -35,6 +35,7 @@ class MyNodeProfileUpdateRequest extends BaseWebRequest
                 'regex:/^[A-Za-z0-9_-]+$/',
                 Rule::unique('users', 'show_id')->ignore($user->id),
             ],
+            'bio' => ['nullable', 'string', 'max:200'],
         ];
     }
 
@@ -55,6 +56,7 @@ class MyNodeProfileUpdateRequest extends BaseWebRequest
             'show_id.max' => 'ユーザーIDは30文字以内で入力してください。',
             'show_id.regex' => 'ユーザーIDに使用できるのは英数字・ハイフン・アンダースコアのみです。',
             'show_id.unique' => 'このユーザーIDは既に使用されています。',
+            'bio.max' => '自己紹介は200文字以内で入力してください。',
         ];
     }
 }

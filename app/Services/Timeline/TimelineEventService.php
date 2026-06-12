@@ -20,6 +20,18 @@ use Illuminate\Support\Facades\Log;
 
 class TimelineEventService
 {
+    public function recordUserRegisteredEvent(int $userId, \Illuminate\Support\Carbon $registeredAt): void
+    {
+        TimelineEvent::create([
+            'event_type'   => TimelineEventType::UserRegistered,
+            'actor_type'   => TimelineActorType::User,
+            'actor_id'     => $userId,
+            'subject_type' => TimelineSubjectType::User,
+            'subject_id'   => $userId,
+            'created_at'   => $registeredAt,
+        ]);
+    }
+
     public function recordReviewEvent(int $userId, int $reviewId, bool $isNew): void
     {
         $eventType = $isNew ? TimelineEventType::ReviewPosted : TimelineEventType::ReviewUpdated;
@@ -180,6 +192,18 @@ class TimelineEventService
                 'ogp_image'         => $ogp?->image,
                 'ogp_description'   => $ogp?->description,
                 'rss_published_at'  => $article?->published_at,
+            ]);
+        }
+
+        if ($event->subject_type === TimelineSubjectType::User) {
+            return array_merge($base, [
+                'game_title_name'  => null,
+                'game_title_key'   => null,
+                'review_key'       => null,
+                'total_score'      => null,
+                'has_spoiler'      => false,
+                'information_id'   => null,
+                'information_head' => null,
             ]);
         }
 
@@ -444,6 +468,69 @@ class TimelineEventService
         $this->fetchMissingOgp($rssArticles);
 
         return $events->map(fn ($e) => $this->toDisplayArray($e, collect(), $gameTitles, $informations, $rssArticles))->all();
+    }
+
+    /**
+     * プロフィールページ用：指定ユーザーの行動タイムラインを取得する（レビュー・怖さメーターのみ）
+     * @return array<int, array<string, mixed>>
+     */
+    public function fetchForProfileUser(int $userId, int $limit = 5): array
+    {
+        $events = TimelineEvent::with('actor')
+            ->where('actor_type', TimelineActorType::User->value)
+            ->where('actor_id', $userId)
+            ->whereIn('event_type', [
+                TimelineEventType::ReviewPosted->value,
+                TimelineEventType::ReviewUpdated->value,
+                TimelineEventType::FearMeterPosted->value,
+                TimelineEventType::FearMeterUpdated->value,
+                TimelineEventType::UserRegistered->value,
+            ])
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+
+        return $this->resolveProfileUserEvents($events);
+    }
+
+    public function fetchForProfileUserPaginated(int $userId, int $perPage = 20): LengthAwarePaginator
+    {
+        $paginator = TimelineEvent::with('actor')
+            ->where('actor_type', TimelineActorType::User->value)
+            ->where('actor_id', $userId)
+            ->whereIn('event_type', [
+                TimelineEventType::ReviewPosted->value,
+                TimelineEventType::ReviewUpdated->value,
+                TimelineEventType::FearMeterPosted->value,
+                TimelineEventType::FearMeterUpdated->value,
+                TimelineEventType::UserRegistered->value,
+            ])
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+
+        $items = $paginator->getCollection();
+
+        $reviewSubjectIds    = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Review)->pluck('subject_id');
+        $gameTitleSubjectIds = $items->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)->pluck('subject_id');
+
+        $reviews    = UserGameTitleReview::with('gameTitle')->whereIn('id', $reviewSubjectIds)->get()->keyBy('id');
+        $gameTitles = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+
+        return $paginator->setCollection(
+            $items->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, collect()))
+        );
+    }
+
+    /** @param Collection<int, TimelineEvent> $events */
+    private function resolveProfileUserEvents(Collection $events): array
+    {
+        $reviewSubjectIds    = $events->filter(fn ($e) => $e->subject_type === TimelineSubjectType::Review)->pluck('subject_id');
+        $gameTitleSubjectIds = $events->filter(fn ($e) => $e->subject_type === TimelineSubjectType::GameTitle)->pluck('subject_id');
+
+        $reviews    = UserGameTitleReview::with('gameTitle')->whereIn('id', $reviewSubjectIds)->get()->keyBy('id');
+        $gameTitles = GameTitle::whereIn('id', $gameTitleSubjectIds)->get()->keyBy('id');
+
+        return $events->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, collect()))->all();
     }
 
     public function recordInformationEvent(int $informationId): void

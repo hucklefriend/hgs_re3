@@ -6,6 +6,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\UserProfileSeeder;
+use Database\Seeders\UserFollowSeeder;
 use Database\Seeders\ReviewSeeder;
 use Database\Seeders\FearMeterSeeder;
 
@@ -25,6 +27,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,
+            UserProfileSeeder::class,
+            UserFollowSeeder::class,
             ReviewSeeder::class,
             FearMeterSeeder::class,
         ]);

@@ -1,4 +1,5 @@
 import { Component } from "./component";
+import { AvatarUpload } from "./components/avatar_upload";
 import { FearMeterCommentReaction } from "./components/fear_meter_comment_reaction";
 import { FearMeterFormInput } from "./components/fear_meter_form_input";
 import { LineupSearch } from "./components/lineup_search";
@@ -8,6 +9,7 @@ import { SpoilerToggle } from "./components/spoiler_toggle";
 import { TitleDetailFavorite } from "./components/title_detail_favorite";
 import { OtpInput } from "./components/otp_input";
 import { SortTabs } from "./components/sort_tabs";
+import { UserRelation } from "./components/user_relation";
 
 /**
  * コンポーネント管理クラス
@@ -17,6 +19,7 @@ export class ComponentManager
     private static _instance: ComponentManager;
     private _components: Component[] = [];
     private _componentMap: { [key: string]: new (...args: any[]) => Component } = {
+        'AvatarUpload': AvatarUpload,
         'LineupSearch': LineupSearch,
         'TitleDetailFavorite': TitleDetailFavorite,
         'FearMeterCommentReaction': FearMeterCommentReaction,
@@ -26,6 +29,7 @@ export class ComponentManager
         'SpoilerToggle': SpoilerToggle,
         'OtpInput': OtpInput,
         'SortTabs': SortTabs,
+        'UserRelation': UserRelation,
     };
 
     /**
