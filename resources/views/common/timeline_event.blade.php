@@ -17,6 +17,8 @@
                 <i class="bi bi-megaphone text-yellow-400"></i> お知らせが投稿されました
             @elseif ($event['type'] === 'rss_article_posted')
                 <i class="bi bi-newspaper text-violet-400"></i> {{ $event['rss_source_label'] }}の新着記事
+            @elseif ($event['type'] === 'user_registered')
+                <i class="bi bi-person-check text-green-400"></i> {{ $event['actor_name'] }} さんが HGN に登録しました
             @endif
         </span>
         <span class="node-pt">●</span>

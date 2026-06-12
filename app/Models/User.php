@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -35,6 +36,8 @@ class User extends Authenticatable
         'email_verification_sent_at',
         'withdrawn_at',
         'privacy_policy_accepted_version',
+        'avatar_filename',
+        'bio',
     ];
 
     /**
@@ -135,5 +138,122 @@ class User extends Authenticatable
     public function timelineSetting(): HasOne
     {
         return $this->hasOne(UserTimelineSetting::class);
+    }
+
+    /**
+     * フォローしているユーザー一覧
+     */
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'follower_id', 'following_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * フォロワー一覧
+     */
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_follows', 'following_id', 'follower_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * ブロックしているユーザー一覧
+     */
+    public function blocking(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_blocks', 'blocker_id', 'blocked_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * 自分をブロックしているユーザー一覧
+     */
+    public function blockedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_blocks', 'blocked_id', 'blocker_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * ミュートしているユーザー一覧
+     */
+    public function muting(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_mutes', 'muter_id', 'muted_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * 自分をミュートしているユーザー一覧
+     */
+    public function mutedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_mutes', 'muted_id', 'muter_id')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * 指定ユーザーをフォローしているか
+     */
+    public function isFollowing(User $user): bool
+    {
+        return UserFollow::where('follower_id', $this->id)
+            ->where('following_id', $user->id)
+            ->exists();
+    }
+
+    /**
+     * 指定ユーザーにフォローされているか
+     */
+    public function isFollowedBy(User $user): bool
+    {
+        return UserFollow::where('follower_id', $user->id)
+            ->where('following_id', $this->id)
+            ->exists();
+    }
+
+    /**
+     * 指定ユーザーをブロックしているか
+     */
+    public function isBlocking(User $user): bool
+    {
+        return UserBlock::where('blocker_id', $this->id)
+            ->where('blocked_id', $user->id)
+            ->exists();
+    }
+
+    /**
+     * 指定ユーザーにブロックされているか
+     */
+    public function isBlockedBy(User $user): bool
+    {
+        return UserBlock::where('blocker_id', $user->id)
+            ->where('blocked_id', $this->id)
+            ->exists();
+    }
+
+    /**
+     * 指定ユーザーをミュートしているか
+     */
+    public function isMuting(User $user): bool
+    {
+        return UserMute::where('muter_id', $this->id)
+            ->where('muted_id', $user->id)
+            ->exists();
+    }
+
+    /**
+     * アバター URL を返す。未設定の場合は黒背景のイニシャルSVGを返す
+     */
+    public function getAvatarUrl(): string
+    {
+        if ($this->avatar_filename) {
+            return Storage::url('avatars/' . $this->avatar_filename);
+        }
+        $initial = htmlspecialchars(mb_strtoupper(mb_substr($this->name, 0, 1)), ENT_XML1);
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><filter id="g"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="100" height="100" fill="#333"/><text x="50" y="50" dominant-baseline="central" text-anchor="middle" font-family="sans-serif" font-size="50" fill="#6ee7b7" filter="url(#g)">' . $initial . '</text></svg>';
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 }

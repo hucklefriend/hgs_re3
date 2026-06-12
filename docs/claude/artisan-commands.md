@@ -18,6 +18,8 @@
 | `game-master:issue-token` | `IssueGameMasterApiToken.php` | ゲームマスターAPI用 Sanctum トークンを発行する（平文表示は一度のみ） |
 | `mail:test` | `TestMailCommand.php` | メール送信テストを実行する |
 | `test:create-show-tests [type]` | `CreateShowTestsCommand.php` | Playwright 用の基本ページアクセステストを生成する |
+| `test:seed-following {user_id}` | `SeedUserFollowingCommand.php` | 指定ユーザーがランダムな5人をフォローするテストデータを作成する |
+| `test:seed-followers {user_id}` | `SeedUserFollowersCommand.php` | 指定ユーザーにランダムな5人のフォロワーを作成するテストデータを作成する |
 | `shop:check-links` | `CheckShopLinksCommand.php` | ショップリンクの販売状況を10件ずつチェックし、販売終了リンクを記録する |
 | `rss:fetch [--source=X]` | `FetchRssFeedsCommand.php` | RSSフィードを取得してタイムラインに登録する。`--source` でソース指定（`4gamer`/`automaton`/`game_watch`/`game_spark`、デバッグ用） |
 
@@ -27,6 +29,8 @@
 
 ```bash
 php artisan db:seed --class=UserSeeder        # テストユーザー投入
+php artisan db:seed --class=UserProfileSeeder # プロフィール（自己紹介）設定
+php artisan db:seed --class=UserFollowSeeder  # フォロー関係テストデータ投入
 php artisan db:seed --class=ReviewSeeder      # レビューのテストデータ投入
 php artisan db:seed --class=FearMeterSeeder   # 怖さメーターのテストデータ投入
 php artisan db:seed                           # 全シーダーを実行（上記の順で実行される）
@@ -35,5 +39,7 @@ php artisan db:seed                           # 全シーダーを実行（上�
 | シーダー | ファイル | 内容 |
 |---|---|---|
 | `UserSeeder` | `database/seeders/UserSeeder.php` | テストユーザーを30人作成する |
+| `UserProfileSeeder` | `database/seeders/UserProfileSeeder.php` | bio 未設定のユーザー全員にランダムな自己紹介テキストを設定する |
+| `UserFollowSeeder` | `database/seeders/UserFollowSeeder.php` | ランダムに選んだ10人が、それぞれランダムな5人をフォローする関係を作成する |
 | `ReviewSeeder` | `database/seeders/ReviewSeeder.php` | 既存ユーザーからランダムに20人選び、各ユーザーに3〜8件のレビューをランダム生成 |
 | `FearMeterSeeder` | `database/seeders/FearMeterSeeder.php` | 既存ユーザー全員に対して3〜10件の怖さメーターをランダム生成 |

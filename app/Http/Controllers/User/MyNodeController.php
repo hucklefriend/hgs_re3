@@ -66,8 +66,16 @@ class MyNodeController extends Controller
 
         $timelineEvents = $this->timelineEventService->fetchForUser($user->id, 5);
 
+        $followingCount = $user->following()->count();
+        $followerCount  = $user->followers()->count();
+        $blockingCount  = $user->blocking()->count();
+        $mutingCount    = $user->muting()->count();
+
         return $this->tree(
-            view('user.my_node.top', compact('user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents')),
+            view('user.my_node.top', compact(
+                'user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents',
+                'followingCount', 'followerCount', 'blockingCount', 'mutingCount'
+            )),
             options: [
                 'url' => route('User.MyNode.Top'),
                 'csrfToken' => csrf_token(),
@@ -85,7 +93,10 @@ class MyNodeController extends Controller
         $user = Auth::user();
         $colorState = $this->getColorState();
 
-        return $this->tree(view('user.my_node.profile', compact('user', 'colorState')));
+        return $this->tree(
+            view('user.my_node.profile', compact('user', 'colorState')),
+            options: ['components' => ['AvatarUpload' => null]]
+        );
     }
 
     /**
@@ -103,6 +114,7 @@ class MyNodeController extends Controller
 
         $user->name = $validated['name'];
         $user->show_id = $validated['show_id'];
+        $user->bio = $validated['bio'] ?? null;
         $user->save();
 
         return redirect()->route('User.MyNode.Top')->with('success', 'プロフィールを更新しました。');

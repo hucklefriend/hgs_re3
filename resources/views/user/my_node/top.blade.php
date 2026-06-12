@@ -27,6 +27,24 @@
 </div>
 @endif
 
+<div class="mt-4 ml-3">
+    <div class="flex items-center gap-4 mb-2">
+        <x-user-avatar :user="$user" class="w-16 h-16 rounded-full object-cover flex-shrink-0"/>
+        <div>
+            <p class="font-bold text-lg leading-tight">{{ $user->name }}</p>
+            <p class="text-slate-500 text-sm">{{ '@' . $user->show_id }}</p>
+        </div>
+    </div>
+    @if ($user->bio)
+    <p class="text-sm whitespace-pre-wrap mb-2">{{ $user->bio }}</p>
+    @endif
+    <p class="text-sm">
+        <a href="{{ route('User.MyNode.Following') }}" class="hover:underline" data-hgn-scope="full">フォロー {{ $followingCount }}人</a>
+        <span class="mx-2 text-slate-400">|</span>
+        <a href="{{ route('User.MyNode.Followers') }}" class="hover:underline" data-hgn-scope="full">フォロワー {{ $followerCount }}人</a>
+    </p>
+</div>
+
 @endsection
 
 @section('nodes')
@@ -49,6 +67,38 @@
             <section class="node basic">
                 <div class="node-head">
                     <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text" data-hgn-scope="full">更新情報を見る</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+        </div>
+    </section>
+    <section class="node tree-node" id="user-social-tree-node">
+        <div class="node-head">
+            <h3 class="node-head-text">ユーザー</h3>
+            <span class="node-pt">●</span>
+        </div>
+        <div class="node-content tree">
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Following') }}" class="node-head-text" data-hgn-scope="full">フォロー中</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Followers') }}" class="node-head-text" data-hgn-scope="full">フォロワー</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Blocking') }}" class="node-head-text" data-hgn-scope="full">ブロック中</a>
+                    <span class="node-pt">●</span>
+                </div>
+            </section>
+            <section class="node basic">
+                <div class="node-head">
+                    <a href="{{ route('User.MyNode.Muting') }}" class="node-head-text" data-hgn-scope="full">ミュート中</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

@@ -290,6 +290,16 @@ label {
     border-color: #e2e8f0;
 }
 
+.btn-primary {
+    color: #818cf8;
+    border-color: rgba(99, 102, 241, 0.7);
+}
+
+.btn-primary:hover {
+    color: white;
+    border-color: #818cf8;
+}
+
 .btn-secondary {
     color: #94a3b8;
     border-color: rgba(148, 163, 184, 0.5);

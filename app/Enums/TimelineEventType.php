@@ -12,6 +12,7 @@ enum TimelineEventType: string
     case ReviewLiked = 'review_liked';
     case InformationPosted = 'information_posted';
     case RssArticlePosted = 'rss_article_posted';
+    case UserRegistered = 'user_registered';
 
     public function label(): string
     {
@@ -24,6 +25,7 @@ enum TimelineEventType: string
             self::ReviewLiked => 'レビューにいいねしてくれました',
             self::InformationPosted => 'お知らせが投稿されました',
             self::RssArticlePosted => 'ゲーム情報が公開されました',
+            self::UserRegistered => 'HGN に登録しました',
         };
     }
 }

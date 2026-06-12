@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Test\AccountController;
 use App\Http\Controllers\Api\Test\FearMeterController;
 use App\Http\Controllers\Api\Test\ReviewController as TestReviewController;
 use App\Http\Controllers\Api\UserFavoriteController;
+use App\Http\Controllers\Api\UserRelationController;
 use Illuminate\Support\Facades\Route;
 
 if (! app()->environment('production')) {
@@ -185,4 +186,12 @@ Route::prefix('v1/admin/game')->middleware(['auth:sanctum', 'game_master.api'])-
 // 認証が必要なAPI
 Route::middleware(['web', 'auth:web'])->group(function () {
     Route::post('user/favorite/toggle', [UserFavoriteController::class, 'toggle'])->name('api.user.favorite.toggle');
+
+    // フォロー/ブロック/ミュート
+    Route::post('users/{show_id}/follow', [UserRelationController::class, 'follow'])->name('api.users.follow');
+    Route::delete('users/{show_id}/follow', [UserRelationController::class, 'unfollow'])->name('api.users.unfollow');
+    Route::post('users/{show_id}/block', [UserRelationController::class, 'block'])->name('api.users.block');
+    Route::delete('users/{show_id}/block', [UserRelationController::class, 'unblock'])->name('api.users.unblock');
+    Route::post('users/{show_id}/mute', [UserRelationController::class, 'mute'])->name('api.users.mute');
+    Route::delete('users/{show_id}/mute', [UserRelationController::class, 'unmute'])->name('api.users.unmute');
 });

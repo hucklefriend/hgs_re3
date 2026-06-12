@@ -85,6 +85,16 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('my-node/timeline-settings', [User\TimelineSettingsController::class, 'show'])->name('User.MyNode.TimelineSettings');
         Route::post('my-node/timeline-settings/mynode', [User\TimelineSettingsController::class, 'updateMyNode'])->name('User.MyNode.TimelineSettings.UpdateMyNode');
         Route::post('my-node/timeline-settings/root', [User\TimelineSettingsController::class, 'updateRoot'])->name('User.MyNode.TimelineSettings.UpdateRoot');
+
+        // フォロー/フォロワー/ブロック/ミュート管理
+        Route::get('my-node/following', [User\MyNodeFollowController::class, 'following'])->name('User.MyNode.Following');
+        Route::get('my-node/followers', [User\MyNodeFollowController::class, 'followers'])->name('User.MyNode.Followers');
+        Route::get('my-node/blocking', [User\MyNodeFollowController::class, 'blocking'])->name('User.MyNode.Blocking');
+        Route::get('my-node/muting', [User\MyNodeFollowController::class, 'muting'])->name('User.MyNode.Muting');
+
+        // アバター
+        Route::post('my-node/avatar', [User\MyNodeAvatarController::class, 'update'])->name('User.MyNode.Avatar.Update');
+        Route::delete('my-node/avatar', [User\MyNodeAvatarController::class, 'delete'])->name('User.MyNode.Avatar.Delete');
     });
     Route::get('my-node/email/verify/{token}', [User\MyNodeController::class, 'emailVerify'])->name('User.MyNode.Email.Verify');
 
@@ -102,6 +112,14 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('review/draft', [User\ReviewController::class, 'discardDraft'])->name('User.Review.Draft.Discard');
     Route::post('review', [User\ReviewController::class, 'publish'])->name('User.Review.Publish');
     Route::delete('review', [User\ReviewController::class, 'destroy'])->name('User.Review.Destroy');
+
+    // ユーザープロフィール（公開）※ 具体的なルートの後に配置
+    Route::get('{show_id}', [User\ProfileController::class, 'show'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.Show');
+    Route::get('{show_id}/fear-meters', [User\ProfileController::class, 'fearMeters'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.FearMeters');
+    Route::get('{show_id}/reviews', [User\ProfileController::class, 'reviews'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.Reviews');
+    Route::get('{show_id}/following', [User\ProfileController::class, 'following'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.Following');
+    Route::get('{show_id}/followers', [User\ProfileController::class, 'followers'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.Followers');
+    Route::get('{show_id}/timeline', [User\ProfileController::class, 'timeline'])->where('show_id', '[a-zA-Z0-9_-]+')->name('User.Profile.Timeline');
 });
 
 use App\Http\Controllers\Admin;
