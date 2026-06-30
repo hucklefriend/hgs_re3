@@ -253,6 +253,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}/link_tree', [$class, 'linkTree'])->name("{$basename}.LinkTree");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -269,6 +273,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -299,6 +307,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
                 Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::post('{' . $prefix . '}/record_timeline', [$class, 'recordTimeline'])->name("{$basename}.RecordTimeline");
                 Route::delete('{' . $prefix . '}/fear-meter/{user}', [$class, 'deleteFearMeter'])->name("{$basename}.DeleteFearMeter");
@@ -314,6 +326,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::get('/', [$class, 'index'])->name($basename);
                 Route::get('add', [$class, 'add'])->name("{$basename}.Add");
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
+                Route::get('json_new', [$class, 'jsonNew'])->name("{$basename}.JsonNew");
+                Route::post('json_new', [$class, 'jsonNewDiff'])->name("{$basename}.JsonNewDiff");
+                Route::post('json_new/apply', [$class, 'jsonNewApply'])->name("{$basename}.JsonNewApply");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_package', [$class, 'linkPackage'])->name("{$basename}.LinkPackage");
@@ -322,6 +337,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}/edit_package_multi', [$class, 'editPackageMulti'])->name("{$basename}.EditPackageMulti");
                 Route::put('{' . $prefix . '}/update_package_multi', [$class, 'updatePackageMulti'])->name("{$basename}.UpdatePackageMulti");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
@@ -338,6 +357,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
                 Route::get('edit_shop_multi', [$class, 'editShopMulti'])->name("{$basename}.EditShopMulti");
                 Route::put('edit_shop_multi', [$class, 'updateShopMulti'])->name("{$basename}.UpdateShopMulti");
+                Route::get('json_new', [$class, 'jsonNew'])->name("{$basename}.JsonNew");
+                Route::post('json_new', [$class, 'jsonNewDiff'])->name("{$basename}.JsonNewDiff");
+                Route::post('json_new/apply', [$class, 'jsonNewApply'])->name("{$basename}.JsonNewApply");
 
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
@@ -349,6 +371,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}/link_package_group', [$class, 'linkPackageGroup'])->name("{$basename}.LinkPackageGroup");
                 Route::post('{' . $prefix . '}/link_package_group', [$class, 'syncPackageGroup'])->name("{$basename}.SyncPackageGroup");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
 
                 Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
                 Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
@@ -370,6 +396,9 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('add', [$class, 'store'])->name("{$basename}.Store");
                 Route::get('edit_multi', [$class, 'editMulti'])->name("{$basename}.EditMulti");
                 Route::put('edit_multi', [$class, 'updateMulti'])->name("{$basename}.UpdateMulti");
+                Route::get('json_new', [$class, 'jsonNew'])->name("{$basename}.JsonNew");
+                Route::post('json_new', [$class, 'jsonNewDiff'])->name("{$basename}.JsonNewDiff");
+                Route::post('json_new/apply', [$class, 'jsonNewApply'])->name("{$basename}.JsonNewApply");
                 Route::get('{' . $prefix . '}/edit', [$class, 'edit'])->name("{$basename}.Edit");
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/copy', [$class, 'copy'])->name("{$basename}.Copy");
@@ -380,6 +409,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
                 Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}/shop/add', [$class, 'addShop'])->name("{$basename}.AddShop");
                 Route::post('{' . $prefix . '}/shop/add', [$class, 'storeShop'])->name("{$basename}.StoreShop");
                 Route::get('{' . $prefix . '}/shop/{shop}/edit', [$class, 'editShop'])->name("{$basename}.EditShop");
@@ -424,6 +457,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::post('{' . $prefix . '}/link_related_product', [$class, 'syncRelatedProduct'])->name("{$basename}.SyncRelatedProduct");
                 Route::get('{' . $prefix . '}/link_title', [$class, 'linkTitle'])->name("{$basename}.LinkTitle");
                 Route::post('{' . $prefix . '}/link_title', [$class, 'syncTitle'])->name("{$basename}.SyncTitle");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });

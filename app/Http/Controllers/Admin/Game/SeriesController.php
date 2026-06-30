@@ -8,15 +8,23 @@ use App\Http\Requests\Admin\Game\LinkMultiTitleRequest;
 use App\Http\Requests\Admin\Game\SeriesRequest;
 use App\Models\Extensions\GameTree;
 use App\Models\GameSeries;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\SeriesMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SeriesController extends AbstractAdminController
 {
+    public function __construct(
+        private readonly SeriesMasterJsonService $seriesMasterJsonService,
+    ) {
+    }
+
     /**
      * インデックス
      *
@@ -72,6 +80,93 @@ class SeriesController extends AbstractAdminController
             'model' => $series,
             'tree'  => GameTree::getTree($series),
         ]);
+    }
+
+    /**
+     * AIに渡すJSONの出力画面
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GameSeries $series): Application|Factory|View
+    {
+        return view('admin.game.series.json_export', [
+            'model' => $series,
+            'json'  => json_encode($this->seriesMasterJsonService->export($series), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GameSeries $series
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GameSeries $series): Application|Factory|View
+    {
+        return view('admin.game.series.json_import', [
+            'model' => $series,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GameSeries $series
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GameSeries $series): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->seriesMasterJsonService->diff($series, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.Series.JsonImport', $series)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.series.json_diff', [
+            'model'        => $series,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GameSeries $series
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function jsonApply(Request $request, GameSeries $series): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->seriesMasterJsonService->export($series), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->seriesMasterJsonService->apply($series, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.Series.JsonImport', $series)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'series',
+            'target_id'         => $series->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.Series.Detail', $series)
+            ->with('success', 'JSONの内容をデータに反映しました。');
     }
 
     /**

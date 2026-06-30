@@ -10,14 +10,21 @@ use App\Http\Requests\Admin\Game\MediaMixMultiUpdateRequest;
 use App\Http\Requests\Admin\Game\MediaMixRequest;
 use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\MediaMixMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaMixController extends AbstractAdminController
 {
+    public function __construct(private readonly MediaMixMasterJsonService $mediaMixMasterJsonService)
+    {
+    }
+
     /**
      * インデックス
      *
@@ -188,6 +195,93 @@ class MediaMixController extends AbstractAdminController
             'model'      => $mediaMix->replicate(),
             'franchises' => $franchises,
         ]);
+    }
+
+    /**
+     * AIへ渡すJSONの表示
+     *
+     * @param GameMediaMix $mediaMix
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GameMediaMix $mediaMix): Application|Factory|View
+    {
+        return view('admin.game.media_mix.json_export', [
+            'model' => $mediaMix,
+            'json'  => json_encode($this->mediaMixMasterJsonService->export($mediaMix), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GameMediaMix $mediaMix
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GameMediaMix $mediaMix): Application|Factory|View
+    {
+        return view('admin.game.media_mix.json_import', [
+            'model' => $mediaMix,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GameMediaMix $mediaMix
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GameMediaMix $mediaMix): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->mediaMixMasterJsonService->diff($mediaMix, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.MediaMix.JsonImport', $mediaMix)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.media_mix.json_diff', [
+            'model'        => $mediaMix,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GameMediaMix $mediaMix
+     * @return RedirectResponse
+     * @throws \Throwable
+     */
+    public function jsonApply(Request $request, GameMediaMix $mediaMix): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->mediaMixMasterJsonService->export($mediaMix), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->mediaMixMasterJsonService->apply($mediaMix, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.MediaMix.JsonImport', $mediaMix)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'media_mix',
+            'target_id'         => $mediaMix->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.MediaMix.Detail', $mediaMix)
+            ->with('success', 'JSONの内容をデータに反映しました。');
     }
 
     /**

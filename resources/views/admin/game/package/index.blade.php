@@ -47,6 +47,9 @@
             <div class="d-flex justify-content-between">
                 <div>{{ $packages->appends($search)->links() }}</div>
                 <div class="text-end">
+                    <a href="{{ route('Admin.Game.Package.JsonNew') }}" class="btn btn-default">
+                        <i class="fas fa-file-import"></i><span class="d-none d-md-inline"> JSONから新規作成</span>
+                    </a>
                     <a href="{{ route('Admin.Game.Package.Add') }}" class="btn btn-default">
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>

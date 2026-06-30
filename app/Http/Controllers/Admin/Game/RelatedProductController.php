@@ -16,14 +16,23 @@ use App\Models\GameRelatedProduct;
 use App\Models\GameRelatedProductShop;
 use App\Models\GameTitle;
 use App\Models\GamePlatform;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\RelatedProductMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class RelatedProductController extends AbstractAdminController
 {
+    public function __construct(
+        private readonly RelatedProductMasterJsonService $relatedProductMasterJsonService,
+    ) {
+    }
+
     /**
      * インデックス
      *
@@ -79,6 +88,161 @@ class RelatedProductController extends AbstractAdminController
             'model' => $relatedProduct,
             'tree'  => GameTree::getTree($relatedProduct),
         ]);
+    }
+
+    /**
+     * AIに渡すJSONの出力画面
+     *
+     * @param GameRelatedProduct $relatedProduct
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GameRelatedProduct $relatedProduct): Application|Factory|View
+    {
+        return view('admin.game.related_product.json_export', [
+            'model' => $relatedProduct,
+            'json'  => json_encode($this->relatedProductMasterJsonService->export($relatedProduct), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GameRelatedProduct $relatedProduct
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GameRelatedProduct $relatedProduct): Application|Factory|View
+    {
+        return view('admin.game.related_product.json_import', [
+            'model' => $relatedProduct,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GameRelatedProduct $relatedProduct
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GameRelatedProduct $relatedProduct): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->relatedProductMasterJsonService->diff($relatedProduct, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.RelatedProduct.JsonImport', $relatedProduct)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.related_product.json_diff', [
+            'model'        => $relatedProduct,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GameRelatedProduct $relatedProduct
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonApply(Request $request, GameRelatedProduct $relatedProduct): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->relatedProductMasterJsonService->export($relatedProduct), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->relatedProductMasterJsonService->apply($relatedProduct, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.RelatedProduct.JsonImport', $relatedProduct)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'related_product',
+            'target_id'         => $relatedProduct->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.RelatedProduct.Detail', $relatedProduct)
+            ->with('success', 'JSONの内容をデータに反映しました。');
+    }
+
+    /**
+     * JSONからの新規作成画面
+     *
+     * @return Application|Factory|View
+     */
+    public function jsonNew(): Application|Factory|View
+    {
+        return view('admin.game.related_product.json_new', [
+            'json' => json_encode($this->relatedProductMasterJsonService->template(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * JSONからの新規作成: 差分（作成内容）確認
+     *
+     * @param Request $request
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonNewDiff(Request $request): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->relatedProductMasterJsonService->diffNew($importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.RelatedProduct.JsonNew')
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.related_product.json_diff_new', [
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * JSONからの新規作成: 反映
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonNewApply(Request $request): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+
+        try {
+            $result = $this->relatedProductMasterJsonService->applyNew($importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.RelatedProduct.JsonNew')
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'related_product',
+            'target_id'         => $result['id'],
+            'before_json'       => json_encode(null),
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($result['applied'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.RelatedProduct.Detail', ['relatedProduct' => $result['id']])
+            ->with('success', 'JSONの内容から新規作成しました。');
     }
 
     /**
