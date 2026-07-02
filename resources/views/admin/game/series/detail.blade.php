@@ -1,6 +1,18 @@
 @extends('admin.layout')
 
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>成功!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if (session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show">
+            <strong>注意!</strong> {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>

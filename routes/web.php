@@ -434,6 +434,10 @@ Route::group(['prefix' => 'admin'], function () {
                 Route::put('{' . $prefix . '}/edit', [$class, 'update'])->name("{$basename}.Update");
                 Route::get('{' . $prefix . '}/link_media_mix', [$class, 'linkMediaMix'])->name("{$basename}.LinkMediaMix");
                 Route::post('{' . $prefix . '}/link_media_mix', [$class, 'syncMediaMix'])->name("{$basename}.SyncMediaMix");
+                Route::get('{' . $prefix . '}/json_export', [$class, 'jsonExport'])->name("{$basename}.JsonExport");
+                Route::get('{' . $prefix . '}/json_import', [$class, 'jsonImport'])->name("{$basename}.JsonImport");
+                Route::post('{' . $prefix . '}/json_diff', [$class, 'jsonDiff'])->name("{$basename}.JsonDiff");
+                Route::post('{' . $prefix . '}/json_apply', [$class, 'jsonApply'])->name("{$basename}.JsonApply");
                 Route::get('{' . $prefix . '}', [$class, 'detail'])->name("{$basename}.Detail");
                 Route::delete('{' . $prefix . '}', [$class, 'delete'])->name("{$basename}.Delete");
             });
