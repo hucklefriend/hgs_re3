@@ -1,12 +1,30 @@
 @extends('admin.layout')
 
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>成功!</strong> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if (session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show">
+            <strong>注意!</strong> {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
     <div class="panel panel-inverse">
         <div class="panel-heading">
             <h4 class="panel-title">{{ $model->name }}</h4>
         </div>
         <div class="panel-body">
             <div class="text-end">
+                <a href="{{ route('Admin.Game.Franchise.JsonExport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-export"></i><span class="d-none d-md-inline"> JSON出力</span>
+                </a>
+                <a href="{{ route('Admin.Game.Franchise.JsonImport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-import"></i><span class="d-none d-md-inline"> JSON入力</span>
+                </a>
                 <a href="{{ route('Admin.Game.Franchise.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>

@@ -35,6 +35,9 @@
                 <div>{{ $packageGroups->appends($search)->links() }}</div>
 
                 <div class="text-end">
+                    <a href="{{ route('Admin.Game.PackageGroup.JsonNew') }}" class="btn btn-default">
+                        <i class="fas fa-file-import"></i><span class="d-none d-md-inline"> JSONから新規作成</span>
+                    </a>
                     <a href="{{ route('Admin.Game.PackageGroup.Add') }}" class="btn btn-default">
                         <i class="fas fa-plus"></i><span class="d-none d-md-inline"> Add</span>
                     </a>

@@ -19,6 +19,12 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
+                <a href="{{ route('Admin.Game.Title.JsonExport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-export"></i><span class="d-none d-md-inline"> JSON出力</span>
+                </a>
+                <a href="{{ route('Admin.Game.Title.JsonImport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-import"></i><span class="d-none d-md-inline"> JSON入力</span>
+                </a>
                 <a href="{{ route('Admin.Game.Title.Edit', $model) }}" class="btn btn-default">
                     <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Edit</span>
                 </a>

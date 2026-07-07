@@ -12,16 +12,25 @@ use App\Models\Extensions\GameTree;
 use App\Models\GameFranchise;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\FranchiseMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class FranchiseController extends AbstractAdminController
 {
+    public function __construct(
+        private readonly FranchiseMasterJsonService $franchiseMasterJsonService,
+    ) {
+    }
+
     /**
      * インデックス
      *
@@ -90,6 +99,93 @@ class FranchiseController extends AbstractAdminController
         return view('admin.game.franchise.link_tree', [
             'franchise' => $franchise
         ]);
+    }
+
+    /**
+     * AIに渡すJSONの出力画面
+     *
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GameFranchise $franchise): Application|Factory|View
+    {
+        return view('admin.game.franchise.json_export', [
+            'model' => $franchise,
+            'json'  => json_encode($this->franchiseMasterJsonService->export($franchise), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GameFranchise $franchise): Application|Factory|View
+    {
+        return view('admin.game.franchise.json_import', [
+            'model' => $franchise,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GameFranchise $franchise
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GameFranchise $franchise): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->franchiseMasterJsonService->diff($franchise, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.Franchise.JsonImport', $franchise)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.franchise.json_diff', [
+            'model'        => $franchise,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GameFranchise $franchise
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonApply(Request $request, GameFranchise $franchise): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->franchiseMasterJsonService->export($franchise), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->franchiseMasterJsonService->apply($franchise, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.Franchise.JsonImport', $franchise)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'franchise',
+            'target_id'         => $franchise->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.Franchise.Detail', $franchise)
+            ->with('success', 'JSONの内容をデータに反映しました。');
     }
 
     /**

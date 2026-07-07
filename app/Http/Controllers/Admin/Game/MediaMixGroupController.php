@@ -9,14 +9,21 @@ use App\Http\Requests\Admin\Game\MediaMixGroupRequest;
 use App\Models\Extensions\GameTree;
 use App\Models\GameMediaMix;
 use App\Models\GameMediaMixGroup;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\MediaMixGroupMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MediaMixGroupController extends AbstractAdminController
 {
+    public function __construct(
+        private readonly MediaMixGroupMasterJsonService $jsonService,
+    ) {}
+
     /**
      * インデックス
      *
@@ -148,6 +155,56 @@ class MediaMixGroupController extends AbstractAdminController
         $mediaMixGroup->delete();
 
         return redirect()->route('Admin.Game.MediaMixGroup');
+    }
+
+    public function jsonExport(GameMediaMixGroup $mediaMixGroup): Application|Factory|View
+    {
+        $json = json_encode($this->jsonService->export($mediaMixGroup), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return view('admin.game.media_mix_group.json_export', ['model' => $mediaMixGroup, 'json' => $json]);
+    }
+
+    public function jsonImport(GameMediaMixGroup $mediaMixGroup): Application|Factory|View
+    {
+        return view('admin.game.media_mix_group.json_import', ['model' => $mediaMixGroup]);
+    }
+
+    public function jsonDiff(Request $request, GameMediaMixGroup $mediaMixGroup): Application|Factory|View|RedirectResponse
+    {
+        $rawJson = $request->input('imported_json', '');
+        $diff = $this->jsonService->diff($mediaMixGroup, $rawJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.MediaMixGroup.JsonImport', $mediaMixGroup)
+                ->withInput()
+                ->with('error', implode(' ', $diff['errors']));
+        }
+
+        return view('admin.game.media_mix_group.json_diff', [
+            'model'        => $mediaMixGroup,
+            'diff'         => $diff,
+            'importedJson' => $rawJson,
+        ]);
+    }
+
+    public function jsonApply(Request $request, GameMediaMixGroup $mediaMixGroup): RedirectResponse
+    {
+        $rawJson = $request->input('imported_json', '');
+        $accept  = $request->input('accept', []);
+
+        $before = $this->jsonService->export($mediaMixGroup);
+        $applied = $this->jsonService->apply($mediaMixGroup, $rawJson, $accept);
+
+        MasterJsonImportLog::create([
+            'admin_user_id'    => Auth::id(),
+            'target_type'      => 'media_mix_group',
+            'target_id'        => $mediaMixGroup->id,
+            'before_json'      => json_encode($before, JSON_UNESCAPED_UNICODE),
+            'imported_json'    => $rawJson,
+            'applied_diff_json'=> json_encode($applied, JSON_UNESCAPED_UNICODE),
+        ]);
+
+        return redirect()->route('Admin.Game.MediaMixGroup.Detail', $mediaMixGroup)
+            ->with('success', 'JSONの内容を反映しました。');
     }
 
     /**

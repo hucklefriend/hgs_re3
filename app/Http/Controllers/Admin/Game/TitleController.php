@@ -13,9 +13,11 @@ use App\Models\Extensions\GameTree;
 use App\Models\FearMeterStatisticsDirtyTitle;
 use App\Models\GameMediaMix;
 use App\Models\GameTitle;
+use App\Models\MasterJsonImportLog;
 use App\Models\User;
 use App\Models\UserGameTitleFearMeter;
 use App\Models\UserGameTitleFearMeterLog;
+use App\Services\MasterJson\TitleMasterJsonService;
 use App\Services\Timeline\TimelineEventService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -28,8 +30,10 @@ use Throwable;
 
 class TitleController extends AbstractAdminController
 {
-    public function __construct(private readonly TimelineEventService $timelineEventService)
-    {
+    public function __construct(
+        private readonly TimelineEventService $timelineEventService,
+        private readonly TitleMasterJsonService $titleMasterJsonService,
+    ) {
     }
     /**
      * インデックス
@@ -239,6 +243,93 @@ class TitleController extends AbstractAdminController
         }
 
         return redirect()->route('Admin.Game.Title.Detail', $title);
+    }
+
+    /**
+     * AIへ渡すJSONの表示
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GameTitle $title): Application|Factory|View
+    {
+        return view('admin.game.title.json_export', [
+            'model' => $title,
+            'json'  => json_encode($this->titleMasterJsonService->export($title), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GameTitle $title
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GameTitle $title): Application|Factory|View
+    {
+        return view('admin.game.title.json_import', [
+            'model' => $title,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GameTitle $title
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GameTitle $title): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->titleMasterJsonService->diff($title, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.Title.JsonImport', $title)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.title.json_diff', [
+            'model'        => $title,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GameTitle $title
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonApply(Request $request, GameTitle $title): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->titleMasterJsonService->export($title), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->titleMasterJsonService->apply($title, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.Title.JsonImport', $title)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'title',
+            'target_id'         => $title->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.Title.Detail', $title)
+            ->with('success', 'JSONの内容をデータに反映しました。');
     }
 
     /**

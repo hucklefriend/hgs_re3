@@ -16,14 +16,23 @@ use App\Models\GameMaker;
 use App\Models\GamePackage;
 use App\Models\GamePackageShop;
 use App\Models\GameTitle;
+use App\Models\MasterJsonImportLog;
+use App\Services\MasterJson\PackageMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class PackageController extends AbstractAdminController
 {
+    public function __construct(
+        private readonly PackageMasterJsonService $packageMasterJsonService,
+    ) {
+    }
+
     /**
      * インデックス
      *
@@ -95,6 +104,161 @@ class PackageController extends AbstractAdminController
             'model' => $package,
             'tree'  => GameTree::getTree($package),
         ]);
+    }
+
+    /**
+     * AIに渡すJSONの出力画面
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function jsonExport(GamePackage $package): Application|Factory|View
+    {
+        return view('admin.game.package.json_export', [
+            'model' => $package,
+            'json'  => json_encode($this->packageMasterJsonService->export($package), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * AIが書き換えたJSONの貼り付け画面
+     *
+     * @param GamePackage $package
+     * @return Application|Factory|View
+     */
+    public function jsonImport(GamePackage $package): Application|Factory|View
+    {
+        return view('admin.game.package.json_import', [
+            'model' => $package,
+        ]);
+    }
+
+    /**
+     * 貼り付けられたJSONと現在のデータの差分を表示
+     *
+     * @param Request $request
+     * @param GamePackage $package
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonDiff(Request $request, GamePackage $package): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->packageMasterJsonService->diff($package, $importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.Package.JsonImport', $package)
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.package.json_diff', [
+            'model'        => $package,
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * 採用された差分をデータへ反映
+     *
+     * @param Request $request
+     * @param GamePackage $package
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonApply(Request $request, GamePackage $package): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+        $beforeJson = json_encode($this->packageMasterJsonService->export($package), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        try {
+            $applied = $this->packageMasterJsonService->apply($package, $importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.Package.JsonImport', $package)
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'package',
+            'target_id'         => $package->id,
+            'before_json'       => $beforeJson,
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($applied, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.Package.Detail', $package)
+            ->with('success', 'JSONの内容をデータに反映しました。');
+    }
+
+    /**
+     * JSONからの新規作成画面
+     *
+     * @return Application|Factory|View
+     */
+    public function jsonNew(): Application|Factory|View
+    {
+        return view('admin.game.package.json_new', [
+            'json' => json_encode($this->packageMasterJsonService->template(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+    }
+
+    /**
+     * JSONからの新規作成: 差分（作成内容）確認
+     *
+     * @param Request $request
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function jsonNewDiff(Request $request): Application|Factory|View|RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $diff = $this->packageMasterJsonService->diffNew($importedJson);
+
+        if (!empty($diff['errors'])) {
+            return redirect()->route('Admin.Game.Package.JsonNew')
+                ->withErrors(['imported_json' => implode(' / ', $diff['errors'])])
+                ->withInput();
+        }
+
+        return view('admin.game.package.json_diff_new', [
+            'diff'         => $diff,
+            'importedJson' => $importedJson,
+        ]);
+    }
+
+    /**
+     * JSONからの新規作成: 反映
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     * @throws Throwable
+     */
+    public function jsonNewApply(Request $request): RedirectResponse
+    {
+        $importedJson = (string) $request->input('imported_json', '');
+        $accept = $request->input('accept', []);
+
+        try {
+            $result = $this->packageMasterJsonService->applyNew($importedJson, $accept);
+        } catch (\Throwable $e) {
+            return redirect()->route('Admin.Game.Package.JsonNew')
+                ->withErrors(['imported_json' => $e->getMessage()])
+                ->withInput();
+        }
+
+        MasterJsonImportLog::create([
+            'admin_user_id'     => Auth::guard('admin')->id(),
+            'target_type'       => 'package',
+            'target_id'         => $result['id'],
+            'before_json'       => json_encode(null),
+            'imported_json'     => $importedJson,
+            'applied_diff_json' => json_encode($result['applied'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        ]);
+
+        return redirect()->route('Admin.Game.Package.Detail', ['package' => $result['id']])
+            ->with('success', 'JSONの内容から新規作成しました。');
     }
 
     /**

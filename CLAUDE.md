@@ -74,6 +74,7 @@ php artisan tinker                 # Interactive REPL
 @docs/claude/discord-webhook.md
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md
+@docs/claude/mcp-server.md
 
 ## Implementation Plans
 
@@ -82,6 +83,7 @@ php artisan tinker                 # Interactive REPL
 | 機能 | 資料 |
 |---|---|
 | タイムライン | `docs/plan/timeline.md` |
+| AI支援ゲームマスターJSON更新 | `docs/plan/ai-master-json-update.md` |
 
 ## Interaction Rules
 - プロンプトに全角の「？」が含まれる場合は、実装を行わず回答のみ行う。半角の「?」はこの対象外。

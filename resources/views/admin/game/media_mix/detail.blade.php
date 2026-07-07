@@ -7,6 +7,12 @@
         </div>
         <div class="panel-body">
             <div class="text-end">
+                <a href="{{ route('Admin.Game.MediaMix.JsonExport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-export"></i><span class="d-none d-md-inline"> JSON出力</span>
+                </a>
+                <a href="{{ route('Admin.Game.MediaMix.JsonImport', $model) }}" class="btn btn-default">
+                    <i class="fas fa-file-import"></i><span class="d-none d-md-inline"> JSON入力</span>
+                </a>
                 <a href="{{ route('Admin.Game.MediaMix.Copy', $model) }}" class="btn btn-default">
                     <i class="far fa-copy"></i><span class="d-none d-md-inline"> Copy</span>
                 </a>&nbsp;

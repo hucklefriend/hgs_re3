@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\Game\RelatedProductController as AdminGameRel
 use App\Http\Controllers\Api\Admin\Game\SeriesController as AdminGameSeriesController;
 use App\Http\Controllers\Api\Admin\Game\TitleController as AdminGameTitleController;
 use App\Http\Controllers\Api\GameMakerController;
+use App\Http\Controllers\Api\McpController;
 use App\Http\Controllers\Api\Test\AccountController;
 use App\Http\Controllers\Api\Test\FearMeterController;
 use App\Http\Controllers\Api\Test\ReviewController as TestReviewController;
@@ -181,6 +182,14 @@ Route::prefix('v1/admin/game')->middleware(['auth:sanctum', 'game_master.api'])-
     Route::post('media-mixes/{id}/related-products', [AdminGameMediaMixController::class, 'relatedProductsAttach'])->name('api.v1.admin.game.media-mixes.related-products.attach');
     Route::put('media-mixes/{id}/related-products', [AdminGameMediaMixController::class, 'relatedProductsSync'])->name('api.v1.admin.game.media-mixes.related-products.sync');
     Route::delete('media-mixes/{id}/related-products/{relatedProductId}', [AdminGameMediaMixController::class, 'relatedProductsDetach'])->name('api.v1.admin.game.media-mixes.related-products.detach');
+});
+
+// MCP API（Claude Desktop + ローカルMCPサーバー向け）
+Route::prefix('v1/mcp')->middleware(['auth:sanctum', 'game_master.api'])->group(function () {
+    Route::get('schema/{type}',       [McpController::class, 'schema'])->name('api.v1.mcp.schema');
+    Route::get('entities/{type}',     [McpController::class, 'entities'])->name('api.v1.mcp.entities');
+    Route::get('export/{type}/{id}',  [McpController::class, 'export'])->name('api.v1.mcp.export');
+    Route::post('diff/{type}/{id}',   [McpController::class, 'diff'])->name('api.v1.mcp.diff');
 });
 
 // 認証が必要なAPI
