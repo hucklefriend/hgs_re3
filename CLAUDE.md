@@ -74,6 +74,7 @@ php artisan tinker                 # Interactive REPL
 @docs/claude/discord-webhook.md
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md
+@docs/claude/mcp-server.md
 
 ## Implementation Plans
 
