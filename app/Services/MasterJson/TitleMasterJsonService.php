@@ -3,6 +3,7 @@
 namespace App\Services\MasterJson;
 
 use App\Enums\Rating;
+use App\Models\GameMaker;
 use App\Models\GamePackage;
 use App\Models\GamePackageGroup;
 use App\Models\GamePackageShop;
@@ -65,7 +66,7 @@ class TitleMasterJsonService
      */
     public function export(GameTitle $title): array
     {
-        $title->load(['packageGroups.packages.shops', 'packageGroups.packages.platform']);
+        $title->load(['packageGroups.packages.shops', 'packageGroups.packages.platform', 'packageGroups.packages.makers']);
 
         $lock = [
             'game_title'          => $title->updated_at?->toIso8601String(),
@@ -88,9 +89,14 @@ class TitleMasterJsonService
                     $shops[] = $this->exportRow(self::PACKAGE_SHOP_FIELDS, $shop, []);
                 }
 
-                $packages[] = $this->exportRow(self::PACKAGE_FIELDS, $package, [
+                $packageRow = $this->exportRow(self::PACKAGE_FIELDS, $package, [
                     'game_platform_id' => ['platform_name' => $package->platform?->name],
                 ], ['shops' => $shops]);
+                $packageRow['game_maker_ids'] = $package->makers->pluck('id')->values()->all();
+                $packageRow['_ref'] = array_merge($packageRow['_ref'] ?? [], [
+                    'maker_names' => $package->makers->pluck('name')->values()->all(),
+                ]);
+                $packages[] = $packageRow;
             }
 
             $packageGroups[] = $this->exportRow(self::PACKAGE_GROUP_FIELDS, $group, [], ['packages' => $packages]);
@@ -166,7 +172,7 @@ class TitleMasterJsonService
             return $result;
         }
 
-        $title->load(['packageGroups.packages.shops']);
+        $title->load(['packageGroups.packages.shops', 'packageGroups.packages.makers']);
         $lock = $incoming['_meta']['lock'] ?? [];
 
         $titleLockConflict = MasterJsonFieldHelper::isLockConflict($lock['game_title'] ?? null, $title->updated_at);
@@ -301,6 +307,10 @@ class TitleMasterJsonService
                     $packageDiff['fields'][] = $f;
                 }
             }
+            $makerField = $this->diffMakers($package, $incomingPackage['game_maker_ids'] ?? null, $rowLabel, $warnings);
+            if ($makerField !== null) {
+                $packageDiff['fields'][] = $makerField;
+            }
             if (!empty($packageDiff['fields'])) {
                 $packageDiff['op'] = 'update';
             }
@@ -330,6 +340,53 @@ class TitleMasterJsonService
         }
 
         return $packageDiff;
+    }
+
+    /**
+     * パッケージに紐づくメーカー（多対多）の差分を計算する。
+     * メーカー自体の新規作成は対象外（既存IDの指定が必須）
+     *
+     * @return array{key: string, label: string, before: string, after: string, raw_after: array<int>}|null
+     */
+    private function diffMakers(GamePackage $package, mixed $incomingIds, string $rowLabel, array &$warnings): ?array
+    {
+        if ($incomingIds === null) {
+            return null;
+        }
+        if (!is_array($incomingIds)) {
+            $warnings[] = "{$rowLabel}: メーカーの指定が不正です（配列ではありません）。このフィールドは無視されました。";
+            return null;
+        }
+
+        $requestedIds = collect($incomingIds)
+            ->filter(fn ($v) => is_numeric($v))
+            ->map(fn ($v) => (int) $v)
+            ->unique()
+            ->values();
+
+        $validIds = GameMaker::query()->whereIn('id', $requestedIds)->pluck('id');
+        $invalidIds = $requestedIds->diff($validIds);
+        if ($invalidIds->isNotEmpty()) {
+            $warnings[] = "{$rowLabel}: メーカーID " . $invalidIds->implode(', ') . ' は存在しないため無視しました。';
+        }
+
+        $newIds = $validIds->sort()->values();
+        $currentIds = $package->makers->pluck('id')->sort()->values();
+
+        if ($newIds->all() === $currentIds->all()) {
+            return null;
+        }
+
+        $currentNames = $package->makers->pluck('name')->implode(', ');
+        $newNames = GameMaker::query()->whereIn('id', $newIds)->pluck('name')->implode(', ');
+
+        return [
+            'key'       => 'game_maker_ids',
+            'label'     => 'メーカー',
+            'before'    => $currentNames !== '' ? $currentNames : '(なし)',
+            'after'     => $newNames !== '' ? $newNames : '(なし)',
+            'raw_after' => $newIds->all(),
+        ];
     }
 
     /**
@@ -504,11 +561,27 @@ class TitleMasterJsonService
         } elseif ($packageDiff['op'] === 'update' && $accepted) {
             $package = GamePackage::find($packageDiff['id']);
             if ($package !== null) {
+                $makerIds = null;
                 foreach ($packageDiff['fields'] as $f) {
+                    if ($f['key'] === 'game_maker_ids') {
+                        $makerIds = $f['raw_after'];
+                        continue;
+                    }
                     $package->{$f['key']} = $f['raw_after'];
                 }
-                if ($package->isDirty()) {
+
+                $changed = $package->isDirty();
+                if ($changed) {
                     $package->save();
+                }
+                if ($makerIds !== null) {
+                    $package->makers()->sync($makerIds);
+                    foreach ($package->makers as $maker) {
+                        $maker->setRating()->save();
+                    }
+                    $changed = true;
+                }
+                if ($changed) {
                     $packageApplied['op'] = 'update';
                     $packageApplied['fields'] = $packageDiff['fields'];
                 }

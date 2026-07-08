@@ -165,6 +165,34 @@ diff_json(type: "series", id: 42, json: "{ ... }")
 | `series` | シリーズ（`GameSeries`） | name, phonetic, node_name, description, description_source |
 | `franchise` | フランチャイズ（`GameFranchise`） | name, phonetic, node_name, description, description_source, rating |
 | `media_mix_group` | メディアミックスグループ（`GameMediaMixGroup`） | name, node_name, description |
+| `title` | ゲームタイトル（`GameTitle`） | name, phonetic, node_name, description, description_source, rating, issue, search_synonyms（他エンティティと異なり、パッケージグループ・パッケージ・ショップ・パッケージに紐づくメーカーの入れ子構造も `export_json` / `diff_json` の対象に含まれる。詳細は下記「タイトルの入れ子構造」および `TitleMasterJsonService` を参照） |
+
+### タイトルの入れ子構造
+
+`title` タイプの `export_json` は、タイトル本体（`game_title`）に加えて `package_groups` 配列を返す。各要素の構造は以下の通り。
+
+```
+game_title: { id, name, phonetic, node_name, description, description_source, rating, issue, search_synonyms }
+package_groups: [
+    {
+        id, name, node_name, sort_order, description, description_source, simple_shop_text,
+        packages: [
+            {
+                id, name, acronym, node_name, release_at, sort_order, default_img_type, rating, game_platform_id,
+                game_maker_ids: [1, 2, ...],   // パッケージに紐づくメーカーのID配列（既存メーカーのみ指定可、新規作成不可）
+                _ref: { game_platform_id_text, maker_names: [...] },
+                shops: [ { id, shop_id, url, img_tag, param1, param2, param3 }, ... ]
+            },
+            ...
+        ]
+    },
+    ...
+]
+```
+
+`diff_json` に投稿する際、`game_maker_ids` を書き換えるとメーカーの紐づけ（追加・削除）が差分として検出される。存在しないメーカーIDを指定した場合は警告付きで無視される。メーカー自体の新規作成（`GameMaker` レコードの追加）はこの機能では未対応。
+
+パッケージグループ・パッケージの新規作成もこの機能では未対応（既存IDの指定が必須）。新規作成が必要な場合は管理画面の該当詳細画面から行う。
 
 ---
 
@@ -181,6 +209,23 @@ diff_json(type: "series", id: 42, json: "{ ... }")
 ```
 
 ステップ6の `diff_json` は省略してもよい。変更内容が明らかな場合はそのまま管理画面に貼り付けてよい。
+
+---
+
+## 新規作成時のJSON自動入力
+
+`series` / `franchise` / `media_mix_group` / `title` の管理画面「新規登録」画面には、JSONを貼り付けてフォームに自動入力するウィジェット（`admin.game.master_json._json_autofill`）がある。
+
+- MCPの `export_json` / `get_schema` のレスポンス形式（`_meta.schema` + トップレベルキー）と互換のJSONを貼り付けて「フォームに反映」を押すと、id/name が一致するフォーム項目に値を入力する
+- `_meta.schema` が画面の対象エンティティと一致しない場合はエラー表示になる
+- JSONに存在してもフォーム側に対応項目がないキー（例: フランチャイズ・シリーズの紐づけIDなど、そもそもMasterJsonServiceの管理対象外のフィールド）は無視され、未対応項目としてメッセージに表示される
+- あくまでフォームへの入力補助であり、送信は通常の「Save」ボタン経由（既存の `SeriesRequest` 等のバリデーションを通る）。パッケージグループ・パッケージ・ショップ・メーカーを含む `title` の入れ子構造はこの自動入力の対象外（本体フィールドのみ）
+
+新しいエンティティタイプでこのウィジェットを使う場合は、対象の `add.blade.php` の `panel-body` 内、フォーム本体の `@include` の前に以下を追加する。
+
+```blade
+@include('admin.game.master_json._json_autofill', ['schema' => 'game_xxx'])
+```
 
 ---
 

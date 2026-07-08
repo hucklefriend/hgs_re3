@@ -4,6 +4,7 @@ namespace App\Services\MasterJson;
 
 use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
+use App\Models\GameMaker;
 use App\Models\GamePackage;
 use App\Models\GamePackageShop;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,7 @@ class PackageMasterJsonService
      */
     public function export(GamePackage $package): array
     {
-        $package->load(['shops']);
+        $package->load(['shops', 'makers']);
 
         $lock = [
             'game_package'       => $package->updated_at?->toIso8601String(),
@@ -58,7 +59,11 @@ class PackageMasterJsonService
         }
 
         $packageRow = $this->exportRow(self::PACKAGE_FIELDS, $package);
-        $packageRow['_ref'] = array_merge($packageRow['_ref'] ?? [], ['game_platform_id_text' => $package->platform?->name]);
+        $packageRow['_ref'] = array_merge($packageRow['_ref'] ?? [], [
+            'game_platform_id_text' => $package->platform?->name,
+            'maker_names'           => $package->makers->pluck('name')->values()->all(),
+        ]);
+        $packageRow['game_maker_ids'] = $package->makers->pluck('id')->values()->all();
 
         return [
             '_meta' => [
@@ -160,7 +165,7 @@ class PackageMasterJsonService
             return $result;
         }
 
-        $package->load(['shops']);
+        $package->load(['shops', 'makers']);
         $lock = $incoming['_meta']['lock'] ?? [];
 
         $lockConflict = MasterJsonFieldHelper::isLockConflict($lock['game_package'] ?? null, $package->updated_at);
@@ -174,6 +179,10 @@ class PackageMasterJsonService
             if ($f !== null) {
                 $fields[] = $f;
             }
+        }
+        $makerField = $this->diffMakers($package, $incomingPackage['game_maker_ids'] ?? null, 'パッケージ本体', $result['warnings']);
+        if ($makerField !== null) {
+            $fields[] = $makerField;
         }
         $result['package'] = ['id' => $package->id, 'lock_conflict' => $lockConflict, 'fields' => $fields];
         if (!empty($fields)) {
@@ -189,6 +198,53 @@ class PackageMasterJsonService
         }
 
         return $result;
+    }
+
+    /**
+     * パッケージに紐づくメーカー（多対多）の差分を計算する。
+     * メーカー自体の新規作成は対象外（既存IDの指定が必須）
+     *
+     * @return array{key: string, label: string, before: string, after: string, raw_after: array<int>}|null
+     */
+    private function diffMakers(GamePackage $package, mixed $incomingIds, string $rowLabel, array &$warnings): ?array
+    {
+        if ($incomingIds === null) {
+            return null;
+        }
+        if (!is_array($incomingIds)) {
+            $warnings[] = "{$rowLabel}: メーカーの指定が不正です（配列ではありません）。このフィールドは無視されました。";
+            return null;
+        }
+
+        $requestedIds = collect($incomingIds)
+            ->filter(fn ($v) => is_numeric($v))
+            ->map(fn ($v) => (int) $v)
+            ->unique()
+            ->values();
+
+        $validIds = GameMaker::query()->whereIn('id', $requestedIds)->pluck('id');
+        $invalidIds = $requestedIds->diff($validIds);
+        if ($invalidIds->isNotEmpty()) {
+            $warnings[] = "{$rowLabel}: メーカーID " . $invalidIds->implode(', ') . ' は存在しないため無視しました。';
+        }
+
+        $newIds = $validIds->sort()->values();
+        $currentIds = $package->makers->pluck('id')->sort()->values();
+
+        if ($newIds->all() === $currentIds->all()) {
+            return null;
+        }
+
+        $currentNames = $package->makers->pluck('name')->implode(', ');
+        $newNames = GameMaker::query()->whereIn('id', $newIds)->pluck('name')->implode(', ');
+
+        return [
+            'key'       => 'game_maker_ids',
+            'label'     => 'メーカー',
+            'before'    => $currentNames !== '' ? $currentNames : '(なし)',
+            'after'     => $newNames !== '' ? $newNames : '(なし)',
+            'raw_after' => $newIds->all(),
+        ];
     }
 
     private function diffShop(
@@ -274,14 +330,27 @@ class PackageMasterJsonService
         $acceptedNewShops = array_map('strval', array_keys($accept['new_shops'] ?? []));
 
         DB::transaction(function () use ($package, $diff, $acceptedFields, $acceptedShops, $acceptedNewShops, &$applied) {
+            $makerIds = null;
             foreach ($diff['package']['fields'] as $f) {
-                if (in_array($f['key'], $acceptedFields, true)) {
-                    $package->{$f['key']} = $f['raw_after'];
-                    $applied['package'][] = $f;
+                if (!in_array($f['key'], $acceptedFields, true)) {
+                    continue;
                 }
+                if ($f['key'] === 'game_maker_ids') {
+                    $makerIds = $f['raw_after'];
+                    $applied['package'][] = $f;
+                    continue;
+                }
+                $package->{$f['key']} = $f['raw_after'];
+                $applied['package'][] = $f;
             }
             if ($package->isDirty()) {
                 $package->save();
+            }
+            if ($makerIds !== null) {
+                $package->makers()->sync($makerIds);
+                foreach ($package->makers as $maker) {
+                    $maker->setRating()->save();
+                }
             }
 
             foreach ($diff['shops'] as $shopDiff) {

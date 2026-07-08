@@ -9,6 +9,7 @@
             @csrf
 
             <div class="panel-body">
+                @include('admin.game.master_json._json_autofill', ['schema' => 'game_title'])
                 @include('admin.game.title.form')
             </div>
             <div class="panel-footer text-end">

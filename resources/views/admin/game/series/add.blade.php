@@ -8,6 +8,7 @@
         <form method="POST" action="{{ route('Admin.Game.Series.Store') }}">
             @csrf
             <div class="panel-body">
+                @include('admin.game.master_json._json_autofill', ['schema' => 'game_series'])
                 @include('admin.game.series.form')
             </div>
             <div class="panel-footer text-end">

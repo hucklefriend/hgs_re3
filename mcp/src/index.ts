@@ -14,7 +14,7 @@ if (!HGN_API_TOKEN) {
     process.exit(1);
 }
 
-const ENTITY_TYPE = z.enum(["series", "franchise", "media_mix_group"]);
+const ENTITY_TYPE = z.enum(["series", "franchise", "media_mix_group", "title"]);
 
 async function hgnFetch(path: string): Promise<unknown> {
     const url = `${HGN_API_URL}/api/v1/mcp${path}`;
@@ -62,7 +62,7 @@ server.tool(
     [
         "エンティティのフィールド定義（スキーマ）を返します。",
         "JSONを書き換える前に呼び出して、どのフィールドが編集可能か・型・制約を確認してください。",
-        "type には series / franchise / media_mix_group のいずれかを指定します。",
+        "type には series / franchise / media_mix_group / title のいずれかを指定します。",
     ].join(" "),
     {
         type: ENTITY_TYPE.describe("エンティティ種別"),
@@ -81,7 +81,7 @@ server.tool(
         "エンティティの一覧を取得します。",
         "IDを調べるときや、作業対象を絞り込むときに使ってください。",
         "q パラメータでキーワード検索できます（名前・よみがな）。",
-        "type には series / franchise / media_mix_group のいずれかを指定します。",
+        "type には series / franchise / media_mix_group / title のいずれかを指定します。",
     ].join(" "),
     {
         type: ENTITY_TYPE.describe("エンティティ種別"),
@@ -112,7 +112,7 @@ server.tool(
         "エンティティのJSONをエクスポートします。",
         "このJSONを編集して、HGN管理画面の「JSON入力」画面から取り込みます。",
         "JSON入力後は管理画面で差分を確認し、適用する変更を選択してください。",
-        "type には series / franchise / media_mix_group のいずれかを指定します。",
+        "type には series / franchise / media_mix_group / title のいずれかを指定します。",
     ].join(" "),
     {
         type: ENTITY_TYPE.describe("エンティティ種別"),
@@ -131,7 +131,7 @@ server.tool(
     [
         "AIが書き換えたJSONを投稿すると、現在のDBの値との差分だけを返します。",
         "変更点をチャット上で確認するために使ってください。実際の保存は管理画面の「JSON入力」→「差分確認」→「保存」から行います。",
-        "type には series / franchise / media_mix_group のいずれかを指定します。",
+        "type には series / franchise / media_mix_group / title のいずれかを指定します。",
     ].join(" "),
     {
         type: ENTITY_TYPE.describe("エンティティ種別"),

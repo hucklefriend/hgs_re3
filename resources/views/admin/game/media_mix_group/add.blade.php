@@ -8,6 +8,7 @@
         <form method="POST" action="{{ route('Admin.Game.MediaMixGroup.Store') }}">
             @csrf
             <div class="panel-body">
+                @include('admin.game.master_json._json_autofill', ['schema' => 'game_media_mix_group'])
                 @include('admin.game.media_mix_group.form')
             </div>
             <div class="panel-footer text-end">

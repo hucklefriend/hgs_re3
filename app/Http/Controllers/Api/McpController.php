@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\GameFranchise;
 use App\Models\GameMediaMixGroup;
 use App\Models\GameSeries;
+use App\Models\GameTitle;
 use App\Services\MasterJson\FranchiseMasterJsonService;
 use App\Services\MasterJson\MediaMixGroupMasterJsonService;
 use App\Services\MasterJson\SeriesMasterJsonService;
+use App\Services\MasterJson\TitleMasterJsonService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -58,6 +60,28 @@ class McpController extends Controller
                 ['key' => 'description', 'label' => '説明文',             'type' => 'text'],
             ],
         ],
+        'title' => [
+            'label'          => 'ゲームタイトル',
+            'model'          => GameTitle::class,
+            'search_columns' => ['name', 'phonetic'],
+            'fields'         => [
+                ['key' => 'name',               'label' => '名前',                 'type' => 'string', 'required' => true,  'maxlength' => 200],
+                ['key' => 'phonetic',            'label' => 'よみがな',             'type' => 'string', 'required' => true,  'maxlength' => 200, 'note' => 'ひらがな・長音符（ー）・数字のみ'],
+                ['key' => 'node_name',           'label' => 'ノード表示用の名前',   'type' => 'string', 'required' => true,  'maxlength' => 200],
+                ['key' => 'description',         'label' => '説明文',               'type' => 'text'],
+                ['key' => 'description_source',  'label' => '説明文の引用元',       'type' => 'text'],
+                ['key' => 'rating',              'label' => 'レーティング',         'type' => 'enum',   'required' => true,
+                    'enum_values' => [
+                        ['value' => 0, 'label' => '全年齢'],
+                        ['value' => 2, 'label' => 'R-18Z'],
+                        ['value' => 3, 'label' => 'R-18A'],
+                    ],
+                ],
+                ['key' => 'issue',               'label' => '疑義',                 'type' => 'text'],
+                ['key' => 'search_synonyms',     'label' => '検索用シノニム',       'type' => 'text'],
+            ],
+            'schema_note' => 'この一覧はタイトル本体のフィールドのみです。パッケージグループ・パッケージ・ショップ・パッケージに紐づくメーカー（game_maker_ids）は export_json のレスポンス（package_groups）に含まれます。フィールド定義は export_json で取得したJSONの構造を参照してください。',
+        ],
     ];
 
     public function schema(string $type): JsonResponse
@@ -68,11 +92,17 @@ class McpController extends Controller
             return response()->json(['message' => 'Unknown entity type.'], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json([
+        $response = [
             'type'   => $type,
             'label'  => $config['label'],
             'fields' => $config['fields'],
-        ]);
+        ];
+
+        if (isset($config['schema_note'])) {
+            $response['note'] = $config['schema_note'];
+        }
+
+        return response()->json($response);
     }
 
     public function entities(Request $request, string $type): JsonResponse
@@ -154,6 +184,8 @@ class McpController extends Controller
             $json = app(SeriesMasterJsonService::class)->export($model);
         } elseif ($type === 'franchise') {
             $json = app(FranchiseMasterJsonService::class)->export($model);
+        } elseif ($type === 'title') {
+            $json = app(TitleMasterJsonService::class)->export($model);
         } else {
             $json = app(MediaMixGroupMasterJsonService::class)->export($model);
         }
@@ -186,6 +218,8 @@ class McpController extends Controller
             $diff = app(SeriesMasterJsonService::class)->diff($model, $importedJson);
         } elseif ($type === 'franchise') {
             $diff = app(FranchiseMasterJsonService::class)->diff($model, $importedJson);
+        } elseif ($type === 'title') {
+            $diff = app(TitleMasterJsonService::class)->diff($model, $importedJson);
         } else {
             $diff = app(MediaMixGroupMasterJsonService::class)->diff($model, $importedJson);
         }

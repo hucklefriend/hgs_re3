@@ -214,6 +214,10 @@ class MasterJsonFieldHelper
         if ($value === '') {
             return '(空)';
         }
+        if ($spec['type'] === 'fk') {
+            $name = DB::table($spec['table'])->where('id', $value)->value('name');
+            return $name !== null ? "{$value}（{$name}）" : (string) $value;
+        }
         return (string) $value;
     }
 
