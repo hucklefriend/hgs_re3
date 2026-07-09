@@ -12,8 +12,8 @@ use App\Models\GameTitlePackageGroupLink;
 use App\Models\GamePlatform;
 use App\Models\GameSeries;
 use App\Models\GameTitle;
-use App\Models\GameTitleFearMeterStatistic;
-use App\Models\GameTitleReviewStatistic;
+use App\Models\TitleFearMeterStatistic;
+use App\Models\TitleReviewStatistic;
 use App\Models\UserFavoriteGameTitle;
 use App\Models\UserGameTitleFearMeterCommentLike;
 use App\Models\UserGameTitleFearMeterCommentReport;
@@ -557,7 +557,7 @@ class GameController extends Controller
         }
 
         // 怖さメーター統計データを取得（集計されていなかったらnull）
-        $fearMeter = GameTitleFearMeterStatistic::find($title->id);
+        $fearMeter = TitleFearMeterStatistic::find($title->id);
         $commentLogPickup = UserGameTitleFearMeterLog::query()
             ->visibleComments()
             ->where('game_title_id', $title->id)
@@ -585,7 +585,7 @@ class GameController extends Controller
         }
 
         // レビュー統計
-        $reviewStatistic = GameTitleReviewStatistic::find($title->id);
+        $reviewStatistic = TitleReviewStatistic::find($title->id);
 
         // 新着レビュー（ネタバレなし優先、最大3件）
         $recentReviews = UserGameTitleReview::where('game_title_id', $title->id)

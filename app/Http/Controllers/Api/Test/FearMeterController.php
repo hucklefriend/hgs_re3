@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Test;
 use App\Models\FearMeterStatisticsRunLog;
 use App\Models\FearMeterStatisticsDirtyTitle;
 use App\Models\GameTitle;
-use App\Models\GameTitleFearMeterStatistic;
+use App\Models\TitleFearMeterStatistic;
 use App\Models\UserGameTitleFearMeter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -53,7 +53,7 @@ class FearMeterController extends BaseTestController
         $successCount = 0;
         foreach ($gameTitleIds as $gameTitleId) {
             try {
-                $statistic = GameTitleFearMeterStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
+                $statistic = TitleFearMeterStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
                 $statistic->game_title_id = $gameTitleId;
                 $statistic->recalculate();
                 $successCount++;
@@ -115,7 +115,7 @@ class FearMeterController extends BaseTestController
             ], 404);
         }
 
-        $statistic = GameTitleFearMeterStatistic::find($title->id);
+        $statistic = TitleFearMeterStatistic::find($title->id);
 
         if (!$statistic) {
             return response()->json([

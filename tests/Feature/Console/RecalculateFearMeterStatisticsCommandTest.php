@@ -6,7 +6,7 @@ use App\Enums\FearMeter;
 use App\Models\FearMeterStatisticsDirtyTitle;
 use App\Models\FearMeterStatisticsRunLog;
 use App\Models\GameTitle;
-use App\Models\GameTitleFearMeterStatistic;
+use App\Models\TitleFearMeterStatistic;
 use App\Models\User;
 use App\Models\UserGameTitleFearMeter;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -57,7 +57,7 @@ class RecalculateFearMeterStatisticsCommandTest extends TestCase
         $this->artisan('fear-meter:recalculate-statistics')->assertSuccessful();
 
         // 初回 assert: 2タイトル分の統計が作成されている
-        $stat1 = GameTitleFearMeterStatistic::find($firstRunTitleIds[0]);
+        $stat1 = TitleFearMeterStatistic::find($firstRunTitleIds[0]);
         $this->assertNotNull($stat1);
         $this->assertSame(3, $stat1->total_count);
         $this->assertSame('1.00', (string) $stat1->average_rating);
@@ -68,7 +68,7 @@ class RecalculateFearMeterStatisticsCommandTest extends TestCase
         $this->assertSame(0, $stat1->rating_3_count);
         $this->assertSame(0, $stat1->rating_4_count);
 
-        $stat2 = GameTitleFearMeterStatistic::find($firstRunTitleIds[1]);
+        $stat2 = TitleFearMeterStatistic::find($firstRunTitleIds[1]);
         $this->assertNotNull($stat2);
         $this->assertSame(3, $stat2->total_count);
         $this->assertSame('2.67', (string) $stat2->average_rating);
@@ -100,7 +100,7 @@ class RecalculateFearMeterStatisticsCommandTest extends TestCase
         $this->artisan('fear-meter:recalculate-statistics')->assertSuccessful();
 
         // 2回目 assert: 追加したタイトルのみ統計が作成されている
-        $statNew = GameTitleFearMeterStatistic::find($secondRunTitleId);
+        $statNew = TitleFearMeterStatistic::find($secondRunTitleId);
         $this->assertNotNull($statNew);
         $this->assertSame(1, $statNew->total_count);
         $this->assertSame('3.00', (string) $statNew->average_rating);
@@ -134,7 +134,7 @@ class RecalculateFearMeterStatisticsCommandTest extends TestCase
         ]);
 
         $this->artisan('fear-meter:recalculate-statistics', ['--force-full' => true])->assertSuccessful();
-        $this->assertNotNull(GameTitleFearMeterStatistic::find($gameTitleId));
+        $this->assertNotNull(TitleFearMeterStatistic::find($gameTitleId));
 
         UserGameTitleFearMeter::where('user_id', $user->id)
             ->where('game_title_id', $gameTitleId)
@@ -143,7 +143,7 @@ class RecalculateFearMeterStatisticsCommandTest extends TestCase
 
         $this->artisan('fear-meter:recalculate-statistics')->assertSuccessful();
 
-        $this->assertNull(GameTitleFearMeterStatistic::find($gameTitleId));
+        $this->assertNull(TitleFearMeterStatistic::find($gameTitleId));
         $this->assertFalse(FearMeterStatisticsDirtyTitle::where('game_title_id', $gameTitleId)->exists());
     }
 }

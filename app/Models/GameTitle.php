@@ -138,7 +138,7 @@ class GameTitle extends Model
      */
     public function fearMeterStatistic(): HasOne
     {
-        return $this->hasOne(GameTitleFearMeterStatistic::class, 'game_title_id');
+        return $this->hasOne(TitleFearMeterStatistic::class, 'game_title_id');
     }
 
     /**
@@ -148,7 +148,7 @@ class GameTitle extends Model
      */
     public function reviewStatistic(): HasOne
     {
-        return $this->hasOne(GameTitleReviewStatistic::class, 'game_title_id');
+        return $this->hasOne(TitleReviewStatistic::class, 'game_title_id');
     }
 
     /**

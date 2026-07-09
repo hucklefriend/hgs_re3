@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Test;
 
 use App\Models\GameTitle;
-use App\Models\GameTitleReviewStatistic;
+use App\Models\TitleReviewStatistic;
 use App\Models\ReviewStatisticsDirtyTitle;
 use App\Models\ReviewStatisticsRunLog;
 use App\Models\UserGameTitleReview;
@@ -54,7 +54,7 @@ class ReviewController extends BaseTestController
         $successCount = 0;
         foreach ($gameTitleIds as $gameTitleId) {
             try {
-                $statistic = GameTitleReviewStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
+                $statistic = TitleReviewStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
                 $statistic->game_title_id = $gameTitleId;
                 $statistic->recalculate();
                 $successCount++;
@@ -116,7 +116,7 @@ class ReviewController extends BaseTestController
             ], 404);
         }
 
-        $statistic = GameTitleReviewStatistic::find($title->id);
+        $statistic = TitleReviewStatistic::find($title->id);
 
         if (!$statistic) {
             return response()->json([

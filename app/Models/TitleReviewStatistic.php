@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
-class GameTitleReviewStatistic extends Model
+class TitleReviewStatistic extends Model
 {
     public const CREATED_AT = null;
 
-    protected $table = 'game_title_review_statistics';
+    protected $table = 'title_review_statistics';
 
     protected $primaryKey = 'game_title_id';
     public $incrementing = false;

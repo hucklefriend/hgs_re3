@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class GameTitleFearMeterStatistic extends Model
+class TitleFearMeterStatistic extends Model
 {
     public const CREATED_AT = null;
+
+    protected $table = 'title_fear_meter_statistics';
 
     protected $primaryKey = 'game_title_id';
     public $incrementing = false;

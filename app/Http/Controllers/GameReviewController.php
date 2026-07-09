@@ -35,8 +35,8 @@ class GameReviewController extends Controller
         }
 
         $query = GameTitle::query()
-            ->join('game_title_review_statistics as rs', 'game_titles.id', '=', 'rs.game_title_id')
-            ->leftJoin('game_title_fear_meter_statistics as fms', 'game_titles.id', '=', 'fms.game_title_id')
+            ->join('title_review_statistics as rs', 'game_titles.id', '=', 'rs.game_title_id')
+            ->leftJoin('title_fear_meter_statistics as fms', 'game_titles.id', '=', 'fms.game_title_id')
             ->select([
                 'game_titles.id',
                 'game_titles.key',

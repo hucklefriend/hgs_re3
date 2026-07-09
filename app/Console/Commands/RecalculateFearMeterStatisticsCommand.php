@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\FearMeterStatisticsRunLog;
 use App\Models\FearMeterStatisticsDirtyTitle;
-use App\Models\GameTitleFearMeterStatistic;
+use App\Models\TitleFearMeterStatistic;
 use App\Models\UserGameTitleFearMeter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -78,7 +78,7 @@ class RecalculateFearMeterStatisticsCommand extends Command
 
         foreach ($gameTitleIds as $gameTitleId) {
             try {
-                $statistic = GameTitleFearMeterStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
+                $statistic = TitleFearMeterStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
                 $statistic->game_title_id = $gameTitleId;
                 $statistic->recalculate();
                 $successCount++;

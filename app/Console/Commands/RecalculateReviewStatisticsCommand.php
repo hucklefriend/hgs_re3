@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ReviewStatisticsDirtyTitle;
 use App\Models\ReviewStatisticsRunLog;
-use App\Models\GameTitleReviewStatistic;
+use App\Models\TitleReviewStatistic;
 use App\Models\UserGameTitleReview;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -79,7 +79,7 @@ class RecalculateReviewStatisticsCommand extends Command
 
         foreach ($gameTitleIds as $gameTitleId) {
             try {
-                $statistic = GameTitleReviewStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
+                $statistic = TitleReviewStatistic::firstOrNew(['game_title_id' => $gameTitleId]);
                 $statistic->game_title_id = $gameTitleId;
                 $statistic->recalculate();
                 $successCount++;
