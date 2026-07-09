@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Models\UserGameTitleReview;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class PurgeWithdrawnUsersCommand extends Command
 {
@@ -50,6 +52,7 @@ class PurgeWithdrawnUsersCommand extends Command
 
         $query->chunkById(100, function ($users) use (&$deletedCount) {
             foreach ($users as $user) {
+                $this->deleteUserFiles($user);
                 $user->delete();
                 $deletedCount++;
             }
@@ -60,6 +63,26 @@ class PurgeWithdrawnUsersCommand extends Command
         $this->info("合計 {$deletedCount} 件のユーザーを削除しました。");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * ユーザーに紐づく物理ファイル（アバター画像・レビューOGP画像）を削除する
+     */
+    private function deleteUserFiles(User $user): void
+    {
+        if ($user->avatar_filename) {
+            Storage::disk('public')->delete('avatars/' . $user->avatar_filename);
+        }
+
+        UserGameTitleReview::where('user_id', $user->id)
+            ->whereNotNull('ogp_image_filename')
+            ->pluck('ogp_image_filename')
+            ->each(function (string $filename) {
+                $fullPath = public_path('img/review/' . $filename);
+                if (file_exists($fullPath)) {
+                    @unlink($fullPath);
+                }
+            });
     }
 }
 

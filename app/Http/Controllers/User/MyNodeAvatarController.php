@@ -15,7 +15,7 @@ class MyNodeAvatarController
     public function update(Request $request): JsonResponse
     {
         $request->validate([
-            'avatar' => ['required', 'image', 'mimes:jpeg,png,gif,webp', 'max:2048'],
+            'avatar' => ['required', 'image', 'mimes:jpeg,png,gif,webp', 'max:2048', 'dimensions:max_width=2000,max_height=2000'],
         ]);
 
         /** @var \App\Models\User $user */
