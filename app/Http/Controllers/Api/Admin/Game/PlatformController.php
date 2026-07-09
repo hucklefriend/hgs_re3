@@ -44,9 +44,7 @@ class PlatformController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $platform = GamePlatform::query()
-            ->with(['synonyms:game_platform_id,synonym'])
-            ->find($id);
+        $platform = GamePlatform::query()->find($id);
 
         if ($platform === null) {
             return response()->json(['message' => 'Not Found'], Response::HTTP_NOT_FOUND);
@@ -61,10 +59,7 @@ class PlatformController extends Controller
     {
         $platform = new GamePlatform();
         $platform->fill($request->validated());
-        $platform->synonymsStr = $request->validated('synonymsStr', '');
         $platform->save();
-
-        $platform->load(['synonyms:game_platform_id,synonym']);
 
         return response()->json([
             'data' => $this->platformToArray($platform),
@@ -80,10 +75,7 @@ class PlatformController extends Controller
         }
 
         $platform->fill($request->validated());
-        $platform->synonymsStr = $request->validated('synonymsStr', '');
         $platform->save();
-
-        $platform->load(['synonyms:game_platform_id,synonym']);
 
         return response()->json([
             'data' => $this->platformToArray($platform),
@@ -184,20 +176,22 @@ class PlatformController extends Controller
             return $query;
         }
 
-        $query->where(function (Builder $sub) use ($words)
+        $query->where(function (Builder $outer) use ($words)
         {
-            foreach ($words as $word) {
-                $sub->where('name', 'LIKE', '%' . $word . '%');
-            }
-        });
+            $outer->where(function (Builder $sub) use ($words)
+            {
+                foreach ($words as $word) {
+                    $sub->where('name', 'LIKE', '%' . $word . '%');
+                }
+            });
 
-        $synonyms = array_map(fn (string $w) => synonym($w), $words);
-
-        $query->orWhereIn('id', function ($sub) use ($synonyms)
-        {
-            $sub->select('game_platform_id')
-                ->from('game_platform_synonyms')
-                ->whereIn('synonym', $synonyms);
+            $synonymWords = array_map(fn (string $w) => synonym($w), $words);
+            $outer->orWhere(function (Builder $syn) use ($synonymWords)
+            {
+                foreach ($synonymWords as $sw) {
+                    $syn->orWhere('search_synonyms', 'LIKE', '%' . $sw . '%');
+                }
+            });
         });
 
         return $query;
@@ -208,10 +202,6 @@ class PlatformController extends Controller
      */
     private function platformToArray(GamePlatform $platform): array
     {
-        $synonyms = $platform->relationLoaded('synonyms')
-            ? $platform->synonyms->pluck('synonym')->values()->all()
-            : [];
-
         $type = $platform->type;
         if ($type instanceof \BackedEnum) {
             $type = $type->value;
@@ -228,7 +218,7 @@ class PlatformController extends Controller
             'game_maker_id' => $platform->game_maker_id,
             'description' => $platform->description,
             'description_source' => $platform->description_source,
-            'synonyms' => $synonyms,
+            'search_synonyms' => $platform->search_synonyms,
         ];
     }
 

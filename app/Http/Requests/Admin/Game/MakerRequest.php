@@ -27,9 +27,6 @@ class MakerRequest extends FormRequest
         if ($this->description === null) {
             $this->merge(['description' => '']);
         }
-        if ($this->synonymsStr === null) {
-            $this->merge(['synonymsStr' => '']);
-        }
     }
 
     /**
@@ -46,7 +43,7 @@ class MakerRequest extends FormRequest
             'rating'                => ['required', new Enum(Rating::class)],
             'type'                  => 'required|integer',
             'related_game_maker_id' => 'nullable|exists:game_makers,id',
-            'synonymsStr'           => '',
+            'search_synonyms'       => '',
             'description'           => 'nullable',
             'description_source'    => 'nullable',
         ];

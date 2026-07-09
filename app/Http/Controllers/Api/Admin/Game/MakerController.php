@@ -44,9 +44,7 @@ class MakerController extends Controller
 
     public function show(int $id): JsonResponse
     {
-        $maker = GameMaker::query()
-            ->with(['synonyms:game_maker_id,synonym'])
-            ->find($id);
+        $maker = GameMaker::query()->find($id);
 
         if ($maker === null) {
             return response()->json(['message' => 'Not Found'], Response::HTTP_NOT_FOUND);
@@ -61,10 +59,7 @@ class MakerController extends Controller
     {
         $maker = new GameMaker();
         $maker->fill($request->validated());
-        $maker->synonymsStr = $request->validated('synonymsStr', '');
         $maker->save();
-
-        $maker->load(['synonyms:game_maker_id,synonym']);
 
         return response()->json([
             'data' => $this->makerToArray($maker),
@@ -80,10 +75,7 @@ class MakerController extends Controller
         }
 
         $maker->fill($request->validated());
-        $maker->synonymsStr = $request->validated('synonymsStr', '');
         $maker->save();
-
-        $maker->load(['synonyms:game_maker_id,synonym']);
 
         return response()->json([
             'data' => $this->makerToArray($maker),
@@ -184,24 +176,26 @@ class MakerController extends Controller
             return $query;
         }
 
-        $query->where(function (Builder $sub) use ($words)
+        $query->where(function (Builder $outer) use ($words)
         {
-            foreach ($words as $word) {
-                $sub->where(function (Builder $term) use ($word)
-                {
-                    $term->where('name', 'LIKE', '%' . $word . '%')
-                        ->orWhere('phonetic', 'LIKE', '%' . $word . '%');
-                });
-            }
-        });
+            $outer->where(function (Builder $sub) use ($words)
+            {
+                foreach ($words as $word) {
+                    $sub->where(function (Builder $term) use ($word)
+                    {
+                        $term->where('name', 'LIKE', '%' . $word . '%')
+                            ->orWhere('phonetic', 'LIKE', '%' . $word . '%');
+                    });
+                }
+            });
 
-        $synonyms = array_map(fn (string $w) => synonym($w), $words);
-
-        $query->orWhereIn('id', function ($sub) use ($synonyms)
-        {
-            $sub->select('game_maker_id')
-                ->from('game_maker_synonyms')
-                ->whereIn('synonym', $synonyms);
+            $synonymWords = array_map(fn (string $w) => synonym($w), $words);
+            $outer->orWhere(function (Builder $syn) use ($synonymWords)
+            {
+                foreach ($synonymWords as $sw) {
+                    $syn->orWhere('search_synonyms', 'LIKE', '%' . $sw . '%');
+                }
+            });
         });
 
         return $query;
@@ -212,10 +206,6 @@ class MakerController extends Controller
      */
     private function makerToArray(GameMaker $maker): array
     {
-        $synonyms = $maker->relationLoaded('synonyms')
-            ? $maker->synonyms->pluck('synonym')->values()->all()
-            : [];
-
         return [
             'id' => $maker->id,
             'name' => $maker->name,
@@ -226,7 +216,7 @@ class MakerController extends Controller
             'related_game_maker_id' => $maker->related_game_maker_id,
             'description' => $maker->description,
             'description_source' => $maker->description_source,
-            'synonyms' => $synonyms,
+            'search_synonyms' => $maker->search_synonyms,
         ];
     }
 

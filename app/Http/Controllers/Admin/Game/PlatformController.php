@@ -51,17 +51,19 @@ class PlatformController extends AbstractAdminController
             });
 
             // 俗称も探す
-            // $words配列の中にある文字列にsynonym関数を適用する
-            array_walk($words, function (&$value, $key){
-                $value = synonym($value);
-            });
+            $synonymWords = [];
+            foreach ($words as $word) {
+                $synonymWords[] = synonym($word);
+            }
 
-            // サブクエリで、game_maker_synonymsテーブルのsynonymが一致するgame_maker_id
-            $platforms->orWhereIn('id', function ($query) use ($words) {
-                $query->select('game_platform_id')
-                    ->from('game_platform_synonyms')
-                    ->whereIn('synonym', $words);
-            });
+            // search_synonymsカラム内の改行区切り文字列から検索
+            if (!empty($synonymWords)) {
+                $platforms->orWhere(function ($query) use ($synonymWords) {
+                    foreach ($synonymWords as $synonymWord) {
+                        $query->orWhere('search_synonyms', 'LIKE', '%' . $synonymWord . '%');
+                    }
+                });
+            }
         }
 
         $this->saveSearchSession($search);
@@ -80,7 +82,6 @@ class PlatformController extends AbstractAdminController
      */
     public function detail(GamePlatform $platform): Application|Factory|View
     {
-        $platform->loadSynonyms();
         return view('admin.game.platform.detail', [
             'model' => $platform
         ]);
@@ -109,7 +110,6 @@ class PlatformController extends AbstractAdminController
     {
         $platform = new GamePlatform();
         $platform->fill($request->validated());
-        $platform->synonymsStr = $request->post('synonymsStr', '');
         $platform->save();
 
         return redirect()->route('Admin.Game.Platform.Detail', $platform);
@@ -159,7 +159,6 @@ class PlatformController extends AbstractAdminController
      */
     public function edit(GamePlatform $platform): Application|Factory|View
     {
-        $platform->loadSynonyms();
         return view('admin.game.platform.edit', [
             'model'  => $platform
         ]);
@@ -176,7 +175,6 @@ class PlatformController extends AbstractAdminController
     public function update(PlatformRequest $request, GamePlatform $platform): RedirectResponse
     {
         $platform->fill($request->validated());
-        $platform->synonymsStr = $request->post('synonymsStr', '');
         $platform->save();
 
         return redirect()->route('Admin.Game.Platform.Detail', $platform);

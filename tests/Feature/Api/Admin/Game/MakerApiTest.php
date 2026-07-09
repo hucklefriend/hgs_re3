@@ -27,7 +27,7 @@ class MakerApiTest extends GameMasterApiTestCase
                     'related_game_maker_id',
                     'description',
                     'description_source',
-                    'synonyms',
+                    'search_synonyms',
                 ],
             ],
             'meta' => [
@@ -53,7 +53,7 @@ class MakerApiTest extends GameMasterApiTestCase
             'name' => '株式会社テスト',
             'phonetic' => 'かぶしきがいしゃてすと',
         ]);
-        $maker->synonymsStr = "てすと\r\n別名テスト";
+        $maker->search_synonyms = "てすと\r\n別名テスト";
         $maker->save();
 
         $response = $this->getJson('/api/v1/admin/game/makers?q='.urlencode('別名テスト'));
@@ -68,14 +68,14 @@ class MakerApiTest extends GameMasterApiTestCase
     public function test_show_returns_maker_with_synonyms(): void
     {
         $maker = GameMaker::factory()->create();
-        $maker->synonymsStr = "a\r\nb";
+        $maker->search_synonyms = "a\r\nb";
         $maker->save();
 
         $response = $this->getJson("/api/v1/admin/game/makers/{$maker->id}");
 
         $response->assertOk();
         $response->assertJsonPath('data.id', $maker->id);
-        $response->assertJsonPath('data.synonyms', [synonym('a'), synonym('b')]);
+        $response->assertJsonPath('data.search_synonyms', "a\r\nb");
     }
 
     public function test_store_creates_maker(): void
@@ -87,7 +87,7 @@ class MakerApiTest extends GameMasterApiTestCase
             'rating' => 0,
             'type' => 1,
             'related_game_maker_id' => null,
-            'synonymsStr' => "別名1\r\n別名2",
+            'search_synonyms' => "別名1\r\n別名2",
             'description' => '説明',
             'description_source' => '引用元',
         ];
@@ -96,14 +96,12 @@ class MakerApiTest extends GameMasterApiTestCase
 
         $response->assertCreated();
         $response->assertJsonPath('data.name', 'テストメーカー');
-        $response->assertJsonPath('data.synonyms', ['別名1', '別名2']);
+        $response->assertJsonPath('data.search_synonyms', "別名1\r\n別名2");
 
         $this->assertDatabaseHas('game_makers', [
             'key' => 'test-maker-key',
             'name' => 'テストメーカー',
-        ]);
-        $this->assertDatabaseHas('game_maker_synonyms', [
-            'synonym' => synonym('別名1'),
+            'search_synonyms' => "別名1\r\n別名2",
         ]);
     }
 
@@ -123,7 +121,7 @@ class MakerApiTest extends GameMasterApiTestCase
             'node_name' => 'After',
             'rating' => 0,
             'type' => 2,
-            'synonymsStr' => "x\r\ny",
+            'search_synonyms' => "x\r\ny",
             'description' => 'desc',
             'description_source' => 'src',
             'related_game_maker_id' => null,
@@ -133,7 +131,7 @@ class MakerApiTest extends GameMasterApiTestCase
 
         $response->assertOk();
         $response->assertJsonPath('data.key', 'after-key');
-        $response->assertJsonPath('data.synonyms', [synonym('x'), synonym('y')]);
+        $response->assertJsonPath('data.search_synonyms', "x\r\ny");
 
         $this->assertDatabaseHas('game_makers', [
             'id' => $maker->id,

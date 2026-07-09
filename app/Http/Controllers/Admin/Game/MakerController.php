@@ -50,17 +50,19 @@ class MakerController extends AbstractAdminController
             });
 
             // 俗称も探す
-            // $words配列の中にある文字列にsynonym関数を適用する
-            array_walk($words, function ($value, $key){
-                return synonym($value);
-            });
+            $synonymWords = [];
+            foreach ($words as $word) {
+                $synonymWords[] = synonym($word);
+            }
 
-            // サブクエリで、game_maker_synonymsテーブルのsynonymが一致するgame_maker_id
-            $makers->orWhereIn('id', function ($query) use ($words) {
-                $query->select('game_maker_id')
-                    ->from('game_maker_synonyms')
-                    ->whereIn('synonym', $words);
-            });
+            // search_synonymsカラム内の改行区切り文字列から検索
+            if (!empty($synonymWords)) {
+                $makers->orWhere(function ($query) use ($synonymWords) {
+                    foreach ($synonymWords as $synonymWord) {
+                        $query->orWhere('search_synonyms', 'LIKE', '%' . $synonymWord . '%');
+                    }
+                });
+            }
         }
 
         $this->saveSearchSession($search);
@@ -95,7 +97,6 @@ class MakerController extends AbstractAdminController
     {
         $maker = new GameMaker();
         $maker->fill($request->validated());
-        $maker->synonymsStr = $request->post('synonymsStr', '');
         $maker->save();
 
         return redirect()->route('Admin.Game.Maker.Detail', $maker);
@@ -109,7 +110,6 @@ class MakerController extends AbstractAdminController
      */
     public function detail(GameMaker $maker): Application|Factory|View
     {
-        $maker->loadSynonyms();
         return view('admin.game.maker.detail', [
             'model'  => $maker,
             'search' => $this->getSearchSession()
@@ -124,7 +124,6 @@ class MakerController extends AbstractAdminController
      */
     public function edit(GameMaker $maker): Application|Factory|View
     {
-        $maker->loadSynonyms();
         return view('admin.game.maker.edit', [
             'model' => $maker
         ]);
@@ -141,7 +140,6 @@ class MakerController extends AbstractAdminController
     public function update(MakerRequest $request, GameMaker $maker): RedirectResponse
     {
         $maker->fill($request->validated());
-        $maker->synonymsStr = $request->validated('synonymsStr', '');
         $maker->save();
 
         return redirect()->route('Admin.Game.Maker.Detail', $maker);

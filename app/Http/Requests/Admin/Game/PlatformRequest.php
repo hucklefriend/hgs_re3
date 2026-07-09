@@ -42,6 +42,7 @@ class PlatformRequest extends FormRequest
             'type'               => 'required|integer',
             'sort_order'         => 'required|integer|min:0|max:99999999',
             'game_maker_id'      => 'nullable|exists:game_makers,id',
+            'search_synonyms'    => '',
             'description'        => '',
             'description_source' => 'nullable',
         ];

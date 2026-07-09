@@ -49,7 +49,7 @@ class PlatformApiTest extends GameMasterApiTestCase
                     'game_maker_id',
                     'description',
                     'description_source',
-                    'synonyms',
+                    'search_synonyms',
                 ],
             ],
             'meta',
@@ -62,7 +62,7 @@ class PlatformApiTest extends GameMasterApiTestCase
         $platform = $this->createPlatform([
             'name' => 'ユニークプラットフォーム名XYZ',
         ]);
-        $platform->synonymsStr = "検索用シノニム\r\n別行";
+        $platform->search_synonyms = "検索用シノニム\r\n別行";
         $platform->save();
 
         $response = $this->getJson('/api/v1/admin/game/platforms?q='.urlencode('検索用シノニム'));
@@ -77,14 +77,14 @@ class PlatformApiTest extends GameMasterApiTestCase
     public function test_show_returns_platform_with_synonyms(): void
     {
         $platform = $this->createPlatform();
-        $platform->synonymsStr = "a\r\nb";
+        $platform->search_synonyms = "a\r\nb";
         $platform->save();
 
         $response = $this->getJson("/api/v1/admin/game/platforms/{$platform->id}");
 
         $response->assertOk();
         $response->assertJsonPath('data.id', $platform->id);
-        $response->assertJsonPath('data.synonyms', [synonym('a'), synonym('b')]);
+        $response->assertJsonPath('data.search_synonyms', "a\r\nb");
     }
 
     public function test_store_creates_platform(): void
@@ -98,7 +98,7 @@ class PlatformApiTest extends GameMasterApiTestCase
             'type' => 1,
             'sort_order' => 10,
             'game_maker_id' => null,
-            'synonymsStr' => "俗称1\r\n俗称2",
+            'search_synonyms' => "俗称1\r\n俗称2",
             'description' => '説明',
             'description_source' => '出典',
         ];
@@ -107,14 +107,12 @@ class PlatformApiTest extends GameMasterApiTestCase
 
         $response->assertCreated();
         $response->assertJsonPath('data.name', '新規PF');
-        $response->assertJsonPath('data.synonyms', [
-            synonym('俗称1'),
-            synonym('俗称2'),
-        ]);
+        $response->assertJsonPath('data.search_synonyms', "俗称1\r\n俗称2");
 
         $this->assertDatabaseHas('game_platforms', [
             'key' => $key,
             'name' => '新規PF',
+            'search_synonyms' => "俗称1\r\n俗称2",
         ]);
     }
 
@@ -134,7 +132,7 @@ class PlatformApiTest extends GameMasterApiTestCase
             'type' => 2,
             'sort_order' => 5,
             'game_maker_id' => null,
-            'synonymsStr' => "x\r\ny",
+            'search_synonyms' => "x\r\ny",
             'description' => 'd',
             'description_source' => null,
         ];
@@ -143,7 +141,7 @@ class PlatformApiTest extends GameMasterApiTestCase
 
         $response->assertOk();
         $response->assertJsonPath('data.key', $newKey);
-        $response->assertJsonPath('data.synonyms', [synonym('x'), synonym('y')]);
+        $response->assertJsonPath('data.search_synonyms', "x\r\ny");
 
         $this->assertDatabaseHas('game_platforms', [
             'id' => $platform->id,

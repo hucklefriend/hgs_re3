@@ -26,7 +26,7 @@ class GameMakerController
             ->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%")
                     ->orWhere('phonetic', 'like', "%{$keyword}%")
-                    ->orWhereHas('synonyms', fn ($q) => $q->where('synonym', 'like', "%{$keyword}%"));
+                    ->orWhere('search_synonyms', 'like', "%{$keyword}%");
             })
             ->orderBy('name')
             ->limit(10)

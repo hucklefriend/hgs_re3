@@ -63,7 +63,7 @@ class McpController extends Controller
         'title' => [
             'label'          => 'ゲームタイトル',
             'model'          => GameTitle::class,
-            'search_columns' => ['name', 'phonetic'],
+            'search_columns' => ['name', 'phonetic', 'search_synonyms'],
             'fields'         => [
                 ['key' => 'name',               'label' => '名前',                 'type' => 'string', 'required' => true,  'maxlength' => 200],
                 ['key' => 'phonetic',            'label' => 'よみがな',             'type' => 'string', 'required' => true,  'maxlength' => 200, 'note' => 'ひらがな・長音符（ー）・数字のみ'],

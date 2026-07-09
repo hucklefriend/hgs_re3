@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\Rating;
 use App\Enums\GameMakerType;
@@ -17,7 +16,7 @@ class GameMaker extends Model
     use KeyFindTrait;
     use HasFactory;
 
-    protected $guarded = ['id', 'synonymsStr'];
+    protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
     /**
@@ -36,31 +35,6 @@ class GameMaker extends Model
         'phonetic' => '',
         'rating'   => Rating::None,
     ];
-
-    /**
-     * @var string 俗称の改行区切り文字列
-     */
-    public string $synonymsStr = '';
-
-    /**
-     * 俗称
-     *
-     * @return HasMany
-     */
-    public function synonyms(): HasMany
-    {
-        return $this->hasMany(GameMakerSynonym::class, 'game_maker_id');
-    }
-
-    /**
-     * 俗称の読み取り
-     *
-     * @return void
-     */
-    public function loadSynonyms(): void
-    {
-        $this->synonymsStr = $this->synonyms()->pluck('synonym')->implode("\r\n");
-    }
 
     /**
      * 関連メーカーを取得
@@ -110,48 +84,6 @@ class GameMaker extends Model
     {
         $this->setRating();
 
-        try {
-            DB::beginTransaction();
-
-            parent::save($options);
-
-            // game_maker_synonymから一旦全部削除して再登録する
-            $this->synonyms()->delete();
-
-            foreach (explode("\r\n", $this->synonymsStr) as $synonym) {
-                $synonym = trim($synonym);
-                if (empty($synonym)) {
-                    continue;
-                }
-
-                $this->synonyms()->create([
-                    'game_maker_id' => $this->id,
-                    'synonym'       => synonym($synonym)
-                ]);
-            }
-
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    /**
-     * 削除
-     *
-     * @throws \Throwable
-     */
-    public function delete(): void
-    {
-        try {
-            DB::beginTransaction();
-            $this->synonyms()->delete();
-            parent::delete();
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        parent::save($options);
     }
 }

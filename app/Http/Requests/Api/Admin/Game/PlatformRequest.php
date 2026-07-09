@@ -16,9 +16,6 @@ class PlatformRequest extends FormRequest
         if ($this->description === null) {
             $this->merge(['description' => '']);
         }
-        if ($this->synonymsStr === null) {
-            $this->merge(['synonymsStr' => '']);
-        }
     }
 
     public function rules(): array
@@ -33,7 +30,7 @@ class PlatformRequest extends FormRequest
             'game_maker_id' => 'nullable|exists:game_makers,id',
             'description' => 'nullable|string',
             'description_source' => 'nullable',
-            'synonymsStr' => 'nullable|string',
+            'search_synonyms' => 'nullable|string',
         ];
     }
 }

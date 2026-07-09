@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <th>俗称</th>
-                    <td>{!! nl2br(e($model->synonymsStr)); !!}</td>
+                    <td>{!! nl2br(e($model->search_synonyms ?? '')); !!}</td>
                 </tr>
                 <tr>
                     <th>説明</th>
