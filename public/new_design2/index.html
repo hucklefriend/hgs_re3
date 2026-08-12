@@ -9,14 +9,15 @@
     <meta name="description" content="Horror Game Network 新デザイン検討用の静的モック">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="page-home" data-route="ROOT">
+<body class="page-home page-network-grid page-network-home" data-route="ROOT">
     <a class="skip-link" href="#main">本文へ移動</a>
+    <div class="page-grid-plane" aria-hidden="true"></div>
 
-    <header class="site-header">
+    <header class="site-header site-header--solid">
         <div class="site-header__inner frame">
-            <a class="brand" href="index.html" aria-label="HGN トップへ">
+            <a class="brand" href="index.html" aria-label="HORROR GAME NETWORK トップへ">
                 <span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span class="brand__text"><b>HGN</b><small>HORROR GAME NETWORK</small></span>
+                <span class="brand__text"><b>HORROR GAME</b><small>NETWORK</small></span>
             </a>
 
             <div class="system-state" aria-label="ネットワーク状態">
@@ -37,6 +38,7 @@
             <canvas class="network-canvas" data-network aria-hidden="true"></canvas>
             <div class="title-screen__wash" aria-hidden="true"></div>
             <div class="frame title-screen__inner">
+                <div class="grid-axis page-grid-axis" aria-hidden="true"><span>NETWORK GRID / ROOT</span><span>X:16 / Y:AUTO</span></div>
                 <div class="title-copy enter-item">
                     <p class="eyebrow"><span>JP / HORROR ARCHIVE</span><span>EST. 2024</span></p>
                     <p class="title-copy__code" aria-hidden="true">HGN / ROOT / 001</p>
@@ -76,7 +78,7 @@
         </section>
 
         <section class="latest-section" id="latest" aria-labelledby="latest-title">
-            <div class="frame">
+            <div class="frame home-latest-grid">
                 <header class="section-heading reveal-item">
                     <div>
                         <p class="eyebrow">INCOMING DATA / 08.03</p>

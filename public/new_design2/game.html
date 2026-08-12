@@ -9,11 +9,12 @@
     <meta name="description" content="HGN新デザイン検討用・ゲーム詳細画面">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="page-detail" data-route="GAME ENTRY">
+<body class="page-detail page-network-grid page-network-detail" data-route="GAME ENTRY">
     <a class="skip-link" href="#main">本文へ移動</a>
+    <div class="page-grid-plane" aria-hidden="true"></div>
     <header class="site-header site-header--solid">
         <div class="site-header__inner frame">
-            <a class="brand" href="index.html" aria-label="HGN トップへ"><span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand__text"><b>HGN</b><small>HORROR GAME NETWORK</small></span></a>
+            <a class="brand" href="index.html" aria-label="HORROR GAME NETWORK トップへ"><span class="brand__mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand__text"><b>HORROR GAME</b><small>NETWORK</small></span></a>
             <div class="system-state"><span class="status-dot"></span><span>ENTRY <b>VERIFIED</b></span></div>
             <nav class="utility-nav" aria-label="ユーティリティ"><a href="index.html">HOME</a><a href="lineup.html">DATABASE</a></nav>
         </div>
@@ -22,7 +23,8 @@
     <main id="main" class="detail-main">
         <section class="game-hero">
             <div class="game-hero__network" aria-hidden="true"></div>
-            <div class="frame">
+            <div class="frame game-grid-frame">
+                <div class="grid-axis page-grid-axis" aria-hidden="true"><span>NETWORK GRID / GT-00198</span><span>X:16 / Y:AUTO</span></div>
                 <nav class="breadcrumb enter-item" aria-label="現在地"><a href="index.html">HGN</a><span>/</span><a href="lineup.html">DATABASE</a><span>/</span><b>GT-00198</b></nav>
                 <div class="game-hero__layout">
                     <div class="game-keyart enter-item">
@@ -48,7 +50,7 @@
         </section>
 
         <section class="detail-body">
-            <div class="frame detail-layout">
+            <div class="frame detail-layout game-detail-grid">
                 <nav class="detail-menu reveal-item" aria-label="ページ内メニュー">
                     <p>SELECT DATA</p>
                     <a class="is-active" href="#overview"><span>01</span><b>概要</b><small>OVERVIEW</small></a>
