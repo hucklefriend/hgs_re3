@@ -81,25 +81,27 @@ export class BasicNode extends NodeBase
             this._nodeContentBehind.loadNodes();
         }
 
-        // Phase1: node-head / node-content の <a href> を同一の遷移経路に乗せる
-        this.getNavigableAnchors().forEach(anchor => {
-            anchor.addEventListener('click', (e) => {
-                this.clickLink(anchor, e);
+        if (document.body.dataset.navigationMode !== 'document') {
+            // Phase1: node-head / node-content の <a href> を同一の遷移経路に乗せる
+            this.getNavigableAnchors().forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    this.clickLink(anchor, e);
+                });
             });
-        });
 
-        const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
-        forms.forEach(form => {
-            // コンポーネント側で処理するやつは無視
-            if (form.dataset.componentUse === '1') {
-                return;
-            }
+            const forms = Array.from(this._nodeElement.querySelectorAll(':scope > .node-content.basic form')) as HTMLFormElement[];
+            forms.forEach(form => {
+                // コンポーネント側で処理するやつは無視
+                if (form.dataset.componentUse === '1') {
+                    return;
+                }
 
-            form.addEventListener('submit', (e) => {
-                this.submitForm(form, e);
-                return false;
+                form.addEventListener('submit', (e) => {
+                    this.submitForm(form, e);
+                    return false;
+                });
             });
-        });
+        }
     }
 
     /**
@@ -556,4 +558,4 @@ export class BasicNode extends NodeBase
 
         this._appearAnimationFunc = this.selectedDisappearAnimation;
     }
-} 
+}

@@ -51,6 +51,12 @@ export class NodeHeadClickable extends NodeHead
 
     public click(e: MouseEvent): void
     {
+        if (document.body.dataset.navigationMode === 'document'
+            && e.target instanceof Element
+            && e.target.closest('a[href]')) {
+            return;
+        }
+
         e.preventDefault();
 
         if (!AppearStatus.isAppeared(this._parentNode.appearStatus)) {

@@ -18,7 +18,7 @@ const startPublicSite = (): void => {
     publicSiteApp = new PublicSiteApp(root);
     publicSiteApp.start();
 
-    // Phase 4 で通常遷移へ切り替えるまで、現行ツリー表示を互換層として起動する。
+    // Phase 5 以降の画面移行が終わるまで、現行ツリーの初期描画だけを互換層として起動する。
     window.hgn = HgnTree.getInstance();
     window.hgn.start();
 };

@@ -330,7 +330,7 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     private setupAnchorEvents(): void
     {
-        if (!this._currentNodeContentElement) {
+        if (!this._currentNodeContentElement || document.body.dataset.navigationMode === 'document') {
             return;
         }
         const anchors = Array.from(
@@ -363,6 +363,10 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
      */
     private setupFormEvents(): void
     {
+        if (document.body.dataset.navigationMode === 'document') {
+            return;
+        }
+
         if (this._currentNodeContentElement) {
             const forms = Array.from(this._currentNodeContentElement.querySelectorAll('form')) as HTMLFormElement[];
             forms.forEach(form => {

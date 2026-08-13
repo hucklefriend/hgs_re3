@@ -405,6 +405,8 @@ DOM 上のグリッド平面と `GridMetrics` を同期する。
 
 ### Phase 4: 通常ページ遷移と接続演出
 
+実施記録: [`grid-network-redesign-phase4.md`](./grid-network-redesign-phase4.md)
+
 実装内容:
 
 - `LinkClassifier`、`ConnectionTerminalController`、`HandoffRoutePlanner` を実装する。

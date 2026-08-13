@@ -138,6 +138,8 @@ export class HgnTree
      */
     public start(): void
     {
+        const usesDocumentNavigation = document.body.dataset.navigationMode === 'document';
+
         // リサイズイベントの登録
         const target = document.body; // 監視対象
         let lastWidth = target.offsetWidth;
@@ -159,23 +161,32 @@ export class HgnTree
         
         ro.observe(target);
         
-        // ページ遷移前のイベント登録
-        window.addEventListener('beforeunload', () => {
-            sessionStorage.setItem('isPageTransition', 'true');
-        });
+        if (!usesDocumentNavigation) {
+            // ページ遷移前のイベント登録
+            window.addEventListener('beforeunload', () => {
+                sessionStorage.setItem('isPageTransition', 'true');
+            });
 
-        // ページ表示イベントの登録（キャッシュからの復元時）
-        window.addEventListener('pageshow', (event) => {
-            const isPageTransition = sessionStorage.getItem('isPageTransition') === 'true';
-            if (event.persisted && !isPageTransition) {
-                this.resize();
-                this.draw();
-            }
-            sessionStorage.removeItem('isPageTransition');
-        });
+            // ページ表示イベントの登録（キャッシュからの復元時）
+            window.addEventListener('pageshow', (event) => {
+                const isPageTransition = sessionStorage.getItem('isPageTransition') === 'true';
+                if (event.persisted && !isPageTransition) {
+                    this.resize();
+                    this.draw();
+                }
+                sessionStorage.removeItem('isPageTransition');
+            });
 
-        // popstateイベントの登録
-        window.addEventListener('popstate', (event) => { this.popState(event); });
+            // popstateイベントの登録
+            window.addEventListener('popstate', (event) => { this.popState(event); });
+        } else {
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) {
+                    this.resize();
+                    this.draw();
+                }
+            });
+        }
 
         this._currentNode.start();
         this.resize();
@@ -184,13 +195,15 @@ export class HgnTree
         // Phase5: Z軸演出を transition モードで有効化
         this._depthSceneController.setMode('transition');
 
-        // Phase2: 初期状態の履歴を NavigationHistoryState 形式で設定
-        const initialState: NavigationHistoryState = {
-            url: window.location.href,
-            scope: 'full',
-            urlPolicy: 'replace',
-        };
-        history.replaceState(initialState, '', window.location.href);
+        if (!usesDocumentNavigation) {
+            // Phase2: 初期状態の履歴を NavigationHistoryState 形式で設定
+            const initialState: NavigationHistoryState = {
+                url: window.location.href,
+                scope: 'full',
+                urlPolicy: 'replace',
+            };
+            history.replaceState(initialState, '', window.location.href);
+        }
 
         this._animationScheduler.register(this._sceneAnimatable);
         this._animationScheduler.requestTick();

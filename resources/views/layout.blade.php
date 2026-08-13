@@ -46,6 +46,7 @@
 <body
     class="@isset($colorState) has-{{ $colorState }} @endisset"
     data-public-app
+    data-navigation-mode="document"
     data-page-kind="{{ $pageKind }}"
     data-page-ready="false"
 >

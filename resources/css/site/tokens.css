@@ -23,6 +23,7 @@
     --site-motion-fast: 160ms;
     --site-motion-normal: 280ms;
     --site-ambient-signal-size: 7px;
+    --site-handoff-token-size: 14px;
 }
 
 @media (max-width: 1023px) {

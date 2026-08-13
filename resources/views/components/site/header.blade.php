@@ -19,11 +19,11 @@
             </p>
 
             <nav class="site-header__nav" aria-label="ユーティリティ">
-                <a href="{{ route('Game.Lineup') }}" @if(request()->routeIs('Game.Lineup')) aria-current="page" @endif>LINEUP</a>
+                <a href="{{ route('Game.Lineup') }}" @if(request()->routeIs('Game.Lineup')) aria-current="page" @endif>LINEUP<x-site.connection-terminal /></a>
                 @auth
-                    <a href="{{ route('User.MyNode.Top') }}" @if(request()->routeIs('User.MyNode.*')) aria-current="page" @endif>MY NODE</a>
+                    <a href="{{ route('User.MyNode.Top') }}" @if(request()->routeIs('User.MyNode.*')) aria-current="page" @endif>MY NODE<x-site.connection-terminal /></a>
                 @else
-                    <a href="{{ route('Account.Login') }}" @if(request()->routeIs('Account.Login')) aria-current="page" @endif>LOGIN</a>
+                    <a href="{{ route('Account.Login') }}" @if(request()->routeIs('Account.Login')) aria-current="page" @endif>LOGIN<x-site.connection-terminal /></a>
                 @endauth
             </nav>
         </div>
