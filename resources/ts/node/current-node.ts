@@ -73,9 +73,6 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
     public start(): void
     {
         this._nodeContentTree.loadNodes(this);
-        const componentManager = ComponentManager.getInstance();
-        componentManager.initializeComponents((window as any).components as { [key: string]: any | null });
-        (window as any).components = {};
     }
 
     /**
@@ -759,4 +756,3 @@ export class CurrentNode extends NodeBase implements TreeNodeInterface
         }
     }
 }
-

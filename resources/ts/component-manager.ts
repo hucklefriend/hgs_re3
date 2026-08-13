@@ -51,6 +51,18 @@ export class ComponentManager
     }
 
     /**
+     * 文書ロード時に渡されたコンポーネントを一度だけ初期化する。
+     *
+     * Ajax 更新との互換用に initializeComponents() は残しているが、公開画面の
+     * 初回起動では PublicSiteApp からこのメソッドだけを呼ぶ。
+     */
+    public initializeDocument(components: { [componentName: string]: any | null }): void
+    {
+        this.disposeComponents();
+        this.initializeComponents(components);
+    }
+
+    /**
      * コンポーネントを初期化する
      * @param components コンポーネント名と初期化パラメーターのオブジェクト
      */
