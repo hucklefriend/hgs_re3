@@ -14,6 +14,7 @@ export class GridPlaneController implements Disposable
     private readonly _frame: HTMLElement;
     private readonly _metrics: GridMetrics;
     private readonly _resizeObserver: ResizeObserver | null;
+    private readonly _metricsListeners: Set<(metrics: GridMetrics) => void> = new Set();
     private _animationFrameId: number | null = null;
     private _started: boolean = false;
 
@@ -59,6 +60,13 @@ export class GridPlaneController implements Disposable
         this.sync();
     }
 
+    public onMetricsChange(listener: (metrics: GridMetrics) => void): () => void
+    {
+        this._metricsListeners.add(listener);
+
+        return () => this._metricsListeners.delete(listener);
+    }
+
     public dispose(): void
     {
         if (!this._started) {
@@ -67,6 +75,7 @@ export class GridPlaneController implements Disposable
 
         window.removeEventListener('resize', this.scheduleSync);
         this._resizeObserver?.disconnect();
+        this._metricsListeners.clear();
 
         if (this._animationFrameId !== null) {
             window.cancelAnimationFrame(this._animationFrameId);
@@ -121,6 +130,7 @@ export class GridPlaneController implements Disposable
         this._root.querySelectorAll<HTMLElement>('[data-grid-columns]').forEach((element) => {
             element.textContent = String(columns);
         });
+        this._metricsListeners.forEach((listener) => listener(this._metrics));
     }
 
     private readPositiveInteger(value: string, fallback: number): number

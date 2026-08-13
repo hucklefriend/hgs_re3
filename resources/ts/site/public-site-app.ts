@@ -2,6 +2,7 @@ import { ComponentManager } from '../component-manager';
 import type { Disposable } from './core/disposable';
 import { MotionPreference } from './core/motion-preference';
 import { PageRevealController } from './core/page-reveal-controller';
+import { AmbientSignalController } from './grid/ambient-signal-controller';
 import { GridPlaneController } from './grid/grid-plane-controller';
 
 type ComponentConfiguration = { [componentName: string]: any | null };
@@ -26,6 +27,7 @@ export class PublicSiteApp implements Disposable
     private readonly _motionPreference: MotionPreference;
     private readonly _pageRevealController: PageRevealController;
     private readonly _gridPlaneController: GridPlaneController;
+    private readonly _ambientSignalController: AmbientSignalController;
     private _started: boolean = false;
 
     public constructor(root: HTMLElement)
@@ -35,6 +37,11 @@ export class PublicSiteApp implements Disposable
         this._motionPreference = new MotionPreference();
         this._pageRevealController = new PageRevealController(root, this._motionPreference);
         this._gridPlaneController = new GridPlaneController(root);
+        this._ambientSignalController = new AmbientSignalController(
+            root,
+            this._gridPlaneController,
+            this._motionPreference,
+        );
     }
 
     public start(): void
@@ -46,6 +53,7 @@ export class PublicSiteApp implements Disposable
         this._started = true;
         this._motionPreference.start();
         this._gridPlaneController.start();
+        this._ambientSignalController.start();
         this._componentManager.initializeDocument(window.components ?? {});
         window.components = {};
         this._pageRevealController.start();
@@ -59,6 +67,7 @@ export class PublicSiteApp implements Disposable
 
         this._pageRevealController.dispose();
         this._componentManager.disposeComponents();
+        this._ambientSignalController.dispose();
         this._gridPlaneController.dispose();
         this._motionPreference.dispose();
         this._started = false;

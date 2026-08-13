@@ -6,7 +6,9 @@ import type { Disposable } from './disposable';
 export class MotionPreference implements Disposable
 {
     private readonly _mediaQuery: MediaQueryList;
+    private readonly _listeners: Set<(canAnimate: boolean) => void> = new Set();
     private _started: boolean = false;
+    private _lastCanAnimate: boolean | null = null;
 
     public constructor()
     {
@@ -30,6 +32,13 @@ export class MotionPreference implements Disposable
         this.syncRootState();
     }
 
+    public onChange(listener: (canAnimate: boolean) => void): () => void
+    {
+        this._listeners.add(listener);
+
+        return () => this._listeners.delete(listener);
+    }
+
     public dispose(): void
     {
         if (!this._started) {
@@ -38,6 +47,8 @@ export class MotionPreference implements Disposable
 
         this._mediaQuery.removeEventListener('change', this.handleChange);
         document.removeEventListener('visibilitychange', this.handleChange);
+        this._listeners.clear();
+        this._lastCanAnimate = null;
         this._started = false;
     }
 
@@ -48,6 +59,14 @@ export class MotionPreference implements Disposable
 
     private syncRootState(): void
     {
-        document.documentElement.dataset.motion = this.canAnimate ? 'full' : 'reduced';
+        const canAnimate = this.canAnimate;
+        document.documentElement.dataset.motion = canAnimate ? 'full' : 'reduced';
+
+        if (canAnimate === this._lastCanAnimate) {
+            return;
+        }
+
+        this._lastCanAnimate = canAnimate;
+        this._listeners.forEach((listener) => listener(canAnimate));
     }
 }

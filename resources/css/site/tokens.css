@@ -22,6 +22,7 @@
     --site-grid-cell-width: calc(var(--site-grid-width) / var(--site-grid-columns));
     --site-motion-fast: 160ms;
     --site-motion-normal: 280ms;
+    --site-ambient-signal-size: 7px;
 }
 
 @media (max-width: 1023px) {

@@ -388,6 +388,8 @@ DOM 上のグリッド平面と `GridMetrics` を同期する。
 
 ### Phase 3: 背景信号
 
+実施記録: [`grid-network-redesign-phase3.md`](./grid-network-redesign-phase3.md)
+
 実装内容:
 
 - `AmbientSignalRoutePlanner`、`AmbientSignalController`、`AmbientSignal` を実装する。
