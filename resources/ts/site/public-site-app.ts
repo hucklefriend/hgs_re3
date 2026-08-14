@@ -11,6 +11,10 @@ import { PageArrivalController } from './navigation/page-arrival-controller';
 import { PageTransitionController } from './navigation/page-transition-controller';
 import { ScrollFollowController } from './navigation/scroll-follow-controller';
 import { TransitionStore } from './navigation/transition-store';
+import { HomePageController } from './pages/home-page-controller';
+import { LineupPageController } from './pages/lineup-page-controller';
+import type { PageController } from './pages/page-controller';
+import { TitleDetailPageController } from './pages/title-detail-page-controller';
 
 type ComponentConfiguration = { [componentName: string]: any | null };
 
@@ -37,6 +41,7 @@ export class PublicSiteApp implements Disposable
     private readonly _connectionTerminalController: ConnectionTerminalController;
     private readonly _pageArrivalController: PageArrivalController;
     private readonly _pageTransitionController: PageTransitionController;
+    private readonly _pageController: PageController | null;
     private _started: boolean = false;
 
     public constructor(root: HTMLElement)
@@ -73,6 +78,7 @@ export class PublicSiteApp implements Disposable
             new ScrollFollowController(this._motionPreference),
             transitionStore,
         );
+        this._pageController = this.createPageController();
     }
 
     public start(): void
@@ -89,6 +95,7 @@ export class PublicSiteApp implements Disposable
         this._pageTransitionController.start();
         this._componentManager.initializeDocument(window.components ?? {});
         window.components = {};
+        this._pageController?.start();
         this._pageArrivalController.start();
     }
 
@@ -100,6 +107,7 @@ export class PublicSiteApp implements Disposable
 
         this._pageTransitionController.dispose();
         this._pageArrivalController.dispose();
+        this._pageController?.dispose();
         this._componentManager.disposeComponents();
         this._connectionTerminalController.dispose();
         this._ambientSignalController.dispose();
@@ -114,6 +122,23 @@ export class PublicSiteApp implements Disposable
             return new TransitionStore(window.sessionStorage);
         } catch {
             return new TransitionStore(null);
+        }
+    }
+
+    private createPageController(): PageController | null
+    {
+        switch (this._root.dataset.pageKind) {
+            case 'root':
+                return new HomePageController(this._root, this._motionPreference);
+
+            case 'game-lineup':
+                return new LineupPageController(this._root, this._motionPreference);
+
+            case 'game-title-detail':
+                return new TitleDetailPageController(this._root, this._motionPreference);
+
+            default:
+                return null;
         }
     }
 }

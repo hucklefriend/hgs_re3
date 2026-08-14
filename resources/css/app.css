@@ -10,3 +10,7 @@
 @import 'site/base.css';
 @import 'site/layout.css';
 @import 'site/motion.css';
+@import 'site/components.css';
+@import 'site/pages/home.css';
+@import 'site/pages/lineup.css';
+@import 'site/pages/title-detail.css';

@@ -425,6 +425,8 @@ DOM 上のグリッド平面と `GridMetrics` を同期する。
 
 ### Phase 5: 主要 3 画面の移行
 
+実施記録: [grid-network-redesign-phase5.md](./grid-network-redesign-phase5.md)
+
 実装内容:
 
 - トップページをタイトル画面風にしつつ、下部に新着情報を配置する。

@@ -44,7 +44,7 @@
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
 <body
-    class="@isset($colorState) has-{{ $colorState }} @endisset"
+    class="@isset($colorState) has-{{ $colorState }} @endisset @yield('body-class')"
     data-public-app
     data-navigation-mode="document"
     data-page-kind="{{ $pageKind }}"
@@ -55,6 +55,9 @@
     <x-site.header :page-kind="$pageKind" />
 
     <main class="site-main" id="site-main">
+        @hasSection('site-content')
+            @yield('site-content')
+        @else
         <div class="site-frame">
             <div class="site-main__grid">
                 <div class="site-grid-axis" aria-hidden="true">
@@ -81,6 +84,7 @@
                 </section>
             </div>
         </div>
+        @endif
     </main>
 
     <x-site.footer />

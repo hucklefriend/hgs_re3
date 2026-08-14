@@ -1,186 +1,172 @@
 @extends('layout')
 
+@php
+    $hasAdvancedFilters = ($platformId ?? null) !== null
+        || ($makerId ?? null) !== null
+        || ($fearMeterMin ?? null) !== null
+        || ($fearMeterMax ?? null) !== null
+        || ($releaseFrom ?? null) !== null
+        || ($releaseTo ?? null) !== null;
+@endphp
+
 @section('title', 'ホラーゲームラインナップ')
+@section('body-class', 'site-page site-page--lineup')
 @section('current-node-title', 'ラインナップ')
-@section('current-node-content')
-<form id="lineup-search-form" method="GET" action="{{ route('Game.Lineup') }}" data-child-only="1">
-    <div>
-        {{-- タイトル検索 --}}
-        <div class="form-row">
-            <label for="search-input" class="lineup-search-form__label">タイトル</label>
-            <input type="text" id="search-input" name="text" value="{{ $text ?? '' }}" placeholder="タイトル名" class="input input-default">
-        </div>
 
-        <div class="form-row lineup-search-form__toggle-row">
-            <span class="lineup-search-form__label">詳細検索</span>
-            <button type="button" id="advanced-search-toggle" class="lineup-search-form__label">
-                <span id="advanced-search-label">開く</span>
-                <span id="advanced-search-icon">▽</span>
-            </button>
-        </div>
-
-        <div id="advanced-search-wrapper" class="advanced-search-wrapper">
-            <div class="advanced-search-wrapper__inner">
-            {{-- プラットフォーム --}}
-            <div class="form-row">
-                <label for="lineup-platform-id" class="lineup-search-form__label">プラットフォーム</label>
-                <select id="lineup-platform-id" name="platform_id" class="input input-default">
-                    <option value="0">すべて</option>
-                    @foreach ($platforms ?? [] as $platform)
-                    <option value="{{ $platform->id }}" @selected(($platformId ?? null) == $platform->id)>
-                        {{ $platform->name }}{{ $platform->acronym ? '（' . $platform->acronym . '）' : '' }}
-                    </option>
-                    @endforeach
-                </select>
+@section('site-content')
+    <section class="lineup-console" aria-labelledby="lineup-title">
+        <div class="site-frame lineup-console__frame" data-grid-frame>
+            <div class="site-grid-axis" aria-hidden="true">
+                <span>NETWORK GRID / DATABASE</span>
+                <span>X:<b data-grid-columns>16</b> / Y:AUTO</span>
             </div>
+            <x-site.breadcrumb page-kind="database" page-title="GAME DATABASE" />
 
-            {{-- メーカー --}}
-            <div class="form-row lineup-search-form__maker-row">
-                <label for="maker-name-input" class="lineup-search-form__label">メーカー</label>
-                <div class="lineup-search-form__maker-input-wrap">
-                    <input
-                        type="text"
-                        id="maker-name-input"
-                        name="maker_name"
-                        value="{{ $makerName ?? '' }}"
-                        placeholder="入力して選択"
-                        class="input input-default"
-                        autocomplete="off"
-                    >
-                    <button type="button" id="maker-clear-btn" class="btn btn-default btn-sm" style="{{ empty($makerName ?? '') ? 'display:none;' : '' }}">✕</button>
+            <header class="lineup-console__title" data-page-reveal>
+                <div>
+                    <p class="site-eyebrow">ARCHIVE NODE / DB-01</p>
+                    <h1 id="lineup-title">GAME<br><span>DATABASE</span></h1>
                 </div>
-                <input type="hidden" id="maker-id-input" name="maker_id" value="{{ $makerId ?? '' }}">
-                <div id="maker-suggestions" class="maker-suggest-list"></div>
-            </div>
+                <p>登録されているホラーゲームを、タイトル・プラットフォーム・メーカー・怖さ・発売年から検索します。</p>
+                <dl>
+                    <div><dt>RESULTS</dt><dd>{{ number_format($total ?? 0) }}</dd></div>
+                    <div><dt>PLATFORMS</dt><dd>{{ number_format(($platforms ?? collect())->count()) }}</dd></div>
+                    <div><dt>MODE</dt><dd>{{ (!empty($text) || $hasAdvancedFilters) ? 'FILTERED' : 'LATEST' }}</dd></div>
+                </dl>
+            </header>
 
-            {{-- 怖さメーター --}}
-            <div class="form-row">
-                <span class="lineup-search-form__label">怖さメーター</span>
-                <div class="lineup-search-form__range-row">
-                    <select name="fear_meter_min" id="fear-meter-min" class="input input-default">
-                        <option value="">下限なし</option>
-                        @for ($i = 0; $i <= 4; $i++)
-                        <option value="{{ $i }}" @selected(($fearMeterMin ?? null) !== null && $fearMeterMin == $i)>{{ $i }}</option>
-                        @endfor
-                    </select>
-                    <span class="lineup-search-form__label">〜</span>
-                    <select name="fear_meter_max" id="fear-meter-max" class="input input-default">
-                        <option value="">上限なし</option>
-                        @for ($i = 0; $i <= 4; $i++)
-                        <option value="{{ $i }}" @selected(($fearMeterMax ?? null) !== null && $fearMeterMax == $i)>{{ $i }}</option>
-                        @endfor
-                    </select>
-                </div>
-            </div>
+            <div class="lineup-console__layout" data-page-reveal>
+                <nav class="lineup-console-menu" aria-label="検索メニュー">
+                    <p>SELECT SEARCH MODE</p>
+                    <button class="lineup-console-option {{ $hasAdvancedFilters ? '' : 'is-active' }}" type="button" data-console-control="title" aria-pressed="{{ $hasAdvancedFilters ? 'false' : 'true' }}">
+                        <span>01</span><span><b>タイトルから検索</b><small>SEARCH BY TITLE</small></span><i aria-hidden="true">→</i>
+                    </button>
+                    <button class="lineup-console-option {{ $hasAdvancedFilters ? 'is-active' : '' }}" id="advanced-search-toggle" type="button" data-console-control="advanced" aria-pressed="{{ $hasAdvancedFilters ? 'true' : 'false' }}">
+                        <span>02</span><span><b>条件を組み合わせる</b><small>ADVANCED FILTERS / <em id="advanced-search-label">開く</em></small></span><i id="advanced-search-icon" aria-hidden="true">▽</i>
+                    </button>
+                    <a class="lineup-console-option" href="#lineup-results">
+                        <span>03</span><span><b>検索結果を見る</b><small>BROWSE RESULTS</small></span><i aria-hidden="true">↓</i>
+                    </a>
+                    <a class="lineup-console-option" href="{{ route('Game.Platform') }}">
+                        <span>04</span><span><b>機種から探す</b><small>PLATFORM CHANNEL</small></span><i aria-hidden="true">→</i>
+                    </a>
+                </nav>
 
-            {{-- 発売年 --}}
-            <div class="form-row">
-                <span class="lineup-search-form__label">発売年</span>
-                <div class="lineup-search-form__range-row">
-                    <input
-                        type="number"
-                        name="release_from"
-                        value="{{ $releaseFrom ?? '' }}"
-                        placeholder="開始年"
-                        min="1980"
-                        max="{{ date('Y') }}"
-                        class="input input-default"
-                    >
-                    <span class="lineup-search-form__label">〜</span>
-                    <input
-                        type="number"
-                        name="release_to"
-                        value="{{ $releaseTo ?? '' }}"
-                        placeholder="終了年"
-                        min="1980"
-                        max="{{ date('Y') }}"
-                        class="input input-default"
-                    >
-                </div>
-            </div>
-            </div>
-        </div>
+                <section class="lineup-console-display" aria-label="検索条件">
+                    <form id="lineup-search-form" method="GET" action="{{ route('Game.Lineup') }}">
+                        <div class="lineup-console-panel {{ $hasAdvancedFilters ? '' : 'is-active' }}" data-console-panel="title" @if ($hasAdvancedFilters) hidden @endif>
+                            <header><span>MODE 01</span><b>TITLE SEARCH</b></header>
+                            <div class="lineup-title-search">
+                                <label for="search-input">ゲームタイトル</label>
+                                <div>
+                                    <input type="search" id="search-input" name="text" value="{{ $text ?? '' }}" placeholder="タイトル名を入力" autocomplete="off">
+                                    <button type="submit">SEARCH <span aria-hidden="true">→</span></button>
+                                </div>
+                            </div>
+                        </div>
 
-        <div class="form-row lineup-search-form__buttons-row">
-            <button type="submit" class="btn btn-default btn-sm">検索</button>
-            <button type="button" id="search-reset-btn" class="btn btn-default btn-sm">リセット</button>
-        </div>
-    </div>
-</form>
-@endsection
-
-@section('nodes')
-@isset($franchises)
-
-@if ($franchises->isNotEmpty())
-@foreach ($franchises as $franchise)
-<section class="node tree-node" id="franchise-{{ $franchise->key }}-link-node">
-    <div class="node-head">
-        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }} フランチャイズ</a>
-        <span class="node-pt">●</span>
-    </div>
-    <div class="node-content tree">
-        @foreach ($franchise->searchSeries ?? [] as $series)
-        <section class="node tree-node">
-            <div class="node-head">
-                <h3 class="node-head-text">{{ $series->name }} シリーズ</h3>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content tree">
-                @foreach ($series->searchTitles ?? [] as $title)
-                <section class="node basic" id="{{ $title->key }}-link-node">
-                    <div class="node-head">
-                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
-                        <span class="node-pt">●</span>
-                    </div>
+                        <div
+                            id="advanced-search-wrapper"
+                            class="advanced-search-wrapper lineup-console-panel {{ $hasAdvancedFilters ? 'open' : '' }}"
+                            data-console-panel="advanced"
+                            @if (!$hasAdvancedFilters) hidden @endif
+                        >
+                            <header><span>MODE 02</span><b>ADVANCED FILTERS</b></header>
+                            <div class="advanced-search-wrapper__inner lineup-filter-grid">
+                                <label>
+                                    <span>PLATFORM</span>
+                                    <select id="lineup-platform-id" name="platform_id">
+                                        <option value="0">すべて</option>
+                                        @foreach ($platforms ?? [] as $platform)
+                                            <option value="{{ $platform->id }}" @selected(($platformId ?? null) == $platform->id)>{{ $platform->name }}{{ $platform->acronym ? '（' . $platform->acronym . '）' : '' }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label class="lineup-filter-grid__maker">
+                                    <span>MAKER</span>
+                                    <span class="lineup-maker-input">
+                                        <input type="text" id="maker-name-input" name="maker_name" value="{{ $makerName ?? '' }}" placeholder="入力して選択" autocomplete="off">
+                                        <button type="button" id="maker-clear-btn" style="{{ empty($makerName ?? '') ? 'display:none;' : '' }}" aria-label="メーカーをクリア">×</button>
+                                        <span id="maker-suggestions" class="maker-suggest-list"></span>
+                                    </span>
+                                    <input type="hidden" id="maker-id-input" name="maker_id" value="{{ $makerId ?? '' }}">
+                                </label>
+                                <fieldset>
+                                    <legend>FEAR METER</legend>
+                                    <div>
+                                        <select name="fear_meter_min" id="fear-meter-min" aria-label="怖さ下限">
+                                            <option value="">下限なし</option>
+                                            @for ($i = 0; $i <= 4; $i++)<option value="{{ $i }}" @selected(($fearMeterMin ?? null) !== null && $fearMeterMin == $i)>{{ $i }}</option>@endfor
+                                        </select>
+                                        <span>—</span>
+                                        <select name="fear_meter_max" id="fear-meter-max" aria-label="怖さ上限">
+                                            <option value="">上限なし</option>
+                                            @for ($i = 0; $i <= 4; $i++)<option value="{{ $i }}" @selected(($fearMeterMax ?? null) !== null && $fearMeterMax == $i)>{{ $i }}</option>@endfor
+                                        </select>
+                                    </div>
+                                </fieldset>
+                                <fieldset>
+                                    <legend>RELEASE YEAR</legend>
+                                    <div>
+                                        <input type="number" name="release_from" value="{{ $releaseFrom ?? '' }}" placeholder="開始年" min="1980" max="{{ date('Y') }}" aria-label="発売年の開始">
+                                        <span>—</span>
+                                        <input type="number" name="release_to" value="{{ $releaseTo ?? '' }}" placeholder="終了年" min="1980" max="{{ date('Y') }}" aria-label="発売年の終了">
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <footer>
+                                <button type="button" id="search-reset-btn">RESET</button>
+                                <button type="submit">APPLY FILTERS <span aria-hidden="true">→</span></button>
+                            </footer>
+                        </div>
+                    </form>
                 </section>
-                @endforeach
             </div>
-        </section>
-        @endforeach
-        @foreach ($franchise->searchTitles ?? [] as $title)
-        <section class="node basic" id="{{ $title->key }}-link-node">
-            <div class="node-head">
-                <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
-                <span class="node-pt">●</span>
+        </div>
+    </section>
+
+    <section class="lineup-results" id="lineup-results" aria-labelledby="lineup-results-title">
+        <div class="site-frame">
+            <header class="site-section-heading" data-page-reveal>
+                <div><p class="site-eyebrow">DATABASE OUTPUT / {{ number_format($total ?? 0) }}</p><h2 id="lineup-results-title">SEARCH<br><span>RESULTS</span></h2></div>
+                <p class="lineup-results__query">
+                    @if (!empty($text))
+                        TITLE: {{ $text }}
+                    @elseif ($hasAdvancedFilters)
+                        ADVANCED FILTERS ACTIVE
+                    @else
+                        LAST UPDATED ORDER
+                    @endif
+                </p>
+            </header>
+
+            <div class="lineup-result-list" data-page-reveal>
+                @forelse ($franchises ?? [] as $franchise)
+                    <section class="lineup-franchise" id="franchise-{{ $franchise->key }}-link-node">
+                        <header>
+                            <span>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            <div><p>FRANCHISE NODE</p><h3><a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}</a></h3></div>
+                            <small>{{ count($franchise->searchSeries ?? []) + count($franchise->searchTitles ?? []) }} CHANNELS</small>
+                        </header>
+                        <div class="lineup-franchise__entries">
+                            @foreach ($franchise->searchSeries ?? [] as $series)
+                                <section class="lineup-series">
+                                    <h4>{{ $series->name }} <small>SERIES</small></h4>
+                                    @foreach ($series->searchTitles ?? [] as $gameTitle)
+                                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $gameTitle->key]) }}"><span class="lineup-result-signal" aria-hidden="true"></span><b>{{ $gameTitle->name }}</b><small>OPEN ENTRY →</small></a>
+                                    @endforeach
+                                </section>
+                            @endforeach
+                            @foreach ($franchise->searchTitles ?? [] as $gameTitle)
+                                <a href="{{ route('Game.TitleDetail', ['titleKey' => $gameTitle->key]) }}"><span class="lineup-result-signal" aria-hidden="true"></span><b>{{ $gameTitle->name }}</b><small>OPEN ENTRY →</small></a>
+                            @endforeach
+                        </div>
+                    </section>
+                @empty
+                    <p class="site-empty-state">この検索条件では、何も見つからないようです。</p>
+                @endforelse
             </div>
-        </section>
-        @endforeach
-    </div>
-
-    @if ($loop->last)
-    @isset($pager)
-    <div class="node-content basic">
-        @include('common.pager', ['pager' => $pager])
-    </div>
-    @endisset
-    @endif
-</section>
-@endforeach
-@endif
-
-@if ($franchises->isEmpty())
-<div class="node-content basic">
-この検索条件では、何も見つからないようだ。
-</div>
-@endif
-
-@endisset
-
-<section class="node tree-node">
-    <div class="node-head">
-        <h2 class="node-head-text">近道</h2>
-        <span class="node-pt">●</span>
-    </div>
-    <div class="node-content tree">
-        <section class="node basic">
-            <div class="node-head">
-                <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
-                <span class="node-pt main-node-pt">●</span>
-            </div>
-        </section>
-    </div>
-
-    @include('common.shortcut_mynode')
-</section>
+            @isset($pager)<div class="lineup-results__pager">@include('common.pager', ['pager' => $pager])</div>@endisset
+        </div>
+    </section>
 @endsection

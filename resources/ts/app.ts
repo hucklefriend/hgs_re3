@@ -18,9 +18,10 @@ const startPublicSite = (): void => {
     publicSiteApp = new PublicSiteApp(root);
     publicSiteApp.start();
 
-    // Phase 5 以降の画面移行が終わるまで、現行ツリーの初期描画だけを互換層として起動する。
-    window.hgn = HgnTree.getInstance();
-    window.hgn.start();
+    if (!root.classList.contains('site-page')) {
+        window.hgn = HgnTree.getInstance();
+        window.hgn.start();
+    }
 };
 
 window.addEventListener('load', startPublicSite, { once: true });
