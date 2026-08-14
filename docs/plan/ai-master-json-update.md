@@ -282,7 +282,7 @@ App\Services\MasterJson\
 - 下段：**差分ツリー（form）** — エンティティ／フィールド単位で before → after を表示。各行に**採用チェックボックス**（ハルシネーション除去の最後の砦）。`create`/`delete` は色分け。`_ref` の出典URL（AIに付けさせる）があれば横に表示。
 - **保存ボタン**：チェックされた差分のみ適用。
 
-> 管理画面は **Bootstrap ベース（AdminLTEテンプレート、`panel`/`btn`/`alert` 等）**。公開SPA側の「Blade直書きJS禁止／HgnTree経由」ルールは**adminには適用されない**。差分チェックのAJAXとクリップボードコピーは、admin の既存流儀（blade内 `<script>` ＋ `vendor.min.js`）で実装してよい。
+> 管理画面は **Bootstrap ベース（AdminLTEテンプレート、`panel`/`btn`/`alert` 等）**。公開画面のフロントエンド規約は**adminには適用されない**。差分チェックのAJAXとクリップボードコピーは、admin の既存流儀（blade内 `<script>` ＋ `vendor.min.js`）で実装してよい。
 
 ---
 

@@ -71,6 +71,7 @@ php artisan tinker                 # Interactive REPL
 機能の実装詳細（使い方・クラス設計・追加手順など）は `docs/claude/` 配下に機能ごとのファイルとして書く。CLAUDE.md には書かない。
 
 @docs/claude/frontend-conventions.md
+@docs/claude/grid-network-design.md
 @docs/claude/discord-webhook.md
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md
@@ -84,7 +85,6 @@ php artisan tinker                 # Interactive REPL
 |---|---|
 | タイムライン | `docs/plan/timeline.md` |
 | AI支援ゲームマスターJSON更新 | `docs/plan/ai-master-json-update.md` |
-| 画面遷移アニメーションの見直し（画面内アニメーションへのシフト） | `docs/plan/in-page-animation-shift.md` |
 
 ## Interaction Rules
 - プロンプトに全角の「？」が含まれる場合は、実装を行わず回答のみ行う。半角の「?」はこの対象外。

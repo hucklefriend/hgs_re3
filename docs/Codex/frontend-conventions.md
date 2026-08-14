@@ -2,7 +2,7 @@
 
 ## 基本構成
 
-公開画面は Laravel Blade が完全な HTML 文書を返し、同一オリジンの GET リンクもブラウザー標準の文書遷移を行う。Ajax によるページ差し替え、History API による擬似遷移、ツリー深度管理は使用しない。
+公開画面は Laravel Blade が完全な HTML 文書を返し、同一オリジンの GET リンクもブラウザー標準の文書遷移を行う。
 
 - エントリーポイント: `resources/ts/app.ts`
 - 公開アプリルート: `resources/ts/site/public-site-app.ts`
@@ -20,15 +20,15 @@ Blade テンプレート内へ JavaScript を直接書かない。インタラ�
 ページ構造は次のどちらかを使う。
 
 1. 専用ページ: `@section('site-content')` でページ全体の構造を定義する。
-2. 標準ページ: `current-node-title`、`current-node-content`、`nodes` セクションを定義する。レイアウトが `.site-standard-page` の共通グリッドUIへ包む。
+2. 標準ページ: レイアウトが見出し、本文、関連セクションを `.site-standard-page` の共通グリッドUIへまとめる。
 
-標準ページのセクション名と一部の `.node` クラスは既存Bladeとの互換用のHTML表現であり、旧ツリーランタイムを意味しない。新規画面では意味のある `article`、`section`、`nav`、見出し階層を優先する。
+新規画面では意味のある `article`、`section`、`nav`、見出し階層を優先する。
 
 OGP の `og:image` と `twitter:image` は `url()` を使った絶対URLにする。ページ固有値はコントローラから `$ogpTitle`、`$ogpDescription`、`$ogpImage`、`$ogpUrl`、`$ogpType` として渡すか、`ogp` セクションを定義する。
 
 ## リンクとフォーム
 
-内部リンクへ `data-hgn-scope` を付けない。通常の `href` だけで文書遷移できる状態を正とする。
+内部リンクは通常の `href` だけで文書遷移できる状態を正とする。
 
 - 同一オリジン GET: ブラウザー標準の文書遷移。対応可能なリンクだけ共通の退場演出を経由する。
 - ハッシュ、ダウンロード、別タブ、外部オリジン、修飾キー付きクリック: ブラウザー標準動作を維持する。
@@ -66,7 +66,7 @@ return $this->tree(
 );
 ```
 
-新しいコンポーネントは `ComponentManager` のマップへ登録する。Ajax再hydrateを前提にせず、完全な文書ロード直後のDOMだけを初期化する。通常フォームの `submit` を横取りして部分HTMLを差し替えない。
+新しいコンポーネントは `ComponentManager` のマップへ登録し、完全な文書ロード直後のDOMを初期化する。
 
 ページ全体に固有の演出や状態管理は `resources/ts/site/pages/` の `PageController` として実装し、`PublicSiteApp.createPageController()` で `data-page-kind` に対応付ける。
 

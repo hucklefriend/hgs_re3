@@ -71,9 +71,14 @@ php artisan tinker                 # Interactive REPL
 機能の実装詳細（使い方・クラス設計・追加手順など）は `docs/Codex/` 配下に機能ごとのファイルとして書く。AGENTS.md には書かない。
 
 @docs/Codex/frontend-conventions.md
+@docs/Codex/grid-network-design.md
 @docs/Codex/discord-webhook.md
 @docs/Codex/ogp-generator.md
 @docs/Codex/artisan-commands.md
+
+## Archived Documentation
+
+`docs/old/` は旧実装の設計資料と履歴を保管するアーカイブである。ユーザーから明示的な指示がない限り、この配下のファイルを読んだり、検索・要約したり、実装判断の根拠として使用したりしない。
 
 ## Implementation Plans
 
