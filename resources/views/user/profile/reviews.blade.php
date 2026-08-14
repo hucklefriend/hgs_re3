@@ -18,7 +18,7 @@
             <section class="node" id="review-{{ $review->game_title_id }}-node">
                 <div class="node-head">
                     <span class="node-head-text">
-                        <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" data-hgn-scope="full">{{ $review->gameTitle->name }}</a>
+                        <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}">{{ $review->gameTitle->name }}</a>
                     </span>
                     <span class="node-pt">●</span>
                 </div>
@@ -80,7 +80,7 @@
 
                     {{-- リンク --}}
                     <div class="mt-2 text-xs">
-                        <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" data-hgn-scope="full"><i class="bi bi-file-text"></i> 表示</a>
+                        <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}"><i class="bi bi-file-text"></i> 表示</a>
                     </div>
                 </div>
 

@@ -13,7 +13,7 @@
 @if ($reviews->isEmpty())
     <p>
         まだレビューを投稿していないようだ。<br>
-        <a href="{{ route('Game.Lineup') }}" data-hgn-scope="full">ラインナップ</a>からタイトルを探して、レビューを書いてみよう。
+        <a href="{{ route('Game.Lineup') }}">ラインナップ</a>からタイトルを探して、レビューを書いてみよう。
     </p>
 @endif
 @endsection
@@ -24,7 +24,7 @@
         <section class="node" id="review-{{ $review->game_title_id }}-node">
             <div class="node-head">
                 <span class="node-head-text">
-                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" data-hgn-scope="full">{{ $review->gameTitle->name }}</a>
+                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}">{{ $review->gameTitle->name }}</a>
                 </span>
                 <span class="node-pt">●</span>
             </div>
@@ -92,8 +92,8 @@
 
                 {{-- リンク --}}
                 <div class="mt-2 flex gap-4 text-xs">
-                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" data-hgn-scope="full"><i class="bi bi-file-text"></i> 表示</a>
-                    <a href="{{ route('User.Review.Form', ['titleKey' => $review->gameTitle->key]) }}" data-hgn-scope="full"><i class="bi bi-pencil"></i> 編集</a>
+                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}"><i class="bi bi-file-text"></i> 表示</a>
+                    <a href="{{ route('User.Review.Form', ['titleKey' => $review->gameTitle->key]) }}"><i class="bi bi-pencil"></i> 編集</a>
                 </div>
             </div>
 

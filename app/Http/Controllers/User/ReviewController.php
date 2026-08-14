@@ -60,7 +60,7 @@ class ReviewController extends Controller
             ->get()
             ->keyBy('game_title_id');
 
-        $pager = new Pager($reviews->currentPage(), $reviews->lastPage(), 'User.Review.Index', [], 'children');
+        $pager = new Pager($reviews->currentPage(), $reviews->lastPage(), 'User.Review.Index', []);
 
         return $this->tree(
             view('user.review.index', compact('reviews', 'draftTitleIds', 'fearMeters', 'pager')),

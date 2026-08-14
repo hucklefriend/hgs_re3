@@ -1,11 +1,4 @@
-import { HgnTree } from './hgn-tree';
 import { PublicSiteApp } from './site/public-site-app';
-
-declare global {
-    interface Window {
-        hgn: HgnTree;
-    }
-}
 
 let publicSiteApp: PublicSiteApp | null = null;
 
@@ -17,11 +10,6 @@ const startPublicSite = (): void => {
 
     publicSiteApp = new PublicSiteApp(root);
     publicSiteApp.start();
-
-    if (!root.classList.contains('site-page')) {
-        window.hgn = HgnTree.getInstance();
-        window.hgn.start();
-    }
 };
 
 window.addEventListener('load', startPublicSite, { once: true });

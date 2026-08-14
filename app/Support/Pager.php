@@ -8,8 +8,7 @@ class Pager
         private readonly int $currentPage,
         private readonly int $totalPages,
         private readonly string $routeName,
-        private readonly array $routeParams = [],
-        private readonly string $dataHgnScope = 'full'
+        private readonly array $routeParams = []
     ) {
     }
 
@@ -84,10 +83,5 @@ class Pager
     public function totalPages(): int
     {
         return $this->totalPages;
-    }
-
-    public function dataHgnScope(): string
-    {
-        return $this->dataHgnScope;
     }
 }

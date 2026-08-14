@@ -94,7 +94,7 @@ class GameController extends Controller
                 'release_to'     => $releaseTo,
             ], fn ($v) => $v !== null);
 
-            $pager = new Pager($page, $totalPages, 'Game.Lineup', $routeParams, 'children');
+            $pager = new Pager($page, $totalPages, 'Game.Lineup', $routeParams);
 
             $lineupComponents = ['LineupSearch' => ['makerSuggestUrl' => route('api.game.maker.suggest')]];
             return $this->tree(view('game.lineup', compact(
@@ -109,7 +109,7 @@ class GameController extends Controller
 
         [$franchises, $hasMore, $total] = $this->getLineupFranchises($offset, self::LINEUP_PER_PAGE);
         $totalPages = (int) ceil($total / self::LINEUP_PER_PAGE);
-        $pager = new Pager($page, $totalPages, 'Game.Lineup', [], 'children');
+        $pager = new Pager($page, $totalPages, 'Game.Lineup', []);
 
         $lineupComponents = ['LineupSearch' => ['makerSuggestUrl' => route('api.game.maker.suggest')]];
         return $this->tree(view('game.lineup', compact(

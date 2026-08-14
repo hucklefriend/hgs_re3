@@ -87,6 +87,12 @@ export class ReviewReaction extends Component
         }
         this._isProcessingMap.set(form, true);
 
+        const activeSubmitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+        if (activeSubmitButton) {
+            activeSubmitButton.disabled = true;
+            activeSubmitButton.setAttribute('aria-busy', 'true');
+        }
+
         const kind = (form.dataset.reactionKind || '') as ReactionKind;
         const wasDone = form.dataset.done === '1';
         const countElement = form.querySelector('.js-like-count') as HTMLElement | null;
@@ -159,6 +165,11 @@ export class ReviewReaction extends Component
         } finally {
             await new Promise(resolve => setTimeout(resolve, 250));
             this._isProcessingMap.set(form, false);
+            const currentSubmitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+            if (currentSubmitButton) {
+                currentSubmitButton.disabled = false;
+                currentSubmitButton.removeAttribute('aria-busy');
+            }
         }
     }
 

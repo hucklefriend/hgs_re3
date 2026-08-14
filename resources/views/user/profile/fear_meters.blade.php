@@ -18,7 +18,7 @@
             <section class="node" id="fear-meter-{{ $fm->game_title_id }}-node">
                 <div class="node-head">
                     <span class="node-head-text">
-                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $fm->gameTitle->key]) }}" data-hgn-scope="full">{{ $fm->gameTitle->name }}</a>
+                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $fm->gameTitle->key]) }}">{{ $fm->gameTitle->name }}</a>
                     </span>
                     <span class="node-pt">●</span>
                 </div>

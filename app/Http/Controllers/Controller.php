@@ -41,73 +41,15 @@ abstract class Controller
             $this->isOver18 = intval(Cookie::get('is_over_18', 0)) === 1;
         }
     }
-    
-    /**
-     * Ajaxリクエストかどうかを判定する
-     *
-     * @return bool
-     */
-    private static function isAjax(): bool
-    {
-        return request()->ajax() || (request()->query('a', 0) == 1);
-    }
 
     /**
-     * nodes HTML から最初の section.node 1 個分の HTML を抽出する（internal_node 用）
-     *
-     * @param string $nodesHtml
-     * @return string
-     */
-    private static function extractFirstNodeSection(string $nodesHtml): string
-    {
-        if ($nodesHtml === '') {
-            return '';
-        }
-        $len = strlen($nodesHtml);
-        $pos = 0;
-        while (($pos = stripos($nodesHtml, '<section', $pos)) !== false) {
-            $tagEnd = strpos($nodesHtml, '>', $pos);
-            if ($tagEnd === false || $tagEnd - $pos > 200) {
-                $pos++;
-                continue;
-            }
-            $tag = substr($nodesHtml, $pos, $tagEnd - $pos + 1);
-            if (preg_match('/\bclass\s*=\s*["\']([^"\']*)["\']/', $tag, $m) && preg_match('/\bnode\b/', $m[1])) {
-                $depth = 1;
-                $i = $tagEnd + 1;
-                while ($i < $len && $depth > 0) {
-                    $nextOpen = stripos($nodesHtml, '<section', $i);
-                    $nextClose = stripos($nodesHtml, '</section>', $i);
-                    if ($nextClose === false) {
-                        break;
-                    }
-                    if ($nextOpen !== false && $nextOpen < $nextClose) {
-                        $depth++;
-                        $i = $nextOpen + 8;
-                    } else {
-                        $depth--;
-                        if ($depth === 0) {
-                            return substr($nodesHtml, $pos, $nextClose + strlen('</section>') - $pos);
-                        }
-                        $i = $nextClose + 10;
-                    }
-                }
-                break;
-            }
-            $pos++;
-        }
-        return '';
-    }
-
-    /**
-     * ツリーの生成
+     * 公開ビューへ共通データを設定する。
      *
      * @param View $view
      * @param array $options
-     * @return JsonResponse|View
-     * @throws \Throwable
+     * @return View
      */
-    protected function tree(View $view, array $options = []): JsonResponse|View
+    protected function tree(View $view, array $options = []): View
     {
         $view->with('isOver18', $this->isOver18)
              ->with('components', $options['components'] ?? []);
@@ -118,42 +60,7 @@ abstract class Controller
             }
         }
 
-        // javascriptのFetch APIでアクセスされていたら、layoutを使わずにテキストを返す
-        if (self::isAjax()) {
-            $viewData = $view->getData();
-            $rendered = $view->renderSections();
-            $nodes = $rendered['nodes'] ?? '';
-
-            $updateType = 'full';
-            if (request()->query('internal_node', 0) == 1) {
-                $updateType = 'node';
-            } elseif (request()->query('children_only', 0) == 1) {
-                $updateType = 'children';
-            }
-
-            $json = [
-                'updateType'         => $updateType,
-                'title'              => $rendered['title'],
-                'currentNodeTitle'   => $rendered['current-node-title'],
-                'currentNodeContent' => $rendered['current-node-content'] ?? '',
-                'nodes'              => $nodes,
-                'popup'              => $rendered['popup'] ?? '',
-                'url'                => $options['url'] ?? '',
-                'colorState'         => $viewData['colorState'] ?? '',
-                'components'         => $options['components'] ?? [],
-                'csrfToken'          => $options['csrfToken'] ?? '',
-            ];
-            if ($updateType === 'node') {
-                $json['internalNodeHtml'] = self::extractFirstNodeSection($nodes);
-                $json['targetNodeId'] = request()->query('source_node_id', '');
-            }
-            if ($updateType === 'children') {
-                $json['currentChildrenHtml'] = $nodes;
-            }
-            return response()->json($json);
-        }
-
-        return $view->with('viewerType', 'tree');
+        return $view;
     }
 
     private function ratingCheck(string $currentUrl): View

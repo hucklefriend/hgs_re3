@@ -20,7 +20,7 @@
             @endforeach
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Game.FranchiseTimeline', ['franchiseKey' => $franchise->key]) }}" class="node-head-text" data-hgn-scope="full">新着情報をもっと見る</a>
+                    <a href="{{ route('Game.FranchiseTimeline', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">新着情報をもっと見る</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

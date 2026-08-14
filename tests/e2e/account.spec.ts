@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'crypto';
-import { waitForTreeAppeared } from './support/utils';
+import { waitForPublicPageReady } from './support/utils';
 
 /**
  * 新規登録して、ログインしマイページで設定を行い、退会する
@@ -33,8 +33,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   });
   
   await page.goto('register');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', email);
   const registerResponsePromise = page.waitForResponse((res) =>
@@ -45,7 +44,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '新規登録' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#register-pending-node')).toBeVisible();
 
   const registrationPayload = await (async () =>
@@ -70,8 +69,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   const registrationPath = new URL(resolvedRegistrationUrl).pathname;
 
   await page.goto(registrationPath);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await page.fill('#name', userName);
   await page.fill('#password', password);
@@ -79,7 +77,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '登録を完了する' }).click(),
   ]);
 
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('.alert-success')).toContainText('登録が完了しました。');
 
   await page.fill('#email', email);
@@ -92,7 +90,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
 
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#mypage-welcome-node')).toContainText(userName);
   
   // プロフィール設定のテスト
@@ -101,8 +99,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   
   // プロフィール設定ページに移動
   await page.goto('user/my-node/profile');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // プロフィール設定フォームが表示されていることを確認
   await expect(page.locator('#profile-edit-node')).toBeVisible();
@@ -120,7 +117,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '更新' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('プロフィールを更新しました。');
@@ -133,8 +130,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   
   // パスワード変更ページに移動
   await page.goto('user/my-node/password');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // パスワード変更フォームが表示されていることを確認
   await expect(page.locator('#password-change-form-node')).toBeVisible();
@@ -153,20 +149,18 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '変更' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('パスワードを変更しました。');
   
   // 新しいパスワードでログインできることを確認するため、ログアウトしてから新しいパスワードでログイン
   await page.goto('logout');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // ログインページに移動
   await page.goto('login');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', email);
   await page.fill('#password', newPassword);
@@ -178,7 +172,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#mypage-welcome-node')).toContainText(updatedUserName);
   
   // メールアドレス変更のテスト
@@ -187,8 +181,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   
   // メールアドレス変更ページに移動
   await page.goto('user/my-node/email');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // メールアドレス変更フォームが表示されていることを確認
   await expect(page.locator('#email-change-form-node')).toBeVisible();
@@ -203,7 +196,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '確認メールを送信' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('確認メールを送信しました。メールをご確認ください。');
@@ -232,21 +225,18 @@ test('新規登録して、ログインしマイページで設定を行い、�
 
   // メールアドレス変更確定URLにアクセス
   await page.goto(emailChangePath);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('メールアドレスを変更しました。');
   
   // 新しいメールアドレスでログインできることを確認するため、ログアウトしてから新しいメールアドレスでログイン
   await page.goto('logout');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // ログインページに移動
   await page.goto('login');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', newEmail);
   await page.fill('#password', newPassword);
@@ -258,14 +248,13 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#mypage-welcome-node')).toContainText(updatedUserName);
   
   // 退会のテスト
   // 退会ページに移動
   await page.goto('user/my-node/withdraw');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 退会フォームが表示されていることを確認
   await expect(page.locator('#withdraw-form-node')).toBeVisible();
@@ -280,7 +269,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: '退会' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('退会が完了しました。');
@@ -296,7 +285,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // エラーメッセージが表示されることを確認
   await expect(page.locator('.alert-danger')).toContainText('メールアドレスまたはパスワードが正しくありません。');
@@ -336,8 +325,7 @@ test('新規登録時にnameフィールドに値が入っていると登録用U
   });
   
   await page.goto('register');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // emailとnameの両方に値を入力（nameは空であるべき）
   await page.fill('#email', email);
@@ -359,7 +347,7 @@ test('新規登録時にnameフィールドに値が入っていると登録用U
     page.getByRole('button', { name: '新規登録' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // バリデーションエラーが表示されることを確認（オプション）
   // エラーメッセージが表示される可能性がある
@@ -406,8 +394,7 @@ test('登録済みのメールアドレスで新規登録しようとすると�
   });
   
   await page.goto('register');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', registeredEmail);
   const registerResponsePromise = page.waitForResponse((res) =>
@@ -418,7 +405,7 @@ test('登録済みのメールアドレスで新規登録しようとすると�
     page.getByRole('button', { name: '新規登録' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // バリデーションエラーメッセージが表示されることを確認
   await expect(page.locator('.alert-warning')).toContainText('このメールアドレスで新規登録はできません。');
@@ -457,8 +444,7 @@ test('新規登録後、1時間以上経過すると登録処理が無効にな�
   });
   
   await page.goto('register');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', email);
   const registerResponsePromise = page.waitForResponse((res) =>
@@ -469,7 +455,7 @@ test('新規登録後、1時間以上経過すると登録処理が無効にな�
     page.getByRole('button', { name: '新規登録' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#register-pending-node')).toBeVisible();
 
   // 登録用URLを取得
@@ -504,8 +490,7 @@ test('新規登録後、1時間以上経過すると登録処理が無効にな�
 
   // 登録完了URLにアクセス（有効期限切れのため新規登録ページにリダイレクトされる）
   await page.goto(registrationPath);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 新規登録ページにリダイレクトされていることを確認
   await expect(page).toHaveURL(/\/register/);
@@ -546,8 +531,7 @@ test('パスワードリセット申請して、パスワードを変更しロ�
   });
   
   await page.goto('password-reset');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   await page.fill('#email', email);
   const passwordResetResponsePromise = page.waitForResponse((res) =>
@@ -558,7 +542,7 @@ test('パスワードリセット申請して、パスワードを変更しロ�
     page.getByRole('button', { name: '送信' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('#password-reset-sent-node')).toBeVisible();
 
   // パスワードリセット用URLを取得
@@ -584,8 +568,7 @@ test('パスワードリセット申請して、パスワードを変更しロ�
   const passwordResetPath = new URL(resolvedPasswordResetUrl).pathname;
 
   await page.goto(passwordResetPath);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await page.fill('#password', newPassword);
   const completePasswordResetResponsePromise = page.waitForResponse((res) =>
@@ -596,7 +579,7 @@ test('パスワードリセット申請して、パスワードを変更しロ�
     page.getByRole('button', { name: 'パスワードを変更' }).click(),
   ]);
 
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   await expect(page.locator('.alert-success')).toContainText('パスワードを変更しました。ログインしてください。');
 
   await page.fill('#email', email);
@@ -609,7 +592,7 @@ test('パスワードリセット申請して、パスワードを変更しロ�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
 
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   // ログイン成功を確認（マイページにリダイレクトされる）
   await expect(page.locator('#mypage-welcome-node')).toContainText('ようこそ');
 

@@ -110,10 +110,11 @@
                 <section class="title-data-section" id="fear-meter" data-page-reveal>
                     <header><span>02</span><div><p>FEAR METER</p><h2>怖さメーター</h2></div></header>
                     @if ($fearMeter)
-                        <div class="title-fear-panel">
+                        <div class="title-fear-panel title-fear-meter">
                             <div><strong>{{ number_format($fearMeterAverage, 2) }}</strong><span>/ {{ number_format($fearMeterMax, 2) }}</span><small>{{ $fearMeter->fear_meter->text() }}</small></div>
                             <div class="title-fear-scale" aria-label="怖さ {{ number_format($fearMeterAverage, 2) }} / 4"><i style="width: {{ $fearMeterPercent }}%"></i></div>
                             <a href="{{ route('Game.TitleFearMeterComments', ['titleKey' => $title->key]) }}">コメントを見る →</a>
+                            @auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">あなたの怖さメーター →</a>@endauth
                         </div>
                     @else
                         <div class="site-empty-state">怖さメーターはまだ入力されていません。@auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">最初の評価を送る →</a>@endauth</div>

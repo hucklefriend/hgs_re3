@@ -149,7 +149,7 @@
         </div>
         <div class="node-content basic">
             <p>
-                <a href="{{ route('Contact') }}" data-hgn-scope="full">問い合わせ</a>機能を使ってください。
+                <a href="{{ route('Contact') }}">問い合わせ</a>機能を使ってください。
             </p>
             <p>
                 個人情報の削除のみ、なるべく急ぎで対応します。<br>

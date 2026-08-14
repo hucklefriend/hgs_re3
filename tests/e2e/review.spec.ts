@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForTreeAppeared, createTestAccount, loginUser } from './support/utils';
+import { waitForPublicPageReady, createTestAccount, loginUser } from './support/utils';
 
 /** Identity V のタイトルキー */
 const TITLE_KEY = 'identity-v';
@@ -14,8 +14,7 @@ const fillAndPublishReview = async (
 ): Promise<void> =>
 {
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // プレイ状況を選択
   await page.check('input[name="play_status"][value="cleared"]');
@@ -35,7 +34,7 @@ const fillAndPublishReview = async (
     publishPromise,
     page.getByRole('button', { name: '公開する' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 };
 
 // ---------------------------------------------------------------------------
@@ -46,8 +45,7 @@ const fillAndPublishReview = async (
 test('未ログイン時、ゲームタイトル照会画面でレビュー投稿リンクが表示されない', async ({ page }) =>
 {
   await page.goto(`game/title/${TITLE_KEY}`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 「レビューを書く」リンクが表示されないことを確認
   await expect(page.getByRole('link', { name: 'レビューを書く' })).not.toBeVisible();
@@ -71,13 +69,11 @@ test('ログイン後、レビューを投稿して成功メッセージが表�
 
   // Identity V のタイトル詳細ページへ
   await page.goto(`game/title/${TITLE_KEY}`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 「レビューを書く」リンクをクリック → レビューフォームへ
   await page.getByRole('link', { name: 'レビューを書く' }).first().click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // プレイ状況を選択
   await page.check('input[name="play_status"][value="cleared"]');
@@ -97,10 +93,10 @@ test('ログイン後、レビューを投稿して成功メッセージが表�
     publishPromise,
     page.getByRole('button', { name: '公開する' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 成功メッセージが表示されることを確認（マイレビュー一覧にリダイレクト）
-  await expect(page.locator('.alert-success')).toContainText('レビューを公開しました。');
+  await expect(page.locator('.alert-success')).toContainText('レビューを投稿しました。');
 
   // 再集計を実行
   const recalcResponse = await request.post('api/test/review/recalculate');
@@ -129,14 +125,12 @@ test('ログイン後、レビューを投稿して成功メッセージが表�
 
   // Identity V のタイトル詳細へ戻る
   await page.goto(`game/title/${TITLE_KEY}`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
-  // レビューセクションに件数が表示されることを確認
-  const reviewsNode = page.locator('#title-reviews-node');
-  await expect(reviewsNode).toContainText('件');
-  // 「レビューはまだないようだ」が表示されていないことを確認
-  await expect(reviewsNode).not.toContainText('まだない');
+  // レビューセクションに集計件数とレビューカードが表示されることを確認
+  const reviewsNode = page.locator('#reviews');
+  await expect(reviewsNode.locator('.title-review-summary')).toContainText(String(statistic.review_count));
+  await expect(reviewsNode.locator('.title-review-list article').first()).toBeVisible();
 
   expect(jsErrors).toHaveLength(0);
 });
@@ -155,8 +149,7 @@ test('下書きを保存した後で公開できる', async ({ page, request }) 
 
   // レビューフォームへ直接遷移
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   const draftBody = '下書きのテスト本文です。まだ公開していません。';
 
@@ -169,7 +162,7 @@ test('下書きを保存した後で公開できる', async ({ page, request }) 
     draftPromise,
     page.getByRole('button', { name: '下書き保存' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 成功メッセージが表示されることを確認（フォームにリダイレクト）
   await expect(page.locator('.alert-success')).toContainText('下書きを保存しました。');
@@ -191,15 +184,14 @@ test('下書きを保存した後で公開できる', async ({ page, request }) 
     publishPromise,
     page.getByRole('button', { name: '公開する' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 公開成功メッセージを確認
-  await expect(page.locator('.alert-success')).toContainText('レビューを公開しました。');
+  await expect(page.locator('.alert-success')).toContainText('レビューを投稿しました。');
 
   // フォームへ再アクセス → 既存レビューとして表示（削除ボタンが存在する）
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await expect(page.getByRole('button', { name: 'レビューを削除' })).toBeVisible();
 });
@@ -221,15 +213,13 @@ test('投稿したレビューをソフトデリートできる', async ({ page,
 
   // マイレビュー一覧へ → レビューが表示されることを確認（Identity V の行が存在する）
   await page.goto('user/review');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await expect(page.getByRole('link', { name: 'Identity V' }).first()).toBeVisible();
 
   // フォームページへ移動して削除操作
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 確認ダイアログを全て承諾する
   page.on('dialog', (dialog) => dialog.accept());
@@ -245,15 +235,14 @@ test('投稿したレビューをソフトデリートできる', async ({ page,
     deletePromise,
     page.getByRole('button', { name: 'レビューを削除' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 成功メッセージを確認
   await expect(page.locator('.alert-success')).toContainText('レビューを削除しました。');
 
   // マイレビュー一覧へ → レビューが表示されないことを確認
   await page.goto('user/review');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 一覧テーブルが存在しない（レビューなし状態）かつ Identity V のリンクが消えている
   await expect(page.locator('#review-list-node')).not.toBeVisible();
@@ -273,8 +262,7 @@ test('ネタバレフラグ付きのレビューは本文が折りたたまれ�
 
   // レビューフォームへ
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // プレイ状況・本文・ネタバレフラグを入力
   await page.check('input[name="play_status"][value="cleared"]');
@@ -293,16 +281,15 @@ test('ネタバレフラグ付きのレビューは本文が折りたたまれ�
     publishPromise,
     page.getByRole('button', { name: '公開する' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
-  await expect(page.locator('.alert-success')).toContainText('レビューを公開しました。');
+  await expect(page.locator('.alert-success')).toContainText('レビューを投稿しました。');
 
   // タイトルのレビュー一覧ページへ（統計不要でレビューが直接表示される）
   await page.goto(`game/title/${TITLE_KEY}/reviews`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
-  // ネタバレ折りたたみ要素（<details>）と「本文を表示」サマリーが存在することを確認
-  await expect(page.locator('details')).toBeVisible();
-  await expect(page.locator('details summary')).toContainText('本文を表示（ネタバレあり）');
+  // 一覧では本文を伏せ、個別ページへの導線を表示する
+  await expect(page.getByText('ネタバレがあるようだ。全文を読むで表示できる。').first()).toBeVisible();
+  await expect(page.getByRole('link', { name: '全文を読む' }).first()).toBeVisible();
 });

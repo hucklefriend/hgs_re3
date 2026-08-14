@@ -384,7 +384,7 @@
 
                     <div class="mt-10">
                         <div class="flex flex-wrap items-center gap-3">
-                            <button type="submit" class="btn btn-success">投稿</button>
+                            <button type="submit" class="btn btn-success">公開する</button>
                             <button
                                 type="button"
                                 class="btn btn-secondary js-review-draft-save"
@@ -437,32 +437,32 @@
         <div class="node-content tree">
             <section class="node tree-node" id="reviews-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }} レビュー一覧</a>
+                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }} レビュー一覧</a>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node tree-node" id="title-link-node">
                         <div class="node-head">
-                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }}</a>
+                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                             <span class="node-pt">●</span>
                         </div>
                         <div class="node-content tree">
                             @if ($shortcutFranchise !== null)
                                 <section class="node tree-node" id="franchise-link-node">
                                     <div class="node-head">
-                                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $shortcutFranchise->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $shortcutFranchise->name }}フランチャイズ</a>
+                                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $shortcutFranchise->key]) }}" class="node-head-text">{{ $shortcutFranchise->name }}フランチャイズ</a>
                                         <span class="node-pt">●</span>
                                     </div>
                                     <div class="node-content tree">
                                         <section class="node tree-node" id="lineup-link-node">
                                             <div class="node-head">
-                                                <a href="{{ route('Game.Lineup') }}" class="node-head-text" data-hgn-scope="full">ラインナップ</a>
+                                                <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
                                                 <span class="node-pt">●</span>
                                             </div>
                                             <div class="node-content tree">
                                                 <section class="node basic" id="root-link-node">
                                                     <div class="node-head">
-                                                        <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                                                        <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                                                         <span class="node-pt">●</span>
                                                     </div>
                                                 </section>
@@ -473,13 +473,13 @@
                             @else
                                 <section class="node tree-node" id="lineup-link-node">
                                     <div class="node-head">
-                                        <a href="{{ route('Game.Lineup') }}" class="node-head-text" data-hgn-scope="full">ラインナップ</a>
+                                        <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
                                         <span class="node-pt">●</span>
                                     </div>
                                     <div class="node-content tree">
                                         <section class="node basic" id="root-link-node">
                                             <div class="node-head">
-                                                <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                                                <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                                                 <span class="node-pt">●</span>
                                             </div>
                                         </section>
@@ -492,13 +492,13 @@
             </section>
             <section class="node tree-node">
                 <div class="node-head">
-                    <a href="{{ route('User.Review.Index') }}" class="node-head-text" data-hgn-scope="full">マイレビュー</a>
+                    <a href="{{ route('User.Review.Index') }}" class="node-head-text">マイレビュー</a>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node basic">
                         <div class="node-head">
-                            <a href="{{ route('User.MyNode.Top') }}" class="node-head-text" data-hgn-scope="full">マイノード</a>
+                            <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイノード</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>

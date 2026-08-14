@@ -1,5 +1,13 @@
 # グリッドネットワークデザイン移行計画
 
+## 実装記録
+
+- [Phase 0〜4 記録](grid-network-redesign-phase0.md)
+- [Phase 5 記録](grid-network-redesign-phase5.md)
+- [Phase 6〜9 記録](grid-network-redesign-phase6-9.md)
+
+Phase 6〜9までの本体移行は2026年8月14日に完了した。`public/new_design2` は比較用モックとして残しており、削除は別途ユーザー確認後に行う。
+
 ## 1. 目的
 
 公開画面の現行ツリー型デザインと Ajax 画面遷移を廃止し、`public/new_design2` で検討したグリッドネットワークデザインへ全面的に移行する。

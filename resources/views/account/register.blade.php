@@ -4,7 +4,7 @@
 @section('current-node-title', '新規登録')
 @section('current-node-content')
     <p class="alert alert-info">
-        最新の<a href="{{ route('PrivacyPolicy') }}" data-hgn-scope="full">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
+        最新の<a href="{{ route('PrivacyPolicy') }}">プライバシーポリシー</a>に同意いただいたものとして新規登録を受け付けます。
     </p>
 @endsection
 
@@ -16,8 +16,8 @@
         </div>
         <div class="node-content basic">
             <div class="mb-3">
-                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary" data-hgn-scope="external">GitHub</a>
-                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary" data-hgn-scope="external">Steam</a>
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHub</a>
+                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary">Steam</a>
                 {{-- X連携: フリープランでは /2/users/me が使えないため非表示。課金後に有効化する。 --}}
                 {{-- <a href="{{ route('Account.X.Redirect') }}" class="btn btn-outline-secondary">X</a> --}}
             </div>

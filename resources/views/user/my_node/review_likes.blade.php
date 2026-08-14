@@ -29,7 +29,7 @@
                                 <p class="text-slate-500">このレビューは非表示になっています。</p>
                             @else
                                 <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
-                                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" class="font-semibold text-slate-100 hover:text-sky-400" data-hgn-scope="full">{{ $review->gameTitle->name }}</a>
+                                    <a href="{{ route('Game.TitleReview', ['titleKey' => $review->gameTitle->key, 'reviewKey' => $review->key]) }}" class="font-semibold text-slate-100 hover:text-sky-400">{{ $review->gameTitle->name }}</a>
                                     <span class="text-slate-400 text-xs">{{ $review->user->name }} のレビュー</span>
                                     @if ($review->total_score !== null)
                                         <span class="text-slate-300">{{ $review->total_score }}<span class="text-slate-500 text-xs"> / 100</span></span>
@@ -56,13 +56,13 @@
         <div class="node-content tree">
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Top') }}" class="node-head-text" data-hgn-scope="full">マイノード</a>
+                    <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイノード</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

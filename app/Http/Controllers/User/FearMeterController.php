@@ -55,7 +55,7 @@ class FearMeterController extends Controller
             ->unique('game_title_id')
             ->keyBy('game_title_id');
 
-        $pager = new Pager($fearMeters->currentPage(), $fearMeters->lastPage(), 'User.FearMeter.Index', [], 'children');
+        $pager = new Pager($fearMeters->currentPage(), $fearMeters->lastPage(), 'User.FearMeter.Index', []);
 
         return $this->tree(
             view('user.fear_meter.index', compact('fearMeters', 'fearMeterComments', 'pager')),

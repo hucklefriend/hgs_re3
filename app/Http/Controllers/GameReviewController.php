@@ -66,8 +66,7 @@ class GameReviewController extends Controller
             $titles->currentPage(),
             $titles->lastPage(),
             'Game.Reviews',
-            $sort !== 'newest' ? ['sort' => $sort] : [],
-            'children',
+            $sort !== 'newest' ? ['sort' => $sort] : []
         );
 
         return $this->tree(
@@ -101,7 +100,7 @@ class GameReviewController extends Controller
             ->get()
             ->keyBy('user_id');
 
-        $pager = new Pager($reviews->currentPage(), $reviews->lastPage(), 'Game.TitleReviews', ['titleKey' => $title->key], 'children');
+        $pager = new Pager($reviews->currentPage(), $reviews->lastPage(), 'Game.TitleReviews', ['titleKey' => $title->key]);
 
         $myReview = null;
         if (Auth::check()) {

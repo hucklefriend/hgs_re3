@@ -18,7 +18,7 @@
     <div class="mb-8 flex flex-wrap gap-1.5" data-sort-tabs>
         @foreach ($sortOptions as $key => $label)
             <a href="{{ route('Game.Reviews', $key !== 'newest' ? ['sort' => $key] : []) }}"
-               data-hgn-scope="children"
+
                class="btn btn-sm btn-default{{ $sort === $key ? ' is-active' : '' }}">
                 {{ $label }}
             </a>
@@ -40,7 +40,7 @@
         <section class="node" id="{{ $title->key }}-review-node">
             <div class="node-head">
                 <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}"
-                   class="node-head-text text-xl" data-hgn-scope="full">{{ $title->name }}</a>
+                   class="node-head-text text-xl">{{ $title->name }}</a>
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content basic" id="{{ $title->key }}-review-node-content">
@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="mt-2 text-xs text-slate-200">
-                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" data-hgn-scope="full">このタイトルのレビューを見る</a>
+                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}">このタイトルのレビューを見る</a>
                 </div>
             </div>
 

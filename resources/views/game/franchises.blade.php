@@ -6,9 +6,9 @@
 @section('nodes')
     @foreach ($prefixes as $prefix => $words)
         @php $prefixFranchises = $franchisesByPrefix[$prefix] ?? []; @endphp
-        <section class="node tree-node accordion" id="{{ $prefix }}-tree" data-accordion-group="acc1" data-accordion-type="auto-close">
+        <section class="node tree-node" id="{{ $prefix }}-tree">
             <div class="node-head">
-                <button class="node-head-text" type="button" aria-expanded="false" aria-controls="acc1-a" id="acc-btn-a">{{ $words[0] }}</button>
+                <h2 class="node-head-text">{{ $words[0] }}</h2>
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content behind">

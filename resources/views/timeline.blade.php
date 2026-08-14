@@ -26,7 +26,7 @@
         <div class="node-content tree">
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

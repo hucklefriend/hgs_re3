@@ -18,7 +18,7 @@ class MyNodeFollowController extends Controller
     {
         $user = Auth::user();
         $following = $user->following()->orderByPivot('created_at', 'desc')->paginate(self::PER_PAGE);
-        $pager = new Pager($following->currentPage(), $following->lastPage(), 'User.MyNode.Following', [], 'children');
+        $pager = new Pager($following->currentPage(), $following->lastPage(), 'User.MyNode.Following', []);
 
         return $this->tree(
             view('user.my_node.following', compact('following', 'pager')),
@@ -30,7 +30,7 @@ class MyNodeFollowController extends Controller
     {
         $user = Auth::user();
         $followers = $user->followers()->orderByPivot('created_at', 'desc')->paginate(self::PER_PAGE);
-        $pager = new Pager($followers->currentPage(), $followers->lastPage(), 'User.MyNode.Followers', [], 'children');
+        $pager = new Pager($followers->currentPage(), $followers->lastPage(), 'User.MyNode.Followers', []);
 
         return $this->tree(
             view('user.my_node.followers', compact('followers', 'pager')),
@@ -42,7 +42,7 @@ class MyNodeFollowController extends Controller
     {
         $user = Auth::user();
         $blocking = $user->blocking()->orderByPivot('created_at', 'desc')->paginate(self::PER_PAGE);
-        $pager = new Pager($blocking->currentPage(), $blocking->lastPage(), 'User.MyNode.Blocking', [], 'children');
+        $pager = new Pager($blocking->currentPage(), $blocking->lastPage(), 'User.MyNode.Blocking', []);
 
         return $this->tree(
             view('user.my_node.blocking', compact('blocking', 'pager')),
@@ -54,7 +54,7 @@ class MyNodeFollowController extends Controller
     {
         $user = Auth::user();
         $muting = $user->muting()->orderByPivot('created_at', 'desc')->paginate(self::PER_PAGE);
-        $pager = new Pager($muting->currentPage(), $muting->lastPage(), 'User.MyNode.Muting', [], 'children');
+        $pager = new Pager($muting->currentPage(), $muting->lastPage(), 'User.MyNode.Muting', []);
 
         return $this->tree(
             view('user.my_node.muting', compact('muting', 'pager')),

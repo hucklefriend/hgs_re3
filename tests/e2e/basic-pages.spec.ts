@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForPublicPageReady } from './support/utils';
 
 /**
  * 基本ページのE2Eテスト
@@ -29,10 +30,8 @@ test('トップページが正常に表示される', async ({ page }) =>
   await page.goto('');
 
   // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
-  await page.waitForLoadState('networkidle');
   
-  // アニメーションや遅延実行されるスクリプトのために追加で待機
-  await page.waitForTimeout(3000);
+  await waitForPublicPageReady(page);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -66,10 +65,8 @@ test('プライバシーポリシーページが正常に表示される', async
   await page.goto('privacy');
 
   // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
-  await page.waitForLoadState('networkidle');
   
-  // アニメーションや遅延実行されるスクリプトのために追加で待機
-  await page.waitForTimeout(3000);
+  await waitForPublicPageReady(page);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -103,10 +100,8 @@ test('aboutページが正常に表示される', async ({ page }) =>
   await page.goto('about');
 
   // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
-  await page.waitForLoadState('networkidle');
   
-  // アニメーションや遅延実行されるスクリプトのために追加で待機
-  await page.waitForTimeout(3000);
+  await waitForPublicPageReady(page);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();
@@ -140,10 +135,8 @@ test('お知らせ一覧ページが正常に表示される', async ({ page }) 
   await page.goto('info');
 
   // ページが完全に読み込まれるまで待機（ネットワークアイドル状態）
-  await page.waitForLoadState('networkidle');
   
-  // アニメーションや遅延実行されるスクリプトのために追加で待機
-  await page.waitForTimeout(3000);
+  await waitForPublicPageReady(page);
   
   // ページが正常に読み込まれたことを確認
   await expect(page.locator('body')).toBeVisible();

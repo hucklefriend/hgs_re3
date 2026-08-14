@@ -3,7 +3,6 @@
 @import 'tailwind_import.css';
 @import 'variables.css';
 @import 'base.css';
-@import 'tree.css';
 @import 'game.css';
 @import 'user.css';
 @import 'site/tokens.css';
@@ -11,6 +10,7 @@
 @import 'site/layout.css';
 @import 'site/motion.css';
 @import 'site/components.css';
+@import 'site/pages/standard.css';
 @import 'site/pages/home.css';
 @import 'site/pages/lineup.css';
 @import 'site/pages/title-detail.css';

@@ -8,8 +8,8 @@
 @if ($needsAcceptance)
 <div class="alert alert-warning mt-3">
     <p>
-        <a href="{{ route('PrivacyPolicy') }}" data-hgn-scope="full">プライバシーポリシー</a>が改定されています。<br>
-        <a href="{{ route('PrivacyPolicy') }}" data-hgn-scope="full">プライバシーポリシー</a>にて内容を確認し「同意」の実行をお願いします。
+        <a href="{{ route('PrivacyPolicy') }}">プライバシーポリシー</a>が改定されています。<br>
+        <a href="{{ route('PrivacyPolicy') }}">プライバシーポリシー</a>にて内容を確認し「同意」の実行をお願いします。
     </p>
 </div>
 @endif
@@ -17,7 +17,7 @@
 <div class="alert alert-warning mt-3">
     <p>
         2段階認証のリカバリーコードの残りが<strong>{{ $recoveryCodeRemaining }}個</strong>になっています。<br>
-        <a href="{{ route('User.MyNode.LoginSettings') }}" data-hgn-scope="full">ログイン設定</a>からリカバリーコードを再発行してください。
+        <a href="{{ route('User.MyNode.LoginSettings') }}">ログイン設定</a>からリカバリーコードを再発行してください。
     </p>
 </div>
 @endif
@@ -27,7 +27,8 @@
 </div>
 @endif
 
-<div class="mt-4 ml-3">
+<div class="mt-4 ml-3" id="mypage-welcome-node">
+    <p class="site-eyebrow">ようこそ</p>
     <div class="flex items-center gap-4 mb-2">
         <x-user-avatar :user="$user" class="w-16 h-16 rounded-full object-cover flex-shrink-0"/>
         <div>
@@ -39,9 +40,9 @@
     <p class="text-sm whitespace-pre-wrap mb-2">{{ $user->bio }}</p>
     @endif
     <p class="text-sm">
-        <a href="{{ route('User.MyNode.Following') }}" class="hover:underline" data-hgn-scope="full">フォロー {{ $followingCount }}人</a>
+        <a href="{{ route('User.MyNode.Following') }}" class="hover:underline">フォロー {{ $followingCount }}人</a>
         <span class="mx-2 text-slate-400">|</span>
-        <a href="{{ route('User.MyNode.Followers') }}" class="hover:underline" data-hgn-scope="full">フォロワー {{ $followerCount }}人</a>
+        <a href="{{ route('User.MyNode.Followers') }}" class="hover:underline">フォロワー {{ $followerCount }}人</a>
     </p>
 </div>
 
@@ -66,7 +67,7 @@
             @endforelse
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text" data-hgn-scope="full">更新情報を見る</a>
+                    <a href="{{ route('User.MyNode.Timeline') }}" class="node-head-text">更新情報を見る</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
@@ -80,25 +81,25 @@
         <div class="node-content tree">
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Following') }}" class="node-head-text" data-hgn-scope="full">フォロー中</a>
+                    <a href="{{ route('User.MyNode.Following') }}" class="node-head-text">フォロー中</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Followers') }}" class="node-head-text" data-hgn-scope="full">フォロワー</a>
+                    <a href="{{ route('User.MyNode.Followers') }}" class="node-head-text">フォロワー</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Blocking') }}" class="node-head-text" data-hgn-scope="full">ブロック中</a>
+                    <a href="{{ route('User.MyNode.Blocking') }}" class="node-head-text">ブロック中</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.Muting') }}" class="node-head-text" data-hgn-scope="full">ミュート中</a>
+                    <a href="{{ route('User.MyNode.Muting') }}" class="node-head-text">ミュート中</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
@@ -144,7 +145,7 @@
             </section>
         </div>
     </section>
-    <section class="node tree-node" id="mypage-welcome-node">
+    <section class="node tree-node" id="mypage-settings-node">
         <div class="node-head">
             <h2 class="node-head-text">設定・管理</h2>
             <span class="node-pt">●</span>
@@ -153,7 +154,7 @@
 
             <section class="node basic" id="timeline-settings-link-node">
                 <div class="node-head">
-                    <a href="{{ route('User.MyNode.TimelineSettings') }}" class="node-head-text" data-hgn-scope="full">タイムライン設定</a>
+                    <a href="{{ route('User.MyNode.TimelineSettings') }}" class="node-head-text">タイムライン設定</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

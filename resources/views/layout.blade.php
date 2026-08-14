@@ -44,7 +44,7 @@
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
 <body
-    class="@isset($colorState) has-{{ $colorState }} @endisset @yield('body-class')"
+    class="site-page site-page--{{ $pageKind }} @isset($colorState) has-{{ $colorState }} @endisset @yield('body-class')"
     data-public-app
     data-navigation-mode="document"
     data-page-kind="{{ $pageKind }}"
@@ -58,7 +58,7 @@
         @hasSection('site-content')
             @yield('site-content')
         @else
-        <div class="site-frame">
+        <div class="site-frame site-standard">
             <div class="site-main__grid">
                 <div class="site-grid-axis" aria-hidden="true">
                     <span>NETWORK GRID / {{ strtoupper($pageKind) }}</span>
@@ -66,22 +66,23 @@
                 </div>
                 <x-site.breadcrumb :page-kind="$pageKind" :page-title="$pageTitle" />
 
-                <section class="node" id="current-node">
-                    <div class="node-head">
+                <article class="site-standard-page node" id="current-node">
+                    <header class="site-standard-page__header node-head">
+                        <span class="site-standard-page__eyebrow">PUBLIC NODE / {{ strtoupper($pageKind) }}</span>
                         <h1 class="node-head-text">@yield('current-node-title')</h1>
-                        <span class="node-pt current-node-pt">●</span>
-                    </div>
+                        <span class="node-pt current-node-pt" aria-hidden="true">●</span>
+                    </header>
 
-                    <div class="node-content" id="current-node-content">
+                    <div class="site-standard-page__content node-content" id="current-node-content">
                         @hasSection('current-node-content')
                             @yield('current-node-content')
                         @endif
                     </div>
 
-                    <div class="node-content tree" id="current-tree-nodes">
+                    <div class="site-standard-page__sections node-content tree" id="current-tree-nodes">
                         @yield('nodes')
                     </div>
-                </section>
+                </article>
             </div>
         </div>
         @endif
