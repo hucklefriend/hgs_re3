@@ -1,8 +1,7 @@
-import type { MotionPreference } from '../core/motion-preference';
 import type { GridPlaneController } from '../grid/grid-plane-controller';
-import { RevealingPageController } from './page-controller';
+import { BasePageController } from './page-controller';
 
-export class HomePageController extends RevealingPageController
+export class HomePageController extends BasePageController
 {
     private readonly _gridPlaneController: GridPlaneController;
     private readonly _commandMenu: HTMLElement | null;
@@ -13,11 +12,10 @@ export class HomePageController extends RevealingPageController
 
     public constructor(
         root: HTMLElement,
-        motionPreference: MotionPreference,
         gridPlaneController: GridPlaneController,
     )
     {
-        super(root, motionPreference);
+        super(root);
         this._gridPlaneController = gridPlaneController;
         this._commandMenu = root.querySelector<HTMLElement>('.home-command-menu');
         this._firstCommandLink = this._commandMenu?.querySelector<HTMLElement>('.home-command-link') ?? null;
@@ -53,16 +51,10 @@ export class HomePageController extends RevealingPageController
         }
 
         this.root.style.setProperty('--home-content-grid-offset', '0px');
-        // 入場アニメーションの移動量を除き、表示完了後の位置をグリッドへ揃える。
         const rect = this._firstCommandLink.getBoundingClientRect();
-        const transform = window.getComputedStyle(this._commandMenu).transform;
-        let revealOffsetY = 0;
-        if (transform !== 'none') {
-            revealOffsetY = new DOMMatrixReadOnly(transform).m42;
-        }
         const firstLinkOrigin = {
             x: rect.left + window.scrollX,
-            y: rect.top + window.scrollY - revealOffsetY,
+            y: rect.top + window.scrollY,
         };
         const snappedOrigin = this._gridPlaneController.metrics.snapToIntersection(firstLinkOrigin);
         const offset = snappedOrigin.y - firstLinkOrigin.y;
@@ -86,16 +78,10 @@ export class HomePageController extends RevealingPageController
             row.style.setProperty('block-size', `${gridRows * rowHeight}px`);
         });
 
-        // 一覧の表示アニメーションによる移動量を除いて、先頭の罫線を背景グリッドへ揃える。
         const rect = this._transmissionList.getBoundingClientRect();
-        const transform = window.getComputedStyle(this._transmissionList).transform;
-        let revealOffsetY = 0;
-        if (transform !== 'none') {
-            revealOffsetY = new DOMMatrixReadOnly(transform).m42;
-        }
         const listOrigin = {
             x: rect.left + window.scrollX,
-            y: rect.top + window.scrollY - revealOffsetY,
+            y: rect.top + window.scrollY,
         };
         const snappedOrigin = this._gridPlaneController.metrics.snapToIntersection(listOrigin);
         const offset = snappedOrigin.y - listOrigin.y;

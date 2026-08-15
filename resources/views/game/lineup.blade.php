@@ -18,7 +18,7 @@
         <div class="site-frame lineup-console__frame" data-grid-frame>
             <x-site.breadcrumb page-kind="lineup" page-title="GAME LINEUP" />
 
-            <header class="lineup-console__title" data-page-reveal>
+            <header class="lineup-console__title">
                 <div>
                     <h1 id="lineup-title">GAME<br><span>LINEUP</span></h1>
                 </div>
@@ -30,7 +30,7 @@
                 </dl>
             </header>
 
-            <div class="lineup-console__layout" data-page-reveal>
+            <div class="lineup-console__layout">
                 <nav class="lineup-console-menu" aria-label="検索メニュー">
                     <p>SELECT SEARCH MODE</p>
                     <button class="lineup-console-option {{ $hasAdvancedFilters ? '' : 'is-active' }}" type="button" data-console-control="title" aria-pressed="{{ $hasAdvancedFilters ? 'false' : 'true' }}">
@@ -122,7 +122,7 @@
 
     <section class="lineup-results" id="lineup-results" aria-labelledby="lineup-results-title">
         <div class="site-frame">
-            <header class="site-section-heading" data-page-reveal>
+            <header class="site-section-heading">
                 <div><p class="site-eyebrow">LINEUP OUTPUT / {{ number_format($total ?? 0) }}</p><h2 id="lineup-results-title">SEARCH<br><span>RESULTS</span></h2></div>
                 <p class="lineup-results__query">
                     @if (!empty($text))
@@ -135,7 +135,7 @@
                 </p>
             </header>
 
-            <div class="lineup-result-list" data-page-reveal>
+            <div class="lineup-result-list">
                 @forelse ($franchises ?? [] as $franchise)
                     <section class="lineup-franchise" id="franchise-{{ $franchise->key }}-link-node">
                         <header>

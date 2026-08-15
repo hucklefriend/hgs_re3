@@ -1,14 +1,13 @@
-import type { MotionPreference } from '../core/motion-preference';
 import { ConsoleTabs } from './console-tabs';
-import { RevealingPageController } from './page-controller';
+import { BasePageController } from './page-controller';
 
-export class LineupPageController extends RevealingPageController
+export class LineupPageController extends BasePageController
 {
     private readonly consoleTabs: ConsoleTabs;
 
-    public constructor(root: HTMLElement, motionPreference: MotionPreference)
+    public constructor(root: HTMLElement)
     {
-        super(root, motionPreference);
+        super(root);
         this.consoleTabs = new ConsoleTabs(root);
     }
 

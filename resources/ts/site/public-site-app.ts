@@ -131,15 +131,14 @@ export class PublicSiteApp implements Disposable
             case 'root':
                 return new HomePageController(
                     this._root,
-                    this._motionPreference,
                     this._gridPlaneController,
                 );
 
             case 'game-lineup':
-                return new LineupPageController(this._root, this._motionPreference);
+                return new LineupPageController(this._root);
 
             case 'game-title-detail':
-                return new TitleDetailPageController(this._root, this._motionPreference);
+                return new TitleDetailPageController(this._root);
 
             default:
                 return null;

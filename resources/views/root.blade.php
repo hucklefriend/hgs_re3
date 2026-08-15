@@ -7,13 +7,13 @@
 @section('site-content')
     <section class="home-hero" aria-labelledby="home-hero-title">
         <div class="site-frame home-hero__grid" data-grid-frame>
-            <div class="home-title-copy" data-page-reveal>
+            <div class="home-title-copy">
                 <h1 id="home-hero-title"><span>HORROR</span><span>GAME</span><strong>NETWORK</strong></h1>
                 <p class="home-title-copy__lead">ホラーゲームを探す。記録する。語り合う。<br>すべての作品へ接続するためのコミュニティ・ネットワーク。</p>
             </div>
-            <nav class="home-command-menu" aria-label="メインメニュー" data-page-reveal>
+            <nav class="home-command-menu" aria-label="メインメニュー">
                 <p class="home-command-menu__label">NODE DIRECTORY</p>
-                <a class="home-command-link home-command-link--primary" href="{{ route('Game.Lineup') }}"><span class="home-command-link__no">01</span><span><b>ゲームを探す</b><small>SEARCH LINEUP</small></span></a>
+                <a class="home-command-link" href="{{ route('Game.Lineup') }}"><span class="home-command-link__no">01</span><span><b>ゲームを探す</b><small>SEARCH LINEUP</small></span></a>
                 <a class="home-command-link" href="{{ route('Game.Platform') }}"><span class="home-command-link__no">02</span><span><b>シリーズ・機種から見る</b><small>BROWSE LINEUP</small></span></a>
                 <a class="home-command-link" href="#latest"><span class="home-command-link__no">03</span><span><b>新着タイムライン</b><small>LATEST TRANSMISSIONS</small></span><span class="home-command-link__arrow" aria-hidden="true">↓</span></a>
                 <a class="home-command-link" href="{{ route('Game.Reviews') }}"><span class="home-command-link__no">04</span><span><b>レビュー</b><small>USER REPORTS</small></span></a>
@@ -27,10 +27,10 @@
 
     <section class="home-latest" id="latest" aria-labelledby="home-latest-title">
         <div class="site-frame">
-            <header class="site-section-heading" data-page-reveal>
+            <header class="site-section-heading">
                 <div><h2 id="home-latest-title">LATEST<br><span>TRANSMISSIONS</span></h2></div>
             </header>
-            <div class="home-transmission-list" data-page-reveal>
+            <div class="home-transmission-list">
                 @forelse ($timelineEvents as $event)
                     @php
                         $eventLabel = match ($event['type']) {
@@ -68,12 +68,20 @@
                     @endphp
                     <article class="home-transmission-row">
                         <span class="home-transmission-row__index">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                        <div>
-                            <p class="site-signal-type">{{ $eventLabel }}@if (!empty($event['rss_source_label'])) / {{ strtoupper($event['rss_source_label']) }}@endif</p>
-                            <h3>@if ($eventUrl)<a href="{{ $eventUrl }}" @if ($event['type'] === 'rss_article_posted') target="_blank" rel="noopener" @endif>{{ $eventTitle }}</a>@else{{ $eventTitle }}@endif</h3>
-                            @if (!empty($event['note']))<p class="home-transmission-row__note">{{ $event['note'] }}</p>@endif
-                            <time datetime="{{ $event['created_at']->toIso8601String() }}">{{ $event['created_at']->format('Y.m.d / H:i') }}</time>
+                        <p class="site-signal-type">{{ $eventLabel }}@if (!empty($event['rss_source_label'])) / {{ strtoupper($event['rss_source_label']) }}@endif</p>
+                        <div @class([
+                            'home-transmission-row__body',
+                            'home-transmission-row__body--with-image' => !empty($event['ogp_image']),
+                        ])>
+                            <div class="home-transmission-row__content">
+                                <h3>@if ($eventUrl)<a href="{{ $eventUrl }}" @if ($event['type'] === 'rss_article_posted') target="_blank" rel="noopener" @endif>{{ $eventTitle }}</a>@else{{ $eventTitle }}@endif</h3>
+                                @if (!empty($event['note']))<p class="home-transmission-row__note">{{ $event['note'] }}</p>@endif
+                            </div>
+                            @if (!empty($event['ogp_image']))
+                                <img class="home-transmission-row__image" src="{{ $event['ogp_image'] }}" alt="" width="220" loading="lazy" decoding="async">
+                            @endif
                         </div>
+                        <time datetime="{{ $event['created_at']->toIso8601String() }}">{{ $event['created_at']->format('Y.m.d H:i') }}</time>
                         <span class="home-transmission-row__arrow" aria-hidden="true">{{ $event['type'] === 'rss_article_posted' ? '↗' : '→' }}</span>
                     </article>
                 @empty

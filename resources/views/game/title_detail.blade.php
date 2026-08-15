@@ -49,7 +49,7 @@
             @endif
 
             <div class="title-hero__layout">
-                <div class="title-keyart" data-page-reveal>
+                <div class="title-keyart">
                     <span class="title-keyart__stamp">KEY VISUAL / LINEUP</span>
                     @if ($title->ogp !== null && !empty($title->ogp->image))
                         <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
@@ -58,7 +58,7 @@
                     @endif
                 </div>
 
-                <div class="title-summary" data-page-reveal>
+                <div class="title-summary">
                     <h1 id="title-detail-name">{{ $title->name }}</h1>
                     @if ($title->series)<p class="title-summary__series">{{ $title->series->name }} / {{ $franchise?->name }}</p>@elseif ($franchise)<p class="title-summary__series">{{ $franchise->name }} FRANCHISE</p>@endif
                     @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif
@@ -93,7 +93,7 @@
             </nav>
 
             <div class="title-detail-content">
-                <section class="title-data-section" id="overview" data-page-reveal>
+                <section class="title-data-section" id="overview">
                     <header><span>01</span><div><p>OVERVIEW</p><h2>作品情報</h2></div></header>
                     <div class="title-overview-grid">
                         <dl>
@@ -105,7 +105,7 @@
                     </div>
                 </section>
 
-                <section class="title-data-section" id="fear-meter" data-page-reveal>
+                <section class="title-data-section" id="fear-meter">
                     <header><span>02</span><div><p>FEAR METER</p><h2>怖さメーター</h2></div></header>
                     @if ($fearMeter)
                         <div class="title-fear-panel title-fear-meter">
@@ -119,7 +119,7 @@
                     @endif
                 </section>
 
-                <section class="title-data-section" id="reviews" data-page-reveal>
+                <section class="title-data-section" id="reviews">
                     <header><span>03</span><div><p>USER REPORTS</p><h2>レビュー</h2></div></header>
                     @if ($reviewStatistic)
                         <div class="title-review-summary">
@@ -147,7 +147,7 @@
                     </div>
                 </section>
 
-                <section class="title-data-section" id="packages" data-page-reveal>
+                <section class="title-data-section" id="packages">
                     <header><span>04</span><div><p>PACKAGES</p><h2>購入・エディション</h2></div></header>
                     <div class="title-package-list">
                         @forelse ($packageGroups as $packageGroup)
@@ -173,7 +173,7 @@
                 </section>
 
                 @if ($title->series && $title->series->titles->count() > 1)
-                    <section class="title-data-section title-related" data-page-reveal>
+                    <section class="title-data-section title-related">
                         <header><span>05</span><div><p>RELATED ENTRIES</p><h2>シリーズ作品</h2></div></header>
                         <div>
                             @foreach ($title->series->titles->sortBy('first_release_int') as $sameSeriesTitle)

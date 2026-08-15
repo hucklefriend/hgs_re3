@@ -1,14 +1,13 @@
-import type { MotionPreference } from '../core/motion-preference';
-import { RevealingPageController } from './page-controller';
+import { BasePageController } from './page-controller';
 import { SectionSpy } from './section-spy';
 
-export class TitleDetailPageController extends RevealingPageController
+export class TitleDetailPageController extends BasePageController
 {
     private readonly sectionSpy: SectionSpy;
 
-    public constructor(root: HTMLElement, motionPreference: MotionPreference)
+    public constructor(root: HTMLElement)
     {
-        super(root, motionPreference);
+        super(root);
         this.sectionSpy = new SectionSpy(root);
     }
 
