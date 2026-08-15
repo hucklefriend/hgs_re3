@@ -18,7 +18,7 @@
                 <a class="home-command-link" href="#latest"><span class="home-command-link__no">03</span><span><b>新着タイムライン</b><small>LATEST TRANSMISSIONS</small></span><span class="home-command-link__arrow" aria-hidden="true">↓</span></a>
                 <a class="home-command-link" href="{{ route('Game.Reviews') }}"><span class="home-command-link__no">04</span><span><b>レビュー</b><small>USER REPORTS</small></span></a>
                 <a class="home-command-link home-command-link--secondary" href="{{ route('Informations') }}"><span class="home-command-link__no">05</span><span><b>お知らせ</b><small>INFORMATION</small></span></a>
-                <a class="home-command-link home-command-link--secondary" href="{{ route('About') }}"><span class="home-command-link__no">06</span><span><b>このサイトについて</b><small>ABOUT HGN</small></span></a>
+                <a class="home-command-link home-command-link--secondary" href="{{ route('About') }}"><span class="home-command-link__no">06</span><span><b>このサイトについて</b><small>ABOUT</small></span></a>
                 <a class="home-command-link home-command-link--secondary" href="{{ route('PrivacyPolicy') }}"><span class="home-command-link__no">07</span><span><b>プライバシーポリシー</b><small>PRIVACY POLICY</small></span></a>
                 <a class="home-command-link home-command-link--secondary" href="{{ route('Contact') }}"><span class="home-command-link__no">08</span><span><b>問い合わせ</b><small>CONTACT</small></span></a>
             </nav>
@@ -79,7 +79,9 @@
                 @empty
                     <p class="site-empty-state">現在受信している新着情報はありません。</p>
                 @endforelse
-                <a class="home-all-signals" href="{{ route('Timeline') }}">すべての通信を見る <span>ALL SIGNALS →</span></a>
+                <div class="home-all-signals">
+                    <a href="{{ route('Timeline') }}">すべての通信を見る</a>
+                </div>
             </div>
         </div>
     </section>
