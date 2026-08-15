@@ -1,13 +1,12 @@
 import { APIRequestContext, Page } from '@playwright/test';
 
 /**
- * HGN のツリーノードが出現アニメーションを完了するまで待機する
+ * 公開ページの全文書ロードと初期化が完了するまで待機する。
  */
-export const waitForTreeAppeared = async (page: Page): Promise<void> =>
+export const waitForPublicPageReady = async (page: Page): Promise<void> =>
 {
-  await new Promise(resolve => setTimeout(resolve, 2000));
   await page.waitForFunction(() =>
-    (window as any)?.hgn?.currentNode?.nodeContentTree?.appearStatus === 2
+    document.querySelector('[data-public-app]')?.getAttribute('data-page-ready') === 'true'
   );
 };
 
@@ -29,8 +28,7 @@ export const createTestAccount = async (request: APIRequestContext): Promise<{ e
 export const loginUser = async (page: Page, email: string, password: string): Promise<void> =>
 {
   await page.goto('login');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await page.fill('#email', email);
   await page.fill('#password', password);
@@ -42,6 +40,6 @@ export const loginUser = async (page: Page, email: string, password: string): Pr
     loginResponsePromise,
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 };
 

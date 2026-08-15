@@ -160,9 +160,7 @@ MCP／ゲームマスターAPI 経由で更新可能な `description` / `descrip
   `{!! nl2br(e($value)) !!}` のように**エスケープしてから** `nl2br` する。
 - `shop->img_tag` のように HTML タグ格納が仕様のフィールドは、保存時に許可タグ・属性を
   ホワイトリスト方式でサニタイズする（例: `<img>` の `src`/`alt` のみ許可、`onerror` 等は除去）。
-- SPA ナビゲーションはサーバー描画済み HTML を `innerHTML` に流し込む
-  （[resources/ts/node/parts/node-content-tree.ts:119](resources/ts/node/parts/node-content-tree.ts#L119)）ため、
-  サーバー側でエスケープが漏れるとそのまま DOM に反映される。防御の起点はサーバー側の出力にある。
+- サーバー側でエスケープが漏れると HTML 応答へ反映されるため、防御の起点はサーバー側の出力に置く。
 
 ---
 

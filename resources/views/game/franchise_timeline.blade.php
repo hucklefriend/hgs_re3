@@ -26,19 +26,19 @@
         <div class="node-content tree">
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $franchise->name }}フランチャイズ</a>
+                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}フランチャイズ</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Game.Franchises') }}" class="node-head-text" data-hgn-scope="full">フランチャイズ</a>
+                    <a href="{{ route('Game.Franchises') }}" class="node-head-text">フランチャイズ</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node basic">
                 <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>

@@ -63,9 +63,9 @@
     @auth
         <p class="mt-3 text-sm">
             @if ($myReview)
-                <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $myReview->key]) }}" data-hgn-scope="full">自分のレビューを確認</a>
+                <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $myReview->key]) }}">自分のレビューを確認</a>
             @else
-                <a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}" data-hgn-scope="full">レビューを書く</a>
+                <a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">レビューを書く</a>
             @endif
         </p>
     @endauth
@@ -139,7 +139,7 @@
                     <div class="mt-2 text-sm leading-relaxed text-slate-100">{!! nl2br(e(mb_strimwidth($review->body, 0, 200, '…'))) !!}</div>
                 @endif
                 <div class="mt-1 text-xs">
-                    <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $review->key]) }}" data-hgn-scope="full">全文を読む</a>
+                    <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $review->key]) }}">全文を読む</a>
                 </div>
             </div>
 
@@ -159,31 +159,31 @@
         <div class="node-content tree">
             <section class="node basic" id="reviews-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.Reviews') }}" class="node-head-text" data-hgn-scope="full">レビュー</a>
+                    <a href="{{ route('Game.Reviews') }}" class="node-head-text">レビュー</a>
                     <span class="node-pt">●</span>
                 </div>
             </section>
             <section class="node tree-node" id="title-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }}</a>
+                    <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node tree-node" id="franchise-link-node">
                         <div class="node-head">
-                            <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $franchise->name }}フランチャイズ</a>
+                            <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}フランチャイズ</a>
                             <span class="node-pt">●</span>
                         </div>
                         <div class="node-content tree">
                             <section class="node tree-node" id="lineup-link-node">
                                 <div class="node-head">
-                                    <a href="{{ route('Game.Lineup') }}" class="node-head-text" data-hgn-scope="full">ラインナップ</a>
+                                    <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
                                     <span class="node-pt">●</span>
                                 </div>
                                 <div class="node-content tree">
                                     <section class="node basic" id="root-link-node">
                                         <div class="node-head">
-                                            <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                                            <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                                             <span class="node-pt">●</span>
                                         </div>
                                     </section>

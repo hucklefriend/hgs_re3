@@ -6,7 +6,7 @@
 <p class="alert alert-warning">
     休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
     2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、<br>
-    改めて<a href="{{ route('Account.Register') }}" data-hgn-scope="full">新規登録</a>をお願いします。
+    改めて<a href="{{ route('Account.Register') }}">新規登録</a>をお願いします。
 </p>
 @endsection
 
@@ -18,8 +18,8 @@
         </div>
         <div class="node-content basic">
             <div class="mt-3 mb-3">
-                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary" data-hgn-scope="external">GitHub</a>
-                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary" data-hgn-scope="external">Steam</a>
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHub</a>
+                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary">Steam</a>
                 {{-- X連携: フリープランでは /2/users/me が使えないため非表示。課金後に有効化する。 --}}
                 {{-- <a href="{{ route('Account.X.Redirect') }}" class="btn btn-outline-secondary">X</a> --}}
             </div>

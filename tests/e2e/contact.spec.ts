@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForTreeAppeared } from './support/utils';
+import { waitForPublicPageReady } from './support/utils';
 
 /**
  * 問い合わせ機能のE2Eテスト
@@ -30,11 +30,10 @@ test('問い合わせフォームから問い合わせを送信できる', async
   
   // トップページにアクセス
   await page.goto('');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 「問い合わせ」リンクをクリック
-  const contactLink = page.locator('#contact-a');
+  const contactLink = page.getByRole('link', { name: /問い合わせ/ });
   await expect(contactLink).toBeVisible();
   
   const contactResponsePromise = page.waitForResponse((response) =>
@@ -45,7 +44,7 @@ test('問い合わせフォームから問い合わせを送信できる', async
     contactLink.click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 問い合わせフォームが表示されていることを確認
   await expect(page.locator('#contact-form-node')).toBeVisible();
@@ -79,7 +78,7 @@ test('問い合わせフォームから問い合わせを送信できる', async
     page.getByRole('button', { name: '送信' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 完了画面が表示されることを確認
   await expect(page.getByRole('heading', { name: '送信完了' })).toBeVisible();
@@ -99,7 +98,7 @@ test('問い合わせフォームから問い合わせを送信できる', async
   // 返信を投稿ボタンをクリック
   await page.getByRole('button', { name: '返信を投稿' }).click();
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 返信が投稿されたことを確認
   // 返信を投稿するとContact.Showにリダイレクトされるため、返信が表示されるまで待つ
@@ -114,7 +113,6 @@ test('問い合わせフォームから問い合わせを送信できる', async
   const currentUrl = new URL(page.url());
   const baseURL = `${currentUrl.protocol}//${currentUrl.host}${currentUrl.pathname.split('/contact')[0]}`;
   await page.goto('admin');
-  await page.waitForLoadState('networkidle');
   
   // ログインフォームに入力
   await page.fill('#emailAddress', 'webmaster@horrorgame.net');
@@ -129,21 +127,17 @@ test('問い合わせフォームから問い合わせを送信できる', async
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
   
-  await page.waitForLoadState('networkidle');
   
   // Manageメニューをクリック
   await page.locator('.menu-item.has-sub:has-text("Manage")').click();
-  await page.waitForTimeout(500); // サブメニューが開くのを待つ
   
   // Contactをクリック
   await page.getByRole('link', { name: 'Contact' }).click();
-  await page.waitForLoadState('networkidle');
   
   // Contact Listの一番上の項目のDetailボタンをクリック
   const firstDetailButton = page.locator('a:has-text("Detail")').first();
   await expect(firstDetailButton).toBeVisible();
   await firstDetailButton.click();
-  await page.waitForLoadState('networkidle');
   
   // ステータスを「対応中」に更新
   await page.selectOption('#status', '1'); // 対応中 = 1
@@ -155,7 +149,6 @@ test('問い合わせフォームから問い合わせを送信できる', async
     page.getByRole('button', { name: 'ステータスを更新' }).click(),
   ]);
   
-  await page.waitForLoadState('networkidle');
   
   // 管理者返信を投稿
   await page.fill('#responder_name', '管理者');
@@ -169,28 +162,24 @@ test('問い合わせフォームから問い合わせを送信できる', async
     page.getByRole('button', { name: '返信を投稿' }).click(),
   ]);
   
-  await page.waitForLoadState('networkidle');
   
   // 管理者返信が表示されることを確認
   await expect(page.locator('body')).toContainText('管理者からの返信です');
   
   // contactUrlに再度アクセスして、ステータスが「対応中」であることを確認
   await page.goto(contactUrl);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // ステータス表示が「対応中」であることを確認
   await expect(page.locator('body')).toContainText('対応中');
   
   // 管理画面に戻る
   await page.goto('admin/manage/contact');
-  await page.waitForLoadState('networkidle');
   
   // 一番上のDetailボタンをクリック
   const firstDetailButtonAgain = page.locator('a:has-text("Detail")').first();
   await expect(firstDetailButtonAgain).toBeVisible();
   await firstDetailButtonAgain.click();
-  await page.waitForLoadState('networkidle');
   
   // ステータスを「完了」に更新
   await page.selectOption('#status', '2'); // 完了 = 2
@@ -202,12 +191,10 @@ test('問い合わせフォームから問い合わせを送信できる', async
     page.getByRole('button', { name: 'ステータスを更新' }).click(),
   ]);
   
-  await page.waitForLoadState('networkidle');
   
   // contactUrlに再度アクセスして、ステータスが「完了」であることを確認
   await page.goto(contactUrl);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // ステータス表示が「完了」であることを確認
   await expect(page.locator('body')).toContainText('完了');
@@ -246,11 +233,10 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
   
   // トップページにアクセス
   await page.goto('');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 「問い合わせ」リンクをクリック
-  const contactLink = page.locator('#contact-a');
+  const contactLink = page.getByRole('link', { name: /問い合わせ/ });
   await expect(contactLink).toBeVisible();
   
   const contactResponsePromise = page.waitForResponse((response) =>
@@ -261,7 +247,7 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
     contactLink.click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 問い合わせフォームが表示されていることを確認
   await expect(page.locator('#contact-form-node')).toBeVisible();
@@ -298,14 +284,13 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
     page.getByRole('button', { name: '送信' }).click(),
   ]);
   
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
   
   // 完了画面が表示されることを確認（スパムでも完了画面は表示される）
   await expect(page.getByRole('heading', { name: '送信完了' })).toBeVisible();
   
   // 管理画面にログイン
   await page.goto('admin');
-  await page.waitForLoadState('networkidle');
   
   // ログインフォームに入力
   await page.fill('#emailAddress', 'webmaster@horrorgame.net');
@@ -320,15 +305,12 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
   
-  await page.waitForLoadState('networkidle');
   
   // Manageメニューをクリック
   await page.locator('.menu-item.has-sub:has-text("Manage")').click();
-  await page.waitForTimeout(500); // サブメニューが開くのを待つ
   
   // Contactをクリック
   await page.getByRole('link', { name: 'Contact' }).click();
-  await page.waitForLoadState('networkidle');
   
   // 投稿した名前で検索
   const keywordInput = page.locator('input[name="keyword"]');
@@ -337,7 +319,6 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
   
   // Searchボタンをクリック
   await page.getByRole('button', { name: 'Search' }).click();
-  await page.waitForLoadState('networkidle');
   
   // 検索結果に投稿した内容が存在しないことを確認
   // 「問い合わせが見つかりませんでした」のメッセージが表示されることを確認
@@ -358,7 +339,6 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
   // メッセージでも検索
   await keywordInput.fill(testMessage);
   await page.getByRole('button', { name: 'Search' }).click();
-  await page.waitForLoadState('networkidle');
   
   // 検索結果に投稿した内容が存在しないことを確認
   // 「問い合わせが見つかりませんでした」のメッセージが表示されることを確認

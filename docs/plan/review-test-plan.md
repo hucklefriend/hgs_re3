@@ -14,9 +14,7 @@
 
 ### E2E テストの特殊な作り（既存テストからの規則）
 
-- **ページ遷移後は必ず `waitForTreeAppeared(page)` を呼ぶ**  
-  （`hgn.currentNode.nodeContentTree.appearStatus === 2` になるまで待機する独自関数）
-- **SPAナビゲーション**なので `page.waitForLoadState('networkidle')` だけでは不十分  
+- **ページ遷移後は `waitForPublicPageReady(page)` で `data-page-ready="true"` を待つ**
 - **ログインが必要なテスト**は `api/test/create-test-account` を叩いてアカウントを作成する
 - **統計の検証**は `api/test/review/recalculate` を叩いてからバッチ結果を確認する  
   （怖さメーターと同様に `api/test/review/statistics` を用意する）
@@ -165,13 +163,13 @@ test('ログイン後、レビューを投稿して成功メッセージが表�
   // 1. テストアカウント作成 + ログイン（create-test-account 経由）
   // 2. Identity V のタイトル詳細ページへ
   // 3. 「レビューを書く」リンクをクリック → レビューフォームへ
-  // 4. waitForTreeAppeared(page)
+  // 4. waitForPublicPageReady(page)
   // 5. プレイ状況を選択（例: cleared）
   // 6. 怖さを選択（例: 2）
   // 7. ストーリー・雰囲気・ゲーム性を選択（例: それぞれ 3）
   // 8. 本文を入力（例: 'テストレビューです。とても面白かったです。'）
   // 9. 「公開する」ボタンをクリック + POST /user/review を waitForResponse
-  // 10. waitForTreeAppeared(page)
+  // 10. waitForPublicPageReady(page)
   // 11. 成功メッセージが表示されることを確認（.alert-success）
   //
   // 12. api/test/review/recalculate を叩く
@@ -192,7 +190,7 @@ test('下書きを保存した後で公開できる', async ({ page, request }) 
   // 1. テストアカウント作成 + ログイン
   // 2. レビューフォームへ
   // 3. 本文を入力して「下書き保存」をクリック + POST /user/review/draft を waitForResponse
-  // 4. waitForTreeAppeared(page)
+  // 4. waitForPublicPageReady(page)
   // 5. 成功（またはフラッシュ）メッセージが表示されることを確認
   // 6. 同フォームへ再アクセス → 下書き内容が復元されていることを確認
   // 7. 「公開する」ボタンをクリック

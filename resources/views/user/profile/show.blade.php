@@ -71,16 +71,16 @@
 
         <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-300">
             <div>
-                怖さメーター: <a href="{{ route('User.Profile.FearMeters', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400" data-hgn-scope="full">{{ $fearMeterCount }}件</a>
+                怖さメーター: <a href="{{ route('User.Profile.FearMeters', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400">{{ $fearMeterCount }}件</a>
             </div>
             <div>
-                レビュー: <a href="{{ route('User.Profile.Reviews', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400" data-hgn-scope="full">{{ $reviewCount }}件</a>
+                レビュー: <a href="{{ route('User.Profile.Reviews', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400">{{ $reviewCount }}件</a>
             </div>
             <div>
-                フォロー: <a href="{{ route('User.Profile.Following', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400" data-hgn-scope="full">{{ $followingCount }}人</a>
+                フォロー: <a href="{{ route('User.Profile.Following', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400">{{ $followingCount }}人</a>
             </div>
             <div>
-                フォロワー: <a href="{{ route('User.Profile.Followers', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400" data-hgn-scope="full">{{ $followerCount }}人</a>
+                フォロワー: <a href="{{ route('User.Profile.Followers', $profileUser->show_id) }}" class="font-semibold hover:text-sky-400">{{ $followerCount }}人</a>
             </div>
         </div>
     @endif
@@ -97,7 +97,7 @@
                 @foreach ($favoriteTitles as $title)
                     <section class="node basic">
                         <div class="node-head">
-                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }}</a>
+                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>
@@ -118,7 +118,7 @@
                 @endforeach
                 <section class="node basic">
                     <div class="node-head">
-                        <a href="{{ route('User.Profile.Timeline', $profileUser->show_id) }}" class="node-head-text" data-hgn-scope="full">活動タイムラインをすべて見る</a>
+                        <a href="{{ route('User.Profile.Timeline', $profileUser->show_id) }}" class="node-head-text">活動タイムラインをすべて見る</a>
                         <span class="node-pt">●</span>
                     </div>
                 </section>

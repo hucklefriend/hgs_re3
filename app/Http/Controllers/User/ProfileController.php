@@ -84,8 +84,7 @@ class ProfileController extends Controller
                 $paginator->currentPage(),
                 $paginator->lastPage(),
                 'User.Profile.Timeline',
-                ['show_id' => $showId],
-                'children'
+                ['show_id' => $showId]
             );
         }
 
@@ -131,8 +130,7 @@ class ProfileController extends Controller
             $fearMeters->currentPage(),
             $fearMeters->lastPage(),
             'User.Profile.FearMeters',
-            ['show_id' => $showId],
-            'children'
+            ['show_id' => $showId]
         );
 
         return $this->tree(
@@ -163,8 +161,7 @@ class ProfileController extends Controller
             $reviews->currentPage(),
             $reviews->lastPage(),
             'User.Profile.Reviews',
-            ['show_id' => $showId],
-            'children'
+            ['show_id' => $showId]
         );
 
         $shortcutRoute = [
@@ -206,8 +203,7 @@ class ProfileController extends Controller
                 $following->currentPage(),
                 $following->lastPage(),
                 'User.Profile.Following',
-                ['show_id' => $showId],
-                'children'
+                ['show_id' => $showId]
             );
         }
 
@@ -240,8 +236,7 @@ class ProfileController extends Controller
                 $followers->currentPage(),
                 $followers->lastPage(),
                 'User.Profile.Followers',
-                ['show_id' => $showId],
-                'children'
+                ['show_id' => $showId]
             );
         }
 

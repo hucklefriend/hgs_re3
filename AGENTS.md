@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Overview
 
-HGN (Horror Game Network) is a community-driven horror game database and social platform at horrorgame.net. Built with Laravel 12 (PHP 8.3+) backend, Blade templating for server-side rendering, and a custom TypeScript frontend (no React/Vue — vanilla TS with a `HgnTree` singleton). UI is styled with TailwindCSS. The application UI is primarily in Japanese.
+HGN (Horror Game Network) is a community-driven horror game database and social platform at horrorgame.net. Built with Laravel 12 (PHP 8.3+) backend, Blade templating for server-side rendering, and a custom TypeScript frontend (no React/Vue — vanilla TS with a `PublicSiteApp` lifecycle root). UI is styled with TailwindCSS. The application UI is primarily in Japanese.
 
 ## Commands
 
@@ -39,6 +39,14 @@ php artisan tinker                 # Interactive REPL
 
 `php artisan migrate` およびロールバック等のマイグレーション操作（`migrate:rollback`, `migrate:reset`, `migrate:refresh`, `migrate:fresh` 等）は**コマンドを提示するのみとし、実行はユーザーに委ねる**。
 
+### Cache Generation
+`php artisan view:cache` など、`storage/framework` または `bootstrap/cache` にキャッシュファイルを作成・再生成するコマンドは、Webサーバーとのグループ書き込み権限を維持するため、**同じシェル内で生成前に `umask 0002` を設定してから実行する**。
+
+```bash
+umask 0002
+php artisan view:cache
+```
+
 ## Architecture
 
 ### Backend (Laravel 12)
@@ -52,8 +60,8 @@ php artisan tinker                 # Interactive REPL
 
 ### Frontend (TypeScript)
 - Entry point: `resources/ts/app.ts`
-- **No framework** — custom singleton `HgnTree` class (`resources/ts/hgn-tree.ts`) manages all frontend state and interactions
-- Components live in `resources/ts/components/`, animations in `resources/ts/animation/`
+- **No framework** — `PublicSiteApp` starts once per full document load; public GET navigation uses normal browser document transitions
+- Page components live in `resources/ts/components/`; grid, navigation effects, and page controllers live in `resources/ts/site/`
 - CSS: TailwindCSS in `resources/css/`, compiled via Vite
 
 ### Rust Tools (`/src/hgn_rust_tools`)
@@ -71,9 +79,14 @@ php artisan tinker                 # Interactive REPL
 機能の実装詳細（使い方・クラス設計・追加手順など）は `docs/Codex/` 配下に機能ごとのファイルとして書く。AGENTS.md には書かない。
 
 @docs/Codex/frontend-conventions.md
+@docs/Codex/grid-network-design.md
 @docs/Codex/discord-webhook.md
 @docs/Codex/ogp-generator.md
 @docs/Codex/artisan-commands.md
+
+## Archived Documentation
+
+`docs/old/` は旧実装の設計資料と履歴を保管するアーカイブである。ユーザーから明示的な指示がない限り、この配下のファイルを読んだり、検索・要約したり、実装判断の根拠として使用したりしない。
 
 ## Implementation Plans
 

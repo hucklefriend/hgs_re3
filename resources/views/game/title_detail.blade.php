@@ -1,264 +1,189 @@
 @extends('layout')
 
+@php
+    $titleDescription = '';
+    if ($title->use_ogp_description == 1 && $title->ogp !== null && !empty($title->ogp->description)) {
+        $titleDescription = $title->ogp->description;
+    } elseif (!empty($title->description)) {
+        $titleDescription = trim(strip_tags($title->description));
+    }
+    $releaseDigits = str_pad((string) $title->first_release_int, 8, '0', STR_PAD_LEFT);
+    $releaseLabel = 'UNKNOWN';
+    if ((int) $title->first_release_int > 0 && (int) $title->first_release_int < 99999999) {
+        $releaseLabel = substr($releaseDigits, 0, 4) . '.' . substr($releaseDigits, 4, 2) . '.' . substr($releaseDigits, 6, 2);
+    }
+    $packageGroups = $title->packageGroups->sortByDesc('sort_order');
+    $allPackages = $packageGroups->flatMap(fn ($group) => $group->packages);
+    $platformLabels = $allPackages->map(fn ($package) => $package->platform?->acronym ?? $package->platform?->name)->filter()->unique()->values();
+    $fearMeterMax = 4;
+    $fearMeterAverage = $fearMeter ? max(0, min($fearMeterMax, (float) $fearMeter->average_rating)) : null;
+    $fearMeterPercent = $fearMeterAverage !== null ? ($fearMeterAverage / $fearMeterMax) * 100 : 0;
+@endphp
+
 @section('title', $title->name)
+@section('body-class', 'site-page site-page--title-detail')
 @section('current-node-title', $title->name)
-@section('ratingCheck', $title->rating == \App\Enums\Rating::None ? "false" : "true")
+@section('ratingCheck', $title->rating == \App\Enums\Rating::None ? 'false' : 'true')
 
-@section('current-node-content')
-
-    @if (session('success'))
-        <div class="alert alert-success mt-3 relative pr-10">
-            <button type="button" class="absolute top-0 right-0 p-2 border-0 bg-transparent cursor-pointer" style="line-height: 1;" onclick="this.closest('.alert').style.display='none'" aria-label="閉じる"><i class="bi bi-x"></i></button>
-            {!! nl2br(e(session('success'))) !!}
-        </div>
-    @endif
-    @if (session('warning'))
-        <div class="alert alert-warning mt-3">
-            {!! nl2br(e(session('warning'))) !!}
-        </div>
-    @endif
-
-    @if (!$isOver18 && $title->rating == \App\Enums\Rating::R18Z)
-        <p class="rating-warning">
-            CERO-Z相当の年齢指定があるパッケージが含まれます。<br>
-            18歳未満には適さない表現が表示される場合があります。
-        </p>
-    @endif
-
-    @include('common.current-node-ogp', ['model' => $title])
-
-    <div class="title-users-info">
-        <div>
-            @if (Auth::check())
-            <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form" data-component-use="1">
-                @csrf
-                <input type="hidden" name="game_title_id" value="{{ $title->id }}">
-                <button type="submit" class="btn btn-favorite{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">
-                    @if ($isFavorite)
-                        ★
-                    @else
-                        ☆
-                    @endif
-                </button>
-            </form>
-            @endif
-        </div>
-    </div>
+@section('ogp')
+    @include('common.ogp_meta', [
+        'ogpTitle' => $title->name,
+        'ogpDescription' => $titleDescription,
+        'ogpImage' => $title->ogp?->image ?? '/img/ogp.png',
+        'ogpUrl' => route('Game.TitleDetail', ['titleKey' => $title->key]),
+        'ogpType' => 'article',
+    ])
 @endsection
 
-@section('nodes')
-    <section class="node" id="title-fear-meter-node">
-        <div class="node-head">
-            <h2 class="node-head-text">怖さメーター</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic mb-5">
-            @if ($fearMeter)
-                <div class="title-fear-meter">
-                    @php
-                        $fearMeterMax = 4;
-                        $fearMeterAverage = (float) $fearMeter->average_rating;
-                        $fearMeterAverage = max(0, min($fearMeterMax, $fearMeterAverage));
-                        $fearMeterPercent = ($fearMeterAverage / $fearMeterMax) * 100;
-                    @endphp
-                    <div class="space-y-2">
-                        <div class="h-3 w-full max-w-xs overflow-hidden rounded-full bg-slate-700/60">
-                            <div
-                                class="h-full bg-gradient-to-r from-slate-800 via-sky-600 to-indigo-500"
-                                style="width: {{ $fearMeterPercent }}%;"
-                            ></div>
-                        </div>
-                        <div class="text-sm text-slate-200">
-                            <span class="font-semibold">{{ number_format($fearMeterAverage, 2) }} / {{ $fearMeterMax }}</span>
-                            <span class="text-slate-400">（{{ $fearMeter->fear_meter->text() }}）</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top: 12px;">
-                    <a href="{{ route('Game.TitleFearMeterComments', ['titleKey' => $title->key]) }}" data-hgn-scope="full">コメントを見る</a>
-                </div>
-            @else
-                <p>怖さメーターは入力されていないようだ</p>
-                @if (Auth::check())
-                    <p class="mt-5">
-                        <a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}" data-hgn-scope="full">怖さメーターを入力しますか？</a>
-                    </p>
-                @endif
-            @endif
-        </div>
-    </section>
+@section('site-content')
+    <section class="title-hero" aria-labelledby="title-detail-name">
+        <div class="site-frame title-hero__frame" data-grid-frame>
+            <nav class="title-breadcrumb" aria-label="パンくず">
+                <a href="{{ route('Root') }}">ROOT</a><span>/</span><a href="{{ route('Game.Lineup') }}">LINEUP</a><span>/</span><b>GT-{{ str_pad((string) $title->id, 5, '0', STR_PAD_LEFT) }}</b>
+            </nav>
 
-    <section class="node" id="title-reviews-node">
-        <div class="node-head">
-            <h2 class="node-head-text">レビュー</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content basic mb-5">
-            @if ($reviewStatistic)
-                <div class="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm">
-                    <div class="flex items-baseline gap-1">
-                        @if ($reviewStatistic->avg_total_score !== null)
-                            <span class="text-3xl font-bold text-slate-100 leading-none">{{ round((float) $reviewStatistic->avg_total_score) }}</span>
-                            <span class="text-xs text-slate-500">/ 100</span>
-                        @else
-                            <span class="text-slate-500">-</span>
-                        @endif
-                        <span class="text-xs text-slate-400 ml-1">{{ $reviewStatistic->review_count }}件</span>
-                    </div>
-                </div>
-                @if ($reviewStatistic->avg_story !== null || $reviewStatistic->avg_atmosphere !== null || $reviewStatistic->avg_gameplay !== null)
-                    <div class="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-400">
-                        @if ($reviewStatistic->avg_story !== null)
-                            <span>ストーリー: <span class="text-slate-300">{{ round((float) $reviewStatistic->avg_story) }}/20</span></span>
-                        @endif
-                        @if ($reviewStatistic->avg_atmosphere !== null)
-                            <span>雰囲気: <span class="text-slate-300">{{ round((float) $reviewStatistic->avg_atmosphere) }}/20</span></span>
-                        @endif
-                        @if ($reviewStatistic->avg_gameplay !== null)
-                            <span>ゲーム性: <span class="text-slate-300">{{ round((float) $reviewStatistic->avg_gameplay) }}/20</span></span>
-                        @endif
-                        @if ($reviewStatistic->user_score_adjustment !== null)
-                            <span>さじ加減: <span class="text-slate-300">{{ round((float) $reviewStatistic->user_score_adjustment) }}/20</span></span>
-                        @endif
-                    </div>
-                @endif
-                <div class="mt-3">
-                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" data-hgn-scope="full">個別のレビューを見る（全{{ $reviewStatistic->review_count }}件）</a>
-                </div>
-            @else
-                <p>レビューはまだないようだ</p>
-                @if (Auth::check())
-                    <div class="mt-5">
-                        <a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}" data-hgn-scope="full">レビューを書く</a>
-                    </div>
-                @endif
+            @if (session('success'))<div class="title-alert title-alert--success" role="status">{!! nl2br(e(session('success'))) !!}</div>@endif
+            @if (session('warning'))<div class="title-alert title-alert--warning" role="alert">{!! nl2br(e(session('warning'))) !!}</div>@endif
+            @if (!$isOver18 && $title->rating == \App\Enums\Rating::R18Z)
+                <p class="title-alert title-alert--warning">CERO-Z相当の年齢指定があるパッケージが含まれます。18歳未満には適さない表現が表示される場合があります。</p>
             @endif
-        </div>
-    </section>
 
-    @if ($title->packageGroups()->exists())
-        <section class="node tree-node" id="pkg-lineup-tree-node">
-            <div class="node-head">
-                <h2 class="node-head-text">パッケージラインナップ</h2>
-                <span class="node-pt">●</span>
+            <div class="title-hero__layout">
+                <div class="title-keyart">
+                    <span class="title-keyart__stamp">KEY VISUAL / LINEUP</span>
+                    @if ($title->ogp !== null && !empty($title->ogp->image))
+                        <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
+                    @else
+                        <div class="title-keyart__placeholder" aria-hidden="true"><span>HGN</span><strong>{{ mb_substr($title->name, 0, 1) }}</strong><small>NO VISUAL DATA</small></div>
+                    @endif
+                </div>
+
+                <div class="title-summary">
+                    <h1 id="title-detail-name">{{ $title->name }}</h1>
+                    @if ($title->series)<p class="title-summary__series">{{ $title->series->name }} / {{ $franchise?->name }}</p>@elseif ($franchise)<p class="title-summary__series">{{ $franchise->name }} FRANCHISE</p>@endif
+                    @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif
+                    <dl class="title-facts">
+                        <div><dt>RELEASE</dt><dd>{{ $releaseLabel }}</dd></div>
+                        <div><dt>PLATFORM</dt><dd>{{ $platformLabels->isNotEmpty() ? $platformLabels->take(2)->implode(' / ') : 'UNKNOWN' }}</dd></div>
+                        <div><dt>STATUS</dt><dd><span aria-hidden="true"></span> VERIFIED</dd></div>
+                    </dl>
+                    @auth
+                        <form action="{{ route('api.user.favorite.toggle') }}" method="POST" class="favorite-toggle-form title-watch-form" data-component-use="1">
+                            @csrf
+                            <input type="hidden" name="game_title_id" value="{{ $title->id }}">
+                            <button type="submit" class="title-watch-button{{ $isFavorite ? ' is-favorite' : '' }}" title="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}" aria-label="{{ $isFavorite ? 'お気に入りを解除' : 'お気に入りに登録' }}">{{ $isFavorite ? '★' : '☆' }}</button>
+                            <span><b>お気に入り</b><small>ADD TO FAVORITES</small></span>
+                        </form>
+                    @else
+                        <a class="title-login-action" href="{{ route('Account.Login') }}">ログインしてお気に入りに追加 <span>CONNECT →</span></a>
+                    @endauth
+                </div>
             </div>
-            <div class="node-content tree">
-                @foreach ($title->packageGroups->sortByDesc('sort_order') as $pkgGroup)
-                    <section class="node" id="pkgg-{{ $pkgGroup->id }}-tree-node">
-                        <div class="node-head">
-                            <h3 class="node-head-text">{{ $pkgGroup->name }}</h3>
-                            <span class="node-pt">●</span>
+        </div>
+    </section>
+
+    <section class="title-detail-body">
+        <div class="site-frame title-detail-layout">
+            <nav class="title-detail-menu" aria-label="ページ内メニュー" data-section-spy>
+                <p>SELECT DATA</p>
+                <a class="is-active" href="#overview"><span>01</span><b>作品情報</b><small>OVERVIEW</small></a>
+                <a href="#fear-meter"><span>02</span><b>怖さメーター</b><small>FEAR METER</small></a>
+                <a href="#reviews"><span>03</span><b>レビュー</b><small>USER REPORTS</small></a>
+                <a href="#packages"><span>04</span><b>購入・エディション</b><small>PACKAGES</small></a>
+            </nav>
+
+            <div class="title-detail-content">
+                <section class="title-data-section" id="overview">
+                    <header><span>01</span><div><p>OVERVIEW</p><h2>作品情報</h2></div></header>
+                    <div class="title-overview-grid">
+                        <dl>
+                            <div><dt>FRANCHISE</dt><dd>@if ($franchise)<a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}</a>@else—@endif</dd></div>
+                            <div><dt>SERIES</dt><dd>{{ $title->series?->name ?? '—' }}</dd></div>
+                            <div><dt>PLATFORMS</dt><dd>{{ $platformLabels->isNotEmpty() ? $platformLabels->implode(' / ') : '—' }}</dd></div>
+                        </dl>
+                        <p>{{ $titleDescription !== '' ? $titleDescription : '作品情報は現在編集中です。' }}</p>
+                    </div>
+                </section>
+
+                <section class="title-data-section" id="fear-meter">
+                    <header><span>02</span><div><p>FEAR METER</p><h2>怖さメーター</h2></div></header>
+                    @if ($fearMeter)
+                        <div class="title-fear-panel title-fear-meter">
+                            <div><strong>{{ number_format($fearMeterAverage, 2) }}</strong><span>/ {{ number_format($fearMeterMax, 2) }}</span><small>{{ $fearMeter->fear_meter->text() }}</small></div>
+                            <div class="title-fear-scale" aria-label="怖さ {{ number_format($fearMeterAverage, 2) }} / 4"><i style="width: {{ $fearMeterPercent }}%"></i></div>
+                            <a href="{{ route('Game.TitleFearMeterComments', ['titleKey' => $title->key]) }}">コメントを見る →</a>
+                            @auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">あなたの怖さメーター →</a>@endauth
                         </div>
-                        <div class="node-content basic">
-                            @if (!empty($pkgGroup->description))
-                                <p class="pkg-group-description">{!! nl2br($pkgGroup->description) !!}</p>
-                            @endif
-                            @foreach ($pkgGroup->packages->sortBy([['sort_order', 'desc'], ['game_platform_id', 'desc'], ['default_img_type', 'desc']]) as $pkg)
-                            <div class="pkg-info">
-                                <div class="pkg-info-text">
-                                    <a href="{{ route('Game.PlatformDetail', ['platformKey' => $pkg->platform->key]) }}" data-hgn-scope="full">{{ $pkg->platform->acronym }}</a>
-                                    @empty($pkg->node_name)
-                                    @else
-                                        &nbsp;{!! $pkg->node_name !!}
-                                    @endif
-                                    <br>
-                                    <span>{{ $pkg->release_at }}</span>
-                                </div>
-                                
-                                @if ($pkg->shops->count() > 0)
-                                <div class="pkg-info-shops">
-                                    @foreach($pkg->shops as $shop)
-                                    <div class="pkg-info-shop">
-                                        <a href="{{ $shop->url }}" target="_blank" rel="noopener">
-                                            <div class="pkg-info-shop-img">
-                                            @if ($shop->ogp !== null && $shop->ogp->image !== null)
-                                                <img src="{{ $shop->ogp->image }}" width="{{ $shop->ogp->image_width }}" height="{{ $shop->ogp->image_height }}" class="pkg-img">
-                                            @elseif (!empty($shop->img_tag))
-                                                {!! $shop->img_tag !!}
-                                            @else
-                                                <img src="{{ $pkg->default_img_type->imgUrl() }}">
-                                            @endif
-                                            </div>
-                                            <div class="shop-name">
-                                                {{ $shop->shop()?->name() ?? '--' }}
-                                            </div>
-                                        </a>
-                                    </div>
+                    @else
+                        <div class="site-empty-state">怖さメーターはまだ入力されていません。@auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">最初の評価を送る →</a>@endauth</div>
+                    @endif
+                </section>
+
+                <section class="title-data-section" id="reviews">
+                    <header><span>03</span><div><p>USER REPORTS</p><h2>レビュー</h2></div></header>
+                    @if ($reviewStatistic)
+                        <div class="title-review-summary">
+                            <strong>{{ $reviewStatistic->avg_total_score !== null ? round((float) $reviewStatistic->avg_total_score) : '—' }}</strong><span>/ 100</span><small>{{ $reviewStatistic->review_count }} REPORTS</small>
+                        </div>
+                    @endif
+                    <div class="title-review-list">
+                        @forelse ($recentReviews as $review)
+                            <article>
+                                <header><span>{{ $review->user?->name ?? 'HGN USER' }}</span><b>{{ $review->total_score !== null ? $review->total_score . ' / 100' : 'NO SCORE' }}</b></header>
+                                @if ($review->has_spoiler)
+                                    <p class="title-review-spoiler">このレビューにはネタバレが含まれます。詳細ページで表示できます。</p>
+                                @else
+                                    <p>{{ \Illuminate\Support\Str::limit($review->body, 240) }}</p>
+                                @endif
+                                <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $review->key]) }}">レビュー詳細 →</a>
+                            </article>
+                        @empty
+                            <p class="site-empty-state">レビューはまだないようです。</p>
+                        @endforelse
+                    </div>
+                    <div class="title-section-actions">
+                        @if ($reviewStatistic)<a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}">すべてのレビューを見る <span>{{ $reviewStatistic->review_count }} REPORTS →</span></a>@endif
+                        @auth<a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">{{ $userReview ? 'レビューを編集する' : 'レビューを書く' }} <span>WRITE REPORT →</span></a>@endauth
+                    </div>
+                </section>
+
+                <section class="title-data-section" id="packages">
+                    <header><span>04</span><div><p>PACKAGES</p><h2>購入・エディション</h2></div></header>
+                    <div class="title-package-list">
+                        @forelse ($packageGroups as $packageGroup)
+                            <article>
+                                <div><p>PACKAGE GROUP / {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p><h3>{{ $packageGroup->name }}</h3>@if (!empty($packageGroup->description))<div class="title-package-description">{!! nl2br($packageGroup->description) !!}</div>@endif</div>
+                                <ul>
+                                    @foreach ($packageGroup->packages->sortByDesc('sort_order') as $package)
+                                        <li><a href="{{ route('Game.PlatformDetail', ['platformKey' => $package->platform->key]) }}">{{ $package->platform->acronym ?? $package->platform->name }}</a>@if (!empty($package->node_name)) / {!! $package->node_name !!}@endif <small>{{ $package->release_at }}</small></li>
+                                    @endforeach
+                                </ul>
+                                <div class="title-package-shops">
+                                    @foreach ($packageGroup->packages as $package)
+                                        @foreach ($package->shops as $shop)
+                                            <a href="{{ $shop->url }}" target="_blank" rel="noopener sponsored">{{ $shop->shop()?->name() ?? 'STORE' }} ↗</a>
+                                        @endforeach
                                     @endforeach
                                 </div>
-                                @endif
-                            </div>
+                            </article>
+                        @empty
+                            <p class="site-empty-state">パッケージ情報はまだ登録されていません。</p>
+                        @endforelse
+                    </div>
+                </section>
+
+                @if ($title->series && $title->series->titles->count() > 1)
+                    <section class="title-data-section title-related">
+                        <header><span>05</span><div><p>RELATED ENTRIES</p><h2>シリーズ作品</h2></div></header>
+                        <div>
+                            @foreach ($title->series->titles->sortBy('first_release_int') as $sameSeriesTitle)
+                                @continue($sameSeriesTitle->id === $title->id)
+                                <a href="{{ route('Game.TitleDetail', ['titleKey' => $sameSeriesTitle->key]) }}"><b>{{ $sameSeriesTitle->name }}</b><span>OPEN ENTRY →</span></a>
                             @endforeach
                         </div>
                     </section>
-                @endforeach
-            </div>
-        </section>
-    @endif
-
-    @if ($title->series && $title->series->titles->count() > 1)
-        <section class="node tree-node" id="footer-tree-node">
-            <div class="node-head">
-                <h2 class="node-head-text">シリーズ作品</h2>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content tree">
-                @foreach ($title->series->titles->sortBy('first_release_int') as $sameSeriesTitle)
-                @if ($sameSeriesTitle->id === $title->id)
-                    @continue
                 @endif
-                <section class="node basic" id="{{ $title->key }}-link-node">
-                    <div class="node-head">
-                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $sameSeriesTitle->key]) }}" class="node-head-text">{{ $sameSeriesTitle->name }}</a>
-                        <span class="node-pt">●</span>
-                    </div>
-                </section>
-                @endforeach
             </div>
-        </section>
-    @endif
-
-    <section class="node tree-node" id="footer-tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">近道</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            <section class="node tree-node" id="admin-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}フランチャイズ</a>
-                    <span class="node-pt">●</span>
-                </div>
-                <div class="node-content tree">
-                    <section class="node tree-node" id="back-to-lineup-node">
-                        <div class="node-head">
-                            <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
-                            <span class="node-pt">●</span>
-                        </div>
-                        <div class="node-content tree">
-                            <section class="node basic" id="back-to-root-node">
-                                <div class="node-head">
-                                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
-                                    <span class="node-pt">●</span>
-                                </div>
-                            </section>
-                        </div>
-                    </section>
-                </div>
-            </section>
-
-            @include('common.shortcut_mynode')
-        
-            @if (is_admin_user())
-            <section class="node basic" id="admin-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Admin.Game.Title.Detail', $title) }}" class="node-head-text" rel="external">管理</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            @endif
         </div>
     </section>
-
-
 @endsection

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-HGN (Horror Game Network) is a community-driven horror game database and social platform at horrorgame.net. Built with Laravel 12 (PHP 8.3+) backend, Blade templating for server-side rendering, and a custom TypeScript frontend (no React/Vue — vanilla TS with a `HgnTree` singleton). UI is styled with TailwindCSS. The application UI is primarily in Japanese.
+HGN (Horror Game Network) is a community-driven horror game database and social platform at horrorgame.net. Built with Laravel 12 (PHP 8.3+) backend, Blade templating for server-side rendering, and a custom TypeScript frontend (no React/Vue — vanilla TS with a `PublicSiteApp` lifecycle root). UI is styled with TailwindCSS. The application UI is primarily in Japanese.
 
 ## Commands
 
@@ -52,8 +52,8 @@ php artisan tinker                 # Interactive REPL
 
 ### Frontend (TypeScript)
 - Entry point: `resources/ts/app.ts`
-- **No framework** — custom singleton `HgnTree` class (`resources/ts/hgn-tree.ts`) manages all frontend state and interactions
-- Components live in `resources/ts/components/`, animations in `resources/ts/animation/`
+- **No framework** — `PublicSiteApp` starts once per full document load; public GET navigation uses normal browser document transitions
+- Page components live in `resources/ts/components/`; grid, navigation effects, and page controllers live in `resources/ts/site/`
 - CSS: TailwindCSS in `resources/css/`, compiled via Vite
 
 ### Rust Tools (`/src/hgn_rust_tools`)
@@ -71,6 +71,7 @@ php artisan tinker                 # Interactive REPL
 機能の実装詳細（使い方・クラス設計・追加手順など）は `docs/claude/` 配下に機能ごとのファイルとして書く。CLAUDE.md には書かない。
 
 @docs/claude/frontend-conventions.md
+@docs/claude/grid-network-design.md
 @docs/claude/discord-webhook.md
 @docs/claude/ogp-generator.md
 @docs/claude/artisan-commands.md

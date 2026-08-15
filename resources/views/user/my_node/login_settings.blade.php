@@ -93,7 +93,7 @@
                     2段階認証を有効にするにはメールアドレスが設定されている必要があるようだ。<br>
                     メールアドレスを設定しますか？<br>
                     <br>
-                    <a href="{{ route('User.MyNode.Email') }}" data-hgn-scope="full">メールアドレス設定画面へ</a>
+                    <a href="{{ route('User.MyNode.Email') }}">メールアドレス設定画面へ</a>
                 </p>
             @else
 
@@ -110,7 +110,7 @@
                     </p>
 
                     <div class="mb-3" style="margin-top: 40px;">
-                        <a href="{{ route('User.MyNode.LoginSettings.Totp.Setup') }}" class="btn btn-success btn-sm" data-hgn-scope="full">Authenticator認証を設定する</a>
+                        <a href="{{ route('User.MyNode.LoginSettings.Totp.Setup') }}" class="btn btn-success btn-sm">Authenticator認証を設定する</a>
                     </div>
                     <p class="text-sm mb-4">
                         「Google Authenticator」または「Microsoft Authenticator」を利用します。<br>

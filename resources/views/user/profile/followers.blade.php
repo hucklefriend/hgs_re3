@@ -5,10 +5,10 @@
 
 @section('current-node-content')
     <p class="text-sm text-slate-400">
-        <a href="{{ route('User.Profile.Show', $profileUser->show_id) }}" class="hover:text-sky-400" data-hgn-scope="full">← {{ $profileUser->name }} のプロフィール</a>
+        <a href="{{ route('User.Profile.Show', $profileUser->show_id) }}" class="hover:text-sky-400">← {{ $profileUser->name }} のプロフィール</a>
     </p>
     <div class="mt-2 flex gap-4 text-sm text-slate-300">
-        <a href="{{ route('User.Profile.Following', $profileUser->show_id) }}" class="hover:text-sky-400" data-hgn-scope="full">フォロー: <strong>{{ $followingCount }}</strong>人</a>
+        <a href="{{ route('User.Profile.Following', $profileUser->show_id) }}" class="hover:text-sky-400">フォロー: <strong>{{ $followingCount }}</strong>人</a>
         <span>フォロワー: <strong>{{ $followerCount }}</strong>人</span>
     </div>
     @if (!$me)

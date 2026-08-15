@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForTreeAppeared, createTestAccount, loginUser } from './support/utils';
+import { waitForPublicPageReady, createTestAccount, loginUser } from './support/utils';
 
 /** Identity V のタイトルキー */
 const TITLE_KEY = 'identity-v';
@@ -18,8 +18,7 @@ const postReviewAsUserA = async (
 
   // レビューフォームへ直接遷移して最小限の入力で公開
   await page.goto(`user/review/${TITLE_KEY}/form`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await page.check('input[name="play_status"][value="cleared"]');
   await page.fill('#body', 'いいね・通報テスト用のレビューです。');
@@ -35,17 +34,18 @@ const postReviewAsUserA = async (
     publishPromise,
     page.getByRole('button', { name: '公開する' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // タイトルのレビュー一覧ページへ → 「全文を読む」リンクからレビュー URL を取得
   await page.goto(`game/title/${TITLE_KEY}/reviews`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 「全文を読む」リンクをクリックしてレビュー個別ページへ遷移
-  await page.getByRole('link', { name: '全文を読む' }).first().click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await Promise.all([
+    page.waitForURL(/\/review\/[^/?#]+$/),
+    page.getByRole('link', { name: '全文を読む' }).first().click(),
+  ]);
+  await waitForPublicPageReady(page);
 
   return page.url();
 };
@@ -66,32 +66,32 @@ test('ログイン後、他ユーザーのレビューにいいねできる', as
   const reviewUrl = await postReviewAsUserA(page, request);
 
   // ログアウトしてユーザー B でログイン
-  await page.goto('logout');
-  await page.waitForLoadState('networkidle');
+  await page.context().clearCookies();
 
   const accountB = await createTestAccount(request);
   await loginUser(page, accountB.email, accountB.password);
 
   // A のレビューページへ遷移
   await page.goto(reviewUrl);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // いいね前のカウントを取得
   const likeCountLocator = page.locator('.js-like-count').first();
   const beforeCount = parseInt((await likeCountLocator.textContent()) ?? '0', 10);
 
   // いいねボタンをクリック
+  const likeButton = page.locator('button[title="いいね"]');
   const likePromise = page.waitForResponse(
     (r) => r.url().includes('/like') && r.request().method() === 'POST',
   );
   await Promise.all([
     likePromise,
-    page.locator('button[title="いいね"]').click(),
+    likeButton.click(),
   ]);
 
   // いいね数が +1 されることを確認
   await expect(likeCountLocator).toHaveText(String(beforeCount + 1));
+  await expect(likeButton).toBeEnabled();
 
   // 再度クリックしていいねを解除
   const unlikePromise = page.waitForResponse(
@@ -99,7 +99,7 @@ test('ログイン後、他ユーザーのレビューにいいねできる', as
   );
   await Promise.all([
     unlikePromise,
-    page.locator('button[title="いいね"]').click(),
+    likeButton.click(),
   ]);
 
   // いいね数が元に戻ることを確認
@@ -117,8 +117,7 @@ test('未ログイン時、いいねボタンが表示されない', async ({ pa
 {
   // タイトル詳細ページへ（未ログイン）
   await page.goto(`game/title/${TITLE_KEY}`);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // いいね用フォームが表示されないことを確認
   await expect(page.locator('form.review-reaction-form[data-reaction-kind="like"]')).not.toBeVisible();
@@ -137,24 +136,27 @@ test('ログイン後、レビューを通報できる', async ({ page, request 
   const reviewUrl = await postReviewAsUserA(page, request);
 
   // ログアウトしてユーザー B でログイン
-  await page.goto('logout');
-  await page.waitForLoadState('networkidle');
+  await page.context().clearCookies();
 
   const accountB = await createTestAccount(request);
   await loginUser(page, accountB.email, accountB.password);
 
   // A のレビューページへ遷移
   await page.goto(reviewUrl);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
-  // 通報ボタンをクリック
+  // 通報モーダルを開いて送信
+  await page.locator('button[title="通報"]').click();
+  const reportForm = page.locator('form.review-reaction-form[data-reaction-kind="report"]');
+  await expect(reportForm).toBeVisible();
+  await reportForm.getByLabel('不適切な内容').check();
+
   const reportPromise = page.waitForResponse(
     (r) => r.url().includes('/report') && r.request().method() === 'POST',
   );
   await Promise.all([
     reportPromise,
-    page.locator('button[title="通報"]').click(),
+    reportForm.getByRole('button', { name: '通報する' }).click(),
   ]);
 
   // 通報済みに変わることを確認（JS でボタンテキストが変化）
@@ -162,8 +164,7 @@ test('ログイン後、レビューを通報できる', async ({ page, request 
 
   // ページをリロードして「通報済み」スパンが表示されることを確認（サーバー側でも反映）
   await page.goto(reviewUrl);
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 通報フォームが消え、通報済みスパンが表示されている
   await expect(page.locator('form.review-reaction-form[data-reaction-kind="report"]')).not.toBeVisible();

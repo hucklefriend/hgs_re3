@@ -315,7 +315,7 @@
                             <div class="mt-3">
                                 <a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}"
                                    class="inline-flex items-center gap-1 text-slate-400 transition-colors hover:text-slate-200"
-                                   data-hgn-scope="full"><i class="bi bi-pencil"></i> 編集する（削除もこちらから）</a>
+                                  ><i class="bi bi-pencil"></i> 編集する（削除もこちらから）</a>
                             </div>
                         @else
                             @if ($userReported)
@@ -350,31 +350,31 @@
         <div class="node-content tree">
             <section class="node tree-node" id="reviews-link-node">
                 <div class="node-head">
-                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }} レビュー一覧</a>
+                    <a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }} レビュー一覧</a>
                     <span class="node-pt">●</span>
                 </div>
                 <div class="node-content tree">
                     <section class="node tree-node" id="title-link-node">
                         <div class="node-head">
-                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $title->name }}</a>
+                            <a href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" class="node-head-text">{{ $title->name }}</a>
                             <span class="node-pt">●</span>
                         </div>
                         <div class="node-content tree">
                             <section class="node tree-node" id="franchise-link-node">
                                 <div class="node-head">
-                                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text" data-hgn-scope="full">{{ $franchise->name }}フランチャイズ</a>
+                                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}" class="node-head-text">{{ $franchise->name }}フランチャイズ</a>
                                     <span class="node-pt">●</span>
                                 </div>
                                 <div class="node-content tree">
                                     <section class="node tree-node" id="lineup-link-node">
                                         <div class="node-head">
-                                            <a href="{{ route('Game.Lineup') }}" class="node-head-text" data-hgn-scope="full">ラインナップ</a>
+                                            <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
                                             <span class="node-pt">●</span>
                                         </div>
                                         <div class="node-content tree">
                                             <section class="node basic" id="root-link-node">
                                                 <div class="node-head">
-                                                    <a href="{{ route('Root') }}" class="node-head-text" data-hgn-scope="full">ルート</a>
+                                                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
                                                     <span class="node-pt">●</span>
                                                 </div>
                                             </section>
@@ -386,7 +386,7 @@
                     </section>
                     <section class="node basic" id="review-link-node">
                         <div class="node-head">
-                            <a href="{{ route('Game.Reviews') }}" class="node-head-text" data-hgn-scope="full">レビュー</a>
+                            <a href="{{ route('Game.Reviews') }}" class="node-head-text">レビュー</a>
                             <span class="node-pt">●</span>
                         </div>
                     </section>

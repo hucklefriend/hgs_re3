@@ -1,183 +1,96 @@
 @extends('layout')
 
 @section('title', 'ルート')
+@section('body-class', 'site-page site-page--home')
 @section('current-node-title', 'ホラーゲームネットワーク(β)')
 
-@section('nodes')
-    <section class="node tree-node" id="horror-games-tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">ホラーゲーム</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            <section class="node basic" id="lineup-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Game.Lineup') }}" class="node-head-text">ラインナップ</a>
-                    <span class="node-pt">●</span>
-                </div>
-                <div class="node-content behind">
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>バイオハザード</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>サイレントヒル</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>零</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="node basic" id="platform-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Game.Platform') }}" class="node-head-text">プラットフォーム</a>
-                    <span class="node-pt">●</span>
-                </div>
-                <div class="node-content behind">
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>Nintendo Switch 2</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>PlayStation 5</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>Xbox Series X</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="node basic" id="reviews-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Game.Reviews') }}" class="node-head-text">レビュー</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-
-            {{--
-            <section class="node basic" id="maker-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Game.Maker') }}" class="node-head-text">ゲームメーカー</a>
-                    <span class="node-pt">●</span>
-                </div>
-                <div class="node-content behind">
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>カプコン</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>コナミ</span>
-                    </div>
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>コーエーテクモ</span>
-                    </div>
-                </div>
-            </section>
-            --}}
-        </div>
-    </section>
-    <section class="node tree-node" id="root-timeline-node">
-        <div class="node-head">
-            <h2 class="node-head-text">新着情報タイムライン</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            @forelse ($timelineEvents as $event)
-                @include('common.timeline_event', ['event' => $event])
-            @empty
-                <section class="node basic">
-                    <div class="node-content basic">
-                        <p>新着情報はないようだ。</p>
-                    </div>
-                </section>
-            @endforelse
-            <section class="node basic">
-                <div class="node-head">
-                    <a href="{{ route('Timeline') }}" class="node-head-text" data-hgn-scope="full">新着情報をもっと見る</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
+@section('site-content')
+    <section class="home-hero" aria-labelledby="home-hero-title">
+        <div class="site-frame home-hero__grid" data-grid-frame>
+            <div class="home-title-copy">
+                <h1 id="home-hero-title"><span>HORROR</span><span>GAME</span><strong>NETWORK</strong></h1>
+                <p class="home-title-copy__lead">ホラーゲームを探す。記録する。語り合う。<br>すべての作品へ接続するためのコミュニティ・ネットワーク。</p>
+            </div>
+            <nav class="home-command-menu" aria-label="メインメニュー">
+                <p class="home-command-menu__label">NODE DIRECTORY</p>
+                <a class="home-command-link" href="{{ route('Game.Lineup') }}"><span class="home-command-link__no">01</span><span><b>ゲームを探す</b><small>SEARCH LINEUP</small></span></a>
+                <a class="home-command-link" href="{{ route('Game.Platform') }}"><span class="home-command-link__no">02</span><span><b>シリーズ・機種から見る</b><small>BROWSE LINEUP</small></span></a>
+                <a class="home-command-link" href="#latest"><span class="home-command-link__no">03</span><span><b>新着タイムライン</b><small>LATEST TRANSMISSIONS</small></span><span class="home-command-link__arrow" aria-hidden="true">↓</span></a>
+                <a class="home-command-link" href="{{ route('Game.Reviews') }}"><span class="home-command-link__no">04</span><span><b>レビュー</b><small>USER REPORTS</small></span></a>
+                <a class="home-command-link home-command-link--secondary" href="{{ route('Informations') }}"><span class="home-command-link__no">05</span><span><b>お知らせ</b><small>INFORMATION</small></span></a>
+                <a class="home-command-link home-command-link--secondary" href="{{ route('About') }}"><span class="home-command-link__no">06</span><span><b>このサイトについて</b><small>ABOUT</small></span></a>
+                <a class="home-command-link home-command-link--secondary" href="{{ route('PrivacyPolicy') }}"><span class="home-command-link__no">07</span><span><b>プライバシーポリシー</b><small>PRIVACY POLICY</small></span></a>
+                <a class="home-command-link home-command-link--secondary" href="{{ route('Contact') }}"><span class="home-command-link__no">08</span><span><b>問い合わせ</b><small>CONTACT</small></span></a>
+            </nav>
         </div>
     </section>
 
-    <section class="node tree-node" id="account-tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">アカウント</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            @if (!Auth::check())
-            <section class="node basic" id="login-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Account.Login') }}" class="node-head-text">ログイン</a>
-                    <span class="node-pt">●</span>
+    <section class="home-latest" id="latest" aria-labelledby="home-latest-title">
+        <div class="site-frame">
+            <header class="site-section-heading">
+                <div><h2 id="home-latest-title">LATEST<br><span>TRANSMISSIONS</span></h2></div>
+            </header>
+            <div class="home-transmission-list">
+                @forelse ($timelineEvents as $event)
+                    @php
+                        $eventLabel = match ($event['type']) {
+                            'review_posted' => 'REVIEW POSTED',
+                            'review_updated' => 'REVIEW UPDATED',
+                            'fear_meter_posted' => 'FEAR METER',
+                            'fear_meter_updated' => 'FEAR METER UPDATED',
+                            'game_title_updated' => 'LINEUP UPDATED',
+                            'review_liked' => 'REVIEW SIGNAL',
+                            'information_posted' => 'INFORMATION',
+                            'rss_article_posted' => 'EXTERNAL NEWS',
+                            'user_registered' => 'NEW USER',
+                            default => 'NETWORK EVENT',
+                        };
+                        $eventTitle = match ($event['type']) {
+                            'review_posted', 'review_updated' => ($event['actor_name'] ?? 'ユーザー') . 'さんが「' . ($event['game_title_name'] ?? 'タイトル') . '」のレビューを更新',
+                            'fear_meter_posted', 'fear_meter_updated' => '「' . ($event['game_title_name'] ?? 'タイトル') . '」に怖さ評価が届きました',
+                            'game_title_updated' => '「' . ($event['game_title_name'] ?? 'タイトル') . '」のデータを更新',
+                            'review_liked' => '「' . ($event['game_title_name'] ?? 'タイトル') . '」のレビューに反応がありました',
+                            'information_posted' => $event['information_head'] ?? 'お知らせを更新しました',
+                            'rss_article_posted' => $event['ogp_title'] ?? (($event['rss_source_label'] ?? '外部メディア') . 'の新着記事'),
+                            'user_registered' => ($event['actor_name'] ?? '新しいユーザー') . 'さんがHGNに接続',
+                            default => '新しい通信を受信しました',
+                        };
+                        $eventUrl = null;
+                        if (!empty($event['rss_article_url'])) {
+                            $eventUrl = $event['rss_article_url'];
+                        } elseif (in_array($event['type'], ['review_posted', 'review_updated', 'review_liked'], true) && !empty($event['game_title_key']) && !empty($event['review_key'])) {
+                            $eventUrl = route('Game.TitleReview', ['titleKey' => $event['game_title_key'], 'reviewKey' => $event['review_key']]);
+                        } elseif (!empty($event['game_title_key'])) {
+                            $eventUrl = route('Game.TitleDetail', ['titleKey' => $event['game_title_key']]);
+                        } elseif ($event['type'] === 'information_posted' && !empty($event['information_id'])) {
+                            $eventUrl = route('InformationDetail', ['info' => $event['information_id']]);
+                        }
+                    @endphp
+                    <article class="home-transmission-row">
+                        <span class="home-transmission-row__index">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                        <p class="site-signal-type">{{ $eventLabel }}@if (!empty($event['rss_source_label'])) / {{ strtoupper($event['rss_source_label']) }}@endif</p>
+                        <div @class([
+                            'home-transmission-row__body',
+                            'home-transmission-row__body--with-image' => !empty($event['ogp_image']),
+                        ])>
+                            <div class="home-transmission-row__content">
+                                <h3>@if ($eventUrl)<a href="{{ $eventUrl }}" @if ($event['type'] === 'rss_article_posted') target="_blank" rel="noopener" @endif>{{ $eventTitle }}</a>@else{{ $eventTitle }}@endif</h3>
+                                @if (!empty($event['note']))<p class="home-transmission-row__note">{{ $event['note'] }}</p>@endif
+                            </div>
+                            @if (!empty($event['ogp_image']))
+                                <img class="home-transmission-row__image" src="{{ $event['ogp_image'] }}" alt="" width="220" loading="lazy" decoding="async">
+                            @endif
+                        </div>
+                        <time datetime="{{ $event['created_at']->toIso8601String() }}">{{ $event['created_at']->format('Y.m.d H:i') }}</time>
+                        <span class="home-transmission-row__arrow" aria-hidden="true">{{ $event['type'] === 'rss_article_posted' ? '↗' : '→' }}</span>
+                    </article>
+                @empty
+                    <p class="site-empty-state">現在受信している新着情報はありません。</p>
+                @endforelse
+                <div class="home-all-signals">
+                    <a href="{{ route('Timeline') }}">すべての通信を見る</a>
                 </div>
-            </section>
-            <section class="node basic" id="login-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Account.Register') }}" class="node-head-text">新規登録</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            @else
-            <section class="node basic" id="logout-link-node">
-                <div class="node-head">
-                    <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイノード</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic" id="logout-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Account.Logout') }}" class="node-head-text">ログアウト</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            @endif
+            </div>
         </div>
     </section>
-
-    <section class="node basic" id="information-node">
-        <div class="node-head">
-            <a href="{{ route('Informations') }}" class="node-head-text">お知らせ</a>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content behind">
-            @if (!$infoList->isEmpty())
-                @foreach ($infoList as $info)
-                    <div class="behind-node">
-                        <span class="node-pt">●</span><span>{{ $info->head }}</span>
-                    </div>
-                @endforeach
-            @else
-                <div class="behind-node">
-                    <span class="node-pt">●</span><span>現在、お知らせはありません。</span>
-                </div>
-            @endif
-        </div>
-    </section>
-    <section class="node basic" id="about-node">
-        <div class="node-head">
-            <a href="{{ route('About') }}" class="node-head-text" id="about-a">このサイトについて</a>
-            <span class="node-pt">●</span>
-        </div>
-    </section>
-    <section class="node basic" id="privacy-policy-node">
-        <div class="node-head">
-            <a href="{{ route('PrivacyPolicy') }}" class="node-head-text" id="privacy-policy-a">プライバシーポリシー</a>
-            <span class="node-pt">●</span>
-        </div>
-    </section>
-    <section class="node basic" id="contact-node">
-        <div class="node-head">
-            <a href="{{ route('Contact') }}" class="node-head-text" id="contact-a">問い合わせ</a>
-            <span class="node-pt">●</span>
-        </div>
-    </section>
-
-    @if (is_admin_user())
-    <section class="node basic">
-        <div class="node-head">
-            <a href="{{ route('Admin.Dashboard') }}" class="node-head-text" rel="external">管理</a>
-            <span class="node-pt">●</span>
-        </div>
-    </section>
-    @endif
 @endsection

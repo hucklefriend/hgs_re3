@@ -1,7 +1,9 @@
+import type { Disposable } from './site/core/disposable';
+
 /**
  * コンポーネントの基底クラス
  */
-export abstract class Component
+export abstract class Component implements Disposable
 {
     /**
      * コンストラクタ
@@ -15,4 +17,3 @@ export abstract class Component
     {
     }
 }
-

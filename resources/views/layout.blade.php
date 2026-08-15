@@ -5,6 +5,9 @@
     $ogpImage = $ogpImage ?? '/img/ogp.png';
     $ogpUrl = $ogpUrl ?? url()->current();
     $ogpType = $ogpType ?? 'website';
+    $routeName = request()->route()?->getName() ?? 'default';
+    $pageKind = $pageKind ?? str($routeName)->replace('.', ' ')->kebab()->toString();
+    $pageTitle = trim($__env->yieldContent('title', ''));
 @endphp
 <html lang="ja">
 <head>
@@ -40,28 +43,46 @@
     </script>
     @vite(['resources/css/app.css', 'resources/ts/app.ts'])
 </head>
-<body class="@isset($colorState) has-{{ $colorState }} @endisset py-4">
-    <main>
-        <section class="node" id="current-node">
-            <div class="node-head">
-                <h1 class="node-head-text">@yield('current-node-title')</h1>
-                <span class="node-pt current-node-pt">●</span>
-            </div>
-            
-            <div class="node-content" id="current-node-content">
-                @hasSection('current-node-content')
-                    @yield('current-node-content')
-                @endif
-            </div>
+<body
+    class="site-page site-page--{{ $pageKind }} @isset($colorState) has-{{ $colorState }} @endisset @yield('body-class')"
+    data-public-app
+    data-navigation-mode="document"
+    data-page-kind="{{ $pageKind }}"
+    data-page-ready="false"
+>
+    <x-site.grid-plane />
+    <a class="site-skip-link" href="#site-main">本文へ移動</a>
+    <x-site.header />
 
-            <div class="node-content tree" id="current-tree-nodes">
-                @yield('nodes')
+    <main class="site-main" id="site-main">
+        @hasSection('site-content')
+            @yield('site-content')
+        @else
+        <div class="site-frame site-standard">
+            <div class="site-main__grid">
+                <x-site.breadcrumb :page-kind="$pageKind" :page-title="$pageTitle" />
+
+                <article class="site-standard-page node" id="current-node">
+                    <header class="site-standard-page__header node-head">
+                        <h1 class="node-head-text">@yield('current-node-title')</h1>
+                        <span class="node-pt current-node-pt" aria-hidden="true">●</span>
+                    </header>
+
+                    <div class="site-standard-page__content node-content" id="current-node-content">
+                        @hasSection('current-node-content')
+                            @yield('current-node-content')
+                        @endif
+                    </div>
+
+                    <div class="site-standard-page__sections node-content tree" id="current-tree-nodes">
+                        @yield('nodes')
+                    </div>
+                </article>
             </div>
-        </section>
+        </div>
+        @endif
     </main>
 
-    <footer>
-        &copy; 2003-{{ date('Y') }} <a href="https://junkonkai.com" target="_blank" rel="external noopener">電子創作房 純魂会</a>
-    </footer>
+    <x-site.footer />
 </body>
 </html>

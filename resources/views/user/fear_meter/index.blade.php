@@ -13,7 +13,7 @@
 @if ($fearMeters->isEmpty())
     <p>
         怖さメーターを入力していないようだ。<br>
-        <a href="{{ route('Game.Lineup') }}" data-hgn-scope="full">ラインナップ</a>からタイトルを探して、怖さメーターを入力してみよう。
+        <a href="{{ route('Game.Lineup') }}">ラインナップ</a>からタイトルを探して、怖さメーターを入力してみよう。
     </p>
 @endif
 @endsection
@@ -24,7 +24,7 @@
         <section class="node" id="fear-meter-{{ $fm->game_title_id }}-node">
             <div class="node-head">
                 <span class="node-head-text">
-                    <a href="{{ route('Game.TitleDetail', ['titleKey' => $fm->gameTitle->key]) }}" data-hgn-scope="full">{{ $fm->gameTitle->name }}</a>
+                    <a href="{{ route('Game.TitleDetail', ['titleKey' => $fm->gameTitle->key]) }}">{{ $fm->gameTitle->name }}</a>
                 </span>
                 <span class="node-pt">●</span>
             </div>
@@ -39,7 +39,7 @@
                 @endif
 
                 <div class="mt-2 text-xs">
-                    <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fm->gameTitle->key, 'from' => 'fear-meter-list']) }}" data-hgn-scope="full"><i class="bi bi-pencil"></i> 編集</a>
+                    <a href="{{ route('User.FearMeter.Form', ['titleKey' => $fm->gameTitle->key, 'from' => 'fear-meter-list']) }}"><i class="bi bi-pencil"></i> 編集</a>
                 </div>
             </div>
 

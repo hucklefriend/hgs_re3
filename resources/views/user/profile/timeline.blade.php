@@ -5,7 +5,7 @@
 
 @section('current-node-content')
     <p class="text-sm text-slate-400">
-        <a href="{{ route('User.Profile.Show', $profileUser->show_id) }}" class="hover:text-sky-400" data-hgn-scope="full">← {{ $profileUser->name }} のプロフィール</a>
+        <a href="{{ route('User.Profile.Show', $profileUser->show_id) }}" class="hover:text-sky-400">← {{ $profileUser->name }} のプロフィール</a>
     </p>
     @if ($isBlocked)
         <p class="mt-3 text-slate-400">このユーザーのコンテンツは表示できません。</p>

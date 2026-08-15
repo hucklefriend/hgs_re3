@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForTreeAppeared, createTestAccount, loginUser } from './support/utils';
+import { waitForPublicPageReady, createTestAccount, loginUser } from './support/utils';
 
 /** 怖さメーターの選択肢の値（0-4） */
 const FEAR_METER_VALUES = [0, 1, 2, 3, 4];
@@ -10,32 +10,10 @@ const FEAR_METER_VALUES = [0, 1, 2, 3, 4];
  */
 test('未ログイン時、ゲームタイトル照会画面で「あなたの怖さメーター」リンクが表示されない', async ({ page }) =>
 {
-  // TOPから遷移
-  await page.goto('');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await page.goto('game/title/identity-v');
+  await waitForPublicPageReady(page);
 
-  // フランチャイズをクリック
-  await page.getByRole('link', { name: 'フランチャイズ' }).click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
-
-  // 「あ」をクリックしてアコーディオンを開く
-  await page.getByRole('button', { name: 'あ' }).click();
-  await page.waitForTimeout(500);
-
-  // 「Identity V」をクリック（フランチャイズ詳細へ）
-  await page.getByRole('link', { name: 'Identity V' }).first().click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
-
-  // タイトルラインナップの「Identity V」をクリック（ゲームタイトル照会画面へ）
-  await page.locator('#title-lineup-tree-node').getByRole('link', { name: 'Identity V' }).click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
-
-  // ゲームタイトル照会画面に遷移したことを確認
-  await expect(page.locator('#title-review-node')).toBeVisible();
+  await expect(page.locator('#reviews')).toBeVisible();
 
   // 未ログイン状態では「あなたの怖さメーター」リンクが表示されないことを確認
   await expect(page.getByRole('link', { name: 'あなたの怖さメーター' })).not.toBeVisible();
@@ -58,8 +36,7 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
 
   // ログイン
   await page.goto('login');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await page.fill('#email', email);
   await page.fill('#password', password);
@@ -70,12 +47,11 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
     loginResponsePromise,
     page.getByRole('button', { name: 'ログイン' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // Identity Vのタイトル画面へ遷移
   await page.goto('game/title/identity-v');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 「あなたの怖さメーター」リンクが存在することを確認
   const fearMeterLink = page.getByRole('link', { name: 'あなたの怖さメーター' });
@@ -83,12 +59,15 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
 
   // リンクをクリック
   await fearMeterLink.click();
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
-  // 入力項目をランダムで選択（0-4のいずれか）
+  // デフォルト値2から、0-4のランダムな値へボタンで変更
   const randomValue = FEAR_METER_VALUES[Math.floor(Math.random() * FEAR_METER_VALUES.length)];
-  await page.locator(`#fear_meter_${randomValue}`).check();
+  const buttonName = randomValue < 2 ? '怖さメーターを下げる' : '怖さメーターを上げる';
+  const clickCount = Math.abs(randomValue - 2);
+  for (let i = 0; i < clickCount; i += 1) {
+    await page.getByRole('button', { name: buttonName }).click();
+  }
 
   // 送信
   const submitResponsePromise = page.waitForResponse((response) =>
@@ -96,12 +75,12 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
   );
   await Promise.all([
     submitResponsePromise,
-    page.getByRole('button', { name: '入力' }).click(),
+    page.getByRole('button', { name: '登録' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 成功メッセージが表示されることを確認
-  await expect(page.locator('.alert-success')).toContainText('怖さメーターを登録しました。');
+  await expect(page.locator('.title-alert--success')).toContainText('怖さメーターを保存しました。');
 
   // 再集計を実行
   const recalcResponse = await request.post('api/test/fear-meter/recalculate');
@@ -129,8 +108,7 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
 
   // タイトル画面に戻る
   await page.goto('game/title/identity-v');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 集計結果が画面に反映されていることを確認
   const titleFearMeter = page.locator('.title-fear-meter');
@@ -151,8 +129,7 @@ test('登録済みの怖さメーターを別の値に変更して更新でき�
 
   // Identity V の怖さメーターフォームへ
   await page.goto('user/fear-meter/identity-v/form');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 値 0 で登録（- ボタンを押して最小値 0 にしてから登録）
   // デフォルト値は 2 なので - ボタンを 2 回押す
@@ -166,12 +143,11 @@ test('登録済みの怖さメーターを別の値に変更して更新でき�
     registerPromise,
     page.getByRole('button', { name: '登録' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 同フォームへ再アクセス → フォームが表示されていることを確認（「更新」ボタンが存在する）
   await page.goto('user/fear-meter/identity-v/form');
-  await page.waitForLoadState('networkidle');
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   await expect(page.getByRole('button', { name: '更新' })).toBeVisible();
 
@@ -187,7 +163,7 @@ test('登録済みの怖さメーターを別の値に変更して更新でき�
     updatePromise,
     page.getByRole('button', { name: '更新' }).click(),
   ]);
-  await waitForTreeAppeared(page);
+  await waitForPublicPageReady(page);
 
   // 成功メッセージが表示されることを確認
   await expect(page.locator('.alert-success')).toContainText('怖さメーターを保存しました。');

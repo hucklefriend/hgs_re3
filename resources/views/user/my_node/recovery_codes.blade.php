@@ -23,7 +23,7 @@
                 @endforeach
             </ul>
 
-            <a href="{{ route('User.MyNode.LoginSettings') }}" class="btn btn-success" data-hgn-scope="full">
+            <a href="{{ route('User.MyNode.LoginSettings') }}" class="btn btn-success">
                 保存しました。ログイン設定へ戻る
             </a>
         </div>

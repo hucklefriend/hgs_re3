@@ -24,7 +24,7 @@
                             <div class="min-w-0 flex-1">
                                 <a href="{{ route('User.Profile.Show', $u->show_id) }}"
                                    class="font-semibold text-slate-100 hover:text-sky-400 block truncate"
-                                   data-hgn-scope="full">{{ $u->name }}</a>
+                                  >{{ $u->name }}</a>
                                 <span class="text-slate-500 text-xs">{{ '@' . $u->show_id }}</span>
                             </div>
                             <button type="button"

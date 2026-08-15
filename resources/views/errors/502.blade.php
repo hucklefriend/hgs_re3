@@ -15,7 +15,7 @@
                 サーバーの一時的な問題の可能性があります。<br>
                 <br>
                 しばらく待ってから再度お試しください。<br>
-                問題が解決しない場合は、<a href="{{ route('Contact') }}" data-hgn-scope="full">問い合わせ</a>ください。
+                問題が解決しない場合は、<a href="{{ route('Contact') }}">問い合わせ</a>ください。
             </p>
         </div>
     </section>

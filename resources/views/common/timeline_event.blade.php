@@ -73,11 +73,11 @@
         @endif
         <div class="mt-2 text-xs">
             @if (in_array($event['type'], ['review_posted', 'review_updated', 'review_liked']) && $event['game_title_key'] && $event['review_key'])
-                <a href="{{ route('Game.TitleReview', ['titleKey' => $event['game_title_key'], 'reviewKey' => $event['review_key']]) }}" data-hgn-scope="full"><i class="bi bi-file-text"></i> レビュー詳細</a>
+                <a href="{{ route('Game.TitleReview', ['titleKey' => $event['game_title_key'], 'reviewKey' => $event['review_key']]) }}"><i class="bi bi-file-text"></i> レビュー詳細</a>
             @elseif (in_array($event['type'], ['game_title_updated', 'fear_meter_posted', 'fear_meter_updated']) && $event['game_title_key'])
-                <a href="{{ route('Game.TitleDetail', ['titleKey' => $event['game_title_key']]) }}" data-hgn-scope="full"><i class="bi bi-controller"></i> タイトル詳細</a>
+                <a href="{{ route('Game.TitleDetail', ['titleKey' => $event['game_title_key']]) }}"><i class="bi bi-controller"></i> タイトル詳細</a>
             @elseif ($event['type'] === 'information_posted' && $event['information_id'])
-                <a href="{{ route('InformationDetail', ['info' => $event['information_id']]) }}" data-hgn-scope="full"><i class="bi bi-megaphone"></i> お知らせ詳細</a>
+                <a href="{{ route('InformationDetail', ['info' => $event['information_id']]) }}"><i class="bi bi-megaphone"></i> お知らせ詳細</a>
             @endif
         </div>
     </div>

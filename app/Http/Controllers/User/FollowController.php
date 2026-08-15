@@ -40,7 +40,7 @@ class FollowController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $pager = new Pager($likes->currentPage(), $likes->lastPage(), 'User.MyNode.ReviewLikes', [], 'children');
+        $pager = new Pager($likes->currentPage(), $likes->lastPage(), 'User.MyNode.ReviewLikes', []);
 
         return $this->tree(
             view('user.my_node.review_likes', compact('likes', 'pager')),

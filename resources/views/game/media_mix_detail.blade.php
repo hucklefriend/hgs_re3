@@ -107,13 +107,6 @@
                 </div>
             @endif
 
-            @if ($mediaMix->titles()->exists())
-                @foreach ($mediaMix->titles as $title)
-                    <div class="node">
-                        @include('common.nodes.title-node', ['title' => $title])
-                    </div>
-                @endforeach
-            @endif
         </div>
     </section>
 
