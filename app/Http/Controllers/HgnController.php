@@ -30,17 +30,9 @@ class HgnController extends Controller
      */
     public function root(TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View
     {
-        $infoList = Information::select(['id', 'head'])
-            ->where('open_at', '<', now())
-            ->where('close_at', '>=', now())
-            ->orderBy('priority', 'desc')
-            ->orderBy('open_at', 'desc')
-            ->limit(3)
-            ->get();
-
         $timelineEvents = $timelineEventService->fetchForRoot(5);
 
-        return $this->tree(view('root', compact('infoList', 'timelineEvents')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
+        return $this->tree(view('root', compact('timelineEvents')), ['url' => route('Root'), 'csrfToken' => csrf_token()]);
     }
 
     public function timeline(TimelineEventService $timelineEventService): JsonResponse|Application|Factory|View

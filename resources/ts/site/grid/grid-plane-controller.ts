@@ -127,9 +127,6 @@ export class GridPlaneController implements Disposable
         this._root.style.setProperty('--site-grid-width', `${frameRect.width}px`);
         this._root.style.setProperty('--site-grid-cell-width', `${this._metrics.cellWidth}px`);
         this._plane.style.blockSize = `${documentHeight}px`;
-        this._root.querySelectorAll<HTMLElement>('[data-grid-columns]').forEach((element) => {
-            element.textContent = String(columns);
-        });
         this._metricsListeners.forEach((listener) => listener(this._metrics));
     }
 

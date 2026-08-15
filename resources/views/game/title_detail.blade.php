@@ -38,9 +38,8 @@
 @section('site-content')
     <section class="title-hero" aria-labelledby="title-detail-name">
         <div class="site-frame title-hero__frame" data-grid-frame>
-            <div class="site-grid-axis" aria-hidden="true"><span>NETWORK GRID / GT-{{ str_pad((string) $title->id, 5, '0', STR_PAD_LEFT) }}</span><span>X:<b data-grid-columns>16</b> / Y:AUTO</span></div>
             <nav class="title-breadcrumb" aria-label="パンくず">
-                <a href="{{ route('Root') }}">HGN</a><span>/</span><a href="{{ route('Game.Lineup') }}">DATABASE</a><span>/</span><b>GT-{{ str_pad((string) $title->id, 5, '0', STR_PAD_LEFT) }}</b>
+                <a href="{{ route('Root') }}">ROOT</a><span>/</span><a href="{{ route('Game.Lineup') }}">LINEUP</a><span>/</span><b>GT-{{ str_pad((string) $title->id, 5, '0', STR_PAD_LEFT) }}</b>
             </nav>
 
             @if (session('success'))<div class="title-alert title-alert--success" role="status">{!! nl2br(e(session('success'))) !!}</div>@endif
@@ -51,7 +50,7 @@
 
             <div class="title-hero__layout">
                 <div class="title-keyart" data-page-reveal>
-                    <span class="title-keyart__stamp">KEY VISUAL / DATABASE</span>
+                    <span class="title-keyart__stamp">KEY VISUAL / LINEUP</span>
                     @if ($title->ogp !== null && !empty($title->ogp->image))
                         <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
                     @else
@@ -60,7 +59,6 @@
                 </div>
 
                 <div class="title-summary" data-page-reveal>
-                    <p class="site-eyebrow">DATABASE ENTRY / GT-{{ str_pad((string) $title->id, 5, '0', STR_PAD_LEFT) }}</p>
                     <h1 id="title-detail-name">{{ $title->name }}</h1>
                     @if ($title->series)<p class="title-summary__series">{{ $title->series->name }} / {{ $franchise?->name }}</p>@elseif ($franchise)<p class="title-summary__series">{{ $franchise->name }} FRANCHISE</p>@endif
                     @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif

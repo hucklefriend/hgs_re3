@@ -52,7 +52,7 @@
 >
     <x-site.grid-plane />
     <a class="site-skip-link" href="#site-main">本文へ移動</a>
-    <x-site.header :page-kind="$pageKind" />
+    <x-site.header />
 
     <main class="site-main" id="site-main">
         @hasSection('site-content')
@@ -60,15 +60,10 @@
         @else
         <div class="site-frame site-standard">
             <div class="site-main__grid">
-                <div class="site-grid-axis" aria-hidden="true">
-                    <span>NETWORK GRID / {{ strtoupper($pageKind) }}</span>
-                    <span>X:<b data-grid-columns>16</b> / Y:AUTO</span>
-                </div>
                 <x-site.breadcrumb :page-kind="$pageKind" :page-title="$pageTitle" />
 
                 <article class="site-standard-page node" id="current-node">
                     <header class="site-standard-page__header node-head">
-                        <span class="site-standard-page__eyebrow">PUBLIC NODE / {{ strtoupper($pageKind) }}</span>
                         <h1 class="node-head-text">@yield('current-node-title')</h1>
                         <span class="node-pt current-node-pt" aria-hidden="true">●</span>
                     </header>

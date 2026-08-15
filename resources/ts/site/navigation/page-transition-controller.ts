@@ -177,7 +177,6 @@ export class PageTransitionController implements Disposable
     private muteNonSelectedElements(anchor: HTMLAnchorElement): void
     {
         const selectors = [
-            '.site-header__status',
             '.site-header__nav a',
             '.site-breadcrumb',
             '#current-node > .node-head',

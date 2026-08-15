@@ -12,10 +12,6 @@
     position: relative;
 }
 
-.lineup-console__frame > .site-grid-axis {
-    padding-inline: 0;
-}
-
 .lineup-console__frame > .site-breadcrumb {
     margin-block-start: 6px;
 }
@@ -62,7 +58,7 @@
 
 .lineup-console__title dt {
     color: var(--site-color-text-muted);
-    font: 600 7px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.12em;
 }
 
@@ -86,7 +82,7 @@
 .lineup-console-menu > p {
     margin: 0 0 16px;
     color: var(--site-color-text-muted);
-    font: 600 8px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.15em;
 }
 
@@ -130,7 +126,7 @@
     align-self: start;
     padding-block-start: 8px;
     color: var(--site-color-text-muted);
-    font: 600 8px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
 }
 
 .lineup-console-option b {
@@ -143,7 +139,7 @@
     display: block;
     margin-block-start: 4px;
     color: var(--site-color-text-muted);
-    font: 600 7px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.1em;
 }
 
@@ -180,7 +176,7 @@
     padding: 13px 18px;
     border-block-end: 1px solid var(--site-color-line);
     color: var(--site-color-text-muted);
-    font: 600 8px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.12em;
 }
 
@@ -199,7 +195,7 @@
     display: block;
     margin-block-end: 10px;
     color: var(--site-color-text-muted);
-    font: 600 8px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.1em;
 }
 
@@ -232,7 +228,7 @@
     border: 1px solid var(--site-color-signal);
     color: #001a08;
     background: var(--site-color-signal);
-    font: 700 8px/1 var(--site-font-mono);
+    font: 700 10px/1 var(--site-font-mono);
     letter-spacing: 0.1em;
 }
 
@@ -336,7 +332,7 @@
 .lineup-results__query {
     margin: 0;
     color: var(--site-color-text-muted);
-    font: 600 8px/1.5 var(--site-font-mono);
+    font: 600 10px/1.5 var(--site-font-mono);
     letter-spacing: 0.1em;
 }
 
@@ -363,7 +359,7 @@
 .lineup-franchise > header p {
     margin: 0;
     color: var(--site-color-text-muted);
-    font: 600 8px/1.4 var(--site-font-mono);
+    font: 600 10px/1.4 var(--site-font-mono);
     letter-spacing: 0.09em;
 }
 
@@ -411,7 +407,7 @@
 
 .lineup-franchise__entries a small {
     color: var(--site-color-text-muted);
-    font: 600 7px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
 }
 
 .lineup-result-signal {
@@ -433,7 +429,7 @@
 
 .lineup-series h4 small {
     margin-inline-start: 6px;
-    font: 600 7px/1 var(--site-font-mono);
+    font: 600 10px/1 var(--site-font-mono);
 }
 
 @media (max-width: 1023px) {

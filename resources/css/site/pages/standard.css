@@ -38,13 +38,6 @@
     box-shadow: 0 0 14px var(--site-color-signal-soft);
 }
 
-.site-standard-page__eyebrow {
-    grid-column: 1;
-    color: var(--site-color-signal);
-    font: 600 8px/1.4 var(--site-font-mono);
-    letter-spacing: 0.18em;
-}
-
 .site-standard-page__header .node-head-text {
     grid-column: 1;
     margin: 0;
@@ -68,7 +61,7 @@
 
 .site-standard-page__header .node-pt {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1;
     align-self: center;
 }
 
@@ -380,4 +373,3 @@
         animation-iteration-count: 1 !important;
     }
 }
-

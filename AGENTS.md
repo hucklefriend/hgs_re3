@@ -39,6 +39,14 @@ php artisan tinker                 # Interactive REPL
 
 `php artisan migrate` およびロールバック等のマイグレーション操作（`migrate:rollback`, `migrate:reset`, `migrate:refresh`, `migrate:fresh` 等）は**コマンドを提示するのみとし、実行はユーザーに委ねる**。
 
+### Cache Generation
+`php artisan view:cache` など、`storage/framework` または `bootstrap/cache` にキャッシュファイルを作成・再生成するコマンドは、Webサーバーとのグループ書き込み権限を維持するため、**同じシェル内で生成前に `umask 0002` を設定してから実行する**。
+
+```bash
+umask 0002
+php artisan view:cache
+```
+
 ## Architecture
 
 ### Backend (Laravel 12)

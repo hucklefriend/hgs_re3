@@ -16,16 +16,11 @@
 @section('site-content')
     <section class="lineup-console" aria-labelledby="lineup-title">
         <div class="site-frame lineup-console__frame" data-grid-frame>
-            <div class="site-grid-axis" aria-hidden="true">
-                <span>NETWORK GRID / DATABASE</span>
-                <span>X:<b data-grid-columns>16</b> / Y:AUTO</span>
-            </div>
-            <x-site.breadcrumb page-kind="database" page-title="GAME DATABASE" />
+            <x-site.breadcrumb page-kind="lineup" page-title="GAME LINEUP" />
 
             <header class="lineup-console__title" data-page-reveal>
                 <div>
-                    <p class="site-eyebrow">ARCHIVE NODE / DB-01</p>
-                    <h1 id="lineup-title">GAME<br><span>DATABASE</span></h1>
+                    <h1 id="lineup-title">GAME<br><span>LINEUP</span></h1>
                 </div>
                 <p>登録されているホラーゲームを、タイトル・プラットフォーム・メーカー・怖さ・発売年から検索します。</p>
                 <dl>
@@ -128,7 +123,7 @@
     <section class="lineup-results" id="lineup-results" aria-labelledby="lineup-results-title">
         <div class="site-frame">
             <header class="site-section-heading" data-page-reveal>
-                <div><p class="site-eyebrow">DATABASE OUTPUT / {{ number_format($total ?? 0) }}</p><h2 id="lineup-results-title">SEARCH<br><span>RESULTS</span></h2></div>
+                <div><p class="site-eyebrow">LINEUP OUTPUT / {{ number_format($total ?? 0) }}</p><h2 id="lineup-results-title">SEARCH<br><span>RESULTS</span></h2></div>
                 <p class="lineup-results__query">
                     @if (!empty($text))
                         TITLE: {{ $text }}

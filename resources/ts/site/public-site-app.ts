@@ -129,7 +129,11 @@ export class PublicSiteApp implements Disposable
     {
         switch (this._root.dataset.pageKind) {
             case 'root':
-                return new HomePageController(this._root, this._motionPreference);
+                return new HomePageController(
+                    this._root,
+                    this._motionPreference,
+                    this._gridPlaneController,
+                );
 
             case 'game-lineup':
                 return new LineupPageController(this._root, this._motionPreference);
