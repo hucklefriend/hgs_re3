@@ -93,5 +93,4 @@
         @endforeach
     @endif
 
-    @include('common.shortcut', ['shortcutRoute' => $shortcutRoute])
 @endsection

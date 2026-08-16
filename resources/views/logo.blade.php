@@ -5,10 +5,6 @@
 @section('current-node-content')
 <style>
 
-#current-tree-nodes {
-  row-gap: 0px !important;
-}
-
 .node-head-text {
   color: #9fffb3; /* 薄い緑 */
   font-size: 48px;

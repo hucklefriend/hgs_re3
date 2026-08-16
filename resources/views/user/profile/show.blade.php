@@ -126,5 +126,4 @@
         </section>
     @endif
 
-    @include('common.shortcut')
 @endsection

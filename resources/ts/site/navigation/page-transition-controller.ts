@@ -9,6 +9,10 @@ import type { ScrollFollowController } from './scroll-follow-controller';
 import type { TransitionStore } from './transition-store';
 
 const NAVIGATION_SAFETY_TIMEOUT = 1_300;
+const DEPARTURE_MASK_GAP = 96;
+const DEPARTURE_MASK_INITIAL_LAG = 64;
+const DEPARTURE_MASK_FOLLOW_RATE = 0.14;
+const DEPARTURE_MASK_COMPLETION_DURATION = 260;
 
 /**
  * リンククリックから通常の全文書遷移までを一度だけ実行する。
@@ -27,6 +31,9 @@ export class PageTransitionController implements Disposable
     private _locked: boolean = false;
     private _generation: number = 0;
     private _started: boolean = false;
+    private _departureMaskTop: number | null = null;
+    private _departureMaskAnimationFrameId: number | null = null;
+    private _departureMaskAnimationResolve: (() => void) | null = null;
 
     public constructor(
         root: HTMLElement,
@@ -81,9 +88,9 @@ export class PageTransitionController implements Disposable
         this._scrollFollowController.dispose();
         this._terminalController.reset();
         delete this._root.dataset.pageDeparting;
-        this._root.querySelectorAll<HTMLElement>('[data-transition-muted]').forEach((element) => {
-            element.removeAttribute('data-transition-muted');
-        });
+        this.cancelDepartureMaskAnimation();
+        this._departureMaskTop = null;
+        this._root.style.removeProperty('--site-departure-mask-top');
     }
 
     private readonly handleClick = (event: MouseEvent): void =>
@@ -123,6 +130,7 @@ export class PageTransitionController implements Disposable
         const generation = this._generation;
         let safetyTimerId: number | null = null;
         let navigationStarted = false;
+        let departureMaskCompletion: Promise<void> | null = null;
         const beginNavigation = (): void => {
             if (navigationStarted || this._generation !== generation) {
                 return;
@@ -145,23 +153,45 @@ export class PageTransitionController implements Disposable
 
             const origin = this._terminalController.documentPointFor(anchor);
             const route = this._routePlanner.plan(origin, this._gridPlaneController.metrics);
-            const headerHeight = this._root.querySelector<HTMLElement>('[data-site-header]')?.offsetHeight ?? 0;
+            const header = this._root.querySelector<HTMLElement>('[data-site-header]');
+            const headerHeight = header?.offsetHeight ?? 0;
+            let headerBottom = headerHeight;
+            if (header !== null) {
+                headerBottom = header.getBoundingClientRect().bottom + window.scrollY;
+            }
+            const startDepartureMaskCompletion = (): void => {
+                if (departureMaskCompletion !== null) {
+                    return;
+                }
+
+                departureMaskCompletion = this.completeDepartureMask(headerBottom, generation);
+            };
             this._terminalController.setConnecting(anchor, true);
+            this.startDepartureMask(origin);
             this._root.dataset.pageDeparting = 'true';
-            this.muteNonSelectedElements(anchor);
             this._scrollFollowController.start(origin, headerHeight);
 
-            const safetyTimeout = new Promise<void>((resolve) => {
-                safetyTimerId = window.setTimeout(resolve, NAVIGATION_SAFETY_TIMEOUT);
+            const safetyTimeout = new Promise<'safety-timeout'>((resolve) => {
+                safetyTimerId = window.setTimeout(() => resolve('safety-timeout'), NAVIGATION_SAFETY_TIMEOUT);
             });
-            await Promise.race([
+            const animationResult = await Promise.race([
                 this._animationController.play(
                     route,
-                    (point) => this._scrollFollowController.update(point),
-                    beginNavigation,
+                    (point) => {
+                        this.updateDepartureMask(point);
+                        this._scrollFollowController.update(point);
+                    },
+                    startDepartureMaskCompletion,
                 ),
                 safetyTimeout,
             ]);
+            if (animationResult === 'safety-timeout') {
+                this._animationController.cancel();
+            }
+            startDepartureMaskCompletion();
+            if (departureMaskCompletion !== null) {
+                await departureMaskCompletion;
+            }
         } catch {
             // 演出に失敗しても finally で通常遷移する。
         } finally {
@@ -174,24 +204,101 @@ export class PageTransitionController implements Disposable
         }
     }
 
-    private muteNonSelectedElements(anchor: HTMLAnchorElement): void
+    private startDepartureMask(origin: { y: number }): void
     {
-        const selectors = [
-            '.site-header__nav a',
-            '.site-breadcrumb',
-            '#current-node > .node-head',
-            '#current-node > .node-content',
-            '#current-node section.node',
-            '#current-node form',
-            '.site-footer__grid > *',
-        ];
+        this._departureMaskTop = origin.y + DEPARTURE_MASK_GAP + DEPARTURE_MASK_INITIAL_LAG;
+        this.renderDepartureMask();
+    }
 
-        this._root.querySelectorAll<HTMLElement>(selectors.join(',')).forEach((element) => {
-            if (element === anchor || element.contains(anchor)) {
-                return;
-            }
+    private updateDepartureMask(point: { y: number }): void
+    {
+        if (this._departureMaskTop === null) {
+            return;
+        }
 
-            element.setAttribute('data-transition-muted', '');
+        const closestAllowedTop = point.y + DEPARTURE_MASK_GAP;
+        if (closestAllowedTop >= this._departureMaskTop) {
+            this._departureMaskTop = closestAllowedTop;
+        } else {
+            const distance = this._departureMaskTop - closestAllowedTop;
+            this._departureMaskTop -= distance * DEPARTURE_MASK_FOLLOW_RATE;
+        }
+
+        this.renderDepartureMask();
+    }
+
+    private renderDepartureMask(): void
+    {
+        if (this._departureMaskTop === null) {
+            return;
+        }
+
+        this._root.style.setProperty('--site-departure-mask-top', `${this._departureMaskTop}px`);
+    }
+
+    private completeDepartureMask(targetTop: number, generation: number): Promise<void>
+    {
+        if (this._departureMaskTop === null) {
+            return Promise.resolve();
+        }
+
+        this.cancelDepartureMaskAnimation();
+        const startTop = this._departureMaskTop;
+        const endTop = Math.max(0, Math.min(startTop, targetTop));
+        if (startTop === endTop) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            const startedAt = performance.now();
+            this._departureMaskAnimationResolve = resolve;
+
+            const tick = (timestamp: number): void => {
+                this._departureMaskAnimationFrameId = null;
+                if (generation !== this._generation) {
+                    this.finishDepartureMaskAnimation(resolve);
+                    return;
+                }
+
+                const progress = Math.min(1, Math.max(0,
+                    (timestamp - startedAt) / DEPARTURE_MASK_COMPLETION_DURATION,
+                ));
+                const eased = 1 - Math.pow(1 - progress, 3);
+                this._departureMaskTop = startTop + ((endTop - startTop) * eased);
+                this.renderDepartureMask();
+
+                if (progress >= 1) {
+                    this.finishDepartureMaskAnimation(resolve);
+                    return;
+                }
+
+                this._departureMaskAnimationFrameId = window.requestAnimationFrame(tick);
+            };
+
+            this._departureMaskAnimationFrameId = window.requestAnimationFrame(tick);
         });
     }
+
+    private cancelDepartureMaskAnimation(): void
+    {
+        if (this._departureMaskAnimationFrameId !== null) {
+            window.cancelAnimationFrame(this._departureMaskAnimationFrameId);
+            this._departureMaskAnimationFrameId = null;
+        }
+
+        const resolve = this._departureMaskAnimationResolve;
+        this._departureMaskAnimationResolve = null;
+        resolve?.();
+    }
+
+    private finishDepartureMaskAnimation(resolve: () => void): void
+    {
+        if (this._departureMaskAnimationResolve !== resolve) {
+            return;
+        }
+
+        this._departureMaskAnimationResolve = null;
+        resolve();
+    }
+
 }

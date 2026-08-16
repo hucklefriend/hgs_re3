@@ -105,5 +105,4 @@
         </section>
     @endforeach
 
-    @include('common.shortcut')
 @endsection

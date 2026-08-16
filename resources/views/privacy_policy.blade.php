@@ -4,25 +4,26 @@
 @section('current-node-title', 'プライバシーポリシー')
 
 
-@section('current-node-content')
-    <p style="font-size: 13px; padding-bottom: 30px;">
-        最終改定日：{{ $privacyPolicyRevisionDate->format('Y年n月j日') }}
-    </p>
-    @if ($needsAcceptance ?? false)
-    <p class="alert alert-warning">
-        プライバシーポリシーが改定されています。<br>
-        内容を確認し、同意できる場合は「同意」ボタンを押してください。<br>
-        同意できない場合、個人情報を取り扱えないためサイトをご利用いただくことができなくなります。
-    </p>
-        
-    <form method="POST" action="{{ route('PrivacyPolicy.Accept') }}" style="padding-bottom: 30px;" data-no-push-state="1" data-child-only="0">
-        @csrf
-        <button type="submit" class="btn btn-default">同意</button>
-    </form>
-    @endif
-@endsection
-
 @section('nodes')
+    <section class="node privacy-policy-revision-date" aria-label="最終改定日">
+        <p>最終改定日：{{ $privacyPolicyRevisionDate->format('Y年n月j日') }}</p>
+    </section>
+
+    @if ($needsAcceptance ?? false)
+    <section class="node privacy-policy-acceptance">
+        <p class="alert alert-warning">
+            プライバシーポリシーが改定されています。<br>
+            内容を確認し、同意できる場合は「同意」ボタンを押してください。<br>
+            同意できない場合、個人情報を取り扱えないためサイトをご利用いただくことができなくなります。
+        </p>
+
+        <form method="POST" action="{{ route('PrivacyPolicy.Accept') }}" data-no-push-state="1" data-child-only="0">
+            @csrf
+            <button type="submit" class="btn btn-default">同意</button>
+        </form>
+    </section>
+    @endif
+
     <section class="node">
         <div class="node-head">
             <h2 class="node-head-text">Intended for users in Japan only</h2>
@@ -242,5 +243,4 @@
         </div>
     </section>
 
-    @include('common.shortcut')
 @endsection

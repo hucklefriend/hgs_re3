@@ -12,7 +12,12 @@ const startPublicSite = (): void => {
     publicSiteApp.start();
 };
 
-window.addEventListener('load', startPublicSite, { once: true });
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startPublicSite, { once: true });
+} else {
+    startPublicSite();
+}
+
 window.addEventListener('pagehide', (event: PageTransitionEvent) => {
     if (event.persisted) {
         return;

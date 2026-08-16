@@ -132,5 +132,4 @@
             </div>
         </div>
     </section>
-    @include('common.shortcut', ['shortcutRoute' => $shortcutRoute])
 @endsection
