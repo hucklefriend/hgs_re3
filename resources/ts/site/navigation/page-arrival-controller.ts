@@ -2,8 +2,8 @@ import type { Disposable } from '../core/disposable';
 import type { MotionPreference } from '../core/motion-preference';
 import type { TransitionStore } from './transition-store';
 
-const HANDOFF_ARRIVAL_DURATION = 620;
-const DIRECT_ARRIVAL_DURATION = 420;
+const HANDOFF_ARRIVAL_DURATION = 920;
+const DIRECT_ARRIVAL_DURATION = 720;
 
 /**
  * 全文書ロード後の表示復帰と、BFCache復元時の状態初期化を担当する。
@@ -101,9 +101,6 @@ export class PageArrivalController implements Disposable
         delete this._root.dataset.pageDeparting;
         delete this._root.dataset.pageArriving;
         delete this._root.dataset.arrivalKind;
-        this._root.querySelectorAll<HTMLElement>('[data-transition-muted]').forEach((element) => {
-            element.removeAttribute('data-transition-muted');
-        });
         this._root.querySelector<HTMLElement>('[data-header-node]')?.removeAttribute('data-receiving');
     }
 

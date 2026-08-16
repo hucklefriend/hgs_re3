@@ -16,6 +16,24 @@ test('公開リンクは接続演出後にAjaxを使わず全文書遷移し、�
 
     await page.goto('');
     await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+    await page.evaluate(() => {
+        window.addEventListener('beforeunload', () => {
+            const root = document.querySelector<HTMLElement>('[data-public-app]');
+            const header = document.querySelector<HTMLElement>('[data-site-header]');
+            if (!root || !header) {
+                return;
+            }
+
+            sessionStorage.setItem(
+                'page-transition-mask-top',
+                root.style.getPropertyValue('--site-departure-mask-top'),
+            );
+            sessionStorage.setItem(
+                'page-transition-header-bottom',
+                String(header.getBoundingClientRect().bottom + window.scrollY),
+            );
+        }, { once: true });
+    });
 
     const lineupLink = page.locator('.site-header__nav a').filter({ hasText: 'LINEUP' });
     await lineupLink.click({ noWaitAfter: true });
@@ -25,6 +43,11 @@ test('公開リンクは接続演出後にAjaxを使わず全文書遷移し、�
     await page.waitForURL('**/game/lineup', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
     expect(lineupRequests).toEqual([{ resourceType: 'document', requestedWith: undefined }]);
+    const departureMaskPosition = await page.evaluate(() => ({
+        maskTop: Number.parseFloat(sessionStorage.getItem('page-transition-mask-top') ?? ''),
+        headerBottom: Number.parseFloat(sessionStorage.getItem('page-transition-header-bottom') ?? ''),
+    }));
+    expect(departureMaskPosition.maskTop).toBeCloseTo(departureMaskPosition.headerBottom, 1);
 
     await page.goBack({ waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/hgs_re3\/public\/$/);

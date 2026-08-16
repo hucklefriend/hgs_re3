@@ -35,6 +35,7 @@
     {{-- <link href="{{ asset('assets/plugins/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet"> --}}
     <link href="{{ asset('assets/plugins/bootstrap-icons/font/bootstrap-icons.css') }}" rel="stylesheet">
     <script>
+        document.documentElement.classList.add('has-public-site-js');
         window.Laravel = @json(['csrfToken' => csrf_token()]);
         window.baseUrl = '{{ url('/') }}';
         window.lazyCss = @json([]);
@@ -68,15 +69,13 @@
                         <span class="node-pt current-node-pt" aria-hidden="true">●</span>
                     </header>
 
-                    <div class="site-standard-page__content node-content" id="current-node-content">
-                        @hasSection('current-node-content')
+                    @hasSection('current-node-content')
+                        <div class="site-standard-page__content node-content" id="current-node-content">
                             @yield('current-node-content')
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
-                    <div class="site-standard-page__sections node-content tree" id="current-tree-nodes">
-                        @yield('nodes')
-                    </div>
+                    @yield('nodes')
                 </article>
             </div>
         </div>

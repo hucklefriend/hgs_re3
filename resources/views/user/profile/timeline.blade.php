@@ -23,5 +23,4 @@
         @include('common.pager', ['pager' => $pager])
     @endif
 
-    @include('common.shortcut')
 @endsection

@@ -100,6 +100,8 @@
 }
 
 .site-standard-page .tree > .node,
+[data-public-app] #current-node > #current-node-content,
+[data-public-app] #current-node > section.node,
 .site-standard-page .node.tree-node,
 .site-standard-page .node.basic,
 .site-standard-page .node.content-node {
@@ -288,6 +290,63 @@
 .site-standard-page canvas.curve-canvas,
 .site-standard-page svg.curve-svg {
     display: none;
+}
+
+[data-public-app] #current-node {
+    padding-block: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+[data-public-app] #current-node::before {
+    display: none;
+}
+
+.site-standard-page__header .node-pt {
+    display: none;
+}
+
+.site-standard-page__header {
+    align-items: center;
+    min-block-size: 0;
+    block-size: calc(var(--site-grid-row-size) * 4);
+    padding-block: 0;
+    background: rgba(0, 3, 1, 0.58);
+}
+
+.site-standard-page__header::after {
+    inline-size: 100%;
+}
+
+[data-public-app] #current-node > #current-node-content,
+[data-public-app] #current-node > section.node {
+    inline-size: 100%;
+    margin-block-start: var(--site-grid-row-size);
+}
+
+[data-page-kind='privacy-policy'] #current-node > section.privacy-policy-revision-date {
+    display: flex;
+    align-items: center;
+    block-size: var(--site-grid-row-size);
+    padding-block: 0;
+}
+
+[data-page-kind='privacy-policy'] .privacy-policy-revision-date p {
+    margin: 0;
+    font-size: 13px;
+}
+
+@media (min-width: 1024px) {
+    [data-public-app] #current-node {
+        grid-column: 2 / 16;
+    }
+}
+
+@media (max-width: 1023px) {
+    .site-standard-page__header {
+        block-size: calc(var(--site-grid-row-size) * 3);
+    }
 }
 
 [data-page-kind^='account-'] .site-standard-page,

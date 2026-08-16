@@ -48,48 +48,4 @@
         </section>
     @endif
 
-    <section class="node tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">近道</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content tree">
-            <section class="node basic" id="shortcut-root-node">
-                <div class="node-head">
-                    <a href="{{ route('Root') }}" class="node-head-text">ルート</a>
-                    <span class="node-pt main-node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic">
-                <div class="node-head">
-                    <a href="{{ route('User.MyNode.Top') }}" class="node-head-text">マイノード</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic">
-                <div class="node-head">
-                    <a href="{{ route('User.MyNode.Following') }}" class="node-head-text">フォロー中</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic">
-                <div class="node-head">
-                    <a href="{{ route('User.MyNode.Blocking') }}" class="node-head-text">ブロック中</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic">
-                <div class="node-head">
-                    <a href="{{ route('User.MyNode.Muting') }}" class="node-head-text">ミュート中</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-            <section class="node basic" id="logout-link-node">
-                <div class="node-head">
-                    <a href="{{ route('Account.Logout') }}" class="node-head-text">ログアウト</a>
-                    <span class="node-pt">●</span>
-                </div>
-            </section>
-        </div>
-    </section>
 @endsection

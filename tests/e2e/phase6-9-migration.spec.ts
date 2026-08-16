@@ -22,6 +22,8 @@ test('残りの代表公開GETルートは標準グリッドレイアウトで�
         await expect(page.locator('body'), route).toHaveClass(/site-page/);
         await expect(page.locator('.site-standard-page'), route).toBeVisible();
         await expect(page.locator('.site-standard-page h1'), route).not.toBeEmpty();
+        await expect(page.locator('#current-tree-nodes'), route).toHaveCount(0);
+        await expect(page.getByRole('heading', { name: '近道' }), route).toHaveCount(0);
     }
 });
 
@@ -33,6 +35,47 @@ test('旧Ajaxクエリが付いてもJSONではなく通常のHTML文書を返�
     expect(response?.headers()['content-type']).toContain('text/html');
     await expect(page.locator('.site-standard-page')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+});
+
+test('標準ページの各セクションはarticle直下でグリッドに揃う', async ({ page }) =>
+{
+    await page.goto('about');
+
+    await expect(page.locator('#current-node-content')).toHaveCount(0);
+    await expect(page.locator('#current-tree-nodes')).toHaveCount(0);
+    await expect(page.locator('#current-node > section.node')).toHaveCount(8);
+
+    const panelsFollowGridRows = await page.locator(
+        '#current-node > #current-node-content, #current-node > section.node',
+    ).evaluateAll((panels) => {
+        const rowHeight = Number.parseFloat(
+            getComputedStyle(document.body).getPropertyValue('--site-grid-row-size'),
+        );
+
+        return panels.every((panel) => {
+            const heightInRows = panel.getBoundingClientRect().height / rowHeight;
+
+            return Math.abs(heightInRows - Math.round(heightInRows)) < 0.01;
+        });
+    });
+    expect(panelsFollowGridRows).toBe(true);
+});
+
+test('プライバシーポリシーの最終改定日は1グリッド行で表示される', async ({ page }) =>
+{
+    await page.goto('privacy');
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+
+    const revisionDate = page.locator('.privacy-policy-revision-date');
+    await expect(revisionDate).toContainText('最終改定日');
+
+    const dimensions = await revisionDate.evaluate((element) => ({
+        height: element.getBoundingClientRect().height,
+        rowHeight: Number.parseFloat(
+            getComputedStyle(document.body).getPropertyValue('--site-grid-row-size'),
+        ),
+    }));
+    expect(dimensions.height).toBe(dimensions.rowHeight);
 });
 
 test('モバイル幅と低減モーションでも標準ページの情報を隠さない', async ({ page }) =>

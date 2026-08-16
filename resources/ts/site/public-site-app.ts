@@ -14,6 +14,7 @@ import { TransitionStore } from './navigation/transition-store';
 import { HomePageController } from './pages/home-page-controller';
 import { LineupPageController } from './pages/lineup-page-controller';
 import type { PageController } from './pages/page-controller';
+import { StandardPageController } from './pages/standard-page-controller';
 import { TitleDetailPageController } from './pages/title-detail-page-controller';
 
 type ComponentConfiguration = { [componentName: string]: any | null };
@@ -141,7 +142,9 @@ export class PublicSiteApp implements Disposable
                 return new TitleDetailPageController(this._root);
 
             default:
-                return null;
+                return this._root.querySelector('.site-standard-page') === null
+                    ? null
+                    : new StandardPageController(this._root, this._gridPlaneController);
         }
     }
 }

@@ -49,6 +49,5 @@
         </div>
     </section>
 
-    @include('common.shortcut')
 @endsection
 
