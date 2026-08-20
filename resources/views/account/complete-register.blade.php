@@ -18,14 +18,14 @@
                 @csrf
                 <div class="form-group mb-3">
                     <label for="name" class="form-label">名前</label>
-                    <input type="text" name="name" class="form-control" id="name" placeholder="名前" value="{{ old('name') }}" required autofocus>
+                    <input type="text" name="name" class="form-control" id="name" value="{{ old('name') }}" required autofocus>
                     @error('name')
                         <div class="text-danger mt-1">{{ $message }}</div>
                     @enderror
                 </div>
                 <div class="form-group mb-3">
                     <label for="password" class="form-label">パスワード</label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="パスワード（8文字以上）" required>
+                    <input type="password" name="password" class="form-control" id="password" required>
                     @error('password')
                         <div class="text-danger mt-1">{{ $message }}</div>
                     @enderror

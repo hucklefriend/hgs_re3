@@ -20,6 +20,17 @@
     box-shadow: var(--site-focus-ring);
 }
 
+[data-public-app] :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='hidden'], [type='file']), textarea, select) {
+    border-color: var(--site-color-input-line);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-public-app] :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='hidden'], [type='file']), textarea, select):focus {
+    outline: 0;
+    border-color: var(--site-color-signal);
+    box-shadow: 0 0 0 1px var(--site-color-input-focus), 0 0 14px var(--site-color-input-focus);
+}
+
 [data-public-app] a {
     text-underline-offset: 0.2em;
 }

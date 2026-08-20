@@ -6,6 +6,8 @@
     --site-color-text-meta: #829188;
     --site-color-line: rgba(91, 130, 105, 0.24);
     --site-color-line-strong: rgba(114, 255, 155, 0.42);
+    --site-color-input-line: rgba(91, 130, 105, 0.36);
+    --site-color-input-focus: rgba(114, 255, 155, 0.38);
     --site-color-signal: #72ff9b;
     --site-color-signal-soft: rgba(114, 255, 155, 0.35);
     --site-focus-ring: 0 0 0 2px #020604, 0 0 0 4px #72ff9b;

@@ -69,6 +69,12 @@
                         <span class="node-pt current-node-pt" aria-hidden="true">●</span>
                     </header>
 
+                    @hasSection('page-notice')
+                        <aside class="site-standard-notice" role="alert">
+                            @yield('page-notice')
+                        </aside>
+                    @endif
+
                     @hasSection('current-node-content')
                         <div class="site-standard-page__content node-content" id="current-node-content">
                             @yield('current-node-content')

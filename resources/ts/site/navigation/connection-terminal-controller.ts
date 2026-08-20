@@ -88,7 +88,7 @@ export class ConnectionTerminalController implements Disposable
     private collectTerminals(): void
     {
         this._root.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
-            if (!this._linkClassifier.destinationForAnchor(anchor)) {
+            if (anchor.hasAttribute('data-no-connection-terminal') || !this._linkClassifier.destinationForAnchor(anchor)) {
                 return;
             }
 
@@ -109,21 +109,11 @@ export class ConnectionTerminalController implements Disposable
 
     private readonly syncPositions = (): void =>
     {
-        const metrics = this._gridPlaneController.metrics;
-
         this._terminals.forEach((terminal, anchor) => {
             const rect = anchor.getBoundingClientRect();
-            const center = {
-                x: rect.right + window.scrollX,
-                y: rect.top + window.scrollY + (rect.height / 2),
-            };
-            const snapped = metrics.snapToIntersection(center);
-            const relativeY = snapped.y - (rect.top + window.scrollY);
-            const minimumY = Math.min(rect.height / 2, 10);
-            const maximumY = Math.max(minimumY, rect.height - minimumY);
-            const clampedY = Math.min(maximumY, Math.max(minimumY, relativeY));
+            const centerY = rect.height / 2;
 
-            terminal.style.setProperty('--site-terminal-y', `${clampedY}px`);
+            terminal.style.setProperty('--site-terminal-y', `${centerY}px`);
         });
     };
 }

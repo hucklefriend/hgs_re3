@@ -218,8 +218,8 @@
 
 .lineup-title-search input:focus,
 .lineup-filter-grid :is(input, select):focus {
-    border-color: var(--site-color-line-strong);
-    box-shadow: inset 2px 0 var(--site-color-signal);
+    border-color: var(--site-color-signal);
+    box-shadow: 0 0 0 1px var(--site-color-input-focus), 0 0 14px var(--site-color-input-focus), inset 2px 0 var(--site-color-signal);
 }
 
 .lineup-title-search button,
