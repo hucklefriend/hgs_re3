@@ -74,6 +74,11 @@ test('lineup opens and closes the search panel with SEARCH', async ({ page }) =>
     await searchToggle.click();
     await expect(searchPanel).toBeHidden();
     await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(searchPanel).toHaveAttribute('hidden', '');
+
+    await searchToggle.click();
+    await expect(searchPanel).toBeVisible();
+    await expect(searchToggle).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('実データのタイトル詳細は情報セクションとOGPをモバイル幅でも維持する', async ({ page }) =>

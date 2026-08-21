@@ -44,7 +44,7 @@ export class LineupSearch extends Component
                 return;
             }
 
-            const opening = this._searchPanel.hidden;
+            const opening = !this._searchPanel.classList.contains('is-open');
             this._searchToggle.setAttribute('aria-expanded', String(opening));
 
             if (opening) {
@@ -58,7 +58,8 @@ export class LineupSearch extends Component
 
             this._searchPanel.classList.remove('is-open');
             const onTransitionEnd = (event: TransitionEvent): void => {
-                if (event.propertyName !== 'max-height' || !this._searchPanel || this._searchPanel.classList.contains('is-open')) {
+                const isPanelSizeTransition = event.propertyName === 'block-size' || event.propertyName === 'height';
+                if (!isPanelSizeTransition || !this._searchPanel || this._searchPanel.classList.contains('is-open')) {
                     return;
                 }
 

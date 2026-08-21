@@ -268,6 +268,10 @@
     margin-block-start: 12px;
 }
 
+.site-footer__nav .has-site-connection-terminal {
+    padding-inline-end: 24px;
+}
+
 .site-footer__grid .site-footer__copyright {
     margin-block-start: var(--site-grid-row-size);
 }

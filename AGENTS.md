@@ -96,9 +96,6 @@ php artisan view:cache
 |---|---|
 | タイムライン | `docs/plan/timeline.md` |
 
-## Interaction Rules
-- プロンプトに全角の「？」が含まれる場合は、実装を行わず回答のみ行う。半角の「?」はこの対象外。
-
 ## Key Conventions
 - リンクの視覚表現は、外部リンクには右上を向いた矢印、内部リンクには接続線を用いる。
 - `app/Console/Commands/` にコマンドを追加・変更した場合、または `database/seeders/` にシーダーを追加・変更した場合は、`docs/Codex/artisan-commands.md` も合わせて更新する。
