@@ -79,7 +79,7 @@
 .site-page .pager > div {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 20px;
 }
 
 .site-page :is(.pager-arrow, .pager-num, .pager-current) {
@@ -90,7 +90,22 @@
     border: 1px solid var(--site-color-line);
     color: var(--site-color-text-muted);
     background: rgba(2, 8, 4, 0.72);
-    font: 600 9px/1 var(--site-font-mono);
+    font: 600 12px/1 var(--site-font-mono);
+}
+
+
+.site-page .pager :is(.pager-arrow, .pager-num).has-site-connection-terminal {
+    padding-inline: 10px;
+}
+
+
+
+.site-page .pager .site-connection-terminal {
+    inset-inline-end: -19px;
+}
+
+.site-page .pager .site-connection-terminal::after {
+    inline-size: 6px;
 }
 
 .site-page .pager-current {

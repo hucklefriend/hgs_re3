@@ -45,32 +45,22 @@ class GameController extends Controller
     {
         $text = trim($request->input('text', ''));
         $platformId = $request->integer('platform_id', 0) > 0 ? $request->integer('platform_id') : null;
-        $makerId = $request->integer('maker_id', 0) > 0 ? $request->integer('maker_id') : null;
         $fearMeterMin = $request->filled('fear_meter_min') ? $request->integer('fear_meter_min') : null;
         $fearMeterMax = $request->filled('fear_meter_max') ? $request->integer('fear_meter_max') : null;
         $releaseFrom = $request->integer('release_from', 0) > 0 ? $request->integer('release_from') : null;
         $releaseTo = $request->integer('release_to', 0) > 0 ? $request->integer('release_to') : null;
 
-        $hasFilters = $platformId !== null || $makerId !== null
+        $hasFilters = $platformId !== null
             || $fearMeterMin !== null || $fearMeterMax !== null
             || $releaseFrom !== null || $releaseTo !== null;
 
         $platforms = GamePlatform::select(['id', 'name', 'acronym'])->orderBy('sort_order')->get();
 
-        $makerName = '';
-        if ($makerId !== null) {
-            $makerModel = GameMaker::select(['id', 'name'])->find($makerId);
-            $makerName = $makerModel?->name ?? '';
-            if ($makerModel === null) {
-                $makerId = null;
-            }
-        }
-
         if (!empty($text) || $hasFilters) {
             $searchResultIds = $this->searchTitleIds(
                 $text,
                 $platformId,
-                $makerId,
+                null,
                 $fearMeterMin,
                 $fearMeterMax,
                 $releaseFrom,
@@ -86,8 +76,6 @@ class GameController extends Controller
             $routeParams = array_filter([
                 'text'           => $text ?: null,
                 'platform_id'    => $platformId,
-                'maker_id'       => $makerId,
-                'maker_name'     => $makerName ?: null,
                 'fear_meter_min' => $fearMeterMin,
                 'fear_meter_max' => $fearMeterMax,
                 'release_from'   => $releaseFrom,
@@ -96,10 +84,10 @@ class GameController extends Controller
 
             $pager = new Pager($page, $totalPages, 'Game.Lineup', $routeParams);
 
-            $lineupComponents = ['LineupSearch' => ['makerSuggestUrl' => route('api.game.maker.suggest')]];
+            $lineupComponents = ['LineupSearch' => []];
             return $this->tree(view('game.lineup', compact(
                 'text', 'franchises', 'pager', 'total',
-                'platforms', 'platformId', 'makerId', 'makerName',
+                'platforms', 'platformId',
                 'fearMeterMin', 'fearMeterMax', 'releaseFrom', 'releaseTo',
             )), ['components' => $lineupComponents]);
         }
@@ -111,10 +99,10 @@ class GameController extends Controller
         $totalPages = (int) ceil($total / self::LINEUP_PER_PAGE);
         $pager = new Pager($page, $totalPages, 'Game.Lineup', []);
 
-        $lineupComponents = ['LineupSearch' => ['makerSuggestUrl' => route('api.game.maker.suggest')]];
+        $lineupComponents = ['LineupSearch' => []];
         return $this->tree(view('game.lineup', compact(
             'text', 'franchises', 'pager', 'total',
-            'platforms', 'platformId', 'makerId', 'makerName',
+            'platforms', 'platformId',
             'fearMeterMin', 'fearMeterMax', 'releaseFrom', 'releaseTo',
         )), ['components' => $lineupComponents]);
     }

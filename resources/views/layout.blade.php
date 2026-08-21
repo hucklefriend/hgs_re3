@@ -66,6 +66,11 @@
                 <article class="site-standard-page node" id="current-node">
                     <header class="site-standard-page__header node-head">
                         <h1 class="node-head-text">@yield('current-node-title')</h1>
+                        @hasSection('current-node-actions')
+                            <div class="site-standard-page__actions">
+                                @yield('current-node-actions')
+                            </div>
+                        @endif
                         <span class="node-pt current-node-pt" aria-hidden="true">●</span>
                     </header>
 
