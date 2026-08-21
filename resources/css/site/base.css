@@ -20,6 +20,40 @@
     box-shadow: var(--site-focus-ring);
 }
 
+[data-public-app] :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='hidden'], [type='file']), textarea, select) {
+    border-color: var(--site-color-input-line);
+    border-radius: 0;
+    color: var(--site-color-text);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-public-app] :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='hidden'], [type='file']), textarea, select):focus {
+    outline: 0;
+    border-color: var(--site-color-signal);
+    box-shadow: 0 0 0 1px var(--site-color-input-focus), 0 0 14px var(--site-color-input-focus);
+}
+
+[data-public-app] select {
+    appearance: none;
+    padding-inline-end: 46px;
+    color-scheme: dark;
+    background-color: rgba(0, 0, 0, 0.28);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%2372ff9b' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 12px 8px;
+}
+
+[data-public-app] select:open {
+    border-color: var(--site-color-signal);
+    box-shadow: 0 0 0 1px var(--site-color-input-focus), 0 0 14px var(--site-color-input-focus), inset 2px 0 var(--site-color-signal);
+}
+
+[data-public-app] select option {
+    color: var(--site-color-text);
+    background: #07110a;
+}
+
 [data-public-app] a {
     text-underline-offset: 0.2em;
 }

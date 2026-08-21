@@ -2,12 +2,12 @@
 
 @section('title', 'ログイン')
 @section('current-node-title', 'ログイン')
-@section('current-node-content')
-<p class="alert alert-warning">
-    休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
-    2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、<br>
-    改めて<a href="{{ route('Account.Register') }}">新規登録</a>をお願いします。
-</p>
+@section('page-notice')
+    <p>
+        休止前に登録されたアカウントは、個人情報保護の観点から削除しました。<br>
+        2025年11月1日以前に登録頂いた方には大変申し訳ありませんが、<br>
+        改めて<a href="{{ route('Account.Register') }}">新規登録</a>をお願いします。
+    </p>
 @endsection
 
 @section('nodes')
@@ -18,8 +18,8 @@
         </div>
         <div class="node-content basic">
             <div class="mt-3 mb-3">
-                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary">GitHub</a>
-                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary">Steam</a>
+                <a href="{{ route('Account.GitHub.Redirect') }}" class="btn btn-outline-secondary account-external-auth-button" data-no-connection-terminal><span>GitHub</span><span class="account-external-auth-button__arrow" aria-hidden="true">↗</span></a>
+                <a href="{{ route('Account.Steam.Redirect') }}" class="btn btn-outline-secondary account-external-auth-button" data-no-connection-terminal><span>Steam</span><span class="account-external-auth-button__arrow" aria-hidden="true">↗</span></a>
                 {{-- X連携: フリープランでは /2/users/me が使えないため非表示。課金後に有効化する。 --}}
                 {{-- <a href="{{ route('Account.X.Redirect') }}" class="btn btn-outline-secondary">X</a> --}}
             </div>
@@ -56,11 +56,11 @@
                 @csrf
                 <div class="form-group mb-3">
                     <label for="email" class="form-label">メールアドレス</label>
-                    <input type="email" name="email" class="form-control" id="email" placeholder="メールアドレス" value="{{ old('email') }}" required autofocus>
+                    <input type="email" name="email" class="form-control" id="email" value="{{ old('email') }}" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="password" class="form-label">パスワード</label>
-                    <input type="password" name="password" class="form-control" id="password" placeholder="パスワード" required>
+                    <input type="password" name="password" class="form-control" id="password" required>
                 </div>
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" name="remember_me" value="1" id="rememberMe" checked>
@@ -69,7 +69,7 @@
                     </label>
                 </div>
                 <div class="form-group" style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-success">ログイン</button>
+                    <button type="submit" class="btn btn-success account-auth-submit has-site-connection-terminal">ログイン<x-site.connection-terminal /></button>
                 </div>
             </form>
 

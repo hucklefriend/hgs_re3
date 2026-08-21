@@ -1,3 +1,23 @@
+.site-standard-notice {
+    display: grid;
+    align-items: center;
+    min-inline-size: 0;
+    min-block-size: calc(var(--site-grid-row-size) * 3);
+    margin-block-start: var(--site-grid-row-size);
+    padding-inline: clamp(24px, 4vw, 56px);
+    border-block: 1px solid rgba(255, 202, 121, 0.52);
+    color: #ffdca5;
+    background: linear-gradient(90deg, rgba(255, 178, 88, 0.1), transparent 78%);
+}
+
+.site-standard-notice p {
+    margin: 0;
+    line-height: 1.85;
+}
+
+.site-standard-notice a {
+    color: var(--site-color-signal);
+}
 .site-standard {
     padding-block-end: calc(var(--site-grid-row-size) * 2);
 }
@@ -20,7 +40,7 @@
 .site-standard-page__header {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 8px 24px;
     min-block-size: calc(var(--site-grid-row-size) * 3);
     padding: clamp(28px, 5vw, 64px);
@@ -49,6 +69,11 @@
     overflow-wrap: anywhere;
 }
 
+.site-standard-page__actions {
+    grid-column: 2;
+    align-self: center;
+}
+
 .site-standard-page .node-pt {
     display: grid;
     place-items: center;
@@ -60,7 +85,7 @@
 }
 
 .site-standard-page__header .node-pt {
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 1;
     align-self: center;
 }
@@ -380,6 +405,12 @@
 }
 
 @media (max-width: 639px) {
+    .site-standard-notice {
+        min-block-size: calc(var(--site-grid-row-size) * 3);
+        padding-inline: 20px;
+        font-size: 13px;
+    }
+
     .site-standard {
         padding-block-end: var(--site-grid-row-size);
     }
@@ -431,4 +462,29 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
     }
+}
+
+.site-standard-page .account-external-auth-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.site-standard-page .account-external-auth-button__arrow {
+    font-size: 14px;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+.site-standard-page .account-auth-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 18px;
+}
+
+.site-standard-page .account-auth-submit .site-connection-terminal {
+    inset-inline-start: calc(100% + 8px);
+    inset-inline-end: auto;
 }

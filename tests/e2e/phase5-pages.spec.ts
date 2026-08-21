@@ -55,23 +55,30 @@ test('トップページはPhase 5のタイトル画面と実データ新着欄�
     });
 });
 
-test('ラインナップはタイトル検索と詳細条件をコンソール内で切り替える', async ({ page }) =>
+test('lineup opens and closes the search panel with SEARCH', async ({ page }) =>
 {
     await page.goto('game/lineup');
     await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
     await expect(page.locator('body')).toHaveClass(/site-page--lineup/);
 
-    const titlePanel = page.locator('[data-console-panel="title"]');
-    const advancedPanel = page.locator('[data-console-panel="advanced"]');
-    await expect(titlePanel).toBeVisible();
+    const searchToggle = page.locator('#lineup-search-toggle');
+    const searchPanel = page.locator('#lineup-search-panel');
+    await expect(searchPanel).toBeHidden();
+    await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
 
-    await page.locator('[data-console-control="advanced"]').click();
-    await expect(advancedPanel).toBeVisible();
-    await expect(page.locator('#lineup-platform-id')).toBeVisible();
+    await searchToggle.click();
+    await expect(searchPanel).toBeVisible();
+    await expect(searchToggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#search-input')).toBeFocused();
 
-    await page.locator('[data-console-control="title"]').click();
-    await expect(titlePanel).toBeVisible();
-    await expect(advancedPanel).toBeHidden();
+    await searchToggle.click();
+    await expect(searchPanel).toBeHidden();
+    await expect(searchToggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(searchPanel).toHaveAttribute('hidden', '');
+
+    await searchToggle.click();
+    await expect(searchPanel).toBeVisible();
+    await expect(searchToggle).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('実データのタイトル詳細は情報セクションとOGPをモバイル幅でも維持する', async ({ page }) =>

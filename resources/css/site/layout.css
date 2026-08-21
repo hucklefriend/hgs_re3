@@ -12,7 +12,7 @@
 
 .site-grid-plane {
     position: absolute;
-    z-index: 0;
+    z-index: 2;
     inset: 0 0 auto;
     min-block-size: 100%;
     pointer-events: none;
@@ -24,7 +24,7 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: var(--site-grid-origin-x);
-    inline-size: var(--site-grid-width);
+    inline-size: calc(var(--site-grid-width) + 1px);
     content: '';
     background-image:
         linear-gradient(90deg, var(--site-color-line) 1px, transparent 1px),
@@ -68,7 +68,13 @@
 .site-main,
 .site-footer {
     position: relative;
-    z-index: 1;
+}
+
+[data-public-app] .site-header > *,
+[data-public-app] .site-main > * > *,
+[data-public-app] .site-footer > * {
+    position: relative;
+    z-index: 3;
 }
 
 .site-header {
@@ -176,6 +182,7 @@
     grid-template-columns: repeat(16, minmax(0, 1fr));
     align-content: start;
     min-inline-size: 0;
+    padding-block-start: var(--site-grid-row-size);
 }
 
 .site-breadcrumb {
@@ -259,6 +266,10 @@
     flex-direction: column;
     gap: 12px;
     margin-block-start: 12px;
+}
+
+.site-footer__nav .has-site-connection-terminal {
+    padding-inline-end: 24px;
 }
 
 .site-footer__grid .site-footer__copyright {

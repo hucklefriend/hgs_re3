@@ -11,7 +11,7 @@
 
 .title-hero__frame {
     position: relative;
-    padding-block: 36px clamp(65px, 8vw, 110px);
+    padding-block: var(--site-grid-row-size) clamp(65px, 8vw, 110px);
 }
 
 .title-breadcrumb {
@@ -19,7 +19,7 @@
     align-items: center;
     gap: 10px;
     min-block-size: var(--site-grid-row-size);
-    margin-block-start: 6px;
+    margin-block-start: 0;
     border-block: 1px solid var(--site-color-line);
     color: var(--site-color-text-muted);
     font: 600 10px/1 var(--site-font-mono);
