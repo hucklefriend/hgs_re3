@@ -282,7 +282,7 @@
 
 .site-footer__terminal {
     position: absolute;
-    inset-block-start: -5px;
+    inset-block-start: -4px;
     inset-inline-start: -4px;
     inline-size: 8px;
     block-size: 8px;

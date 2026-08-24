@@ -550,7 +550,7 @@
 
 @media (max-width: 639px) {
     .lineup-console {
-        --lineup-search-panel-rows: 8;
+        --lineup-search-panel-rows: 10;
         --lineup-control-height: 32px;
         padding-block-start: 0;
     }

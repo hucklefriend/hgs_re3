@@ -79,9 +79,13 @@ test('lineup opens and closes the search panel with SEARCH', async ({ page }) =>
     await searchToggle.click();
     await expect(searchPanel).toBeVisible();
     await expect(searchToggle).toHaveAttribute('aria-expanded', 'true');
+
+    await page.setViewportSize({ width: 320, height: 800 });
+    await expect(searchPanel).toHaveCSS('block-size', '400px');
+    expect(await searchPanel.evaluate((panel) => panel.scrollHeight <= panel.clientHeight)).toBe(true);
 });
 
-test('実データのタイトル詳細は情報セクションとOGPをモバイル幅でも維持する', async ({ page }) =>
+test('実データのタイトル詳細はデータセクションとOGPをモバイル幅でも維持する', async ({ page }) =>
 {
     await page.goto('game/lineup');
     const detailUrl = await page.locator('.lineup-franchise__entries a').first().getAttribute('href');
@@ -92,8 +96,93 @@ test('実データのタイトル詳細は情報セクションとOGPをモバ�
     await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
     await expect(page.locator('body')).toHaveClass(/site-page--title-detail/);
     await expect(page.locator('#title-detail-name')).toBeVisible();
-    await expect(page.locator('#overview')).toBeVisible();
+    await expect(page.locator('#overview')).toHaveCount(0);
+    await expect(page.locator('#fear-meter')).toBeVisible();
+    await expect(page.locator('.title-detail-menu a').first()).toHaveAttribute('href', '#fear-meter');
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
+
+    const heroGridOffset = await page.locator('.title-hero__panel').evaluate((heroPanel) => {
+        const root = document.querySelector<HTMLElement>('[data-public-app]');
+        if (root === null) {
+            throw new Error('The public site root is missing.');
+        }
+
+        const rootStyle = window.getComputedStyle(root);
+        const rowSize = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-row-size'));
+        const originY = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-origin-y'));
+        const panelEnd = heroPanel.getBoundingClientRect().bottom + window.scrollY;
+        const remainder = ((panelEnd - originY) % rowSize + rowSize) % rowSize;
+
+        return Math.min(remainder, rowSize - remainder);
+    });
+    expect(heroGridOffset).toBeLessThanOrEqual(1);
+
+    const dataGridOffsets = await page.locator('.title-data-section').evaluateAll((sections) => {
+        const root = document.querySelector<HTMLElement>('[data-public-app]');
+        if (root === null) {
+            throw new Error('The public site root is missing.');
+        }
+
+        const rootStyle = window.getComputedStyle(root);
+        const rowSize = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-row-size'));
+        const originY = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-origin-y'));
+        const distanceFromGrid = (position: number): number => {
+            const remainder = ((position - originY) % rowSize + rowSize) % rowSize;
+
+            return Math.min(remainder, rowSize - remainder);
+        };
+
+        return sections.flatMap((section) => {
+            const rect = section.getBoundingClientRect();
+            const header = section.querySelector<HTMLElement>(':scope > header');
+
+            return [
+                distanceFromGrid(rect.top + window.scrollY),
+                distanceFromGrid(rect.bottom + window.scrollY),
+                header === null ? Number.POSITIVE_INFINITY : distanceFromGrid(header.getBoundingClientRect().bottom + window.scrollY),
+            ];
+        });
+    });
+    dataGridOffsets.forEach((offset) => expect(offset).toBeLessThanOrEqual(1));
+
+    const reviewPanelGridOffsets = await page.locator('.title-review-list > :is(article, .site-empty-state)').evaluateAll((panels) => {
+        const root = document.querySelector<HTMLElement>('[data-public-app]');
+        if (root === null) {
+            throw new Error('The public site root is missing.');
+        }
+
+        const rootStyle = window.getComputedStyle(root);
+        const rowSize = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-row-size'));
+        const originY = Number.parseFloat(rootStyle.getPropertyValue('--site-grid-origin-y'));
+
+        return panels.map((panel) => {
+            const panelEnd = panel.getBoundingClientRect().bottom + window.scrollY;
+            const remainder = ((panelEnd - originY) % rowSize + rowSize) % rowSize;
+
+            return Math.min(remainder, rowSize - remainder);
+        });
+    });
+    expect(reviewPanelGridOffsets.length).toBeGreaterThan(0);
+    reviewPanelGridOffsets.forEach((offset) => expect(offset).toBeLessThanOrEqual(1));
+
+    await page.locator('#packages').evaluate((section) => section.scrollIntoView());
+    await expect(page.locator('.title-detail-menu a[href="#packages"]')).toHaveClass(/is-active/);
+
+    const relatedSection = page.locator('#related');
+    if (await relatedSection.count() > 0) {
+        await expect(page.locator('.title-detail-menu a[href="#related"]')).toContainText('04シリーズ');
+    }
+
+    const loginAction = page.locator('.title-login-action');
+    await expect(loginAction).toContainText('ログインしてお気に入りに追加');
+    expect(await loginAction.evaluate((action) => {
+        const terminal = action.querySelector<HTMLElement>('.site-connection-terminal');
+        if (terminal === null) {
+            return false;
+        }
+
+        return terminal.getBoundingClientRect().left >= action.getBoundingClientRect().right;
+    })).toBe(true);
 
     const hasHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
     expect(hasHorizontalOverflow).toBe(false);

@@ -55,7 +55,12 @@
 }
 
 [data-public-app] a {
+    color: var(--site-color-link);
     text-underline-offset: 0.2em;
+}
+
+[data-public-app] a:active {
+    color: var(--site-color-signal);
 }
 
 @media (prefers-reduced-motion: reduce) {
