@@ -139,7 +139,10 @@ export class PublicSiteApp implements Disposable
                 return new LineupPageController(this._root);
 
             case 'game-title-detail':
-                return new TitleDetailPageController(this._root);
+                return new TitleDetailPageController(
+                    this._root,
+                    this._gridPlaneController,
+                );
 
             default:
                 return this._root.querySelector('.site-standard-page') === null

@@ -15,6 +15,38 @@ test('未ログイン時、ゲームタイトル照会画面で「あなたの�
 
   await expect(page.locator('#reviews')).toBeVisible();
 
+  const fearSpectrum = page.locator('.title-fear-spectrum');
+  await expect(fearSpectrum).toBeVisible();
+  await expect(fearSpectrum.locator('li')).toHaveCount(5);
+  await expect(fearSpectrum.locator('li').first().locator(':scope > span')).toHaveText('4');
+  await expect(fearSpectrum.locator('li').last().locator(':scope > span')).toHaveText('0');
+  await expect(fearSpectrum.locator('li.is-current')).toHaveCount(1);
+  const fearGauge = page.locator('.title-fear-gauge');
+  await expect(fearGauge).toBeVisible();
+  await expect(fearGauge.locator('.title-fear-gauge__ticks li')).toHaveCount(5);
+  const fearMarker = fearGauge.locator('.title-fear-gauge__marker');
+  await expect(fearMarker).toBeVisible();
+  await expect(fearMarker).toHaveText(/^\d\.\d$/);
+  await expect(page.locator('.title-fear-status')).toHaveCount(0);
+
+  const commentLink = page.getByRole('link', { name: '怖さコメントを見る' });
+  await expect(commentLink).toBeVisible();
+  await expect(commentLink).toHaveCSS('color', 'rgb(204, 238, 204)');
+  await commentLink.hover();
+  await expect(commentLink).toHaveCSS('color', 'rgb(114, 255, 155)');
+  const terminalCenterOffset = await commentLink.evaluate((link) => {
+    const terminal = link.querySelector<HTMLElement>('.site-connection-terminal');
+    if (terminal === null) {
+      throw new Error('The fear comment link terminal is missing.');
+    }
+
+    const linkRect = link.getBoundingClientRect();
+    const terminalRect = terminal.getBoundingClientRect();
+
+    return Math.abs((linkRect.top + linkRect.height / 2) - (terminalRect.top + terminalRect.height / 2));
+  });
+  expect(terminalCenterOffset).toBeLessThanOrEqual(1);
+
   // 未ログイン状態では「あなたの怖さメーター」リンクが表示されないことを確認
   await expect(page.getByRole('link', { name: 'あなたの怖さメーター' })).not.toBeVisible();
 });
@@ -113,7 +145,7 @@ test('ログイン後、怖さメーターを入力して成功メッセージ�
   // 集計結果が画面に反映されていることを確認
   const titleFearMeter = page.locator('.title-fear-meter');
   await expect(titleFearMeter).toContainText(statistic.fear_meter_text);
-  await expect(titleFearMeter).toContainText(String(statistic.average_rating));
+  await expect(titleFearMeter).toContainText(Number(statistic.average_rating).toFixed(1));
 });
 
 /**

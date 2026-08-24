@@ -184,8 +184,11 @@
 }
 
 .home-latest {
+    --home-latest-section-padding: clamp(90px, 12vw, 165px);
+
     position: relative;
-    padding-block: clamp(90px, 12vw, 165px);
+    padding-block-start: var(--home-latest-section-padding);
+    padding-block-end: calc(var(--home-latest-section-padding) + var(--home-footer-grid-offset, 0px));
     background: linear-gradient(180deg, rgba(3, 8, 5, 0.58), rgba(2, 6, 4, 0.72));
 }
 
@@ -212,6 +215,7 @@
     min-block-size: calc(var(--site-grid-row-size) * 3);
     padding: calc(var(--site-grid-row-size) / 2) 8px;
     border-block-end: 1px solid var(--site-color-line);
+    background: rgba(2, 6, 4, 0.68);
 }
 
 .home-transmission-row::before {
@@ -350,7 +354,7 @@
     }
 
     .home-latest {
-        padding-block: 78px;
+        --home-latest-section-padding: 78px;
     }
 
     .home-transmission-row {

@@ -45,7 +45,7 @@ export class SectionSpy implements Disposable
             });
         }, {
             rootMargin: '-15% 0px -58%',
-            threshold: [0.08, 0.3, 0.6],
+            threshold: 0,
         });
 
         sections.forEach((section) => this.observer?.observe(section));

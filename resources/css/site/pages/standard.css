@@ -334,9 +334,8 @@
 
 .site-standard-page__header {
     align-items: center;
-    min-block-size: 0;
-    block-size: calc(var(--site-grid-row-size) * 4);
-    padding-block: 0;
+    min-block-size: calc(var(--site-grid-row-size) * 4);
+    padding-block: calc(var(--site-grid-row-size) / 2);
     background: rgba(0, 3, 1, 0.58);
 }
 
@@ -370,7 +369,7 @@
 
 @media (max-width: 1023px) {
     .site-standard-page__header {
-        block-size: calc(var(--site-grid-row-size) * 3);
+        min-block-size: calc(var(--site-grid-row-size) * 3);
     }
 }
 
