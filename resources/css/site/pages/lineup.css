@@ -413,7 +413,7 @@
     gap: calc(var(--site-grid-row-size) * 0.75);
 }
 
-[data-page-kind='game-franchise-detail'] #current-node > .franchise-detail-node {
+:is([data-page-kind='game-franchise-detail'], [data-page-kind='game-franchise-timeline']) #current-node > .franchise-detail-node {
     inline-size: 100%;
     margin-block-start: calc(var(--site-grid-row-size) * 3);
 }
@@ -449,30 +449,30 @@
     letter-spacing: 0.09em;
 }
 
-.lineup-franchise h3 {
+.lineup-franchise > header :is(h2, h3) {
     margin: 5px 0 0;
     font-size: clamp(23px, 2.5vw, 32px);
     font-weight: 500;
 }
 
-.lineup-franchise h3 a {
+.lineup-franchise > header :is(h2, h3) a {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.55em;
 }
 
-.lineup-franchise h3 small {
+.lineup-franchise > header :is(h2, h3) small {
     color: var(--site-color-text-meta);
     font: 600 10px/1 var(--site-font-mono);
     letter-spacing: 0.06em;
 }
 
-.lineup-franchise h3 a.has-site-connection-terminal {
+.lineup-franchise > header :is(h2, h3) a.has-site-connection-terminal {
     padding-inline-end: 23px;
 }
 
-.lineup-franchise h3 a:hover {
+.lineup-franchise > header :is(h2, h3) a:hover {
     color: var(--site-color-signal);
 }
 
