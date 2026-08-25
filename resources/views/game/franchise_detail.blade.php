@@ -15,12 +15,11 @@
 
 @section('nodes')
     @if (!empty($timelineEvents))
-    <section class="node tree-node" id="franchise-timeline-tree-node">
-        <div class="node-head">
-            <h2 class="node-head-text">新着情報</h2>
-            <span class="node-pt">●</span>
-        </div>
-        <div class="node-content home-transmission-list">
+    <section class="lineup-franchise franchise-detail-node" id="franchise-timeline-tree-node">
+        <header>
+            <div><p>TRANSMISSION NODE</p><h2>新着情報</h2></div>
+        </header>
+        <div class="home-transmission-list">
             @foreach ($timelineEvents as $event)
                 @include('common.transmission_row', ['event' => $event, 'index' => $loop->iteration])
             @endforeach
@@ -33,7 +32,7 @@
 
     <section class="lineup-franchise franchise-detail-node" id="title-lineup-tree-node">
         <header>
-            <div><p>LINEUP NODE</p><h3>タイトルラインナップ</h3></div>
+            <div><p>LINEUP NODE</p><h2>タイトルラインナップ</h2></div>
         </header>
         <div class="lineup-franchise__entries">
             @foreach ($franchise->series->sortBy('first_release_int') as $series)
@@ -60,7 +59,7 @@
 
     <section class="lineup-franchise franchise-detail-node" id="media-mix-tree-node">
         <header>
-            <div><p>MEDIA MIX NODE</p><h3>メディアミックス</h3></div>
+            <div><p>MEDIA MIX NODE</p><h2>メディアミックス</h2></div>
         </header>
         <div class="lineup-franchise__entries">
             @foreach ($franchise->mediaMixGroups->sortBy('sort_order') as $mediaMixGroup)
