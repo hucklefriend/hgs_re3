@@ -59,13 +59,11 @@
                 </header>
 
                 <div class="title-hero__content">
-                    <div class="title-keyart">
-                        @if ($title->ogp !== null && !empty($title->ogp->image))
+                    @if ($title->ogp !== null && !empty($title->ogp->image))
+                        <div class="title-keyart">
                             <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
-                        @else
-                            <div class="title-keyart__placeholder" aria-hidden="true"><span>HGN</span><strong>{{ mb_substr($title->name, 0, 1) }}</strong><small>NO VISUAL DATA</small></div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
                     <div class="title-summary">
                         @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif
@@ -96,7 +94,7 @@
                 <p>SELECT DATA</p>
                 <a class="is-active" href="#fear-meter"><span>01</span><b>怖さメーター</b><small>FEAR METER</small></a>
                 <a href="#reviews"><span>02</span><b>レビュー</b><small>USER REPORTS</small></a>
-                <a href="#packages"><span>03</span><b>購入・エディション</b><small>PACKAGES</small></a>
+                <a href="#packages"><span>03</span><b>販売パッケージ</b><small>PACKAGES</small></a>
                 @if ($title->series && $title->series->titles->count() > 1)
                     <a href="#related"><span>04</span><b>シリーズ</b><small>RELATED ENTRIES</small></a>
                 @endif
@@ -170,21 +168,46 @@
                 </section>
 
                 <section class="title-data-section" id="packages">
-                    <header><span>03</span><div><p>PACKAGES</p><h2>購入・エディション</h2></div></header>
+                    <header><span>03</span><div><p>PACKAGES</p><h2>販売パッケージ</h2></div></header>
                     <div class="title-package-list">
                         @forelse ($packageGroups as $packageGroup)
                             <article>
-                                <div><p>PACKAGE GROUP / {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</p><h3>{{ $packageGroup->name }}</h3>@if (!empty($packageGroup->description))<div class="title-package-description">{!! nl2br($packageGroup->description) !!}</div>@endif</div>
-                                <ul>
+                                <header class="title-package-group__header">
+                                    <h3>{{ $packageGroup->name }}</h3>
+                                    @if (!empty($packageGroup->description))<div class="title-package-description">{!! nl2br($packageGroup->description) !!}</div>@endif
+                                </header>
+                                <div class="title-package-items">
                                     @foreach ($packageGroup->packages->sortByDesc('sort_order') as $package)
-                                        <li><a href="{{ route('Game.PlatformDetail', ['platformKey' => $package->platform->key]) }}">{{ $package->platform->acronym ?? $package->platform->name }}</a>@if (!empty($package->node_name)) / {!! $package->node_name !!}@endif <small>{{ $package->release_at }}</small></li>
-                                    @endforeach
-                                </ul>
-                                <div class="title-package-shops">
-                                    @foreach ($packageGroup->packages as $package)
-                                        @foreach ($package->shops as $shop)
-                                            <a href="{{ $shop->url }}" target="_blank" rel="noopener sponsored">{{ $shop->shop()?->name() ?? 'STORE' }} ↗</a>
-                                        @endforeach
+                                        @php
+                                            $packageImageShop = null;
+                                            foreach ($package->shops->sortBy('shop_id') as $packageShop) {
+                                                if ($packageShop->ogp !== null && !empty($packageShop->ogp->image)) {
+                                                    $packageImageShop = $packageShop;
+                                                    break;
+                                                }
+                                            }
+                                        @endphp
+                                        <section @class(['title-package-item', 'title-package-item--without-image' => $packageImageShop === null])>
+                                            @if ($packageImageShop !== null)
+                                                <figure class="title-package-item__visual">
+                                                    <img src="{{ $packageImageShop->ogp->image }}" width="{{ $packageImageShop->ogp->image_width }}" height="{{ $packageImageShop->ogp->image_height }}" alt="{{ $packageGroup->name }} {{ $package->platform->acronym ?? $package->platform->name }}" loading="lazy">
+                                                </figure>
+                                            @endif
+                                            <div class="title-package-item__body">
+                                                <div class="title-package-item__identity">
+                                                    <h4>{{ $package->platform->acronym ?? $package->platform->name }}</h4>
+                                                    @if (!empty($package->node_name))<p>{!! $package->node_name !!}</p>@endif
+                                                </div>
+                                                <p class="title-package-item__release"><span>RELEASE</span><time>{{ $package->release_at }}</time></p>
+                                                @if ($package->shops->isNotEmpty())
+                                                    <div class="title-package-shops">
+                                                        @foreach ($package->shops as $shop)
+                                                            <a href="{{ $shop->url }}" target="_blank" rel="noopener sponsored">{{ $shop->shop()?->name() ?? 'STORE' }} ↗</a>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </section>
                                     @endforeach
                                 </div>
                             </article>
