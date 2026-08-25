@@ -98,6 +98,7 @@ php artisan view:cache
 
 ## Key Conventions
 - リンクの視覚表現は、外部リンクには右上を向いた矢印、内部リンクには接続線を用いる。
+- ゲームパッケージのエディション名（`node_name`）は、プラットフォーム略称が前方に付く前提で命名されている。表示時は両者を同じ行で連結する（例: `PS` + `one books` → `PS one books`）。
 - `app/Console/Commands/` にコマンドを追加・変更した場合、または `database/seeders/` にシーダーを追加・変更した場合は、`docs/Codex/artisan-commands.md` も合わせて更新する。
 - 三項演算子の真の値・偽の値にはロジック処理や関数呼び出しを書かない。値や変数の参照は可。処理が必要な場合は if 文で書く。
 

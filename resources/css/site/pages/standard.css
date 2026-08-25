@@ -349,6 +349,10 @@
     margin-block-start: var(--site-grid-row-size);
 }
 
+[data-page-kind='game-franchise-detail'] #current-node > #current-node-content {
+    margin-block-start: 0;
+}
+
 [data-page-kind='privacy-policy'] #current-node > section.privacy-policy-revision-date {
     display: flex;
     align-items: center;

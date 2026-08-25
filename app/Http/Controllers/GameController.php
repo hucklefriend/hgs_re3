@@ -533,6 +533,11 @@ class GameController extends Controller
             abort(404);
         }
 
+        $title->load([
+            'packageGroups.packages.platform',
+            'packageGroups.packages.shops.ogp',
+        ]);
+
         $ratingCheck = $title->rating == Rating::R18A;
         $franchise = $title->getFranchise();
 

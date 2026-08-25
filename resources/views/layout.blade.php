@@ -61,7 +61,7 @@
         @else
         <div class="site-frame site-standard">
             <div class="site-main__grid">
-                <x-site.breadcrumb :page-kind="$pageKind" :page-title="$pageTitle" />
+                <x-site.breadcrumb :page-kind="$pageKind" :page-title="$pageTitle" :items="$breadcrumbItems ?? []" />
 
                 <article class="site-standard-page node" id="current-node">
                     <header class="site-standard-page__header node-head">
