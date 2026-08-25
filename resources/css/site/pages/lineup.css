@@ -410,7 +410,12 @@
 
 .lineup-result-list {
     display: grid;
-    gap: var(--site-grid-row-size);
+    gap: calc(var(--site-grid-row-size) * 0.75);
+}
+
+[data-page-kind='game-franchise-detail'] #current-node > .franchise-detail-node {
+    inline-size: 100%;
+    margin-block-start: calc(var(--site-grid-row-size) * 3);
 }
 
 .lineup-franchise {
@@ -439,17 +444,29 @@
 
 .lineup-franchise > header p {
     margin: 0;
-    color: var(--site-color-text-muted);
+    color: var(--site-color-text-meta);
     font: 600 10px/1.4 var(--site-font-mono);
     letter-spacing: 0.09em;
 }
 
 .lineup-franchise h3 {
     margin: 5px 0 0;
-    font-size: clamp(21px, 2.5vw, 32px);
-    font-weight: 400;
+    font-size: clamp(23px, 2.5vw, 32px);
+    font-weight: 500;
 }
 
+.lineup-franchise h3 a {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55em;
+}
+
+.lineup-franchise h3 small {
+    color: var(--site-color-text-meta);
+    font: 600 10px/1 var(--site-font-mono);
+    letter-spacing: 0.06em;
+}
 
 .lineup-franchise h3 a.has-site-connection-terminal {
     padding-inline-end: 23px;
@@ -484,16 +501,20 @@
     grid-template-columns: 8px minmax(0, 1fr) auto;
     gap: 14px;
     align-items: center;
-    min-block-size: var(--site-grid-row-size);
-    padding: 8px 18px;
+    min-block-size: max(var(--site-grid-row-size), 44px);
+    padding: 11px 18px;
     border-block-end: 1px solid var(--site-color-line);
+}
+
+.lineup-series > a {
+    padding-inline-start: 30px;
 }
 
 .lineup-franchise__entries > a:nth-of-type(odd),
 .lineup-series > a:nth-of-type(odd) {
     border-inline-end: 1px solid var(--site-color-line);
 }
-.lineup-franchise__entries a:hover b {
+.lineup-franchise__entries a:is(:hover, :focus-visible) b {
     color: var(--site-color-signal);
 }
 
@@ -512,7 +533,23 @@
     block-size: 4px;
     border-radius: 50%;
     background: var(--site-color-signal);
+    box-shadow: 0 0 5px rgba(114, 255, 155, 0.4);
+    opacity: 0.38;
+    transition: opacity var(--site-motion-fast), box-shadow var(--site-motion-fast);
+}
+
+.lineup-franchise__entries a:is(:hover, :focus-visible) .lineup-result-signal {
     box-shadow: 0 0 8px var(--site-color-signal);
+    opacity: 1;
+}
+
+.lineup-franchise__entries .site-connection-terminal {
+    opacity: 0.42;
+    transition: opacity var(--site-motion-fast), border-color var(--site-motion-fast), box-shadow var(--site-motion-fast);
+}
+
+.lineup-franchise__entries a:is(:hover, :focus-visible) .site-connection-terminal {
+    opacity: 1;
 }
 
 .lineup-series h4 {
@@ -523,9 +560,9 @@
     margin: 0;
     padding: 8px 18px;
     border-block-end: 1px solid var(--site-color-line);
-    color: var(--site-color-text-muted);
-    font-size: 11px;
-    font-weight: 500;
+    color: var(--site-color-text-meta);
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .lineup-series h4 small {

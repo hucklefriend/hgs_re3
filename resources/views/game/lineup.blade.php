@@ -16,7 +16,7 @@
 @section('nodes')
     <section class="lineup-console" aria-label="Game search">
         <div class="lineup-console__frame">
-            <button class="lineup-search-toggle" id="lineup-search-toggle" type="button" aria-controls="lineup-search-panel" aria-expanded="{{ $hasActiveSearch ? 'true' : 'false' }}">SEARCH <span aria-hidden="true">+</span></button>
+            <button class="lineup-search-toggle" id="lineup-search-toggle" type="button" aria-controls="lineup-search-panel" aria-expanded="{{ $hasActiveSearch ? 'true' : 'false' }}">タイトルを検索 <span aria-hidden="true">+</span></button>
             <section class="lineup-console-display @if ($hasActiveSearch) is-open @endif" id="lineup-search-panel" aria-label="Search controls" @if (!$hasActiveSearch) hidden @endif>
                 <div class="lineup-search-panel__body">
                     <form id="lineup-search-form" method="GET" action="{{ route('Game.Lineup') }}">
@@ -81,16 +81,11 @@
                 @forelse ($franchises ?? [] as $franchise)
                     <section class="lineup-franchise" id="franchise-{{ $franchise->key }}-link-node">
                         <header>
-                            <div><p>FRANCHISE NODE</p><h3><a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}</a></h3></div>
+                            <div><p>FRANCHISE NODE</p><h3><a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}<small>フランチャイズ</small></a></h3></div>
                         </header>
                         <div class="lineup-franchise__entries">
                             @foreach ($franchise->searchSeries ?? [] as $series)
-                                <section class="lineup-series">
-                                    <h4><span>{{ $series->name }}<small>シリーズ</small></span></h4>
-                                    @foreach ($series->searchTitles ?? [] as $gameTitle)
-                                        <a href="{{ route('Game.TitleDetail', ['titleKey' => $gameTitle->key]) }}"><span class="lineup-result-signal" aria-hidden="true"></span><b>{{ $gameTitle->name }}</b></a>
-                                    @endforeach
-                                </section>
+                                <x-site.lineup-series :series="$series" :titles="$series->searchTitles ?? []" />
                             @endforeach
                             @if (count($franchise->searchSeries ?? []) > 0 && count($franchise->searchTitles ?? []) > 0)
                                 <section class="lineup-series">

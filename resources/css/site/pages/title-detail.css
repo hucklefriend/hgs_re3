@@ -695,30 +695,6 @@
     font: 600 10px/1 var(--site-font-mono);
 }
 
-.title-related > div {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background: var(--site-color-line);
-}
-
-.title-related > div a {
-    display: grid;
-    gap: 7px;
-    min-block-size: calc(var(--site-grid-row-size) * 2);
-    padding: 20px;
-    background: var(--site-color-background);
-}
-
-.title-related > div a:hover b {
-    color: var(--site-color-signal);
-}
-
-.title-related > div b {
-    font-size: 12px;
-    font-weight: 500;
-}
-
 .site-page--title-detail a {
     color: var(--site-color-link);
 }
@@ -784,8 +760,7 @@
         min-inline-size: 0;
     }
 
-    .title-section-actions,
-    .title-related > div {
+    .title-section-actions {
         grid-template-columns: 1fr;
     }
 

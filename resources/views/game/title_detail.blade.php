@@ -42,7 +42,7 @@
                 <a href="{{ route('Root') }}">ROOT</a><span>/</span>
                 <a href="{{ route('Game.Lineup') }}">LINEUP</a><span>/</span>
                 @if ($franchise)
-                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}</a><span>/</span>
+                    <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}フランチャイズ</a><span>/</span>
                 @endif
                 <b>{{ $title->name }}</b>
             </nav>
@@ -69,7 +69,16 @@
                         @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif
                         <dl class="title-facts">
                             <div><dt>FIRST RELEASE</dt><dd>{{ $releaseLabel }}</dd></div>
-                            <div><dt>SERIES</dt><dd>{{ $title->series?->name ?? '—' }}</dd></div>
+                            <div>
+                                <dt>FRANCHISE</dt>
+                                <dd>
+                                    @if ($franchise)
+                                        <a href="{{ route('Game.FranchiseDetail', ['franchiseKey' => $franchise->key]) }}">{{ $franchise->name }}フランチャイズ</a>
+                                    @else
+                                        —
+                                    @endif
+                                </dd>
+                            </div>
                             <div><dt>PLATFORM</dt><dd>{{ $platformLabels->isNotEmpty() ? $platformLabels->implode(' / ') : 'UNKNOWN' }}</dd></div>
                         </dl>
                         @auth
@@ -218,13 +227,14 @@
                 </section>
 
                 @if ($title->series && $title->series->titles->count() > 1)
-                    <section class="title-data-section title-related" id="related">
+                    <section class="title-data-section" id="related">
                         <header><span>04</span><div><p>RELATED ENTRIES</p><h2>シリーズ作品</h2></div></header>
-                        <div>
-                            @foreach ($title->series->titles->sortBy('first_release_int') as $sameSeriesTitle)
-                                @continue($sameSeriesTitle->id === $title->id)
-                                <a href="{{ route('Game.TitleDetail', ['titleKey' => $sameSeriesTitle->key]) }}"><b>{{ $sameSeriesTitle->name }}</b></a>
-                            @endforeach
+                        <div class="lineup-franchise__entries">
+                            <x-site.lineup-series
+                                :series="$title->series"
+                                :titles="$title->series->titles->sortBy('first_release_int')"
+                                :exclude-title-id="$title->id"
+                            />
                         </div>
                     </section>
                 @endif
