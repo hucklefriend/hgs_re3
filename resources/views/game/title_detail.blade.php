@@ -35,6 +35,12 @@
     ])
 @endsection
 
+@if (is_admin_user())
+    @section('site-footer-action')
+        <a href="{{ route('Admin.Game.Title.Detail', $title) }}" class="site-footer-action__link">管理へ</a>
+    @endsection
+@endif
+
 @section('site-content')
     <section class="title-hero" aria-labelledby="title-detail-name">
         <div class="site-frame title-hero__frame" data-grid-frame>
@@ -60,7 +66,7 @@
 
                 <div class="title-hero__content">
                     @if ($title->ogp !== null && !empty($title->ogp->image))
-                        <div class="title-keyart">
+                        <div @class(['title-keyart', 'title-keyart--tall' => (int) $title->ogp->image_height > 1000])>
                             <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
                         </div>
                     @endif

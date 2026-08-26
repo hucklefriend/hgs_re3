@@ -3,6 +3,12 @@
 @section('title', 'お知らせ')
 @section('current-node-title', 'お知らせ')
 
+@if (is_admin_user())
+    @section('site-footer-action')
+        <a href="{{ route('Admin.Manage.Information') }}" class="site-footer-action__link">管理へ</a>
+    @endsection
+@endif
+
 @section('nodes')
     @if ($informations->isEmpty())
         <section class="node">

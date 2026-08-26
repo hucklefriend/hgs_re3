@@ -10,6 +10,7 @@ use App\Http\Requests\ContactSubmitRequest;
 use App\Models\Contact;
 use App\Models\ContactResponse;
 use App\Services\Discord\DiscordWebhookService;
+use App\Support\DiscordNotificationTitle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -84,9 +85,13 @@ class ContactController extends Controller
             $category  = $contact->category?->label() ?? 'カテゴリなし';
             $preview   = mb_strimwidth($contact->message, 0, 200, '…');
             $hr = '─────────────────────';
+            $title = DiscordNotificationTitle::withEnvironment(
+                '新しいお問い合わせが届きました',
+                app()->environment(),
+            );
             app(DiscordWebhookService::class)
                 ->to(DiscordChannel::Contact)
-                ->send("新しいお問い合わせが届きました\n{$hr}\n名前: {$contact->name}\nカテゴリ: {$category}\n内容: {$preview}\n管理画面: {$adminUrl}\n{$hr}");
+                ->send("{$title}\n{$hr}\n名前: {$contact->name}\nカテゴリ: {$category}\n内容: {$preview}\n管理画面: {$adminUrl}\n{$hr}");
         }
 
         $url = route('Contact.Show', ['token' => $contact->token]);

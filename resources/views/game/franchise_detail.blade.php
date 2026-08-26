@@ -13,6 +13,12 @@
     {!! nl2br($franchise->description) !!}
 @endsection
 
+@if (is_admin_user())
+    @section('site-footer-action')
+        <a href="{{ route('Admin.Game.Franchise.Detail', $franchise) }}" class="site-footer-action__link">管理へ</a>
+    @endsection
+@endif
+
 @section('nodes')
     @if (!empty($timelineEvents))
     <section class="lineup-franchise franchise-detail-node" id="franchise-timeline-tree-node">

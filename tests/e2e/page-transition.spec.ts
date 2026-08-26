@@ -113,3 +113,50 @@ test('低減モーションでは接続ノードを作らず直ちに通常遷�
     }));
     expect(recordedState).toEqual({ handoffCreated: 'false', pageDeparting: 'false' });
 });
+
+test('接続端子付き送信ボタンは演出後に通常のPOST送信を行う', async ({ page }) =>
+{
+    await page.goto('contact');
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+    const confirmationUrl = new URL('contact/test-confirmation-token', page.url()).href;
+    await page.evaluate((url) => {
+        const root = document.querySelector<HTMLElement>('[data-public-app]');
+        const section = document.querySelector<HTMLElement>('#contact-about-node');
+        if (root !== null) {
+            root.dataset.pageKind = 'send-contact';
+        }
+        if (section !== null) {
+            section.dataset.contactConfirmationUrl = url;
+        }
+    }, confirmationUrl);
+    const completionHtml = await page.content();
+
+    await page.route('**/contact', async (route) => {
+        if (route.request().method() !== 'POST') {
+            await route.continue();
+            return;
+        }
+
+        await route.fulfill({
+            status: 200,
+            contentType: 'text/html; charset=UTF-8',
+            body: completionHtml,
+        });
+    });
+    await page.fill('#message', '問い合わせです');
+
+    const postRequest = page.waitForRequest((request) =>
+        request.url().endsWith('/contact') && request.method() === 'POST'
+    );
+    await page.getByRole('button', { name: '送信' }).click({ noWaitAfter: true });
+
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-departing', 'true');
+    await expect(page.locator('.site-handoff-token')).toHaveCount(1);
+    await postRequest;
+    await expect(page).toHaveURL(confirmationUrl);
+
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+    await expect(page.locator('#contact-form-node')).toBeVisible();
+    await expect(page).toHaveURL(/\/contact$/);
+});

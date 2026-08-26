@@ -83,6 +83,7 @@ test('問い合わせフォームから問い合わせを送信できる', async
   // 完了画面が表示されることを確認
   await expect(page.getByRole('heading', { name: '送信完了' })).toBeVisible();
   await expect(page.locator('#contact-content-node')).toBeVisible();
+  await expect(page).toHaveURL(/\/contact\/[^/]+$/);
   
   // 入力した内容が表示されることを確認
   await expect(page.locator('#contact-content')).toContainText('テスト');
@@ -356,4 +357,3 @@ test('投稿内容にひらがな・カタカナが含まれていなかった�
   expect(jsErrors, `JavaScriptエラーが発生しました: ${jsErrors.map(e => e.message).join(', ')}`).toHaveLength(0);
   expect(consoleErrors, `コンソールエラーが発生しました: ${consoleErrors.join(', ')}`).toHaveLength(0);
 });
-

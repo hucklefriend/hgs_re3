@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', '問い合わせ | ホラーゲームネットワーク')
+@section('title', '問い合わせ')
 @section('current-node-title', '問い合わせ')
 
 @section('nodes')
@@ -78,11 +78,10 @@
                 </div>
 
                 <div style="margin-top: 30px;">
-                    <button type="submit" class="btn btn-success">送信</button>
+                    <button type="submit" class="btn btn-success site-terminal-submit has-site-connection-terminal">送信<x-site.connection-terminal /></button>
                 </div>
             </form>
         </div>
     </section>
 
 @endsection
-

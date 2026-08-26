@@ -495,7 +495,7 @@ Route::group(['prefix' => 'game'], function () {
     Route::get('/franchise/{franchiseKey}/timeline', [$class, 'franchiseTimeline'])->name('Game.FranchiseTimeline');
     // フランチャイズ
     Route::get('/franchises/{prefix?}', [$class, 'franchises'])->name('Game.Franchises');
-    // ホラーゲームラインナップ
+    // ラインナップ
     Route::get('/lineup', [$class, 'lineup'])->name('Game.Lineup');
     // タイトル詳細
     Route::get('/title/{titleKey}', [$class, 'titleDetail'])->name('Game.TitleDetail');

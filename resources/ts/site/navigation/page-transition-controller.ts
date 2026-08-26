@@ -15,7 +15,7 @@ const DEPARTURE_MASK_FOLLOW_RATE = 0.14;
 const DEPARTURE_MASK_COMPLETION_DURATION = 260;
 
 /**
- * リンククリックから通常の全文書遷移までを一度だけ実行する。
+ * リンクまたはフォーム操作から通常の全文書遷移までを一度だけ実行する。
  */
 export class PageTransitionController implements Disposable
 {
@@ -34,6 +34,7 @@ export class PageTransitionController implements Disposable
     private _departureMaskTop: number | null = null;
     private _departureMaskAnimationFrameId: number | null = null;
     private _departureMaskAnimationResolve: (() => void) | null = null;
+    private readonly _resumingForms: WeakSet<HTMLFormElement> = new WeakSet();
 
     public constructor(
         root: HTMLElement,
@@ -65,6 +66,7 @@ export class PageTransitionController implements Disposable
 
         this._started = true;
         document.addEventListener('click', this.handleClick);
+        document.addEventListener('submit', this.handleSubmit);
         window.addEventListener('pageshow', this.handlePageShow);
     }
 
@@ -75,6 +77,7 @@ export class PageTransitionController implements Disposable
         }
 
         document.removeEventListener('click', this.handleClick);
+        document.removeEventListener('submit', this.handleSubmit);
         window.removeEventListener('pageshow', this.handlePageShow);
         this.reset();
         this._started = false;
@@ -115,7 +118,54 @@ export class PageTransitionController implements Disposable
         }
 
         this._locked = true;
-        void this.startTransition(anchor, destination);
+        void this.startTransition(anchor, destination, () => window.location.assign(destination.href));
+    };
+
+    private readonly handleSubmit = (event: SubmitEvent): void =>
+    {
+        if (!(event.target instanceof HTMLFormElement)
+            || event.defaultPrevented
+            || this._resumingForms.has(event.target)
+            || !this._root.contains(event.target)) {
+            return;
+        }
+
+        const form = event.target;
+        const submitter = event.submitter;
+        if (!(submitter instanceof HTMLButtonElement || submitter instanceof HTMLInputElement)
+            || !submitter.classList.contains('has-site-connection-terminal')) {
+            return;
+        }
+
+        const target = form.target.trim().toLowerCase();
+        if ((target !== '' && target !== '_self') || form.method.toLowerCase() === 'dialog') {
+            return;
+        }
+
+        let destination: URL;
+        try {
+            destination = new URL(form.action, window.location.href);
+        } catch {
+            return;
+        }
+        if (destination.origin !== window.location.origin) {
+            return;
+        }
+
+        event.preventDefault();
+        if (this._locked) {
+            return;
+        }
+
+        this._locked = true;
+        void this.startTransition(submitter, destination, () => {
+            this._resumingForms.add(form);
+            try {
+                form.requestSubmit(submitter);
+            } finally {
+                this._resumingForms.delete(form);
+            }
+        });
     };
 
     private readonly handlePageShow = (event: PageTransitionEvent): void =>
@@ -125,19 +175,23 @@ export class PageTransitionController implements Disposable
         }
     };
 
-    private async startTransition(anchor: HTMLAnchorElement, destination: URL): Promise<void>
+    private async startTransition(
+        originElement: HTMLElement,
+        destination: URL,
+        beginNavigation: () => void,
+    ): Promise<void>
     {
         const generation = this._generation;
         let safetyTimerId: number | null = null;
         let navigationStarted = false;
         let departureMaskCompletion: Promise<void> | null = null;
-        const beginNavigation = (): void => {
+        const navigateOnce = (): void => {
             if (navigationStarted || this._generation !== generation) {
                 return;
             }
 
-            window.location.assign(destination.href);
             navigationStarted = true;
+            beginNavigation();
         };
 
         try {
@@ -151,7 +205,7 @@ export class PageTransitionController implements Disposable
                 return;
             }
 
-            const origin = this._terminalController.documentPointFor(anchor);
+            const origin = this._terminalController.documentPointFor(originElement);
             const route = this._routePlanner.plan(origin, this._gridPlaneController.metrics);
             const header = this._root.querySelector<HTMLElement>('[data-site-header]');
             const headerHeight = header?.offsetHeight ?? 0;
@@ -166,7 +220,7 @@ export class PageTransitionController implements Disposable
 
                 departureMaskCompletion = this.completeDepartureMask(headerBottom, generation);
             };
-            this._terminalController.setConnecting(anchor, true);
+            this._terminalController.setConnecting(originElement, true);
             this.startDepartureMask(origin);
             this._root.dataset.pageDeparting = 'true';
             this._scrollFollowController.start(origin, headerHeight);
@@ -200,7 +254,7 @@ export class PageTransitionController implements Disposable
             }
             this._animationController.cancel();
             this._scrollFollowController.dispose();
-            beginNavigation();
+            navigateOnce();
         }
     }
 

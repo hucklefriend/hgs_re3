@@ -33,7 +33,7 @@ class GameController extends Controller
     private const LINEUP_PER_PAGE = 10;
 
     /**
-     * ホラーゲームラインナップ
+     * ラインナップ
      * last_title_update_at 降順のフランチャイズと、紐づくシリーズ・タイトルをツリー形式で表示する。
      * text またはフィルタが指定された場合は Meilisearch で検索し、検索結果を表示する。
      *
@@ -641,19 +641,22 @@ class GameController extends Controller
             abort(404);
         }
 
-        $relatedNetworks = [];
-        if ($mediaMix->mediaMixGroup !== null) {
-            foreach ($mediaMix->mediaMixGroup->mediaMixes as $relatedMediaMix) {
-                if ($relatedMediaMix->id === $mediaMix->id) {
-                    continue;
-                }
-                $relatedNetworks[] = $relatedMediaMix;
-            }
-        }
+        $mediaMix->load([
+            'ogp',
+            'mediaMixGroup.franchise',
+            'mediaMixGroup.mediaMixes',
+            'franchise',
+            'relatedProducts.shops.ogp',
+        ]);
+
+        $franchise = $mediaMix->getFranchise();
 
         return $this->tree(view('game.media_mix_detail', [
             'mediaMix' => $mediaMix,
-            'relatedNetworks' => $relatedNetworks,
-        ]), options: ['ratingCheck' => $mediaMix->rating == Rating::R18A]);
+            'franchise' => $franchise,
+        ]), options: [
+            'ratingCheck' => $mediaMix->rating == Rating::R18A,
+            'url' => route('Game.MediaMixDetail', ['mediaMixKey' => $mediaMix->key]),
+        ]);
     }
 }

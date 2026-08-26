@@ -69,7 +69,7 @@
                     </label>
                 </div>
                 <div class="form-group" style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-success account-auth-submit has-site-connection-terminal">ログイン<x-site.connection-terminal /></button>
+                    <button type="submit" class="btn btn-success site-terminal-submit has-site-connection-terminal">ログイン<x-site.connection-terminal /></button>
                 </div>
             </form>
 
@@ -85,4 +85,3 @@
     </section>
 
 @endsection
-

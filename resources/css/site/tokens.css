@@ -26,6 +26,8 @@
     --site-grid-cell-width: calc(var(--site-grid-width) / var(--site-grid-columns));
     --site-motion-fast: 160ms;
     --site-motion-normal: 280ms;
+    --site-connection-terminal-size: 13px;
+    --site-connection-stub-length: 8px;
     --site-ambient-signal-size: 7px;
     --site-handoff-token-size: 14px;
 }

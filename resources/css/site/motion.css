@@ -66,8 +66,8 @@
     z-index: 4;
     inset-block-start: var(--site-terminal-y, 50%);
     inset-inline-end: 1px;
-    inline-size: 13px;
-    block-size: 13px;
+    inline-size: var(--site-connection-terminal-size);
+    block-size: var(--site-connection-terminal-size);
     border: 1px solid var(--site-color-line-strong);
     border-radius: 50%;
     background: var(--site-color-background);
@@ -91,7 +91,7 @@
     position: absolute;
     inset-block-start: 50%;
     inset-inline-end: 100%;
-    inline-size: 8px;
+    inline-size: var(--site-connection-stub-length);
     block-size: 1px;
     content: '';
     background: var(--site-color-line-strong);
