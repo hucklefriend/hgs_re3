@@ -280,6 +280,25 @@
     color: var(--site-color-signal);
 }
 
+.site-footer-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--site-grid-row-size);
+    margin-block-end: var(--site-grid-row-size);
+}
+
+.site-footer-action__link {
+    color: var(--site-color-text-muted);
+    font: 600 10px/1.4 var(--site-font-mono);
+    letter-spacing: 0.12em;
+}
+
+.site-footer-action__link:hover,
+.site-footer-action__link:focus-visible {
+    color: var(--site-color-signal);
+}
+
 .site-footer__terminal {
     position: absolute;
     inset-block-start: -4px;

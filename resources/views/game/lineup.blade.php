@@ -9,7 +9,7 @@
     $hasActiveSearch = !empty($text) || $hasAdvancedFilters;
 @endphp
 
-@section('title', 'ホラーゲームラインナップ')
+@section('title', 'ラインナップ')
 @section('body-class', 'site-page site-page--lineup')
 @section('current-node-title', 'ラインナップ')
 

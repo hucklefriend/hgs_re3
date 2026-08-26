@@ -12,6 +12,7 @@ import { PageTransitionController } from './navigation/page-transition-controlle
 import { ScrollFollowController } from './navigation/scroll-follow-controller';
 import { TransitionStore } from './navigation/transition-store';
 import { HomePageController } from './pages/home-page-controller';
+import { ContactCompletePageController } from './pages/contact-complete-page-controller';
 import { LineupPageController } from './pages/lineup-page-controller';
 import type { PageController } from './pages/page-controller';
 import { StandardPageController } from './pages/standard-page-controller';
@@ -139,7 +140,14 @@ export class PublicSiteApp implements Disposable
                 return new LineupPageController(this._root);
 
             case 'game-title-detail':
+            case 'game-media-mix-detail':
                 return new TitleDetailPageController(
+                    this._root,
+                    this._gridPlaneController,
+                );
+
+            case 'send-contact':
+                return new ContactCompletePageController(
                     this._root,
                     this._gridPlaneController,
                 );

@@ -111,7 +111,7 @@
                             >{{ old('message') }}</textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-success">返信を投稿</button>
+                        <button type="submit" class="btn btn-success site-terminal-submit has-site-connection-terminal">返信を投稿<x-site.connection-terminal /></button>
                     </form>
                 </div>
             </section>
@@ -132,7 +132,7 @@
                 </p>
                 <form method="POST" action="{{ route('Contact.Cancel', ['token' => $contact->token]) }}" data-child-only="0" data-no-push-state="1">
                     @csrf
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('本当に取り消していいですか？');">問い合わせを取り消す</button>
+                    <button type="submit" class="btn btn-danger site-terminal-submit has-site-connection-terminal" onclick="return confirm('本当に取り消していいですか？');">問い合わせを取り消す<x-site.connection-terminal /></button>
                 </form>
             </div>
         </section>
@@ -141,4 +141,3 @@
 
 
 @endsection
-

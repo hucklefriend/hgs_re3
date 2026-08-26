@@ -91,6 +91,14 @@
             </div>
         </div>
         @endif
+
+        @hasSection('site-footer-action')
+            <div class="site-frame">
+                <nav class="site-footer-action" aria-label="管理操作">
+                    @yield('site-footer-action')
+                </nav>
+            </div>
+        @endif
     </main>
 
     <x-site.footer />

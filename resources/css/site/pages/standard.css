@@ -480,14 +480,16 @@
     transform: translateY(-1px);
 }
 
-.site-standard-page .account-auth-submit {
+.site-standard-page .site-terminal-submit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    inline-size: fit-content;
+    max-inline-size: 100%;
     padding-inline: 18px;
 }
 
-.site-standard-page .account-auth-submit .site-connection-terminal {
-    inset-inline-start: calc(100% + 8px);
+.site-standard-page .site-terminal-submit .site-connection-terminal {
+    inset-inline-start: calc(100% + var(--site-connection-stub-length));
     inset-inline-end: auto;
 }
