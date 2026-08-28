@@ -20,7 +20,7 @@
 
 .platform-title-card {
     display: grid;
-    grid-template-rows: calc(var(--site-grid-row-size) * 6) calc(var(--site-grid-row-size) * 4);
+    grid-template-rows: calc(var(--site-grid-row-size) * 6) minmax(calc(var(--site-grid-row-size) * 4), auto);
     min-inline-size: 0;
     padding-block-end: var(--site-grid-row-size);
     color: var(--site-color-text);
@@ -33,8 +33,11 @@
 }
 
 .platform-title-card.has-site-connection-terminal {
-    --site-terminal-y: 80%;
     padding-inline-end: 0;
+}
+
+.platform-title-card > .site-connection-terminal {
+    --site-terminal-y: calc(var(--site-grid-row-size) * 6 + 54px) !important;
 }
 
 .platform-title-card__image {
@@ -121,14 +124,12 @@
 }
 
 .platform-title-card__description {
-    display: -webkit-box;
+    display: block;
     margin-block-start: 13px;
-    overflow: hidden;
     color: #96a49c;
     font-size: 12px;
     line-height: 1.8;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    overflow-wrap: anywhere;
 }
 
 .platform-title-card__description--empty {
@@ -160,12 +161,12 @@
     }
 
     .platform-title-card {
-        grid-template-rows: calc(var(--site-grid-row-size) * 5) calc(var(--site-grid-row-size) * 5);
+        grid-template-rows: calc(var(--site-grid-row-size) * 5) minmax(calc(var(--site-grid-row-size) * 5), auto);
         border-inline-start: 0;
     }
 
-    .platform-title-card.has-site-connection-terminal {
-        --site-terminal-y: 75%;
+    .platform-title-card > .site-connection-terminal {
+        --site-terminal-y: calc(var(--site-grid-row-size) * 5 + 50px) !important;
     }
 
     .platform-title-card__body {
