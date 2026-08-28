@@ -97,6 +97,7 @@ php artisan view:cache
 | タイムライン | `docs/plan/timeline.md` |
 
 ## Key Conventions
+- 問題・不具合を修正した際は、完了報告で「何が原因だったか」と「どのように修正したか」を具体的に説明する。
 - リンクの視覚表現は、外部リンクには右上を向いた矢印、内部リンクには接続線を用いる。
 - ゲームパッケージのエディション名（`node_name`）は、プラットフォーム略称が前方に付く前提で命名されている。表示時は両者を同じ行で連結する（例: `PS` + `one books` → `PS one books`）。
 - `app/Console/Commands/` にコマンドを追加・変更した場合、または `database/seeders/` にシーダーを追加・変更した場合は、`docs/Codex/artisan-commands.md` も合わせて更新する。

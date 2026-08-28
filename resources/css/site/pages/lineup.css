@@ -413,6 +413,10 @@
     gap: calc(var(--site-grid-row-size) * 0.75);
 }
 
+.site-page--game-platform .lineup-result-list {
+    gap: var(--site-grid-row-size);
+}
+
 :is([data-page-kind='game-franchise-detail'], [data-page-kind='game-franchise-timeline']) #current-node > .franchise-detail-node {
     inline-size: 100%;
     margin-block-start: calc(var(--site-grid-row-size) * 3);

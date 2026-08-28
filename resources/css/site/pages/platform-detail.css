@@ -1,0 +1,174 @@
+[data-page-kind='game-platform-detail'] {
+    --platform-detail-surface: rgba(4, 14, 8, 0.38);
+}
+
+[data-page-kind='game-platform-detail'] #current-node > #current-node-content {
+    margin-block-start: 0;
+    background: var(--platform-detail-surface);
+}
+
+.platform-title-catalog {
+    margin-block-start: var(--site-grid-row-size);
+}
+
+.platform-title-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    background: var(--platform-detail-surface);
+}
+
+.platform-title-card {
+    display: grid;
+    grid-template-rows: calc(var(--site-grid-row-size) * 6) calc(var(--site-grid-row-size) * 4);
+    min-inline-size: 0;
+    padding-block-end: var(--site-grid-row-size);
+    color: var(--site-color-text);
+    background: rgba(1, 7, 4, 0.58);
+    overflow: hidden;
+}
+
+.platform-title-card:nth-child(even) {
+    border-inline-start: 1px solid var(--site-color-line);
+}
+
+.platform-title-card.has-site-connection-terminal {
+    --site-terminal-y: 80%;
+    padding-inline-end: 0;
+}
+
+.platform-title-card__image {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+    overflow: hidden;
+    border-block-end: 1px solid var(--site-color-line-strong);
+    background:
+        linear-gradient(135deg, rgba(114, 255, 155, 0.06), transparent 48%),
+        rgba(0, 3, 1, 0.26);
+}
+
+.platform-title-card__image::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background: linear-gradient(to top, rgba(0, 5, 2, 0.52), transparent 42%);
+    pointer-events: none;
+}
+
+.platform-title-card__image img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    opacity: 0.82;
+    filter: saturate(0.78) brightness(0.84);
+    transition: filter var(--site-motion-normal), opacity var(--site-motion-normal), transform var(--site-motion-normal);
+}
+
+.platform-title-card__placeholder {
+    display: grid;
+    place-items: center;
+    gap: 14px;
+    color: var(--site-color-text-meta);
+    font: 600 9px/1 var(--site-font-mono);
+    letter-spacing: 0.16em;
+}
+
+.platform-title-card__placeholder i {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 50%;
+    background: var(--site-color-signal);
+    box-shadow: 0 0 14px var(--site-color-signal-soft);
+    opacity: 0.45;
+}
+
+.platform-title-card__body {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    align-content: start;
+    min-inline-size: 0;
+    padding: 20px 24px;
+    background: transparent;
+}
+
+.platform-title-card__type {
+    margin-block-end: 10px;
+    color: var(--site-color-text-meta);
+    font: 600 9px/1 var(--site-font-mono);
+    letter-spacing: 0.13em;
+}
+
+.platform-title-card__body b {
+    display: grid;
+    grid-template-columns: 5px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-inline-size: 0;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.platform-title-card__body b i {
+    inline-size: 4px;
+    block-size: 4px;
+    border-radius: 50%;
+    background: var(--site-color-signal);
+    box-shadow: 0 0 5px var(--site-color-signal-soft);
+    opacity: 0.45;
+}
+
+.platform-title-card__description {
+    display: -webkit-box;
+    margin-block-start: 13px;
+    overflow: hidden;
+    color: #96a49c;
+    font-size: 12px;
+    line-height: 1.8;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.platform-title-card__description--empty {
+    color: var(--site-color-text-muted);
+}
+
+.platform-title-card:is(:hover, :focus-visible) .platform-title-card__image img {
+    filter: saturate(1) brightness(1);
+    opacity: 0.96;
+    transform: scale(1.025);
+}
+
+.platform-title-card:is(:hover, :focus-visible) .platform-title-card__body b {
+    color: var(--site-color-signal);
+}
+
+.platform-title-card:is(:hover, :focus-visible) .platform-title-card__body b i {
+    box-shadow: 0 0 9px var(--site-color-signal);
+    opacity: 1;
+}
+
+.platform-title-catalog__pager {
+    background: var(--platform-detail-surface);
+}
+
+@media (max-width: 767px) {
+    .platform-title-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .platform-title-card {
+        grid-template-rows: calc(var(--site-grid-row-size) * 5) calc(var(--site-grid-row-size) * 5);
+        border-inline-start: 0;
+    }
+
+    .platform-title-card.has-site-connection-terminal {
+        --site-terminal-y: 75%;
+    }
+
+    .platform-title-card__body {
+        padding: 18px 20px;
+    }
+}
