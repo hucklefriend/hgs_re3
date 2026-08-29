@@ -7,7 +7,7 @@
     @if ($isBlocked)
         <p class="mt-3 text-slate-400">このユーザーのコンテンツは表示できません。</p>
     @elseif ($fearMeters->isEmpty())
-        <p class="mt-3">まだ怖さメーターの評価はありません。</p>
+        <p class="mt-3">ここには、まだ恐怖の記録はないようだ。</p>
     @endif
 @endsection
 

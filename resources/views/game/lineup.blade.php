@@ -100,7 +100,7 @@
                         </div>
                     </section>
                 @empty
-                    <p class="site-empty-state">この検索条件では、何も見つからないようです。</p>
+                    <p class="site-empty-state">あたりを調べたが、条件に合う作品は見つからないようだ。</p>
                 @endforelse
             </div>
             @isset($pager)<div class="lineup-results__pager">@include('common.pager', ['pager' => $pager])</div>@endisset

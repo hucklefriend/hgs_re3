@@ -8,6 +8,54 @@
     $routeName = request()->route()?->getName() ?? 'default';
     $pageKind = $pageKind ?? str($routeName)->replace('.', ' ')->kebab()->toString();
     $pageTitle = trim($__env->yieldContent('title', ''));
+    $pageHeadingLabel = trim($__env->yieldContent('current-node-label', ''));
+    if ($pageHeadingLabel === '') {
+        if (str_starts_with($pageKind, 'game-title')) {
+            $pageHeadingLabel = 'GAME TITLE';
+        } elseif (str_starts_with($pageKind, 'game-franchise')) {
+            $pageHeadingLabel = 'FRANCHISE';
+        } elseif (str_starts_with($pageKind, 'game-platform')) {
+            $pageHeadingLabel = 'PLATFORM';
+        } elseif (str_starts_with($pageKind, 'game-maker')) {
+            $pageHeadingLabel = 'MAKER';
+        } elseif (str_starts_with($pageKind, 'game-media-mix')) {
+            $pageHeadingLabel = 'MEDIA MIX';
+        } elseif ($pageKind === 'game-lineup') {
+            $pageHeadingLabel = 'LINEUP';
+        } elseif (str_starts_with($pageKind, 'game-review')) {
+            $pageHeadingLabel = 'REVIEWS';
+        } elseif (str_starts_with($pageKind, 'user-my-node')) {
+            $pageHeadingLabel = 'MY NODE';
+        } elseif (str_starts_with($pageKind, 'user-profile')) {
+            $pageHeadingLabel = 'USER PROFILE';
+        } elseif (str_starts_with($pageKind, 'user-review')) {
+            $pageHeadingLabel = 'REVIEW';
+        } elseif (str_starts_with($pageKind, 'user-fear-meter')) {
+            $pageHeadingLabel = 'FEAR METER';
+        } elseif (str_starts_with($pageKind, 'user-follow')) {
+            $pageHeadingLabel = 'USER';
+        } elseif ($pageKind === 'timeline') {
+            $pageHeadingLabel = 'TIMELINE';
+        } elseif (str_starts_with($pageKind, 'information') || str_starts_with($pageKind, 'infomation')) {
+            $pageHeadingLabel = 'INFORMATION';
+        } elseif (str_starts_with($pageKind, 'account') || str_starts_with($pageKind, 'two-factor')) {
+            $pageHeadingLabel = 'ACCOUNT';
+        } elseif (str_starts_with($pageKind, 'contact')) {
+            $pageHeadingLabel = 'CONTACT';
+        } elseif ($pageKind === 'privacy-policy') {
+            $pageHeadingLabel = 'PRIVACY POLICY';
+        } elseif ($pageKind === 'about') {
+            $pageHeadingLabel = 'ABOUT';
+        } elseif ($pageKind === 'rating-check') {
+            $pageHeadingLabel = 'AGE VERIFICATION';
+        } elseif ($pageKind === 'logo') {
+            $pageHeadingLabel = 'BRAND ASSETS';
+        } elseif (str_starts_with($pageKind, 'errors')) {
+            $pageHeadingLabel = 'ERROR';
+        } else {
+            $pageHeadingLabel = 'NODE';
+        }
+    }
 @endphp
 <html lang="ja">
 <head>
@@ -65,7 +113,7 @@
 
                 <article class="site-standard-page node" id="current-node">
                     <header class="site-standard-page__header node-head">
-                        <h1 class="node-head-text">@yield('current-node-title')</h1>
+                        <x-site.page-heading :label="$pageHeadingLabel" title-class="node-head-text">@yield('current-node-title')</x-site.page-heading>
                         @hasSection('current-node-actions')
                             <div class="site-standard-page__actions">
                                 @yield('current-node-actions')

@@ -1,5 +1,11 @@
 @extends('layout')
 
+@php
+    $breadcrumbItems = [
+        ['label' => 'プラットフォーム', 'url' => route('Game.Platform')],
+    ];
+@endphp
+
 @section('title', $platform->name)
 @section('current-node-title', $platform->name)
 
@@ -55,20 +61,13 @@
                     }
                 @endphp
                 <a class="platform-title-card" href="{{ route('Game.TitleDetail', ['titleKey' => $title->key]) }}" id="{{ $title->key }}-link-node">
-                    <span class="platform-title-card__image">
-                        @if ($title->ogp !== null && !empty($title->ogp->image))
-                            <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="" loading="lazy">
-                        @else
-                            <span class="platform-title-card__placeholder" aria-hidden="true"><i></i>NO IMAGE SIGNAL</span>
-                        @endif
-                    </span>
                     <span class="platform-title-card__body">
                         <span class="platform-title-card__type">GAME TITLE</span>
                         <b><i aria-hidden="true"></i>{{ $title->name }}</b>
                         @if ($titleDescription !== '')
                             <span class="platform-title-card__description">{{ $titleDescription }}</span>
                         @else
-                            <span class="platform-title-card__description platform-title-card__description--empty">作品説明はまだ登録されていません。</span>
+                            <span class="platform-title-card__description platform-title-card__description--empty">この作品について、詳しいことはまだわからない。</span>
                         @endif
                     </span>
                 </a>

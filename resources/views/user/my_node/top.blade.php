@@ -52,7 +52,7 @@
 
     <section class="node tree-node" id="timeline-node">
         <div class="node-head">
-            <h2 class="node-head-text">新着情報</h2>
+            <x-site.timeline-heading title="新着情報" title-class="node-head-text" />
             <span class="node-pt">●</span>
         </div>
         <div class="node-content tree">
@@ -221,4 +221,3 @@
     </section>
 
 @endsection
-

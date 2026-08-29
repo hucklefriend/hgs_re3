@@ -78,7 +78,10 @@ php artisan view:cache
 
 機能の実装詳細（使い方・クラス設計・追加手順など）は `docs/Codex/` 配下に機能ごとのファイルとして書く。AGENTS.md には書かない。
 
+公開画面の文言を追加・変更する実装では、空状態を含む文章表現を統一するため `docs/Codex/public-copy-guidelines.md` を読むこと。
+
 @docs/Codex/frontend-conventions.md
+@docs/Codex/public-copy-guidelines.md
 @docs/Codex/grid-network-design.md
 @docs/Codex/discord-webhook.md
 @docs/Codex/ogp-generator.md

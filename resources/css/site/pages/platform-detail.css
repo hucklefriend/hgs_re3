@@ -20,9 +20,10 @@
 
 .platform-title-card {
     display: grid;
-    grid-template-rows: calc(var(--site-grid-row-size) * 6) minmax(calc(var(--site-grid-row-size) * 4), auto);
+    grid-template-rows: auto;
     min-inline-size: 0;
     padding-block-end: var(--site-grid-row-size);
+    border-block-start: 1px solid var(--site-color-line);
     color: var(--site-color-text);
     background: rgba(1, 7, 4, 0.58);
     overflow: hidden;
@@ -37,54 +38,7 @@
 }
 
 .platform-title-card > .site-connection-terminal {
-    --site-terminal-y: calc(var(--site-grid-row-size) * 6 + 54px) !important;
-}
-
-.platform-title-card__image {
-    position: relative;
-    display: grid;
-    place-items: center;
-    min-inline-size: 0;
-    overflow: hidden;
-    border-block-end: 1px solid var(--site-color-line-strong);
-    background:
-        linear-gradient(135deg, rgba(114, 255, 155, 0.06), transparent 48%),
-        rgba(0, 3, 1, 0.26);
-}
-
-.platform-title-card__image::after {
-    position: absolute;
-    inset: 0;
-    content: '';
-    background: linear-gradient(to top, rgba(0, 5, 2, 0.52), transparent 42%);
-    pointer-events: none;
-}
-
-.platform-title-card__image img {
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
-    opacity: 0.82;
-    filter: saturate(0.78) brightness(0.84);
-    transition: filter var(--site-motion-normal), opacity var(--site-motion-normal), transform var(--site-motion-normal);
-}
-
-.platform-title-card__placeholder {
-    display: grid;
-    place-items: center;
-    gap: 14px;
-    color: var(--site-color-text-meta);
-    font: 600 9px/1 var(--site-font-mono);
-    letter-spacing: 0.16em;
-}
-
-.platform-title-card__placeholder i {
-    inline-size: 7px;
-    block-size: 7px;
-    border-radius: 50%;
-    background: var(--site-color-signal);
-    box-shadow: 0 0 14px var(--site-color-signal-soft);
-    opacity: 0.45;
+    --site-terminal-y: 54px !important;
 }
 
 .platform-title-card__body {
@@ -136,12 +90,6 @@
     color: var(--site-color-text-muted);
 }
 
-.platform-title-card:is(:hover, :focus-visible) .platform-title-card__image img {
-    filter: saturate(1) brightness(1);
-    opacity: 0.96;
-    transform: scale(1.025);
-}
-
 .platform-title-card:is(:hover, :focus-visible) .platform-title-card__body b {
     color: var(--site-color-signal);
 }
@@ -161,12 +109,12 @@
     }
 
     .platform-title-card {
-        grid-template-rows: calc(var(--site-grid-row-size) * 5) minmax(calc(var(--site-grid-row-size) * 5), auto);
+        grid-template-rows: auto;
         border-inline-start: 0;
     }
 
     .platform-title-card > .site-connection-terminal {
-        --site-terminal-y: calc(var(--site-grid-row-size) * 5 + 50px) !important;
+        --site-terminal-y: 50px !important;
     }
 
     .platform-title-card__body {

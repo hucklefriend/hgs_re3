@@ -51,7 +51,7 @@
 
             <article class="title-hero__panel">
                 <header class="site-standard-page__header title-hero__header node-head">
-                    <h1 class="node-head-text" id="media-mix-detail-name">{{ $mediaMix->name }}</h1>
+                    <x-site.page-heading label="MEDIA MIX" heading-id="media-mix-detail-name" title-class="node-head-text">{{ $mediaMix->name }}</x-site.page-heading>
                 </header>
 
                 <div class="title-hero__content">
@@ -65,7 +65,7 @@
                         @if ($mediaMixDescription !== '')
                             <p class="title-summary__description">{{ $mediaMixDescription }}</p>
                         @else
-                            <p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>
+                            <p class="title-summary__description title-summary__description--empty">この作品について、詳しいことはまだわからない。</p>
                         @endif
                         <dl class="title-facts">
                             <div><dt>MEDIA TYPE</dt><dd>{{ $mediaMix->type->text() }}</dd></div>
@@ -132,12 +132,12 @@
                                             </a>
                                         </section>
                                     @empty
-                                        <p class="site-empty-state">販売先はまだ登録されていません。</p>
+                                        <p class="site-empty-state">この品物の入手先は、まだわからない。</p>
                                     @endforelse
                                 </div>
                             </article>
                         @empty
-                            <p class="site-empty-state">関連商品はまだ登録されていません。</p>
+                            <p class="site-empty-state">ここには、関連する品物は見当たらないようだ。</p>
                         @endforelse
                     </div>
                 </section>

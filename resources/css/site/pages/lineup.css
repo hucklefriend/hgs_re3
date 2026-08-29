@@ -410,7 +410,7 @@
 
 .lineup-result-list {
     display: grid;
-    gap: calc(var(--site-grid-row-size) * 0.75);
+    gap: var(--site-grid-row-size);
 }
 
 .site-page--game-platform .lineup-result-list {

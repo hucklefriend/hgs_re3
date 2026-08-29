@@ -9,7 +9,7 @@
         <div class="lineup-results__frame">
             <div class="lineup-result-list">
                 @if ($platforms->isEmpty())
-                    <p class="site-empty-state">登録されているプラットフォームはありません。</p>
+                    <p class="site-empty-state">利用できるプラットフォームの記録は、見つからないようだ。</p>
                 @else
                     @foreach (\App\Enums\GamePlatformType::cases() as $type)
                         @php($platformsOfType = $platforms->where('type', $type))
