@@ -13,7 +13,7 @@
     @if ($informations->isEmpty())
         <section class="node">
             <div class="node-head">
-                <h2 class="node-head-text">現在、お知らせはありません。</h2>
+                <h2 class="node-head-text">新しい知らせは、まだ届いていないようだ。</h2>
                 <span class="node-pt">●</span>
             </div>
         </section>

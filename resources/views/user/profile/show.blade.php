@@ -109,7 +109,7 @@
     @if (!$isBlocked && count($recentActivity) > 0)
         <section class="node tree-node" id="profile-activity-node">
             <div class="node-head">
-                <h2 class="node-head-text">最近の活動</h2>
+                <x-site.timeline-heading title="最近の活動" title-class="node-head-text" />
                 <span class="node-pt">●</span>
             </div>
             <div class="node-content tree">

@@ -7,7 +7,7 @@
     @if ($isBlocked)
         <p class="mt-3 text-slate-400">このユーザーのコンテンツは表示できません。</p>
     @elseif ($reviews->isEmpty())
-        <p class="mt-3">まだレビューはありません。</p>
+        <p class="mt-3">ここには、まだレビューの記録はないようだ。</p>
     @endif
 @endsection
 

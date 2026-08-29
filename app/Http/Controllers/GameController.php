@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 class GameController extends Controller
 {
     private const LINEUP_PER_PAGE = 10;
+    private const PLATFORM_TITLES_PER_PAGE = 30;
 
     /**
      * ラインナップ
@@ -413,11 +414,24 @@ class GameController extends Controller
         $packages = GamePackage::select(['id'])->where('game_platform_id', $platform->id)->get();
         $packageGroups = GamePackageGroupPackageLink::whereIn('game_package_id', $packages->pluck('id'))->get();
         $titleIds = GameTitlePackageGroupLink::whereIn('game_package_group_id', $packageGroups->pluck('game_package_group_id')->unique())->pluck('game_title_id');
-        $titles = GameTitle::whereIn('id', $titleIds)->get();
+        $titleQuery = GameTitle::with('ogp')
+            ->whereIn('id', $titleIds)
+            ->orderByRaw('CASE WHEN first_release_int IS NULL OR first_release_int <= 0 OR first_release_int >= 99999999 THEN 1 ELSE 0 END')
+            ->orderByDesc('first_release_int')
+            ->orderByDesc('id');
+
+        $total = (clone $titleQuery)->count();
+        $totalPages = max(1, (int) ceil($total / self::PLATFORM_TITLES_PER_PAGE));
+        $page = min(max(1, $request->integer('page', 1)), $totalPages);
+        $titles = $titleQuery
+            ->forPage($page, self::PLATFORM_TITLES_PER_PAGE)
+            ->get();
+        $pager = new Pager($page, $totalPages, 'Game.PlatformDetail', ['platformKey' => $platform->key]);
 
         return $this->tree(view('game.platform_detail', [
             'platform'    => $platform,
-            'titles'      => $titles
+            'titles'      => $titles,
+            'pager'       => $pager,
         ]));
     }
 

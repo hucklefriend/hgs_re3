@@ -18,6 +18,16 @@
     $fearMeterMax = 4;
     $fearMeterAverage = $fearMeter ? max(0, min($fearMeterMax, (float) $fearMeter->average_rating)) : null;
     $fearMeterPercent = $fearMeterAverage !== null ? ($fearMeterAverage / $fearMeterMax) * 100 : 0;
+    $ogpSourceName = '';
+    if ($title->ogp !== null) {
+        if (!empty($title->ogp->site_name)) {
+            $ogpSourceName = $title->ogp->site_name;
+        } elseif (!empty($title->ogp->title)) {
+            $ogpSourceName = $title->ogp->title;
+        } else {
+            $ogpSourceName = $title->ogp->url;
+        }
+    }
 @endphp
 
 @section('title', $title->name)
@@ -61,18 +71,27 @@
 
             <article class="title-hero__panel">
                 <header class="site-standard-page__header title-hero__header node-head">
-                    <h1 class="node-head-text" id="title-detail-name">{{ $title->name }}</h1>
+                    <x-site.page-heading label="GAME TITLE" heading-id="title-detail-name" title-class="node-head-text">{{ $title->name }}</x-site.page-heading>
                 </header>
 
                 <div class="title-hero__content">
                     @if ($title->ogp !== null && !empty($title->ogp->image))
-                        <div @class(['title-keyart', 'title-keyart--tall' => (int) $title->ogp->image_height > 1000])>
-                            <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
-                        </div>
+                        <figure class="title-keyart-source">
+                            <div @class(['title-keyart', 'title-keyart--tall' => (int) $title->ogp->image_height > 1000])>
+                                <img src="{{ $title->ogp->image }}" width="{{ $title->ogp->image_width }}" height="{{ $title->ogp->image_height }}" alt="{{ $title->name }}">
+                            </div>
+                            <figcaption class="title-keyart-source__caption">
+                                <span>参照元:</span>
+                                <a href="{{ $title->ogp->url }}" target="_blank" rel="noopener">{{ $ogpSourceName }} <span aria-hidden="true">↗</span></a>
+                            </figcaption>
+                        </figure>
                     @endif
 
                     <div class="title-summary">
-                        @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">作品説明はまだ登録されていません。</p>@endif
+                        <section class="title-synopsis" aria-labelledby="title-synopsis-heading">
+                            <h2 class="title-synopsis__heading" id="title-synopsis-heading"><span>あらすじ</span><small>STORY</small></h2>
+                            @if ($titleDescription !== '')<p class="title-summary__description">{{ $titleDescription }}</p>@else<p class="title-summary__description title-summary__description--empty">この作品について、詳しいことはまだわからない。</p>@endif
+                        </section>
                         <dl class="title-facts">
                             <div><dt>FIRST RELEASE</dt><dd>{{ $releaseLabel }}</dd></div>
                             <div>
@@ -150,7 +169,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="site-empty-state">怖さメーターはまだ入力されていません。@auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">最初の評価を送る →</a>@endauth</div>
+                        <div class="site-empty-state title-empty-action-state">この作品の恐怖については、まだ誰も語っていないようだ。@auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">怖さを記録する</a>@endauth</div>
                     @endif
                 </section>
 
@@ -173,13 +192,15 @@
                                 <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $review->key]) }}">レビュー詳細</a>
                             </article>
                         @empty
-                            <p class="site-empty-state">レビューはまだないようです。</p>
+                            <div class="site-empty-state title-empty-action-state">この作品について書かれた記録は、まだないようだ。@auth<a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">レビューを記録する</a>@endauth</div>
                         @endforelse
                     </div>
-                    <div class="title-section-actions">
-                        @if ($reviewStatistic)<a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}">すべてのレビューを見る</a>@endif
-                        @auth<a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">{{ $userReview ? 'レビューを編集する' : 'レビューを書く' }} <span>WRITE REPORT →</span></a>@endauth
-                    </div>
+                    @if ($recentReviews->isNotEmpty())
+                        <div class="title-section-actions">
+                            @if ($reviewStatistic)<a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}">すべてのレビューを見る</a>@endif
+                            @auth<a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">{{ $userReview ? 'レビューを編集する' : 'レビューを書く' }} <span>WRITE REPORT →</span></a>@endauth
+                        </div>
+                    @endif
                 </section>
 
                 <section class="title-data-section" id="packages">
@@ -203,11 +224,6 @@
                                             }
                                         @endphp
                                         <section @class(['title-package-item', 'title-package-item--without-image' => $packageImageShop === null])>
-                                            @if ($packageImageShop !== null)
-                                                <figure class="title-package-item__visual">
-                                                    <img src="{{ $packageImageShop->ogp->image }}" width="{{ $packageImageShop->ogp->image_width }}" height="{{ $packageImageShop->ogp->image_height }}" alt="{{ $packageGroup->name }} {{ $package->platform->acronym ?? $package->platform->name }}" loading="lazy">
-                                                </figure>
-                                            @endif
                                             <div class="title-package-item__body">
                                                 <div class="title-package-item__identity">
                                                     <h4>{{ $package->platform->acronym ?? $package->platform->name }}</h4>
@@ -222,12 +238,20 @@
                                                     </div>
                                                 @endif
                                             </div>
+                                            @if ($packageImageShop !== null)
+                                                <figure class="title-package-item__visual">
+                                                    <a href="{{ $packageImageShop->url }}" target="_blank" rel="noopener sponsored" aria-label="{{ $packageImageShop->shop()?->name() ?? 'ショップ' }}で商品を見る">
+                                                        <img src="{{ $packageImageShop->ogp->image }}" width="{{ $packageImageShop->ogp->image_width }}" height="{{ $packageImageShop->ogp->image_height }}" alt="{{ $packageGroup->name }} {{ $package->platform->acronym ?? $package->platform->name }}" loading="lazy">
+                                                        <span aria-hidden="true">↗</span>
+                                                    </a>
+                                                </figure>
+                                            @endif
                                         </section>
                                     @endforeach
                                 </div>
                             </article>
                         @empty
-                            <p class="site-empty-state">パッケージ情報はまだ登録されていません。</p>
+                            <p class="site-empty-state">この作品を入手する手がかりは、まだ見つかっていないようだ。</p>
                         @endforelse
                     </div>
                 </section>

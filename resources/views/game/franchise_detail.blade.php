@@ -23,7 +23,7 @@
     @if (!empty($timelineEvents))
     <section class="lineup-franchise franchise-detail-node" id="franchise-timeline-tree-node">
         <header>
-            <div><p>TRANSMISSION NODE</p><h2>新着情報</h2></div>
+            <x-site.timeline-heading title="新着情報" />
         </header>
         <div class="home-transmission-list">
             @foreach ($timelineEvents as $event)

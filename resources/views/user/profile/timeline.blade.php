@@ -10,7 +10,7 @@
     @if ($isBlocked)
         <p class="mt-3 text-slate-400">このユーザーのコンテンツは表示できません。</p>
     @elseif ($paginator->isEmpty())
-        <p class="mt-3">まだ活動はありません。</p>
+        <p class="mt-3">ここには、まだ活動の痕跡はないようだ。</p>
     @endif
 @endsection
 

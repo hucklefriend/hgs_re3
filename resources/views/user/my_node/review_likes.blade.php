@@ -5,7 +5,7 @@
 
 @section('current-node-content')
 @if ($likes->isEmpty())
-    <p>まだいいねしたレビューはありません。</p>
+    <p>気に留めたレビューは、まだないようだ。</p>
 @endif
 @endsection
 
