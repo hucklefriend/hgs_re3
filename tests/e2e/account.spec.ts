@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'crypto';
-import { waitForPublicPageReady } from './support/utils';
+import { createTestAccount, waitForPublicPageReady } from './support/utils';
 
 /**
  * 新規登録して、ログインしマイページで設定を行い、退会する
  */
-test('新規登録して、ログインしマイページで設定を行い、退会する', async ({ page, request }) =>
+test('新規登録して、ログインしマイページで設定を行い、退会する', async ({ page, request, browser }) =>
 {
   // テストタイムアウトを120秒に設定（長いE2Eテストのため）
   test.setTimeout(120000);
@@ -14,7 +14,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   const jsErrors: Error[] = [];
   const consoleErrors: string[] = [];
   const randomLocalPart = randomUUID().replace(/-/g, '').slice(0, 12);
-  const email = `${randomLocalPart}@horrorgame.net`;
+  const email = `${randomLocalPart}@playwright.invalid`;
   const password = 'Password123!';
   const userName = 'Playwright User';
   
@@ -92,6 +92,75 @@ test('新規登録して、ログインしマイページで設定を行い、�
 
   await waitForPublicPageReady(page);
   await expect(page.locator('#mypage-welcome-node')).toContainText(userName);
+  const quickMenuLinks = page.locator('.my-node-quick-menu__links a');
+  await expect(quickMenuLinks).toHaveCount(15);
+  await expect(quickMenuLinks.locator('[data-connection-terminal]')).toHaveCount(15);
+
+  const terminalAlignment = async (): Promise<Array<{
+    centerOffsetInEm: number;
+    lineAxisError: number;
+    ownerIsLabel: boolean;
+    scale: string;
+  }>> => quickMenuLinks.evaluateAll((links) => links.map((link) => {
+    const label = link.querySelector<HTMLElement>('.site-connection-label');
+    const terminal = link.querySelector<HTMLElement>('[data-connection-terminal]');
+    if (label === null || terminal === null) {
+      throw new Error('The my-node connection label is incomplete.');
+    }
+
+    const labelRect = label.getBoundingClientRect();
+    const terminalRect = terminal.getBoundingClientRect();
+    const terminalStyle = getComputedStyle(terminal);
+    const stubStyle = getComputedStyle(terminal, '::after');
+    const stubTransform = new DOMMatrixReadOnly(stubStyle.transform);
+    const circleCenter = terminal.offsetHeight / 2;
+    const stubCenter = Number.parseFloat(terminalStyle.borderTopWidth)
+      + Number.parseFloat(stubStyle.top)
+      + stubTransform.m42
+      + (Number.parseFloat(stubStyle.height) / 2);
+    return {
+      centerOffsetInEm: (
+        terminalRect.top + (terminalRect.height / 2)
+        - labelRect.top - (labelRect.height / 2)
+      ) / Number.parseFloat(getComputedStyle(label).fontSize),
+      lineAxisError: Math.abs(circleCenter - stubCenter),
+      ownerIsLabel: terminal.offsetParent === label,
+      scale: terminalStyle.scale,
+    };
+  }));
+
+  const expectAlignedTerminals = (alignments: Awaited<ReturnType<typeof terminalAlignment>>): void => {
+    alignments.forEach((alignment) => {
+      expect(alignment.ownerIsLabel).toBe(true);
+      expect(alignment.centerOffsetInEm).toBeCloseTo(0.1, 2);
+      expect(alignment.lineAxisError).toBeLessThanOrEqual(0.01);
+      expect(alignment.scale).toBe('0.72');
+    });
+  };
+
+  const devtoolsSession = await page.context().newCDPSession(page);
+  for (const pageScaleFactor of [1, 1.5]) {
+    await devtoolsSession.send('Emulation.setPageScaleFactor', { pageScaleFactor });
+
+    expectAlignedTerminals(await terminalAlignment());
+  }
+
+  await devtoolsSession.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
+  await devtoolsSession.detach();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expectAlignedTerminals(await terminalAlignment());
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
+  await page.setViewportSize({ width: 1280, height: 720 });
+
+  const noJavaScriptContext = await browser.newContext({ javaScriptEnabled: false });
+  await noJavaScriptContext.addCookies(await page.context().cookies());
+  const noJavaScriptPage = await noJavaScriptContext.newPage();
+  await noJavaScriptPage.goto(new URL('/user/my-node', page.url()).href);
+  await expect(noJavaScriptPage.locator('.my-node-quick-menu__links a')).toHaveCount(15);
+  await expect(noJavaScriptPage.locator('.my-node-quick-menu__links [data-connection-terminal]')).toHaveCount(15);
+  await expect(noJavaScriptPage.locator('.my-node-quick-menu__links [data-connection-terminal]').first()).toBeVisible();
+  await noJavaScriptContext.close();
   
   // プロフィール設定のテスト
   const updatedUserName = 'Updated Playwright User';
@@ -177,7 +246,7 @@ test('新規登録して、ログインしマイページで設定を行い、�
   
   // メールアドレス変更のテスト
   const newEmailLocalPart = randomUUID().replace(/-/g, '').slice(0, 12);
-  const newEmail = `${newEmailLocalPart}@horrorgame.net`;
+  const newEmail = `${newEmailLocalPart}@playwright.invalid`;
   
   // メールアドレス変更ページに移動
   await page.goto('user/my-node/email');
@@ -307,7 +376,7 @@ test('新規登録時にnameフィールドに値が入っていると登録用U
   const jsErrors: Error[] = [];
   const consoleErrors: string[] = [];
   const randomLocalPart = randomUUID().replace(/-/g, '').slice(0, 12);
-  const email = `${randomLocalPart}@horrorgame.net`;
+  const email = `${randomLocalPart}@playwright.invalid`;
   const invalidName = 'Invalid Name';
   
   // ページエラー（未処理の例外など）を捕捉
@@ -427,7 +496,7 @@ test('新規登録後、1時間以上経過すると登録処理が無効にな�
   const jsErrors: Error[] = [];
   const consoleErrors: string[] = [];
   const randomLocalPart = randomUUID().replace(/-/g, '').slice(0, 12);
-  const email = `${randomLocalPart}@horrorgame.net`;
+  const email = `${randomLocalPart}@playwright.invalid`;
   
   // ページエラー（未処理の例外など）を捕捉
   page.on('pageerror', (error) =>
@@ -513,7 +582,8 @@ test('パスワードリセット申請して、パスワードを変更しロ�
   // JavaScriptエラーを収集
   const jsErrors: Error[] = [];
   const consoleErrors: string[] = [];
-  const email = 'webmaster@horrorgame.net';
+  const account = await createTestAccount(request);
+  const email = account.email;
   const newPassword = 'NewPassword123!';
   
   // ページエラー（未処理の例外など）を捕捉
@@ -594,15 +664,9 @@ test('パスワードリセット申請して、パスワードを変更しロ�
 
   await waitForPublicPageReady(page);
   // ログイン成功を確認（マイページにリダイレクトされる）
-  await expect(page.locator('#mypage-welcome-node')).toContainText('ようこそ');
-
-  // パスワードを戻す
-  const resetPasswordResponse = await request.post('api/test/reset-webmaster-password');
-  expect(resetPasswordResponse.ok()).toBe(true);
+  await expect(page.locator('#mypage-welcome-node')).toBeVisible();
 
   // JavaScriptエラーがないことを確認
   expect(jsErrors, `JavaScriptエラーが発生しました: ${jsErrors.map(e => e.message).join(', ')}`).toHaveLength(0);
   expect(consoleErrors, `コンソールエラーが発生しました: ${consoleErrors.join(', ')}`).toHaveLength(0);
 });
-
-

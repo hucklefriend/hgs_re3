@@ -80,6 +80,8 @@ php artisan view:cache
 
 公開画面の文言を追加・変更する実装では、空状態を含む文章表現を統一するため `docs/Codex/public-copy-guidelines.md` を読むこと。
 
+公開フロントエンドのBlade、CSS、TypeScript、レイアウト、コンポーネントを追加・変更する場合は、作業前に `docs/Codex/frontend-conventions.md` と `docs/Codex/grid-network-design.md` を読み、記載された構造・視覚整列・接続表現・レスポンシブ設計に準拠すること。新しい共通デザイン判断を導入した場合は、実装だけに閉じず `docs/Codex/grid-network-design.md` も更新すること。
+
 @docs/Codex/frontend-conventions.md
 @docs/Codex/public-copy-guidelines.md
 @docs/Codex/grid-network-design.md

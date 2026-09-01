@@ -148,14 +148,14 @@ class AccountController extends BaseTestController
 
     /**
      * ローカル環境専用：テスト用の有効なアカウントを作成するAPI
-     * メールアドレスは「ランダムな文字列@horrorgame.net」、パスワードは「testtest」
+     * メールアドレスは「ランダムな文字列@playwright.invalid」、パスワードは「testtest」
      *
      * @return JsonResponse
      */
     public function createTestAccount(): JsonResponse
     {
         $localPart = Str::random(12);
-        $email = $localPart . '@horrorgame.net';
+        $email = $localPart . '@playwright.invalid';
         $password = 'testtest';
 
         if (User::where('email', $email)->exists()) {
@@ -260,4 +260,3 @@ class AccountController extends BaseTestController
         ]);
     }
 }
-

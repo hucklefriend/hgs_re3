@@ -19,7 +19,7 @@ export class StandardPageController extends BasePageController
         this.gridPlaneController = gridPlaneController;
         this.header = root.querySelector<HTMLElement>('.site-standard-page__header');
         this.panels = Array.from(root.querySelectorAll<HTMLElement>(
-            '#current-node > #current-node-content, #current-node > section.node, #current-node > .franchise-detail-node',
+            '#current-node > #current-node-content, #current-node > section.node, #current-node > .lineup-franchise',
         ));
         this.transmissionRows = Array.from(root.querySelectorAll<HTMLElement>('.home-transmission-row'));
         this.transmissionImages = Array.from(root.querySelectorAll<HTMLImageElement>('.home-transmission-row__image'));

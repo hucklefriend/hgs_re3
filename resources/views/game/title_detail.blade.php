@@ -157,7 +157,7 @@
                                         $isCurrentFearLevel = $fearLevel->value === $fearMeter->fear_meter->value;
                                     @endphp
                                     <li @class(['is-current' => $isCurrentFearLevel])>
-                                        <span>{{ $fearLevel->value }}</span>
+                                        <span>{{ $fearLevel->averageRangeText() }}</span>
                                         <b>{{ $fearLevel->text() }}</b>
                                     </li>
                                 @endforeach
@@ -165,7 +165,7 @@
 
                             <div class="title-fear-actions">
                                 <a href="{{ route('Game.TitleFearMeterComments', ['titleKey' => $title->key]) }}">怖さコメントを見る</a>
-                                @auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">あなたの怖さメーター →</a>@endauth
+                                @auth<a href="{{ route('User.FearMeter.Form', ['titleKey' => $title->key, 'from' => 'title-detail']) }}">あなたの怖さメーター</a>@endauth
                             </div>
                         </div>
                     @else
@@ -198,7 +198,13 @@
                     @if ($recentReviews->isNotEmpty())
                         <div class="title-section-actions">
                             @if ($reviewStatistic)<a href="{{ route('Game.TitleReviews', ['titleKey' => $title->key]) }}">すべてのレビューを見る</a>@endif
-                            @auth<a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">{{ $userReview ? 'レビューを編集する' : 'レビューを書く' }} <span>WRITE REPORT →</span></a>@endauth
+                            @auth
+                                @if ($userReview)
+                                    <a href="{{ route('Game.TitleReview', ['titleKey' => $title->key, 'reviewKey' => $userReview->key]) }}">あなたのレビューを見る <span>YOUR REPORT</span></a>
+                                @else
+                                    <a href="{{ route('User.Review.Form', ['titleKey' => $title->key]) }}">レビューを書く <span>WRITE REPORT</span></a>
+                                @endif
+                            @endauth
                         </div>
                     @endif
                 </section>

@@ -80,7 +80,10 @@ export class ConnectionTerminalController implements Disposable
         this._removeMetricsListener = null;
         this._generatedTerminals.forEach((terminal) => terminal.remove());
         this._generatedTerminals.clear();
-        this._terminals.forEach((_terminal, anchor) => anchor.classList.remove('has-site-connection-terminal'));
+        this._terminals.forEach((terminal, anchor) => {
+            terminal.style.removeProperty('--site-terminal-owner-y');
+            anchor.classList.remove('has-site-connection-terminal');
+        });
         this._terminals.clear();
         this._started = false;
     }
@@ -92,7 +95,7 @@ export class ConnectionTerminalController implements Disposable
                 return;
             }
 
-            let terminal = anchor.querySelector<HTMLElement>(':scope > [data-connection-terminal]');
+            let terminal = anchor.querySelector<HTMLElement>('[data-connection-terminal]');
             if (!terminal) {
                 terminal = anchor.ownerDocument.createElement('span');
                 terminal.className = 'site-connection-terminal';
@@ -107,6 +110,10 @@ export class ConnectionTerminalController implements Disposable
         });
 
         this._root.querySelectorAll<HTMLElement>('[data-connection-terminal]').forEach((terminal) => {
+            if (terminal.closest('a[href]') !== null) {
+                return;
+            }
+
             const owner = terminal.parentElement;
             if (owner === null || terminal !== owner.querySelector(':scope > [data-connection-terminal]')) {
                 return;
@@ -120,10 +127,13 @@ export class ConnectionTerminalController implements Disposable
     private readonly syncPositions = (): void =>
     {
         this._terminals.forEach((terminal, anchor) => {
-            const rect = anchor.getBoundingClientRect();
+            const positioningOwner = terminal.offsetParent;
+            const rect = positioningOwner instanceof HTMLElement
+                ? positioningOwner.getBoundingClientRect()
+                : anchor.getBoundingClientRect();
             const centerY = rect.height / 2;
 
-            terminal.style.setProperty('--site-terminal-y', `${centerY}px`);
+            terminal.style.setProperty('--site-terminal-owner-y', `${centerY}px`);
         });
     };
 }

@@ -15,7 +15,6 @@ use App\Models\Extensions\GameTree;
 use App\Models\GameMaker;
 use App\Models\GamePackage;
 use App\Models\GamePackageShop;
-use App\Models\GameTitle;
 use App\Models\MasterJsonImportLog;
 use App\Services\MasterJson\PackageMasterJsonService;
 use Illuminate\Contracts\Foundation\Application;
@@ -60,23 +59,11 @@ class PackageController extends AbstractAdminController
 
         if (!empty($searchName)) {
             $search['name'] = $searchName;
-            $words = explode(' ', $searchName);
-
-            $packages->where(function ($query) use ($words) {
-                foreach ($words as $word) {
-                    $query->where('name', operator: 'LIKE', value: '%' . $word . '%');
-                }
-            });
-
-            array_walk_synonym($words);
-            $gamePackageIds = \App\Models\GameTitlePackageLink::whereIn('game_title_id', function ($query) use ($words) {
-                $query->select('game_title_id')
-                    ->from('game_title_synonyms')
-                    ->whereIn('synonym', $words);
-            })->get(['game_package_id'])->pluck('id')->toArray();
-            if (!empty($gamePackageIds)) {
-                $packages->orWhereIn('id', $gamePackageIds);
-            }
+            $words = array_values(array_filter(
+                preg_split('/\s+/u', $searchName) ?: [],
+                fn ($word) => $word !== '',
+            ));
+            $packages->searchByNameOrRelatedTitle($words);
         }
 
         if (!empty($searchPlatforms)) {

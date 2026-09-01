@@ -4,8 +4,10 @@ namespace Tests\Feature\Api\Admin\Game;
 
 use App\Enums\Shop;
 use App\Models\GameMaker;
+use App\Models\GamePackage;
 use App\Models\GamePackageGroup;
 use App\Models\GamePlatform;
+use App\Models\GameTitle;
 
 class PackageApiTest extends GameMasterApiTestCase
 {
@@ -126,5 +128,32 @@ class PackageApiTest extends GameMasterApiTestCase
         $this->getJson('/api/v1/admin/game/packages?platform_ids[]='.$p2->id)
             ->assertOk()
             ->assertJsonFragment(['id' => $id2]);
+    }
+
+    public function test_index_can_search_by_related_title_synonym(): void
+    {
+        $platform = $this->createPlatform();
+        $package = GamePackage::query()->create($this->packagePayload($platform->id, [
+            'name' => '検索語を含まないパッケージ',
+        ]));
+        $packageGroup = GamePackageGroup::query()->create([
+            'name' => '検索用グループ',
+            'node_name' => '検索用グループ',
+            'sort_order' => 0,
+        ]);
+        $title = GameTitle::query()->create([
+            'key' => 'package-search-title-'.uniqid('', true),
+            'name' => '検索対象タイトル',
+            'phonetic' => 'けんさくたいしょうたいとる',
+            'node_name' => '検索対象タイトル',
+            'search_synonyms' => "関連作品別名\r\n別の呼び名",
+        ]);
+
+        $package->packageGroups()->attach($packageGroup->id);
+        $title->packageGroups()->attach($packageGroup->id);
+
+        $this->getJson('/api/v1/admin/game/packages?q='.urlencode('関連作品別名'))
+            ->assertOk()
+            ->assertJsonFragment(['id' => $package->id]);
     }
 }

@@ -13,6 +13,8 @@ use App\Models\RssArticle;
 use App\Models\TimelineEvent;
 use App\Models\UserFavoriteGameTitle;
 use App\Models\UserGameTitleReview;
+use App\Models\UserTimelineSetting;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -71,52 +73,13 @@ class TimelineEventService
 
     /**
      * ユーザー向けタイムラインイベントを取得する。
-     * 現在は「お気に入りタイトルの更新」と「自分への通知」のみ対象。
-     * フォロー機能実装後にフォロー中ユーザーの活動を追加する。
+     * お気に入りタイトルの更新、自分への通知、お知らせ、設定で有効なRSS記事を対象とする。
      *
      * @return array<int, array<string, mixed>>
      */
     public function fetchForUser(int $userId, int $limit = 20): array
     {
-        $favoriteGameTitleIds = UserFavoriteGameTitle::where('user_id', $userId)
-            ->pluck('game_title_id');
-
-        $franchiseIds = collect();
-        if ($favoriteGameTitleIds->isNotEmpty()) {
-            $favoriteTitles = GameTitle::with('franchise', 'series.franchise')
-                ->whereIn('id', $favoriteGameTitleIds)
-                ->get();
-            $franchiseIds = $favoriteTitles
-                ->map(fn ($t) => $t->getFranchise()?->id)
-                ->filter()
-                ->unique()
-                ->values();
-        }
-
-        $events = TimelineEvent::with('actor')
-            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds) {
-                $q->where(function ($q2) use ($favoriteGameTitleIds) {
-                    $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
-                        ->whereIn('subject_id', $favoriteGameTitleIds);
-                })
-                ->orWhere('recipient_user_id', $userId)
-                ->orWhere('event_type', TimelineEventType::InformationPosted->value)
-                ->orWhere(function ($q2) use ($franchiseIds) {
-                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
-                       ->where(function ($q3) use ($franchiseIds) {
-                           $q3->whereIn('subject_id', function ($sub) {
-                               $sub->select('id')->from('rss_articles')->where('has_horror_keyword', true);
-                           });
-                           if ($franchiseIds->isNotEmpty()) {
-                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseIds) {
-                                   $sub->select('rss_article_id')
-                                       ->from('rss_article_matched_franchises')
-                                       ->whereIn('game_franchise_id', $franchiseIds->all());
-                               });
-                           }
-                       });
-                });
-            })
+        $events = $this->queryForUser($userId)
             ->orderByDesc('created_at')
             ->limit($limit)
             ->get();
@@ -370,44 +333,7 @@ class TimelineEventService
 
     public function fetchForUserPaginated(int $userId, int $perPage = 20): LengthAwarePaginator
     {
-        $favoriteGameTitleIds = UserFavoriteGameTitle::where('user_id', $userId)->pluck('game_title_id');
-
-        $franchiseIds = collect();
-        if ($favoriteGameTitleIds->isNotEmpty()) {
-            $favoriteTitles = GameTitle::with('franchise', 'series.franchise')
-                ->whereIn('id', $favoriteGameTitleIds)
-                ->get();
-            $franchiseIds = $favoriteTitles
-                ->map(fn ($t) => $t->getFranchise()?->id)
-                ->filter()
-                ->unique()
-                ->values();
-        }
-
-        $paginator = TimelineEvent::with('actor')
-            ->where(function ($q) use ($userId, $favoriteGameTitleIds, $franchiseIds) {
-                $q->where(function ($q2) use ($favoriteGameTitleIds) {
-                    $q2->where('event_type', TimelineEventType::GameTitleUpdated->value)
-                        ->whereIn('subject_id', $favoriteGameTitleIds);
-                })
-                ->orWhere('recipient_user_id', $userId)
-                ->orWhere('event_type', TimelineEventType::InformationPosted->value)
-                ->orWhere(function ($q2) use ($franchiseIds) {
-                    $q2->where('event_type', TimelineEventType::RssArticlePosted->value)
-                       ->where(function ($q3) use ($franchiseIds) {
-                           $q3->whereIn('subject_id', function ($sub) {
-                               $sub->select('id')->from('rss_articles')->where('has_horror_keyword', true);
-                           });
-                           if ($franchiseIds->isNotEmpty()) {
-                               $q3->orWhereIn('subject_id', function ($sub) use ($franchiseIds) {
-                                   $sub->select('rss_article_id')
-                                       ->from('rss_article_matched_franchises')
-                                       ->whereIn('game_franchise_id', $franchiseIds->all());
-                               });
-                           }
-                       });
-                });
-            })
+        $paginator = $this->queryForUser($userId)
             ->orderByDesc('created_at')
             ->paginate($perPage);
 
@@ -428,6 +354,86 @@ class TimelineEventService
         return $paginator->setCollection(
             $items->map(fn ($e) => $this->toDisplayArray($e, $reviews, $gameTitles, $informations, $rssArticles))
         );
+    }
+
+    private function queryForUser(int $userId): Builder
+    {
+        $favoriteGameTitleIds = UserFavoriteGameTitle::where('user_id', $userId)
+            ->pluck('game_title_id');
+
+        $franchiseIds = collect();
+        if ($favoriteGameTitleIds->isNotEmpty()) {
+            $favoriteTitles = GameTitle::with('franchise', 'series.franchise')
+                ->whereIn('id', $favoriteGameTitleIds)
+                ->get();
+            $franchiseIds = $favoriteTitles
+                ->map(fn ($title) => $title->getFranchise()?->id)
+                ->filter()
+                ->unique()
+                ->values();
+        }
+
+        $setting = UserTimelineSetting::forUser($userId);
+        $showHorrorKeywordRss = $setting->show_horror_keyword_rss;
+        $showFavoriteFranchiseRss = $setting->show_favorite_franchise_rss;
+        $showAnyRss = $showHorrorKeywordRss
+            || ($showFavoriteFranchiseRss && $franchiseIds->isNotEmpty());
+
+        return TimelineEvent::with('actor')
+            ->where(function ($query) use (
+                $userId,
+                $favoriteGameTitleIds,
+                $franchiseIds,
+                $showHorrorKeywordRss,
+                $showFavoriteFranchiseRss,
+                $showAnyRss,
+            ) {
+                $query->where(function ($favoriteTitleQuery) use ($favoriteGameTitleIds) {
+                    $favoriteTitleQuery
+                        ->where('event_type', TimelineEventType::GameTitleUpdated->value)
+                        ->whereIn('subject_id', $favoriteGameTitleIds);
+                })
+                    ->orWhere('recipient_user_id', $userId)
+                    ->orWhere('event_type', TimelineEventType::InformationPosted->value);
+
+                if ($showAnyRss) {
+                    $query->orWhere(function ($rssEventQuery) use (
+                        $franchiseIds,
+                        $showHorrorKeywordRss,
+                        $showFavoriteFranchiseRss,
+                    ) {
+                        $rssEventQuery
+                            ->where('event_type', TimelineEventType::RssArticlePosted->value)
+                            ->where(function ($rssArticleQuery) use (
+                                $franchiseIds,
+                                $showHorrorKeywordRss,
+                                $showFavoriteFranchiseRss,
+                            ) {
+                                if ($showHorrorKeywordRss) {
+                                    $rssArticleQuery->whereIn('subject_id', function ($subquery) {
+                                        $subquery->select('id')
+                                            ->from('rss_articles')
+                                            ->where('has_horror_keyword', true);
+                                    });
+                                }
+
+                                if ($showFavoriteFranchiseRss && $franchiseIds->isNotEmpty()) {
+                                    $matchedFranchiseArticleIds = function ($subquery) use ($franchiseIds) {
+                                        $subquery->select('rss_article_id')
+                                            ->from('rss_article_matched_franchises')
+                                            ->whereIn('game_franchise_id', $franchiseIds->all());
+                                    };
+
+                                    if ($showHorrorKeywordRss) {
+                                        $rssArticleQuery->orWhereIn('subject_id', $matchedFranchiseArticleIds);
+                                    } else {
+                                        $rssArticleQuery->whereIn('subject_id', $matchedFranchiseArticleIds);
+                                    }
+                                }
+                            });
+                    });
+                }
+            });
     }
 
     /**

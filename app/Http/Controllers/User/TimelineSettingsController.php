@@ -36,9 +36,8 @@ class TimelineSettingsController extends Controller
         $validated = $request->validated();
 
         $setting = UserTimelineSetting::firstOrNew(['user_id' => $user->id]);
-        $setting->show_horror_keyword_rss     = (bool) ($validated['show_horror_keyword_rss'] ?? false);
+        $setting->show_horror_keyword_rss = (bool) ($validated['show_horror_keyword_rss'] ?? false);
         $setting->show_favorite_franchise_rss = (bool) ($validated['show_favorite_franchise_rss'] ?? false);
-        $setting->show_followed_user_activity = (bool) ($validated['show_followed_user_activity'] ?? false);
         $setting->save();
 
         return redirect()->route('User.MyNode.TimelineSettings')->with('success', 'マイノードタイムラインの設定を更新しました。');

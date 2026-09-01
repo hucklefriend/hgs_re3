@@ -55,6 +55,50 @@ test('トップページはPhase 5のタイトル画面と実データ新着欄�
     });
 });
 
+test('フッターの内部リンク端子は文字・円・接続線の共通軸を使う', async ({ page }) =>
+{
+    await page.goto('');
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+
+    const footerLinks = page.locator('.site-footer__nav a');
+    await expect(footerLinks).toHaveCount(4);
+    await expect(footerLinks.locator('[data-connection-terminal]')).toHaveCount(4);
+
+    const terminalAlignment = await footerLinks.evaluateAll((links) => links.map((link) => {
+        const label = link.querySelector<HTMLElement>('.site-connection-label');
+        const terminal = link.querySelector<HTMLElement>('[data-connection-terminal]');
+        if (label === null || terminal === null) {
+            throw new Error('The footer connection label is incomplete.');
+        }
+
+        const labelRect = label.getBoundingClientRect();
+        const terminalRect = terminal.getBoundingClientRect();
+        const terminalStyle = getComputedStyle(terminal);
+        const stubStyle = getComputedStyle(terminal, '::after');
+        const stubTransform = new DOMMatrixReadOnly(stubStyle.transform);
+        const circleCenter = terminal.offsetHeight / 2;
+        const stubCenter = Number.parseFloat(terminalStyle.borderTopWidth)
+            + Number.parseFloat(stubStyle.top)
+            + stubTransform.m42
+            + (Number.parseFloat(stubStyle.height) / 2);
+
+        return {
+            centerOffsetInEm: (
+                terminalRect.top + (terminalRect.height / 2)
+                - labelRect.top - (labelRect.height / 2)
+            ) / Number.parseFloat(getComputedStyle(label).fontSize),
+            lineAxisError: Math.abs(circleCenter - stubCenter),
+            ownerIsLabel: terminal.offsetParent === label,
+        };
+    }));
+
+    terminalAlignment.forEach((alignment) => {
+        expect(alignment.ownerIsLabel).toBe(true);
+        expect(alignment.centerOffsetInEm).toBeCloseTo(0, 2);
+        expect(alignment.lineAxisError).toBeLessThanOrEqual(0.01);
+    });
+});
+
 test('lineup opens and closes the search panel with SEARCH', async ({ page }) =>
 {
     await page.goto('game/lineup');

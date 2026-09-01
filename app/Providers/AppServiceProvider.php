@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Listeners\PreventE2eMailDelivery;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -23,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(SocialiteWasCalled::class, SteamExtendSocialite::class);
+        Event::listen(MessageSending::class, PreventE2eMailDelivery::class);
     }
 }

@@ -29,6 +29,8 @@
     --site-motion-normal: 280ms;
     --site-connection-terminal-size: 13px;
     --site-connection-stub-length: 8px;
+    --site-connection-text-optical-offset: 0.1em;
+    --site-connection-text-optical-offset-mono: 0em;
     --site-ambient-signal-size: 7px;
     --site-handoff-token-size: 14px;
 }

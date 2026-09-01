@@ -100,6 +100,18 @@ CREATE TABLE `failed_jobs` (
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `fear_meter_statistics_dirty_titles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fear_meter_statistics_dirty_titles` (
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`game_title_id`),
+  KEY `fear_meter_statistics_dirty_titles_updated_at_index` (`updated_at`),
+  CONSTRAINT `fear_meter_statistics_dirty_titles_game_title_id_foreign` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `fear_meter_statistics_run_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -125,6 +137,7 @@ CREATE TABLE `game_franchises` (
   `description_source` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '説明の引用元',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `last_title_update_at` timestamp NULL DEFAULT NULL COMMENT '紐づくGameTitleの最終更新日時',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='ゲームフランチャイズデータ';
@@ -154,18 +167,6 @@ CREATE TABLE `game_maker_sites` (
   KEY `game_maker_id` (`game_maker_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='ゲームメーカーのサイトURL';
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `game_maker_synonyms`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `game_maker_synonyms` (
-  `game_maker_id` bigint(20) unsigned NOT NULL COMMENT 'メーカーID',
-  `synonym` varchar(100) NOT NULL DEFAULT '' COMMENT '俗称',
-  `created_at` timestamp NULL DEFAULT NULL COMMENT '作成日時',
-  `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新日時',
-  KEY `synonym` (`synonym`),
-  KEY `game_maker_id` (`game_maker_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='ゲームメーカーの俗称';
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `game_makers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -179,6 +180,7 @@ CREATE TABLE `game_makers` (
   `type` int(11) NOT NULL COMMENT 'ゲームメーカー種別',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '説明',
   `description_source` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '説明の引用元',
+  `search_synonyms` text DEFAULT NULL COMMENT '検索用俗称（改行区切り）',
   `related_game_maker_id` int(11) DEFAULT NULL COMMENT '何かしら関係のあるメーカーID',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -371,19 +373,6 @@ CREATE TABLE `game_platform_sites` (
   KEY `game_maker_id` (`game_platform_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='ゲームプラットフォームのURL';
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `game_platform_synonyms`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `game_platform_synonyms` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `game_platform_id` bigint(20) unsigned NOT NULL COMMENT 'プラットフォームID',
-  `synonym` varchar(100) NOT NULL DEFAULT '' COMMENT '俗称',
-  `created_at` timestamp NULL DEFAULT NULL COMMENT '作成日時',
-  `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新日時',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `synonym` (`synonym`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='ゲームプラットフォームの俗称';
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `game_platforms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -398,6 +387,7 @@ CREATE TABLE `game_platforms` (
   `sort_order` int(10) unsigned NOT NULL COMMENT '表示順',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '説明',
   `description_source` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '説明の引用元',
+  `search_synonyms` text DEFAULT NULL COMMENT '検索用俗称（改行区切り）',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -459,24 +449,6 @@ CREATE TABLE `game_series` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ゲームシリーズ';
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `game_title_fear_meter_statistics`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `game_title_fear_meter_statistics` (
-  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
-  `average_rating` decimal(3,2) NOT NULL DEFAULT 0.00 COMMENT '平均評価（0.00-4.00）',
-  `fear_meter` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `total_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価総数',
-  `rating_0_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価0の数',
-  `rating_1_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価1の数',
-  `rating_2_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価2の数',
-  `rating_3_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価3の数',
-  `rating_4_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価4の数',
-  `updated_at` timestamp NULL DEFAULT NULL COMMENT '最終更新日時',
-  PRIMARY KEY (`game_title_id`),
-  CONSTRAINT `game_title_fear_meter_statistics_game_title_id_foreign` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `game_title_package_group_links`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -533,7 +505,27 @@ DROP TABLE IF EXISTS `information`;
 CREATE TABLE `information` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `head` text NOT NULL COMMENT 'ヘッダ',
-  `body` text NOT NULL COMMENT '本文',
+  `header_text` text DEFAULT NULL,
+  `sub_title_1` varchar(255) DEFAULT NULL,
+  `sub_text_1` text DEFAULT NULL,
+  `sub_title_2` varchar(255) DEFAULT NULL,
+  `sub_text_2` text DEFAULT NULL,
+  `sub_title_3` varchar(255) DEFAULT NULL,
+  `sub_text_3` text DEFAULT NULL,
+  `sub_title_4` varchar(255) DEFAULT NULL,
+  `sub_text_4` text DEFAULT NULL,
+  `sub_title_5` varchar(255) DEFAULT NULL,
+  `sub_text_5` text DEFAULT NULL,
+  `sub_title_6` varchar(255) DEFAULT NULL,
+  `sub_text_6` text DEFAULT NULL,
+  `sub_title_7` varchar(255) DEFAULT NULL,
+  `sub_text_7` text DEFAULT NULL,
+  `sub_title_8` varchar(255) DEFAULT NULL,
+  `sub_text_8` text DEFAULT NULL,
+  `sub_title_9` varchar(255) DEFAULT NULL,
+  `sub_text_9` text DEFAULT NULL,
+  `sub_title_10` varchar(255) DEFAULT NULL,
+  `sub_text_10` text DEFAULT NULL,
   `priority` smallint(6) NOT NULL DEFAULT 100 COMMENT '優先度',
   `open_at` datetime NOT NULL COMMENT '掲載開始日時',
   `close_at` datetime NOT NULL COMMENT '掲載終了日時',
@@ -573,6 +565,25 @@ CREATE TABLE `jobs` (
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `master_json_import_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `master_json_import_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `admin_user_id` bigint(20) unsigned NOT NULL COMMENT '実行した管理者のユーザーID',
+  `target_type` varchar(30) NOT NULL COMMENT '対象種別（title/media_mix）',
+  `target_id` int(10) unsigned NOT NULL COMMENT '対象ID',
+  `before_json` longtext NOT NULL COMMENT '適用前のシリアライズJSON',
+  `imported_json` longtext NOT NULL COMMENT '貼り付けられたJSON',
+  `applied_diff_json` longtext NOT NULL COMMENT '実際に採用された差分',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `master_json_import_logs_target_type_target_id_index` (`target_type`,`target_id`),
+  KEY `master_json_import_logs_admin_user_id_foreign` (`admin_user_id`),
+  CONSTRAINT `master_json_import_logs_admin_user_id_foreign` FOREIGN KEY (`admin_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `migrations`;
@@ -631,6 +642,96 @@ CREATE TABLE `password_resets` (
   KEY `password_resets_email_index` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `personal_access_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) unsigned NOT NULL,
+  `name` text NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  KEY `personal_access_tokens_expires_at_index` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `review_statistics_dirty_titles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `review_statistics_dirty_titles` (
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`game_title_id`),
+  KEY `review_statistics_dirty_titles_updated_at_index` (`updated_at`),
+  CONSTRAINT `revdirt_title_fk` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `review_statistics_run_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `review_statistics_run_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `last_completed_at` timestamp NULL DEFAULT NULL COMMENT '前回の集計完了日時',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `rss_article_matched_franchises`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rss_article_matched_franchises` (
+  `rss_article_id` bigint(20) unsigned NOT NULL,
+  `game_franchise_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`rss_article_id`,`game_franchise_id`),
+  KEY `rssamf_franchise_idx` (`game_franchise_id`),
+  CONSTRAINT `rssamf_article_fk` FOREIGN KEY (`rss_article_id`) REFERENCES `rss_articles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `rssamf_franchise_fk` FOREIGN KEY (`game_franchise_id`) REFERENCES `game_franchises` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `rss_articles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rss_articles` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `rss_source` varchar(32) NOT NULL COMMENT 'RSSソース（RssSource Enumの値）',
+  `guid` varchar(2048) NOT NULL COMMENT 'RSSのguid or link（重複判定キー）',
+  `guid_hash` varchar(64) NOT NULL COMMENT '(rss_source, guid)のSHA256ハッシュ',
+  `url` varchar(2048) NOT NULL COMMENT '記事URL',
+  `url_hash` varchar(64) NOT NULL COMMENT 'urlのSHA256ハッシュ（OgpCache紐付け用）',
+  `has_horror_keyword` tinyint(1) NOT NULL DEFAULT 0 COMMENT '「ホラーゲーム」を含むか',
+  `published_at` timestamp NULL DEFAULT NULL COMMENT 'RSS配信日時',
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rssart_source_guid_unique` (`rss_source`,`guid_hash`),
+  KEY `rssart_published_idx` (`published_at`),
+  KEY `rssart_source_idx` (`rss_source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `rss_fetch_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rss_fetch_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `rss_source` varchar(32) DEFAULT NULL COMMENT '取得ソース（NULL=全ソース）',
+  `status` varchar(16) NOT NULL DEFAULT 'running' COMMENT 'running / success / error',
+  `new_article_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '新着記事数',
+  `error_message` text DEFAULT NULL COMMENT 'エラー内容',
+  `started_at` timestamp NOT NULL COMMENT '取得開始日時',
+  `finished_at` timestamp NULL DEFAULT NULL COMMENT '取得完了日時',
+  PRIMARY KEY (`id`),
+  KEY `rss_fetch_logs_started_at_index` (`started_at`),
+  KEY `rss_fetch_logs_rss_source_index` (`rss_source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -644,6 +745,56 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   KEY `sessions_user_id_index` (`user_id`),
   KEY `sessions_last_activity_index` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `shop_link_check_progresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shop_link_check_progresses` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `source_table` varchar(50) NOT NULL,
+  `last_checked_id` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shop_link_check_progresses_source_table_unique` (`source_table`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `shop_link_sold_out_results`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shop_link_sold_out_results` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `source_table` varchar(50) NOT NULL,
+  `source_id` int(10) unsigned NOT NULL,
+  `shop_id` int(10) unsigned NOT NULL,
+  `url` text NOT NULL,
+  `reason` varchar(10) NOT NULL,
+  `matched_keyword` varchar(255) DEFAULT NULL,
+  `detected_at` timestamp NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `shop_link_sold_out_results_source_table_source_id_unique` (`source_table`,`source_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `social_accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `social_accounts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `provider` tinyint(3) unsigned NOT NULL COMMENT 'SocialAccountProvider Enum',
+  `provider_user_id` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `access_token` text DEFAULT NULL,
+  `refresh_token` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `social_accounts_provider_provider_user_id_unique` (`provider`,`provider_user_id`),
+  KEY `social_accounts_user_id_foreign` (`user_id`),
+  CONSTRAINT `social_accounts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tags`;
@@ -675,6 +826,106 @@ CREATE TABLE `temporary_registrations` (
   UNIQUE KEY `temporary_registrations_token_unique` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `timeline_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `timeline_events` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `event_type` varchar(32) NOT NULL COMMENT 'イベント種別（TimelineEventType）',
+  `actor_type` varchar(16) DEFAULT NULL COMMENT 'アクター種別（TimelineActorType）',
+  `actor_id` bigint(20) unsigned DEFAULT NULL COMMENT 'アクターID（actor_type=user のとき users.id）',
+  `subject_type` varchar(32) NOT NULL COMMENT 'サブジェクト種別（TimelineSubjectType）',
+  `subject_id` bigint(20) unsigned NOT NULL COMMENT 'サブジェクトID（subject_type に対応するID）',
+  `recipient_user_id` bigint(20) unsigned DEFAULT NULL COMMENT '通知先ユーザーID（通知系イベント共通）',
+  `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT '付随情報（怖さメーターラベルなど）' CHECK (json_valid(`payload`)),
+  `created_at` timestamp NOT NULL COMMENT 'イベント発生日時',
+  PRIMARY KEY (`id`),
+  KEY `tlevt_actor_idx` (`actor_type`,`actor_id`,`created_at`),
+  KEY `tlevt_subject_idx` (`subject_type`,`subject_id`,`created_at`),
+  KEY `tlevt_recipient_idx` (`recipient_user_id`,`created_at`),
+  KEY `tlevt_actor_fk` (`actor_id`),
+  CONSTRAINT `tlevt_actor_fk` FOREIGN KEY (`actor_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tlevt_recipient_fk` FOREIGN KEY (`recipient_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `title_fear_meter_statistics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `title_fear_meter_statistics` (
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `average_rating` decimal(3,2) NOT NULL DEFAULT 0.00 COMMENT '平均評価（0.00-4.00）',
+  `fear_meter` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `total_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価総数',
+  `rating_0_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価0の数',
+  `rating_1_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価1の数',
+  `rating_2_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価2の数',
+  `rating_3_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価3の数',
+  `rating_4_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '評価4の数',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT '最終更新日時',
+  PRIMARY KEY (`game_title_id`),
+  CONSTRAINT `game_title_fear_meter_statistics_game_title_id_foreign` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `title_review_statistics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `title_review_statistics` (
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `review_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT '公開済みレビュー件数',
+  `avg_total_score` decimal(5,2) DEFAULT NULL COMMENT '総合スコア平均（0〜100）',
+  `avg_story` decimal(4,2) DEFAULT NULL COMMENT 'ストーリー平均（0〜4）',
+  `avg_atmosphere` decimal(4,2) DEFAULT NULL COMMENT '雰囲気・演出平均（0〜4）',
+  `avg_gameplay` decimal(4,2) DEFAULT NULL COMMENT 'ゲーム性平均（0〜4）',
+  `updated_at` timestamp NULL DEFAULT NULL COMMENT '最終更新日時',
+  PRIMARY KEY (`game_title_id`),
+  CONSTRAINT `gtrstat_title_fk` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `two_factor_auth_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `two_factor_auth_codes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  `failed_attempts` tinyint(4) NOT NULL DEFAULT 0,
+  `resend_count` tinyint(4) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `two_factor_auth_codes_user_id_foreign` (`user_id`),
+  CONSTRAINT `two_factor_auth_codes_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `two_factor_recovery_codes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `two_factor_recovery_codes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `code` varchar(64) NOT NULL,
+  `used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `two_factor_recovery_codes_user_id_foreign` (`user_id`),
+  CONSTRAINT `two_factor_recovery_codes_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_blocks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_blocks` (
+  `blocker_id` bigint(20) unsigned NOT NULL COMMENT 'ブロックするユーザーID',
+  `blocked_id` bigint(20) unsigned NOT NULL COMMENT 'ブロックされるユーザーID',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`blocker_id`,`blocked_id`),
+  KEY `user_blocks_blocked_idx` (`blocked_id`),
+  CONSTRAINT `ub_blocked_fk` FOREIGN KEY (`blocked_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ub_blocker_fk` FOREIGN KEY (`blocker_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_favorite_game_titles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -689,6 +940,101 @@ CREATE TABLE `user_favorite_game_titles` (
   CONSTRAINT `user_favorite_game_titles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_fear_meter_restrictions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_fear_meter_restrictions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '対象ユーザーID',
+  `reason` varchar(255) DEFAULT NULL COMMENT '理由',
+  `source` varchar(30) NOT NULL DEFAULT 'manual' COMMENT '制限ソース',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '有効フラグ',
+  `started_at` timestamp NOT NULL COMMENT '開始日時',
+  `ended_at` timestamp NULL DEFAULT NULL COMMENT '終了日時',
+  `created_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '作成管理者ID',
+  `released_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '解除管理者ID',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ufmr_user_active_started_idx` (`user_id`,`is_active`,`started_at`),
+  KEY `ufmr_created_admin_fk` (`created_by_admin_id`),
+  KEY `ufmr_released_admin_fk` (`released_by_admin_id`),
+  CONSTRAINT `ufmr_created_admin_fk` FOREIGN KEY (`created_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ufmr_released_admin_fk` FOREIGN KEY (`released_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ufmr_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_follows`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_follows` (
+  `follower_id` bigint(20) unsigned NOT NULL COMMENT 'フォローするユーザーID',
+  `following_id` bigint(20) unsigned NOT NULL COMMENT 'フォローされるユーザーID',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`follower_id`,`following_id`),
+  KEY `user_follows_following_idx` (`following_id`),
+  CONSTRAINT `uf_follower_fk` FOREIGN KEY (`follower_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `uf_following_fk` FOREIGN KEY (`following_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_fear_meter_comment_likes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_fear_meter_comment_likes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `fear_meter_log_id` bigint(20) unsigned NOT NULL COMMENT '怖さメーターログID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'いいねしたユーザーID',
+  `created_at` timestamp NOT NULL COMMENT '作成日時',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtfmcl_log_user_unique` (`fear_meter_log_id`,`user_id`),
+  KEY `user_game_title_fear_meter_comment_likes_fear_meter_log_id_index` (`fear_meter_log_id`),
+  KEY `user_game_title_fear_meter_comment_likes_user_id_index` (`user_id`),
+  CONSTRAINT `ugtfmcl_log_fk` FOREIGN KEY (`fear_meter_log_id`) REFERENCES `user_game_title_fear_meter_logs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtfmcl_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_fear_meter_comment_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_fear_meter_comment_reports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `fear_meter_log_id` bigint(20) unsigned NOT NULL COMMENT '怖さメーターログID',
+  `reporter_user_id` bigint(20) unsigned NOT NULL COMMENT '通報者ユーザーID',
+  `reason` varchar(255) DEFAULT NULL COMMENT '通報理由',
+  `status` varchar(20) NOT NULL DEFAULT 'open' COMMENT '通報ステータス',
+  `reviewed_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT 'レビューした管理者ID',
+  `reviewed_at` timestamp NULL DEFAULT NULL COMMENT 'レビュー日時',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtfmcr_log_reporter_unique` (`fear_meter_log_id`,`reporter_user_id`),
+  KEY `ugtfmcr_status_created_at_idx` (`status`,`created_at`),
+  KEY `ugtfmcr_log_idx` (`fear_meter_log_id`),
+  KEY `ugtfmcr_reporter_fk` (`reporter_user_id`),
+  KEY `ugtfmcr_reviewed_admin_fk` (`reviewed_by_admin_id`),
+  CONSTRAINT `ugtfmcr_log_fk` FOREIGN KEY (`fear_meter_log_id`) REFERENCES `user_game_title_fear_meter_logs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtfmcr_reporter_fk` FOREIGN KEY (`reporter_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtfmcr_reviewed_admin_fk` FOREIGN KEY (`reviewed_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_fear_meter_drafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_fear_meter_drafts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'ユーザーID',
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `fear_meter` tinyint(3) unsigned NOT NULL COMMENT '怖さ評価値（0-4）',
+  `comment` varchar(100) DEFAULT NULL COMMENT '一言コメント',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_game_title_fear_meter_drafts_user_id_game_title_id_unique` (`user_id`,`game_title_id`),
+  KEY `user_game_title_fear_meter_drafts_game_title_id_foreign` (`game_title_id`),
+  CONSTRAINT `user_game_title_fear_meter_drafts_game_title_id_foreign` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_game_title_fear_meter_drafts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `user_game_title_fear_meter_logs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -698,11 +1044,24 @@ CREATE TABLE `user_game_title_fear_meter_logs` (
   `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
   `old_fear_meter` tinyint(3) unsigned DEFAULT NULL COMMENT '変更前の怖さ評価値（0-4、初回登録時はNULL）',
   `new_fear_meter` tinyint(3) unsigned NOT NULL COMMENT '変更後の怖さ評価値（0-4）',
+  `comment` varchar(100) DEFAULT NULL COMMENT '一言コメント',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '削除フラグ',
+  `deleted_at` timestamp NULL DEFAULT NULL COMMENT '削除日時',
+  `deleted_by_user_id` bigint(20) unsigned DEFAULT NULL COMMENT '削除したユーザーID',
+  `deleted_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '削除した管理者ID',
+  `action` tinyint(3) unsigned NOT NULL DEFAULT 1 COMMENT '操作種別（1=新規登録, 2=編集, 3=削除）',
   `created_at` timestamp NOT NULL COMMENT '変更日時',
   PRIMARY KEY (`id`),
   KEY `user_game_title_fear_meter_logs_user_id_index` (`user_id`),
   KEY `user_game_title_fear_meter_logs_game_title_id_index` (`game_title_id`),
   KEY `user_game_title_fear_meter_logs_created_at_index` (`created_at`),
+  KEY `ugtfml_game_title_created_at_idx` (`game_title_id`,`created_at`),
+  KEY `ugtfml_title_deleted_created_at_idx` (`game_title_id`,`is_deleted`,`created_at`),
+  KEY `ugtfml_user_title_id_idx` (`user_id`,`game_title_id`,`id`),
+  KEY `ugtfml_deleted_by_user_fk` (`deleted_by_user_id`),
+  KEY `ugtfml_deleted_by_admin_fk` (`deleted_by_admin_id`),
+  CONSTRAINT `ugtfml_deleted_by_admin_fk` FOREIGN KEY (`deleted_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ugtfml_deleted_by_user_fk` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `user_game_title_fear_meter_logs_game_title_id_foreign` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE,
   CONSTRAINT `user_game_title_fear_meter_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -724,6 +1083,200 @@ CREATE TABLE `user_game_title_fear_meters` (
   CONSTRAINT `user_game_title_fear_meters_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_draft_packages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_draft_packages` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `draft_id` bigint(20) unsigned NOT NULL COMMENT '下書きID',
+  `game_package_id` int(10) unsigned NOT NULL COMMENT 'ゲームパッケージID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevdftpkg_dft_pkg_unique` (`draft_id`,`game_package_id`),
+  KEY `ugtrevdftpkg_dft_idx` (`draft_id`),
+  KEY `ugtrevdftpkg_pkg_fk` (`game_package_id`),
+  CONSTRAINT `ugtrevdftpkg_dft_fk` FOREIGN KEY (`draft_id`) REFERENCES `user_game_title_review_drafts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevdftpkg_pkg_fk` FOREIGN KEY (`game_package_id`) REFERENCES `game_packages` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_drafts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_drafts` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'ユーザーID',
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `review_id` bigint(20) unsigned DEFAULT NULL COMMENT 'レビューID（NULLなら新規投稿の下書き、値ありなら編集中の下書き）',
+  `play_status` varchar(32) DEFAULT NULL COMMENT 'プレイ状況',
+  `body` text DEFAULT NULL COMMENT '本文',
+  `has_spoiler` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'ネタバレフラグ',
+  `score_story` tinyint(3) unsigned DEFAULT NULL COMMENT 'ストーリースコア（0〜4）',
+  `score_atmosphere` tinyint(3) unsigned DEFAULT NULL COMMENT '雰囲気・演出スコア（0〜4）',
+  `score_gameplay` tinyint(3) unsigned DEFAULT NULL COMMENT 'ゲーム性スコア（0〜4）',
+  `user_score_adjustment` smallint(6) DEFAULT NULL COMMENT 'ユーザー調整値（−20〜+20）',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevdft_user_title_unique` (`user_id`,`game_title_id`),
+  KEY `ugtrevdft_user_idx` (`user_id`),
+  KEY `ugtrevdft_title_idx` (`game_title_id`),
+  KEY `ugtrevdft_rev_fk` (`review_id`),
+  CONSTRAINT `ugtrevdft_rev_fk` FOREIGN KEY (`review_id`) REFERENCES `user_game_title_reviews` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevdft_title_fk` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevdft_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_likes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_likes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'いいねしたユーザーID',
+  `review_id` bigint(20) unsigned NOT NULL COMMENT 'レビューID',
+  `review_log_id` bigint(20) unsigned NOT NULL COMMENT 'いいねした時点のバージョンID',
+  `created_at` timestamp NOT NULL COMMENT '作成日時',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevlk_user_rev_unique` (`user_id`,`review_id`),
+  KEY `ugtrevlk_rev_idx` (`review_id`),
+  KEY `ugtrevlk_user_idx` (`user_id`),
+  KEY `ugtrevlk_log_fk` (`review_log_id`),
+  CONSTRAINT `ugtrevlk_log_fk` FOREIGN KEY (`review_log_id`) REFERENCES `user_game_title_review_logs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevlk_rev_fk` FOREIGN KEY (`review_id`) REFERENCES `user_game_title_reviews` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevlk_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID（バージョンIDとして使用）',
+  `review_id` bigint(20) unsigned NOT NULL COMMENT 'レビューID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'ユーザーID',
+  `version` int(10) unsigned NOT NULL COMMENT 'レビューごとの連番（1始まり）',
+  `play_status` varchar(32) NOT NULL COMMENT 'プレイ状況',
+  `game_package_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'ゲームパッケージIDの配列（スナップショット）' CHECK (json_valid(`game_package_ids`)),
+  `body` text NOT NULL COMMENT '本文',
+  `has_spoiler` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'ネタバレフラグ',
+  `score_story` tinyint(3) unsigned DEFAULT NULL COMMENT 'ストーリースコア（0〜4）',
+  `score_atmosphere` tinyint(3) unsigned DEFAULT NULL COMMENT '雰囲気・演出スコア（0〜4）',
+  `score_gameplay` tinyint(3) unsigned DEFAULT NULL COMMENT 'ゲーム性スコア（0〜4）',
+  `user_score_adjustment` smallint(6) DEFAULT NULL COMMENT 'ユーザー調整値（−20〜+20）',
+  `base_score` tinyint(3) unsigned DEFAULT NULL COMMENT 'ベーススコア（0〜100）',
+  `total_score` tinyint(3) unsigned DEFAULT NULL COMMENT '総合スコア（0〜100）',
+  `created_at` timestamp NOT NULL COMMENT '編集日時',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevlog_rev_ver_unique` (`review_id`,`version`),
+  KEY `ugtrevlog_rev_idx` (`review_id`),
+  KEY `ugtrevlog_user_idx` (`user_id`),
+  CONSTRAINT `ugtrevlog_rev_fk` FOREIGN KEY (`review_id`) REFERENCES `user_game_title_reviews` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevlog_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_packages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_packages` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `review_id` bigint(20) unsigned NOT NULL COMMENT 'レビューID',
+  `game_package_id` int(10) unsigned NOT NULL COMMENT 'ゲームパッケージID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevpkg_rev_pkg_unique` (`review_id`,`game_package_id`),
+  KEY `ugtrevpkg_rev_idx` (`review_id`),
+  KEY `ugtrevpkg_pkg_fk` (`game_package_id`),
+  CONSTRAINT `ugtrevpkg_pkg_fk` FOREIGN KEY (`game_package_id`) REFERENCES `game_packages` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevpkg_rev_fk` FOREIGN KEY (`review_id`) REFERENCES `user_game_title_reviews` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_review_reports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_review_reports` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '通報者ユーザーID',
+  `review_id` bigint(20) unsigned NOT NULL COMMENT 'レビューID',
+  `review_log_id` bigint(20) unsigned NOT NULL COMMENT '通報時点のバージョンID',
+  `reason` text DEFAULT NULL COMMENT '通報理由',
+  `is_resolved` tinyint(1) NOT NULL DEFAULT 0 COMMENT '対応済みフラグ',
+  `resolved_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '対応した管理者ID',
+  `resolved_at` timestamp NULL DEFAULT NULL COMMENT '対応日時',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrevrpt_user_rev_unique` (`user_id`,`review_id`),
+  KEY `ugtrevrpt_rev_idx` (`review_id`),
+  KEY `ugtrevrpt_resolved_created_idx` (`is_resolved`,`created_at`),
+  KEY `ugtrevrpt_log_fk` (`review_log_id`),
+  KEY `ugtrevrpt_admin_fk` (`resolved_by_admin_id`),
+  CONSTRAINT `ugtrevrpt_admin_fk` FOREIGN KEY (`resolved_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ugtrevrpt_log_fk` FOREIGN KEY (`review_log_id`) REFERENCES `user_game_title_review_logs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevrpt_rev_fk` FOREIGN KEY (`review_id`) REFERENCES `user_game_title_reviews` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrevrpt_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_game_title_reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_game_title_reviews` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `key` varchar(20) DEFAULT NULL,
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'ユーザーID',
+  `game_title_id` int(10) unsigned NOT NULL COMMENT 'ゲームタイトルID',
+  `is_hidden` tinyint(1) NOT NULL DEFAULT 0 COMMENT '管理者による非表示フラグ',
+  `hidden_by_admin_id` bigint(20) unsigned DEFAULT NULL COMMENT '非表示にした管理者ID',
+  `hidden_at` timestamp NULL DEFAULT NULL COMMENT '非表示にした日時',
+  `play_status` varchar(32) NOT NULL COMMENT 'プレイ状況',
+  `body` text NOT NULL COMMENT '本文（〜2000文字）',
+  `has_spoiler` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'ネタバレフラグ',
+  `score_story` tinyint(3) unsigned DEFAULT NULL COMMENT 'ストーリースコア（0〜4）',
+  `score_atmosphere` tinyint(3) unsigned DEFAULT NULL COMMENT '雰囲気・演出スコア（0〜4）',
+  `score_gameplay` tinyint(3) unsigned DEFAULT NULL COMMENT 'ゲーム性スコア（0〜4）',
+  `user_score_adjustment` smallint(6) DEFAULT NULL COMMENT 'ユーザー調整値（−20〜+20）',
+  `base_score` tinyint(3) unsigned DEFAULT NULL COMMENT 'ベーススコア（0〜100）',
+  `total_score` tinyint(3) unsigned DEFAULT NULL COMMENT '総合スコア（0〜100）',
+  `current_log_id` bigint(20) unsigned DEFAULT NULL COMMENT '現在の公開バージョンのログID',
+  `ogp_image_filename` varchar(255) DEFAULT NULL COMMENT 'OGP画像パス',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'ユーザーによるソフトデリートフラグ',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ugtrev_user_title_unique` (`user_id`,`game_title_id`),
+  UNIQUE KEY `user_game_title_reviews_key_unique` (`key`),
+  KEY `ugtrev_user_idx` (`user_id`),
+  KEY `ugtrev_title_idx` (`game_title_id`),
+  KEY `ugtrev_title_visible_idx` (`game_title_id`,`is_deleted`,`is_hidden`),
+  KEY `ugtrev_admin_fk` (`hidden_by_admin_id`),
+  CONSTRAINT `ugtrev_admin_fk` FOREIGN KEY (`hidden_by_admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `ugtrev_title_fk` FOREIGN KEY (`game_title_id`) REFERENCES `game_titles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ugtrev_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_mutes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_mutes` (
+  `muter_id` bigint(20) unsigned NOT NULL COMMENT 'ミュートするユーザーID',
+  `muted_id` bigint(20) unsigned NOT NULL COMMENT 'ミュートされるユーザーID',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`muter_id`,`muted_id`),
+  KEY `user_mutes_muted_idx` (`muted_id`),
+  CONSTRAINT `um_muted_fk` FOREIGN KEY (`muted_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `um_muter_fk` FOREIGN KEY (`muter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `user_timeline_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_timeline_settings` (
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'ユーザーID',
+  `show_horror_keyword_rss` tinyint(1) NOT NULL DEFAULT 1 COMMENT '「ホラーゲーム」キーワードでマッチしたRSS記事を表示するか',
+  `show_favorite_franchise_rss` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'お気に入りタイトル（フランチャイズ）にマッチしたRSS記事を表示するか',
+  `show_followed_user_activity` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'フォロー中ユーザーの活動（レビュー・怖さメーター）を表示するか',
+  `publish_activity_to_root` tinyint(1) NOT NULL DEFAULT 1 COMMENT '自分のレビュー・怖さメーター更新をルートタイムラインに掲載するか',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `utls_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -735,15 +1288,19 @@ CREATE TABLE `users` (
   `adult` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `hgs12_user` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `profile` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `avatar_filename` varchar(255) DEFAULT NULL COMMENT 'アバター画像ファイル名。nullの場合はGravatarを表示',
+  `bio` varchar(200) DEFAULT NULL,
   `point` bigint(20) NOT NULL DEFAULT 0,
   `last_login_at` datetime DEFAULT NULL,
   `sign_up_at` datetime DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `email_verification_token` varchar(255) DEFAULT NULL,
   `email_verification_sent_at` timestamp NULL DEFAULT NULL,
   `withdrawn_at` timestamp NULL DEFAULT NULL,
   `privacy_policy_accepted_version` int(10) unsigned NOT NULL DEFAULT 0,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `two_factor_method` varchar(255) DEFAULT NULL,
+  `two_factor_secret` text DEFAULT NULL,
   `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -810,3 +1367,61 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (50,'2026_01_15_100
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (51,'2026_01_15_100003_add_fear_meter_to_game_title_fear_meter_statistics_table',32);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (52,'2026_02_05_100000_create_fear_meter_statistics_run_log_table',33);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (53,'2026_02_05_100001_add_updated_at_game_title_id_index_to_user_game_title_fear_meters_table',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (54,'2026_02_20_100000_update_informations_table_add_header_text_and_sub_items',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (55,'2026_02_23_070034_create_social_accounts_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (56,'2026_02_23_070045_make_password_nullable_in_users_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (57,'2026_03_03_100000_add_last_title_update_at_to_game_franchises_table',36);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (58,'2026_03_03_100001_backfill_last_title_update_at_on_game_franchises',37);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (59,'2026_03_18_181300_create_personal_access_tokens_table',38);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (60,'2026_03_23_120000_add_comment_and_delete_flags_to_user_game_title_fear_meter_logs_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (61,'2026_03_23_130000_create_fear_meter_statistics_dirty_titles_table',40);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (62,'2026_03_23_140000_create_fear_meter_comment_likes_table',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (63,'2026_03_23_140001_create_fear_meter_comment_reports_table',42);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (64,'2026_03_23_140002_create_user_fear_meter_restrictions_table',42);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (65,'2026_04_03_060051_make_email_nullable_in_users_table',43);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (66,'2026_04_07_054506_add_two_factor_method_to_users_table',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (67,'2026_04_07_054506_create_two_factor_auth_codes_table',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (68,'2026_04_07_060000_add_two_factor_secret_to_users_table',45);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (69,'2026_04_08_000000_create_two_factor_recovery_codes_table',46);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (70,'2026_04_10_100000_create_user_game_title_reviews_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (71,'2026_04_10_100001_create_user_game_title_review_packages_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (72,'2026_04_10_100002_create_user_game_title_review_horror_type_tags_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (73,'2026_04_10_100003_create_user_game_title_review_logs_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (74,'2026_04_10_100004_create_user_game_title_review_drafts_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (75,'2026_04_10_100005_create_user_game_title_review_draft_packages_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (76,'2026_04_10_100006_create_user_game_title_review_draft_horror_type_tags_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (77,'2026_04_10_100007_create_user_game_title_review_likes_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (78,'2026_04_10_100008_create_user_game_title_review_reports_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (79,'2026_04_10_100009_create_game_title_review_statistics_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (80,'2026_04_10_100010_create_review_statistics_dirty_titles_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (81,'2026_04_10_100011_create_review_statistics_run_log_table',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (82,'2026_04_10_100012_add_action_to_user_game_title_fear_meter_logs_table',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (83,'2026_04_15_000000_drop_play_time_from_review_tables',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (84,'2026_04_15_000001_rename_ogp_image_path_to_ogp_image_filename_in_reviews_table',50);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (85,'2026_04_15_100002_convert_score_fields_to_point_values',51);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (86,'2026_04_17_061516_add_key_to_user_game_title_reviews_table',52);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (87,'2026_04_24_053805_create_user_game_title_fear_meter_drafts_table',53);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (88,'2026_04_26_051825_drop_horror_type_tags_tables',54);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (89,'2026_05_13_000001_create_shop_link_check_progresses_table',55);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (94,'2026_05_13_000002_create_shop_link_sold_out_results_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (95,'2026_05_19_000001_create_timeline_events_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (96,'2026_06_01_000001_create_rss_sources_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (97,'2026_06_01_000002_create_rss_articles_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (98,'2026_06_01_000003_create_rss_article_matched_titles_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (99,'2026_06_01_000004_create_rss_article_matched_franchises_table',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (100,'2026_06_01_000005_switch_rss_source_from_table_to_enum',57);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (101,'2026_06_02_000001_create_user_timeline_settings_table',58);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (102,'2026_06_03_000001_drop_rss_article_matched_titles_table',59);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (103,'2026_06_04_000001_create_rss_fetch_logs_table',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (104,'2026_06_05_000001_add_avatar_filename_to_users_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (105,'2026_06_05_000002_create_user_follows_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (106,'2026_06_05_000003_create_user_blocks_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (107,'2026_06_05_000004_create_user_mutes_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (108,'2026_06_06_000001_add_bio_to_users_table',62);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (109,'2026_06_09_000001_seed_user_registered_timeline_events',63);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (110,'2026_06_19_000001_create_master_json_import_logs_table',63);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (111,'2026_07_09_000001_rename_game_title_statistics_tables',64);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (112,'2026_07_10_000001_add_search_synonyms_to_game_makers_table',65);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (113,'2026_07_10_000002_drop_game_maker_synonyms_table',65);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (114,'2026_07_10_000003_add_search_synonyms_to_game_platforms_table',65);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (115,'2026_07_10_000004_drop_game_platform_synonyms_table',65);

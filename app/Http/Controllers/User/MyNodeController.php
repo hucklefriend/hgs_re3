@@ -29,6 +29,8 @@ use App\Enums\SocialAccountProvider;
 use App\Models\EmailChangeRequest;
 use App\Models\SocialAccount;
 use App\Models\User;
+use App\Models\UserGameTitleReview;
+use App\Models\UserGameTitleReviewLike;
 use Laravel\Socialite\Facades\Socialite;
 
 class MyNodeController extends Controller
@@ -70,11 +72,18 @@ class MyNodeController extends Controller
         $followerCount  = $user->followers()->count();
         $blockingCount  = $user->blocking()->count();
         $mutingCount    = $user->muting()->count();
+        $favoriteTitleCount = $user->favoriteGameTitles()->count();
+        $fearMeterCount = $user->fearMeters()->count();
+        $reviewCount = UserGameTitleReview::where('user_id', $user->id)
+            ->where('is_deleted', false)
+            ->count();
+        $reviewLikeCount = UserGameTitleReviewLike::where('user_id', $user->id)->count();
 
         return $this->tree(
             view('user.my_node.top', compact(
                 'user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents',
-                'followingCount', 'followerCount', 'blockingCount', 'mutingCount'
+                'followingCount', 'followerCount', 'blockingCount', 'mutingCount',
+                'favoriteTitleCount', 'fearMeterCount', 'reviewCount', 'reviewLikeCount'
             )),
             options: [
                 'url' => route('User.MyNode.Top'),
@@ -426,4 +435,3 @@ class MyNodeController extends Controller
         });
     }
 }
-

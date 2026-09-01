@@ -36,14 +36,6 @@
                     </label>
                 </div>
 
-                <div class="form-group mb-4">
-                    <label class="d-flex align-items-center gap-2">
-                        <input type="checkbox" name="show_followed_user_activity" value="1"
-                            @checked(old('show_followed_user_activity', $setting->show_followed_user_activity))>
-                        フォロー中ユーザーの活動
-                    </label>
-                </div>
-
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">設定</button>
                 </div>

@@ -2,12 +2,14 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use App\Notifications\TestFailedNotification;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\TestFailedNotification;
+use Illuminate\Support\Facades\Schema;
 use Tests\Subscribers\TestFailedSubscriber;
+
 abstract class TestCase extends BaseTestCase
 {
     use DatabaseTransactions;
@@ -17,7 +19,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $viewCompiledPath = env('VIEW_COMPILED_PATH');
-        if (is_string($viewCompiledPath) && $viewCompiledPath !== '' && !is_dir($viewCompiledPath)) {
+        if (is_string($viewCompiledPath) && $viewCompiledPath !== '' && ! is_dir($viewCompiledPath)) {
             @mkdir($viewCompiledPath, 0777, true);
         }
 
@@ -27,15 +29,16 @@ abstract class TestCase extends BaseTestCase
         if ($databaseName !== 'hgs_re3_test') {
             throw new \RuntimeException(
                 "テストはデータベース 'hgs_re3_test' に対してのみ実行してください。"
-                . " 現在の接続先は '{$databaseName}' です。"
-                . " 設定キャッシュが有効な場合は 'php artisan config:clear' を実行し、"
-                . " phpunit.xml の DB_DATABASE=hgs_re3_test が効くようにしてください。"
+                ." 現在の接続先は '{$databaseName}' です。"
+                ." 設定キャッシュが有効な場合は 'php artisan config:clear' を実行し、"
+                .' phpunit.xml の DB_DATABASE=hgs_re3_test が効くようにしてください。'
             );
         }
 
         // テスト開始時にスキーマファイルからテーブルを復元
         $schemaPath = database_path('schema/mariadb-schema.sql');
         if (file_exists($schemaPath)) {
+            $this->dropTestDatabaseTables();
             $sql = file_get_contents($schemaPath);
             DB::unprepared($sql);
         }
@@ -48,10 +51,30 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /**
+     * スキーマダンプに存在しない旧テーブルと外部キーも残さず削除する。
+     */
+    private function dropTestDatabaseTables(): void
+    {
+        $tables = DB::select("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        try {
+            foreach ($tables as $table) {
+                $tableName = array_values((array) $table)[0] ?? null;
+                if (is_string($tableName) && $tableName !== '') {
+                    Schema::drop($tableName);
+                }
+            }
+        } finally {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        }
+    }
+
     protected function tearDown(): void
     {
         $failedSubscriber = TestFailedSubscriber::getInstance();
-        if (!empty($failedSubscriber->getFailures())) {
+        if (! empty($failedSubscriber->getFailures())) {
             Notification::route('slack', config('services.slack.test_error_webhook_url'))
                 ->notify(new TestFailedNotification($failedSubscriber->getFailures()));
 

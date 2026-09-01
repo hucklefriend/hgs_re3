@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ProductDefaultImage;
 use App\Enums\Rating;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -76,6 +77,45 @@ class GamePackage extends Model
     public function packageGroups(): BelongsToMany
     {
         return $this->belongsToMany(GamePackageGroup::class, GamePackageGroupPackageLink::class);
+    }
+
+    /**
+     * パッケージ名、または関連タイトルの名称・よみがな・検索用俗称で絞り込む。
+     *
+     * @param  array<int, string>  $words
+     */
+    public function scopeSearchByNameOrRelatedTitle(Builder $query, array $words): Builder
+    {
+        if ($words === []) {
+            return $query;
+        }
+
+        $synonymWords = array_map(fn (string $word) => synonym($word), $words);
+
+        return $query->where(function (Builder $outerQuery) use ($words, $synonymWords) {
+            $outerQuery->where(function (Builder $packageNameQuery) use ($words) {
+                foreach ($words as $word) {
+                    $packageNameQuery->where('game_packages.name', 'LIKE', '%' . $word . '%');
+                }
+            })->orWhereHas('packageGroups.titles', function (Builder $titleQuery) use ($words, $synonymWords) {
+                $titleQuery->where(function (Builder $titleNameQuery) use ($words) {
+                    foreach ($words as $word) {
+                        $titleNameQuery->where(function (Builder $titleTermQuery) use ($word) {
+                            $titleTermQuery->where('game_titles.name', 'LIKE', '%' . $word . '%')
+                                ->orWhere('game_titles.phonetic', 'LIKE', '%' . $word . '%');
+                        });
+                    }
+                })->orWhere(function (Builder $titleSynonymQuery) use ($synonymWords) {
+                    foreach ($synonymWords as $synonymWord) {
+                        $titleSynonymQuery->orWhere(
+                            'game_titles.search_synonyms',
+                            'LIKE',
+                            '%' . $synonymWord . '%',
+                        );
+                    }
+                });
+            });
+        });
     }
 
     /**

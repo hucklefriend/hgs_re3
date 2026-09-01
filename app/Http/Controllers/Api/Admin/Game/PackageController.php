@@ -8,7 +8,6 @@ use App\Http\Requests\Api\Admin\Game\PackageRequest;
 use App\Http\Requests\Api\Admin\Game\PackageShopRequest;
 use App\Models\GamePackage;
 use App\Models\GamePackageShop;
-use App\Models\GameTitlePackageLink;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -427,33 +426,7 @@ class PackageController extends Controller
             $words = array_values(array_filter(preg_split('/\s+/u', $q) ?: [], fn ($w) => $w !== ''));
 
             if ($words !== []) {
-                $query->where(function (Builder $sub) use ($words)
-                {
-                    $sub->where(function (Builder $nameQ) use ($words)
-                    {
-                        foreach ($words as $word) {
-                            $nameQ->where('name', 'LIKE', '%' . $word . '%');
-                        }
-                    });
-
-                    $synonymWords = array_map(fn (string $w) => synonym($w), $words);
-                    $pkgIds = GameTitlePackageLink::query()
-                        ->whereIn('game_title_id', function ($q2) use ($synonymWords)
-                        {
-                            $q2->select('game_title_id')
-                                ->from('game_title_synonyms')
-                                ->whereIn('synonym', $synonymWords);
-                        })
-                        ->pluck('game_package_id')
-                        ->unique()
-                        ->filter()
-                        ->values()
-                        ->all();
-
-                    if ($pkgIds !== []) {
-                        $sub->orWhereIn('id', $pkgIds);
-                    }
-                });
+                $query->searchByNameOrRelatedTitle($words);
             }
         }
 

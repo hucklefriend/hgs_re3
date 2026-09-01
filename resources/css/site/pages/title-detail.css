@@ -505,7 +505,7 @@
 
 .title-fear-spectrum li {
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-columns: 68px minmax(0, 1fr);
     gap: 12px;
     align-items: center;
     padding-block: 2px;

@@ -63,6 +63,10 @@ test('テストの説明', async ({ page }) =>
 - **ビデオ録画**: テスト失敗時のみ保存
 - **トレース**: リトライ時に有効化
 
+### メール送信
+
+E2Eテストで作成するアカウントには `@playwright.invalid` を使用します。ローカル環境とSTG環境では、このドメイン宛てのメールは送信直前に破棄され、実際のSMTPサーバーには送信されません。
+
 ### HTTP認証（Basic/Digest認証）
 
 ステージング環境などでHTTP認証（Basic認証またはDigest認証）が必要な場合、プロジェクトルートに`.env.playwright.local`ファイルを作成して、以下の環境変数を設定してください：
@@ -83,4 +87,3 @@ PLAYWRIGHT_DIGEST_PASSWORD=your_password
 
 - [Playwright公式ドキュメント](https://playwright.dev/)
 - [Test API Reference](https://playwright.dev/docs/api/class-test)
-

@@ -1,5 +1,21 @@
 import { expect, test } from '@playwright/test';
 
+test('ラベル内に置いた端子からも接続演出後に全文書遷移する', async ({ page }) =>
+{
+    await page.goto('');
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+
+    const aboutLink = page.locator('.site-footer__nav a').filter({ hasText: 'ABOUT' });
+    await expect(aboutLink.locator('[data-connection-terminal]')).toHaveCount(1);
+    await aboutLink.scrollIntoViewIfNeeded();
+    await aboutLink.click({ noWaitAfter: true });
+
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-departing', 'true');
+    await expect(page.locator('.site-handoff-token')).toHaveCount(1);
+    await page.waitForURL('**/about', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-public-app]')).toHaveAttribute('data-page-ready', 'true');
+});
+
 test('公開リンクは接続演出後にAjaxを使わず全文書遷移し、戻る操作で復元できる', async ({ page }) =>
 {
     const lineupRequests: { resourceType: string; requestedWith: string | undefined }[] = [];

@@ -105,6 +105,9 @@ test('JavaScript無効でも本文・通常リンク・ログインフォーム�
     await page.goto('about');
     await expect(page.locator('.site-standard-page')).toBeVisible();
     await expect(page.locator('.site-standard-page a[href]').first()).toBeVisible();
+    await expect(page.locator('.site-footer__nav a')).toHaveCount(4);
+    await expect(page.locator('.site-footer__nav [data-connection-terminal]')).toHaveCount(4);
+    await expect(page.locator('.site-footer__nav [data-connection-terminal]').first()).toBeVisible();
 
     await page.goto('login');
     await expect(page.locator('form')).toBeVisible();

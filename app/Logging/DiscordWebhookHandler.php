@@ -4,6 +4,7 @@ namespace App\Logging;
 
 use App\Enums\DiscordChannel;
 use App\Services\Discord\DiscordWebhookService;
+use App\Support\DiscordNotificationTitle;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
@@ -17,23 +18,27 @@ class DiscordWebhookHandler extends AbstractProcessingHandler
 
     protected function write(LogRecord $record): void
     {
-        $hr      = '─────────────────────';
-        $level   = $record->level->getName();
+        $hr = '─────────────────────';
+        $level = $record->level->getName();
         $message = $record->message;
-        $lines   = ["{$hr}", "レベル: {$level}", "メッセージ: {$message}"];
+        $lines = ["{$hr}", "レベル: {$level}", "メッセージ: {$message}"];
 
         // 例外情報があれば追記
         $stackTrace = null;
         if (isset($record->context['exception']) && $record->context['exception'] instanceof \Throwable) {
             $e = $record->context['exception'];
-            $lines[] = "例外: " . get_class($e) . ": " . $e->getMessage();
-            $lines[] = "場所: " . $e->getFile() . ":" . $e->getLine();
+            $lines[] = '例外: '.get_class($e).': '.$e->getMessage();
+            $lines[] = '場所: '.$e->getFile().':'.$e->getLine();
             $stackTrace = $e->getTraceAsString();
         }
 
         $lines[] = $hr;
 
         $body = implode("\n", $lines);
+        $title = DiscordNotificationTitle::withEnvironment(
+            "[{$level}] ログが出力されました",
+            app()->environment(),
+        );
 
         try {
             $service = app(DiscordWebhookService::class)
@@ -47,7 +52,7 @@ class DiscordWebhookHandler extends AbstractProcessingHandler
                 $service->attach($tmpPath, 'stacktrace.txt');
             }
 
-            $service->send("[{$level}] ログが出力されました\n{$body}");
+            $service->send("{$title}\n{$body}");
 
             if (isset($tmpPath)) {
                 @unlink($tmpPath);

@@ -272,6 +272,10 @@
     padding-inline-end: 24px;
 }
 
+.site-footer__nav .site-connection-label {
+    --site-connection-label-padding: 24px;
+}
+
 .site-footer__grid .site-footer__copyright {
     margin-block-start: var(--site-grid-row-size);
 }
