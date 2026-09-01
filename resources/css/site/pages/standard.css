@@ -484,6 +484,10 @@
     border-block-end: 1px solid var(--site-color-line);
 }
 
+[data-page-kind='user-my-node-top'] .my-node-quick-menu__group:last-of-type {
+    border-block-end-color: var(--site-color-signal-soft);
+}
+
 [data-page-kind='user-my-node-top'] .my-node-quick-menu__group > header {
     display: grid;
     align-content: center;
