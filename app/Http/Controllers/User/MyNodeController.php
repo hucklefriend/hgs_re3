@@ -66,7 +66,13 @@ class MyNodeController extends Controller
 
         $request->session()->regenerateToken();
 
-        $timelineEvents = $this->timelineEventService->fetchForUser($user->id, 5);
+        $timelinePaginator = $this->timelineEventService->fetchForUserPaginated($user->id, 20);
+        $timelineEvents = $timelinePaginator->items();
+        $timelinePager = new Pager(
+            $timelinePaginator->currentPage(),
+            $timelinePaginator->lastPage(),
+            'User.MyNode.Top'
+        );
 
         $followingCount = $user->following()->count();
         $followerCount  = $user->followers()->count();
@@ -81,7 +87,7 @@ class MyNodeController extends Controller
 
         return $this->tree(
             view('user.my_node.top', compact(
-                'user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents',
+                'user', 'needsAcceptance', 'recoveryCodeRemaining', 'timelineEvents', 'timelinePager',
                 'followingCount', 'followerCount', 'blockingCount', 'mutingCount',
                 'favoriteTitleCount', 'fearMeterCount', 'reviewCount', 'reviewLikeCount'
             )),

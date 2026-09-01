@@ -98,7 +98,7 @@
 
     <section class="lineup-franchise my-node-timeline" id="timeline-node">
         <header>
-            <x-site.timeline-heading title="新着情報" />
+            <x-site.timeline-heading title="あなたのタイムライン" />
         </header>
         <div class="home-transmission-list">
             @forelse ($timelineEvents as $event)
@@ -106,9 +106,11 @@
             @empty
                 <p class="site-empty-state">新しい通信は、まだ届いていないようだ。</p>
             @endforelse
-            <div class="home-all-signals">
-                <a href="{{ route('User.MyNode.Timeline') }}">更新情報を見る</a>
-            </div>
+            @if ($timelinePager->hasMultiplePages())
+                <div class="my-node-timeline__pager">
+                    @include('common.pager', ['pager' => $timelinePager])
+                </div>
+            @endif
         </div>
     </section>
 @endsection
