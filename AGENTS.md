@@ -73,6 +73,7 @@ php artisan view:cache
 - `main` → production (auto-deploys via GitHub Actions SSH)
 - `develop` → staging (auto-deploys via GitHub Actions SSH)
 - Feature branches merge into `develop`
+- 作業の適切な区切りでは、変更をコミットしてよい。リモートへの push は行わず、ユーザーに委ねる。
 
 ## Feature Documentation
 
