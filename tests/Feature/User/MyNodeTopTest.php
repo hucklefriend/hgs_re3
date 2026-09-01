@@ -36,7 +36,8 @@ class MyNodeTopTest extends TestCase
         $response->assertOk();
         $response->assertSee('あなたのタイムライン');
         $response->assertDontSee('更新情報を見る');
-        $response->assertDontSee('href="'.route('User.MyNode.Timeline').'"', false);
         $response->assertSee(route('User.MyNode.Top', ['page' => 3]), false);
+
+        $this->get('/user/my-node/timeline')->assertNotFound();
     }
 }

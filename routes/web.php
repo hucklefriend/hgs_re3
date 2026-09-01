@@ -78,9 +78,6 @@ Route::group(['prefix' => 'user'], function () {
         // いいねしたレビュー
         Route::get('my-node/review-likes', [User\FollowController::class, 'reviewLikes'])->name('User.MyNode.ReviewLikes');
 
-        // タイムライン
-        Route::get('my-node/timeline', [User\MyNodeController::class, 'timeline'])->name('User.MyNode.Timeline');
-
         // タイムライン設定
         Route::get('my-node/timeline-settings', [User\TimelineSettingsController::class, 'show'])->name('User.MyNode.TimelineSettings');
         Route::post('my-node/timeline-settings/mynode', [User\TimelineSettingsController::class, 'updateMyNode'])->name('User.MyNode.TimelineSettings.UpdateMyNode');

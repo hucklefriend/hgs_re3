@@ -408,21 +408,6 @@ class MyNodeController extends Controller
     }
 
     /**
-     * タイムライン表示
-     *
-     * @return JsonResponse|Application|Factory|View
-     */
-    public function timeline(): JsonResponse|Application|Factory|View
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $paginator = $this->timelineEventService->fetchForUserPaginated($user->id, 20);
-        $events = $paginator->items();
-        $pager = new Pager($paginator->currentPage(), $paginator->lastPage(), 'User.MyNode.Timeline');
-        return $this->tree(view('user.my_node.timeline', compact('events', 'pager')));
-    }
-
-    /**
      * メール変更確認メール送信を非同期で実行
      * 
      * @param User $user
