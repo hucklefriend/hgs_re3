@@ -3,6 +3,7 @@
 namespace Tests\Feature\User;
 
 use App\Enums\SocialAccountProvider;
+use App\Models\GameTitle;
 use App\Models\SocialAccount;
 use App\Models\User;
 use Tests\TestCase;
@@ -65,5 +66,30 @@ class MyNodeBreadcrumbTest extends TestCase
             'MY NODE',
             'パスワード設定',
         ], false);
+    }
+
+    public function test_favorite_titles_use_the_franchise_title_lineup_design(): void
+    {
+        $user = User::factory()->create();
+        $title = GameTitle::query()->firstOrFail();
+        $user->favoriteGameTitles()->attach($title->id, [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->get(route('User.Follow.FavoriteTitles'));
+
+        $response->assertOk();
+        $response->assertSee(
+            '<section class="lineup-franchise favorite-title-catalog" id="favorite-titles-tree-node">',
+            false
+        );
+        $response->assertSee('<div class="lineup-franchise__entries">', false);
+        $response->assertDontSee('お気に入りに登録されているタイトル一覧です。');
+        $response->assertSee(
+            '<span class="lineup-result-signal" aria-hidden="true"></span><b>'.e($title->name).'</b>',
+            false
+        );
+        $response->assertDontSee('class="node tree-node" id="favorite-titles-tree-node"', false);
     }
 }

@@ -620,6 +620,11 @@
     margin-block-start: var(--site-grid-row-size);
 }
 
+[data-page-kind='user-follow-favorite-titles'] #current-node > .favorite-title-catalog {
+    inline-size: 100%;
+    margin-block-start: var(--site-grid-row-size);
+}
+
 [data-page-kind='user-my-node-top'] .my-node-timeline__pager {
     padding-block: var(--site-grid-row-size);
 }
