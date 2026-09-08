@@ -1,3 +1,9 @@
+@php
+    $breadcrumbItems = [
+        ['label' => 'MY NODE', 'url' => route('User.MyNode.Top')],
+    ];
+@endphp
+
 @extends('layout')
 
 @section('title', 'プロフィール設定')
@@ -81,5 +87,4 @@
     </section>
 
 @endsection
-
 

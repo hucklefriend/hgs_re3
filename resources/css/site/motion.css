@@ -153,7 +153,13 @@
 }
 
 .site-breadcrumb .has-site-connection-terminal {
-    padding-inline-end: 19px;
+    padding-inline-end: 0;
+}
+
+.site-breadcrumb .site-connection-label {
+    --site-connection-label-padding: calc(
+        var(--site-connection-terminal-size) + var(--site-connection-stub-length) + 3px
+    );
 }
 
 .site-handoff-layer {

@@ -1,3 +1,9 @@
+@php
+    $breadcrumbItems = [
+        ['label' => 'MY NODE', 'url' => route('User.MyNode.Top')],
+    ];
+@endphp
+
 @extends('layout')
 
 @section('title', 'お気に入りタイトル')
@@ -34,4 +40,3 @@
     @endif
 
 @endsection
-

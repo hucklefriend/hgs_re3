@@ -202,7 +202,7 @@
     color: var(--site-color-signal);
 }
 
-.site-breadcrumb span:last-child {
+.site-breadcrumb > span:last-child {
     min-inline-size: 0;
     overflow: hidden;
     text-overflow: ellipsis;

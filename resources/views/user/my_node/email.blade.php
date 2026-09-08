@@ -1,3 +1,9 @@
+@php
+    $breadcrumbItems = [
+        ['label' => 'MY NODE', 'url' => route('User.MyNode.Top')],
+    ];
+@endphp
+
 @extends('layout')
 
 @section('title', 'メールアドレス変更')
@@ -33,5 +39,4 @@
     </section>
 
 @endsection
-
 
