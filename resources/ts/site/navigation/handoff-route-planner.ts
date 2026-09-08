@@ -13,7 +13,6 @@ export class HandoffRoutePlanner
         return this.compact([
             origin,
             { x: entry.x, y: origin.y },
-            entry,
             { x: entry.x, y: destination.y },
             destination,
         ]);

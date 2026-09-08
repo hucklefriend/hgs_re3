@@ -11,6 +11,15 @@ const metrics = new GridMetrics({
 });
 
 describe('HandoffRoutePlanner', () => {
+    it.each([2237, 2250, 2256])('does not move downward before heading to the header from y=%s', (y) => {
+        const route = new HandoffRoutePlanner().plan({ x: 913, y }, metrics);
+
+        expect(route[1].x).toBeGreaterThan(route[0].x);
+        route.slice(1).forEach((point, index) => {
+            expect(point.y).toBeLessThanOrEqual(route[index].y);
+        });
+    });
+
     it('connects an arbitrary document point to the header node with orthogonal segments', () => {
         const origin = { x: 913, y: 2237 };
         const route = new HandoffRoutePlanner().plan(origin, metrics);
