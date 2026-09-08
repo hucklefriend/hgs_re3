@@ -1,3 +1,9 @@
+@php
+    $breadcrumbItems = [
+        ['label' => 'MY NODE', 'url' => route('User.MyNode.Top')],
+    ];
+@endphp
+
 @extends('layout')
 
 @section('title', 'ミュート中')
@@ -10,42 +16,5 @@
 @endsection
 
 @section('nodes')
-    @if ($muting->isNotEmpty())
-        <section class="node" id="muting-list-node">
-            <div class="node-head">
-                <h2 class="node-head-text">ミュート中</h2>
-                <span class="node-pt">●</span>
-            </div>
-            <div class="node-content basic">
-                <div class="space-y-2">
-                    @foreach ($muting as $u)
-                        <div class="flex items-center gap-3 border border-slate-700 rounded p-2">
-                            <x-user-avatar :user="$u" class="w-10 h-10 rounded-full object-cover flex-shrink-0"/>
-                            <div class="min-w-0 flex-1">
-                                <a href="{{ route('User.Profile.Show', $u->show_id) }}"
-                                   class="font-semibold text-slate-100 hover:text-sky-400 block truncate"
-                                  >{{ $u->name }}</a>
-                                <span class="text-slate-500 text-xs">@{{ $u->show_id }}</span>
-                            </div>
-                            <button type="button"
-                                    class="js-mute-toggle btn btn-sm btn-outline flex-shrink-0"
-                                    data-show-id="{{ $u->show_id }}"
-                                    data-active="1"
-                                    data-label-on="ミュート解除"
-                                    data-label-off="ミュートする"
-                                    data-url-on="{{ route('api.users.unmute', $u->show_id) }}"
-                                    data-url-off="{{ route('api.users.mute', $u->show_id) }}"
-                                    data-method-on="DELETE"
-                                    data-method-off="POST"
-                                    data-reload="1">
-                                ミュート解除
-                            </button>
-                        </div>
-                    @endforeach
-                </div>
-                @include('common.pager', ['pager' => $pager])
-            </div>
-        </section>
-    @endif
-
+    @include('user.my_node.relationship-list', ['users' => $muting, 'listKind' => 'muting', 'muteRoute' => 'User.MyNode.Muting.Mute'])
 @endsection

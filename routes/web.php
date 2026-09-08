@@ -88,6 +88,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('my-node/following', [User\MyNodeFollowController::class, 'following'])->name('User.MyNode.Following');
         Route::get('my-node/followers', [User\MyNodeFollowController::class, 'followers'])->name('User.MyNode.Followers');
         Route::get('my-node/blocking', [User\MyNodeFollowController::class, 'blocking'])->name('User.MyNode.Blocking');
+        Route::delete('my-node/muting/{show_id}/mute', [User\MyNodeFollowController::class, 'updateMute'])->name('User.MyNode.Muting.Mute');
         Route::get('my-node/muting', [User\MyNodeFollowController::class, 'muting'])->name('User.MyNode.Muting');
 
         // アバター

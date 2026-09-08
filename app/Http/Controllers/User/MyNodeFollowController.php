@@ -54,6 +54,10 @@ class MyNodeFollowController extends Controller
             UserMute::firstOrCreate($attributes);
         }
 
+        if ($request->routeIs('User.MyNode.Muting.Mute')) {
+            return redirect()->route('User.MyNode.Muting', [], 303);
+        }
+
         return redirect()->route('User.MyNode.Following', [], 303);
     }
 
@@ -65,7 +69,7 @@ class MyNodeFollowController extends Controller
 
         return $this->tree(
             view('user.my_node.followers', compact('followers', 'pager')),
-            options: ['url' => route('User.MyNode.Followers'), 'components' => ['UserRelation' => null]]
+            options: ['url' => route('User.MyNode.Followers'), 'components' => ['UserRelation' => null, 'UserActionMenu' => null]]
         );
     }
 
@@ -77,7 +81,7 @@ class MyNodeFollowController extends Controller
 
         return $this->tree(
             view('user.my_node.blocking', compact('blocking', 'pager')),
-            options: ['url' => route('User.MyNode.Blocking'), 'components' => ['UserRelation' => null]]
+            options: ['url' => route('User.MyNode.Blocking'), 'components' => ['UserRelation' => null, 'UserActionMenu' => null]]
         );
     }
 
@@ -89,7 +93,7 @@ class MyNodeFollowController extends Controller
 
         return $this->tree(
             view('user.my_node.muting', compact('muting', 'pager')),
-            options: ['url' => route('User.MyNode.Muting'), 'components' => ['UserRelation' => null]]
+            options: ['url' => route('User.MyNode.Muting'), 'components' => ['UserRelation' => null, 'UserActionMenu' => null]]
         );
     }
 }

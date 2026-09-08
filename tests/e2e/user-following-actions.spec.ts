@@ -18,6 +18,7 @@ test(`フォロー中一覧でミュート後に${action.label}と幕の演出�
 
   const viewerAccount = await createTestAccount(request);
   await loginUser(page, viewerAccount.email, viewerAccount.password);
+  const viewerShowId = (await page.locator('#mypage-welcome-node p.text-slate-500').textContent())?.trim().replace(/^@/, '');
   await page.goto(`user/${targetShowId}`);
   await waitForPublicPageReady(page);
 
@@ -81,5 +82,42 @@ test(`フォロー中一覧でミュート後に${action.label}と幕の演出�
   await waitForPublicPageReady(page);
 
   await expect(page.getByText('フォロー中ユーザーはいないようだ。')).toBeVisible();
+
+  await page.goto('user/my-node/muting');
+  await waitForPublicPageReady(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await menuTrigger.click();
+  await expect(page.getByRole('menuitem', { name: 'プロフィールを見る' }).locator('[data-connection-terminal]')).toHaveCount(0);
+  await page.getByRole('menuitem', { name: 'ミュートを解除' }).click();
+  await expect(page.getByText('ミュートしているユーザーはいないようだ。')).toBeVisible();
+  await page.reload();
+  await expect(page.getByText('ミュートしているユーザーはいないようだ。')).toBeVisible();
+
+  if (action.endpoint === 'block') {
+    await page.goto('user/my-node/blocking');
+    await waitForPublicPageReady(page);
+    await expect(page.locator('a.following-user-link')).toHaveCount(0);
+    await menuTrigger.click();
+    await page.getByRole('menuitem', { name: 'ブロックを解除' }).click();
+    await expect(page.getByText('ブロックしているユーザーはいないようだ。')).toBeVisible();
+  } else {
+    await page.context().clearCookies();
+    await loginUser(page, targetAccount.email, targetAccount.password);
+    await page.goto(`user/${viewerShowId}`);
+    await waitForPublicPageReady(page);
+    const followed = page.waitForResponse(response => response.url().endsWith(`/api/users/${viewerShowId}/follow`) && response.request().method() === 'POST');
+    await page.getByRole('button', { name: 'フォローする' }).click();
+    expect((await followed).ok()).toBe(true);
+    await page.context().clearCookies();
+    await loginUser(page, viewerAccount.email, viewerAccount.password);
+    await page.goto('user/my-node/followers');
+    await waitForPublicPageReady(page);
+    await menuTrigger.click();
+    page.once('dialog', dialog => dialog.accept());
+    await page.getByRole('menuitem', { name: 'ブロックする' }).click();
+    await expect(page.getByText('フォロワーはいないようだ。')).toBeVisible();
+  }
+
 });
 }

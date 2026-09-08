@@ -4,6 +4,7 @@ namespace Tests\Feature\User;
 
 use App\Models\User;
 use App\Models\UserFollow;
+use App\Models\UserBlock;
 use App\Models\UserMute;
 use Tests\TestCase;
 
@@ -55,5 +56,30 @@ class MyNodeFollowingTest extends TestCase
         $this->actingAs($viewer)->post(route('User.MyNode.Following.Mute', $viewer->show_id))
             ->assertForbidden();
         $this->post(route('User.MyNode.Following.Mute', 'missing-user'))->assertNotFound();
+    }
+    public function test_other_relationship_lists_share_the_action_menu(): void
+    {
+        $viewer = User::factory()->create();
+        $target = User::factory()->create();
+        UserFollow::create(['follower_id' => $target->id, 'following_id' => $viewer->id]);
+        UserMute::create(['muter_id' => $viewer->id, 'muted_id' => $target->id]);
+        UserBlock::create(['blocker_id' => $viewer->id, 'blocked_id' => $target->id]);
+
+        foreach (['Followers', 'Muting', 'Blocking'] as $list) {
+            $response = $this->actingAs($viewer)->get(route('User.MyNode.' . $list));
+            $response->assertOk()->assertSee('following-user-entry')->assertSee('UserActionMenu');
+            $response->assertDontSee('lineup-result-signal');
+            if ($list === 'Blocking') {
+                $response->assertDontSee('プロフィールを見る');
+                $response->assertSee('ブロックを解除');
+            } else {
+                $response->assertSee('プロフィールを見る');
+            }
+        }
+
+        $this->delete(route('User.MyNode.Muting.Mute', $target->show_id))
+            ->assertStatus(303)->assertRedirect(route('User.MyNode.Muting'));
+        $this->assertDatabaseMissing('user_mutes', ['muter_id' => $viewer->id, 'muted_id' => $target->id]);
+        $this->get(route('User.MyNode.Muting'))->assertOk()->assertSee('ミュートしているユーザーはいないようだ。');
     }
 }

@@ -259,18 +259,18 @@
     text-shadow: none;
 }
 
-.site-page--user-my-node-following #current-node > .following-user-list {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) #current-node > .following-user-list {
     inline-size: 100%;
     margin-block-start: var(--site-grid-row-size);
 }
 
-.site-page--user-my-node-following .following-user-list__entries {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-list__entries {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px 12px;
 }
 
-.site-page--user-my-node-following .following-user-entry {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-entry {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: stretch;
@@ -278,46 +278,56 @@
     background: rgba(0, 0, 0, 0.72);
 }
 
-.site-page--user-my-node-following .following-user-link {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link {
     --site-terminal-y: 50%;
+    --site-connection-stub-length: 10px;
 
+    position: relative;
     display: grid;
-    grid-template-columns: 4px 40px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr);
     min-inline-size: 0;
     align-items: center;
     gap: 14px;
-    padding: 11px 30px 11px 18px;
+    margin: 6px 28px 6px 6px;
+    border: 1px solid var(--site-color-line);
+    padding: 10px 12px;
     color: var(--site-color-text);
-    transition: color var(--site-motion-fast), background var(--site-motion-fast);
+    transition: color var(--site-motion-fast), background var(--site-motion-fast), border-color var(--site-motion-fast);
 }
 
-.site-page--user-my-node-following .following-user-link:is(:hover, :focus-visible) {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link > .site-connection-terminal {
+    inset-inline-end: calc((var(--site-connection-terminal-size) + var(--site-connection-stub-length)) * -1);
+}
+
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) a.following-user-link:is(:hover, :focus-visible) {
+    border-color: var(--site-color-signal);
     color: var(--site-color-signal);
     background: rgba(114, 255, 155, 0.055);
 }
 
-.site-page--user-my-node-following .following-user-link__avatar {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link__avatar {
     inline-size: 40px;
     block-size: 40px;
     flex: 0 0 auto;
     border-radius: 50%;
     object-fit: cover;
+    text-shadow: none;
 }
 
-.site-page--user-my-node-following .following-user-link__identity {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link__identity {
     display: grid;
     min-inline-size: 0;
     gap: 2px;
 }
 
-.site-page--user-my-node-following .following-user-link__name {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link__name {
     overflow: hidden;
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.site-page--user-my-node-following .following-user-link__id {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link__id {
     overflow: hidden;
     color: var(--site-color-text-muted);
     font: 500 10px/1.4 var(--site-font-mono);
@@ -325,7 +335,7 @@
     white-space: nowrap;
 }
 
-.site-page--user-my-node-following .following-user-action-menu {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu {
     position: relative;
     display: flex;
     min-inline-size: 100px;
@@ -359,35 +369,35 @@
     background: rgba(114, 255, 155, 0.1);
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger-mark {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger-mark {
     color: var(--site-color-text-muted);
     font-size: 14px;
     line-height: 1;
     transition: rotate var(--site-motion-fast), color var(--site-motion-fast);
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger[aria-expanded='true'] .following-user-action-menu__trigger-mark {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger[aria-expanded='true'] .following-user-action-menu__trigger-mark {
     color: var(--site-color-signal);
     rotate: 45deg;
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger .site-connection-terminal {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger .site-connection-terminal {
     inset-inline-end: calc((var(--site-connection-terminal-size) + var(--site-connection-stub-length)) * -1);
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger[data-action-complete] {
     animation: following-user-action-confirm 480ms ease-out;
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal {
     animation: following-user-action-terminal 480ms ease-out;
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::before {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::before {
     animation: following-user-action-node 480ms ease-out;
 }
 
-.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::after {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::after {
     animation: following-user-action-line 480ms ease-out;
 }
 
@@ -411,7 +421,7 @@
     45% { background: var(--site-color-signal); box-shadow: 0 0 9px var(--site-color-signal-soft); }
 }
 
-.site-page--user-my-node-following .following-user-action-menu__panel {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__panel {
     position: absolute;
     z-index: 20;
     inset-block-start: calc(50% + 22px);
@@ -422,11 +432,11 @@
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.58), 0 0 18px rgba(114, 255, 155, 0.08);
 }
 
-.site-page--user-my-node-following .following-user-action-menu.is-above .following-user-action-menu__panel {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu.is-above .following-user-action-menu__panel {
     inset-block: auto calc(50% + 22px);
 }
 
-.site-page--user-my-node-following .following-user-action-menu__panel[hidden] {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__panel[hidden] {
     display: none;
 }
 
@@ -474,27 +484,27 @@
     background: #ff8f8f;
 }
 
-.site-page--user-my-node-following .following-user-action-menu__separator {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-action-menu__separator {
     block-size: 1px;
     margin-inline: 12px;
     background: var(--site-color-line);
 }
 
-.site-page--user-my-node-following .following-user-list__pager {
+:is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-list__pager {
     padding: 0 18px 18px;
     background: rgba(0, 0, 0, 0.72);
 }
 
 @media (max-width: 1023px) {
-    .site-page--user-my-node-following .following-user-list__entries {
+    :is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-list__entries {
         grid-template-columns: minmax(0, 1fr);
     }
 }
 
 @media (max-width: 639px) {
-    .site-page--user-my-node-following .following-user-link {
+    :is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) .following-user-link {
         gap: 10px;
-        padding-inline: 12px 25px;
+        padding-inline: 8px;
     }
 }
 
