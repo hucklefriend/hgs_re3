@@ -455,6 +455,11 @@
     text-align: start;
 }
 
+.site-standard-page .following-user-action-menu__panel form {
+    display: block;
+    margin: 0;
+}
+
 .site-standard-page .following-user-action-menu__item.has-site-connection-terminal {
     --site-terminal-y: 50%;
 
