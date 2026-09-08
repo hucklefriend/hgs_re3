@@ -10,6 +10,7 @@ import { TitleDetailFavorite } from "./components/title_detail_favorite";
 import { OtpInput } from "./components/otp_input";
 import { SortTabs } from "./components/sort_tabs";
 import { UserRelation } from "./components/user_relation";
+import { UserActionMenu } from "./components/user_action_menu";
 
 /**
  * コンポーネント管理クラス
@@ -30,6 +31,7 @@ export class ComponentManager
         'OtpInput': OtpInput,
         'SortTabs': SortTabs,
         'UserRelation': UserRelation,
+        'UserActionMenu': UserActionMenu,
     };
 
     /**

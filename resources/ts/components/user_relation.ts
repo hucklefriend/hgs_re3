@@ -1,5 +1,9 @@
 import { Component } from "../component";
 
+type RelationSuccessDetail = {
+    waitUntil: (promise: Promise<unknown>) => void;
+};
+
 /**
  * フォロー・ブロック・ミュートのトグルボタン
  *
@@ -12,12 +16,13 @@ import { Component } from "../component";
  *   data-method-on             ON→OFF のHTTPメソッド（DELETE等）
  *   data-method-off            OFF→ON のHTTPメソッド（POST等）
  *   data-reload="1"            （省略可）操作後にページをリロードする
+ *   data-confirm                （省略可）実行前に表示する確認文
  *   data-icon-on               （省略可）ON 状態の <i> クラス文字列（設定するとアイコンモードになる）
  *   data-icon-off              （省略可）OFF 状態の <i> クラス文字列
  */
 export class UserRelation extends Component
 {
-    private _handlers: Map<HTMLButtonElement, () => void> = new Map();
+    private _handlers: Map<HTMLButtonElement, (event: MouseEvent) => void> = new Map();
 
     constructor(params: any | null = null)
     {
@@ -28,7 +33,7 @@ export class UserRelation extends Component
         );
 
         buttons.forEach(btn => {
-            const handler = () => this.handleClick(btn);
+            const handler = (event: MouseEvent) => this.handleClick(btn, event);
             btn.addEventListener('click', handler);
             this._handlers.set(btn, handler);
         });
@@ -42,9 +47,15 @@ export class UserRelation extends Component
         this._handlers.clear();
     }
 
-    private async handleClick(btn: HTMLButtonElement): Promise<void>
+    private async handleClick(btn: HTMLButtonElement, event: MouseEvent): Promise<void>
     {
         if (btn.disabled) {
+            return;
+        }
+
+        const confirmation = btn.dataset.confirm;
+        if (confirmation && !window.confirm(confirmation)) {
+            event.stopPropagation();
             return;
         }
 
@@ -61,6 +72,7 @@ export class UserRelation extends Component
 
         btn.disabled = true;
         const prevText = btn.textContent || '';
+        let reloading = false;
 
         try {
             const response = await fetch(url, {
@@ -79,28 +91,48 @@ export class UserRelation extends Component
                 return;
             }
 
-            if (reload) {
-                location.reload();
-                return;
+            const nextActive = !isActive;
+            if (!reload) {
+                btn.dataset.active = nextActive ? '1' : '0';
+
+                const iconEl = btn.querySelector<HTMLElement>('i');
+                if (iconEl && btn.dataset.iconOn && btn.dataset.iconOff) {
+                    iconEl.className = nextActive ? btn.dataset.iconOn : btn.dataset.iconOff;
+                    btn.title = nextActive ? labelOn : labelOff;
+                } else {
+                    btn.textContent = nextActive ? labelOn : labelOff;
+                }
             }
 
-            const nextActive = !isActive;
-            btn.dataset.active = nextActive ? '1' : '0';
+            await this.waitForSuccessEffects(btn);
 
-            const iconEl = btn.querySelector<HTMLElement>('i');
-            if (iconEl && btn.dataset.iconOn && btn.dataset.iconOff) {
-                iconEl.className = nextActive ? btn.dataset.iconOn : btn.dataset.iconOff;
-                btn.title = nextActive ? labelOn : labelOff;
-            } else {
-                btn.textContent = nextActive ? labelOn : labelOff;
+            if (reload) {
+                reloading = true;
+                location.reload();
             }
         } catch {
             alert('操作に失敗しました。');
             btn.textContent = prevText;
         } finally {
-            if (!btn.disabled || !btn.dataset.reload) {
+            if (!reloading) {
                 btn.disabled = false;
             }
+        }
+    }
+
+    private async waitForSuccessEffects(btn: HTMLButtonElement): Promise<void>
+    {
+        const pendingEffects: Promise<unknown>[] = [];
+        const event = new CustomEvent<RelationSuccessDetail>('user-relation:success', {
+            bubbles: true,
+            detail: {
+                waitUntil: promise => pendingEffects.push(promise),
+            },
+        });
+        btn.dispatchEvent(event);
+
+        if (pendingEffects.length > 0) {
+            await Promise.allSettled(pendingEffects);
         }
     }
 }

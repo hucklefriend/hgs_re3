@@ -84,6 +84,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('my-node/timeline-settings/root', [User\TimelineSettingsController::class, 'updateRoot'])->name('User.MyNode.TimelineSettings.UpdateRoot');
 
         // フォロー/フォロワー/ブロック/ミュート管理
+        Route::match(['post', 'delete'], 'my-node/following/{show_id}/mute', [User\MyNodeFollowController::class, 'updateMute'])->name('User.MyNode.Following.Mute');
         Route::get('my-node/following', [User\MyNodeFollowController::class, 'following'])->name('User.MyNode.Following');
         Route::get('my-node/followers', [User\MyNodeFollowController::class, 'followers'])->name('User.MyNode.Followers');
         Route::get('my-node/blocking', [User\MyNodeFollowController::class, 'blocking'])->name('User.MyNode.Blocking');

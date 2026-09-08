@@ -267,18 +267,15 @@
 .site-page--user-my-node-following .following-user-list__entries {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    background: rgba(0, 0, 0, 0.72);
+    gap: 8px 12px;
 }
 
 .site-page--user-my-node-following .following-user-entry {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: stretch;
-    border-block-end: 1px solid var(--site-color-line);
-}
-
-.site-page--user-my-node-following .following-user-entry:nth-child(odd) {
-    border-inline-end: 1px solid var(--site-color-line);
+    border: 1px solid var(--site-color-line);
+    background: rgba(0, 0, 0, 0.72);
 }
 
 .site-page--user-my-node-following .following-user-link {
@@ -328,20 +325,159 @@
     white-space: nowrap;
 }
 
-.site-standard-page .following-user-unfollow.btn-warning {
-    align-self: stretch;
-    min-inline-size: 68px;
-    border-block: 0;
-    border-inline-end: 0;
-    border-color: rgba(255, 215, 64, 0.72);
-    color: #ffe066;
-    background: rgba(42, 32, 0, 0.68);
+.site-page--user-my-node-following .following-user-action-menu {
+    position: relative;
+    display: flex;
+    min-inline-size: 100px;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 7px 31px;
 }
 
-.site-standard-page .following-user-unfollow.btn-warning:hover {
-    border-color: #ffe066;
+.site-standard-page .following-user-action-menu__trigger {
+    --site-terminal-y: 50%;
+    --site-connection-stub-length: 10px;
+
+    position: relative;
+    display: inline-flex;
+    min-inline-size: 62px;
+    min-block-size: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid var(--site-color-line);
+    padding: 0 9px;
+    color: var(--site-color-text-secondary);
+    background: rgba(5, 18, 10, 0.72);
+    font: 600 10px/1 var(--site-font-mono);
+    letter-spacing: 0.08em;
+}
+
+.site-standard-page .following-user-action-menu__trigger:is(:hover, [aria-expanded='true']) {
+    border-color: var(--site-color-signal);
+    color: var(--site-color-signal);
+    background: rgba(114, 255, 155, 0.1);
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger-mark {
+    color: var(--site-color-text-muted);
+    font-size: 14px;
+    line-height: 1;
+    transition: rotate var(--site-motion-fast), color var(--site-motion-fast);
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger[aria-expanded='true'] .following-user-action-menu__trigger-mark {
+    color: var(--site-color-signal);
+    rotate: 45deg;
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger .site-connection-terminal {
+    inset-inline-end: calc((var(--site-connection-terminal-size) + var(--site-connection-stub-length)) * -1);
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] {
+    animation: following-user-action-confirm 480ms ease-out;
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal {
+    animation: following-user-action-terminal 480ms ease-out;
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::before {
+    animation: following-user-action-node 480ms ease-out;
+}
+
+.site-page--user-my-node-following .following-user-action-menu__trigger[data-action-complete] .site-connection-terminal::after {
+    animation: following-user-action-line 480ms ease-out;
+}
+
+@keyframes following-user-action-confirm {
+    0%, 100% { border-color: var(--site-color-line); box-shadow: none; }
+    45% { border-color: var(--site-color-signal); box-shadow: 0 0 18px rgba(114, 255, 155, 0.24); }
+}
+
+@keyframes following-user-action-terminal {
+    0%, 100% { border-color: var(--site-color-line-strong); box-shadow: 0 0 7px rgba(114, 255, 155, 0.15); }
+    45% { border-color: var(--site-color-signal); box-shadow: 0 0 16px var(--site-color-signal-soft); }
+}
+
+@keyframes following-user-action-node {
+    0%, 100% { opacity: 0.68; scale: 1; }
+    45% { opacity: 1; scale: 1.55; }
+}
+
+@keyframes following-user-action-line {
+    0%, 100% { background: var(--site-color-line-strong); box-shadow: none; }
+    45% { background: var(--site-color-signal); box-shadow: 0 0 9px var(--site-color-signal-soft); }
+}
+
+.site-page--user-my-node-following .following-user-action-menu__panel {
+    position: absolute;
+    z-index: 20;
+    inset-block-start: calc(50% + 22px);
+    inset-inline-end: 7px;
+    inline-size: min(224px, calc(100vw - 40px));
+    border: 1px solid var(--site-color-line-strong);
+    background: rgba(2, 10, 6, 0.98);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.58), 0 0 18px rgba(114, 255, 155, 0.08);
+}
+
+.site-page--user-my-node-following .following-user-action-menu.is-above .following-user-action-menu__panel {
+    inset-block: auto calc(50% + 22px);
+}
+
+.site-page--user-my-node-following .following-user-action-menu__panel[hidden] {
+    display: none;
+}
+
+.site-standard-page .following-user-action-menu__item {
+    display: flex;
+    inline-size: 100%;
+    min-block-size: 42px;
+    align-items: center;
+    justify-content: flex-start;
+    border: 0;
+    padding: 11px 14px;
+    color: var(--site-color-text);
+    background: transparent;
+    font: 500 12px/1.4 var(--site-font-sans);
+    letter-spacing: 0;
+    text-align: start;
+}
+
+.site-standard-page .following-user-action-menu__item.has-site-connection-terminal {
+    --site-terminal-y: 50%;
+
+    padding-inline-end: 14px;
+}
+
+.site-standard-page .following-user-action-menu__item:is(:hover, :focus-visible) {
+    color: var(--site-color-signal);
+    background: rgba(114, 255, 155, 0.09);
+}
+
+.site-standard-page .following-user-action-menu__item--warning {
+    color: #ffe066;
+}
+
+.site-standard-page .following-user-action-menu__item--danger {
+    color: #ff8f8f;
+}
+
+.site-standard-page .following-user-action-menu__item--warning:is(:hover, :focus-visible) {
     color: #171000;
     background: #ffe066;
+}
+
+.site-standard-page .following-user-action-menu__item--danger:is(:hover, :focus-visible) {
+    color: #210000;
+    background: #ff8f8f;
+}
+
+.site-page--user-my-node-following .following-user-action-menu__separator {
+    block-size: 1px;
+    margin-inline: 12px;
+    background: var(--site-color-line);
 }
 
 .site-page--user-my-node-following .following-user-list__pager {
@@ -349,15 +485,13 @@
     background: rgba(0, 0, 0, 0.72);
 }
 
-@media (max-width: 639px) {
+@media (max-width: 1023px) {
     .site-page--user-my-node-following .following-user-list__entries {
         grid-template-columns: minmax(0, 1fr);
     }
+}
 
-    .site-page--user-my-node-following .following-user-entry:nth-child(odd) {
-        border-inline-end: 0;
-    }
-
+@media (max-width: 639px) {
     .site-page--user-my-node-following .following-user-link {
         gap: 10px;
         padding-inline: 12px 25px;

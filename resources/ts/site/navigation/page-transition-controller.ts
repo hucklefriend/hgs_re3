@@ -67,6 +67,7 @@ export class PageTransitionController implements Disposable
         this._started = true;
         document.addEventListener('click', this.handleClick);
         document.addEventListener('submit', this.handleSubmit);
+        this._root.addEventListener('user-relation:success', this.handleRelationSuccess);
         window.addEventListener('pageshow', this.handlePageShow);
     }
 
@@ -78,6 +79,7 @@ export class PageTransitionController implements Disposable
 
         document.removeEventListener('click', this.handleClick);
         document.removeEventListener('submit', this.handleSubmit);
+        this._root.removeEventListener('user-relation:success', this.handleRelationSuccess);
         window.removeEventListener('pageshow', this.handlePageShow);
         this.reset();
         this._started = false;
@@ -132,8 +134,12 @@ export class PageTransitionController implements Disposable
 
         const form = event.target;
         const submitter = event.submitter;
-        if (!(submitter instanceof HTMLButtonElement || submitter instanceof HTMLInputElement)
-            || !submitter.classList.contains('has-site-connection-terminal')) {
+        if (!(submitter instanceof HTMLButtonElement || submitter instanceof HTMLInputElement)) {
+            return;
+        }
+        const originElement = form.closest('.js-user-action-menu')
+            ?.querySelector<HTMLButtonElement>('[aria-haspopup="menu"]') ?? submitter;
+        if (!originElement.classList.contains('has-site-connection-terminal')) {
             return;
         }
 
@@ -158,7 +164,7 @@ export class PageTransitionController implements Disposable
         }
 
         this._locked = true;
-        void this.startTransition(submitter, destination, () => {
+        void this.startTransition(originElement, destination, () => {
             this._resumingForms.add(form);
             try {
                 form.requestSubmit(submitter);
@@ -167,6 +173,58 @@ export class PageTransitionController implements Disposable
             }
         });
     };
+
+    private readonly handleRelationSuccess = (event: Event): void =>
+    {
+        if (!(event instanceof CustomEvent) || !(event.target instanceof Element)) {
+            return;
+        }
+
+        const trigger = event.target.closest('.js-user-action-menu')
+            ?.querySelector<HTMLButtonElement>('[aria-haspopup="menu"]');
+        if (!trigger || typeof event.detail?.waitUntil !== 'function') {
+            return;
+        }
+
+        if (event.target instanceof HTMLElement && event.target.dataset.reload === '1') {
+            if (!this._locked) {
+                this._locked = true;
+                // 再読み込みは UserRelation が成功演出の完了を待って実行する。
+                event.detail.waitUntil(this.startTransition(trigger, new URL(window.location.href), () => {}));
+            }
+            return;
+        }
+
+        event.detail.waitUntil(this.playRelationSuccess(trigger));
+    };
+
+    private async playRelationSuccess(trigger: HTMLButtonElement): Promise<void>
+    {
+        if (this._locked || !this._motionPreference.canAnimate) {
+            return;
+        }
+
+        this._locked = true;
+        let timerId: number | null = null;
+        try {
+            const origin = this._terminalController.documentPointFor(trigger);
+            const route = this._routePlanner.plan(origin, this._gridPlaneController.metrics);
+            this._terminalController.setConnecting(trigger, true);
+            await Promise.race([
+                this._animationController.play(route, () => {}),
+                new Promise<void>(resolve => {
+                    timerId = window.setTimeout(resolve, NAVIGATION_SAFETY_TIMEOUT);
+                }),
+            ]);
+        } finally {
+            if (timerId !== null) {
+                window.clearTimeout(timerId);
+            }
+            this._animationController.cancel();
+            this._terminalController.setConnecting(trigger, false);
+            this._locked = false;
+        }
+    }
 
     private readonly handlePageShow = (event: PageTransitionEvent): void =>
     {
