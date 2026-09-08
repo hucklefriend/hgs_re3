@@ -22,7 +22,7 @@
                      alt="アバター"
                      class="w-20 h-20 rounded-full object-cover">
                 <div class="flex flex-col gap-2">
-                    <label class="btn btn-sm btn-outline cursor-pointer">
+                    <label class="avatar-file-trigger btn btn-sm btn-outline cursor-pointer">
                         画像を選択
                         <input type="file" id="avatar-file-input" accept="image/jpeg,image/png,image/gif,image/webp" class="hidden">
                     </label>
@@ -87,4 +87,3 @@
     </section>
 
 @endsection
-

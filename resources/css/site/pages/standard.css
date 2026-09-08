@@ -259,6 +259,12 @@
     text-shadow: none;
 }
 
+.site-standard-page .avatar-file-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 :is(.site-page--user-my-node-following, .site-page--user-my-node-followers, .site-page--user-my-node-muting, .site-page--user-my-node-blocking) #current-node > .following-user-list {
     inline-size: 100%;
     margin-block-start: var(--site-grid-row-size);
