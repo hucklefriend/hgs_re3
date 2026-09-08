@@ -95,5 +95,6 @@ php artisan view:cache
 npm run test:e2e
 ```
 
-Playwrightは固定秒数の `waitForTimeout` を避け、`[data-public-app][data-page-ready="true"]`、URL、対象要素の表示、APIレスポンスなど意味のある完了条件を待つ。公開画面の変更時はデスクトップ、モバイル、低減モーション、JavaScript無効時の主要導線と、`/admin/login` の非影響を確認する。
+公開画面のデザイン、レイアウト、余白、配置、レスポンシブ表示を変更した場合は、完了前にPlaywrightのChromiumで対象画面と対象状態を実際に表示し、スクリーンショットを撮影して目視確認する。変更の意図に応じてデスクトップとモバイルの両方を確認し、配置精度や隙間が問題になる箇所では、要素の実寸や算出スタイルも測定する。`npm run build`の成功だけを実表示確認の代替にしない。
 
+Playwrightは固定秒数の `waitForTimeout` を避け、`[data-public-app][data-page-ready="true"]`、URL、対象要素の表示、APIレスポンスなど意味のある完了条件を待つ。公開画面の変更時はデスクトップ、モバイル、低減モーション、JavaScript無効時の主要導線と、`/admin/login` の非影響を確認する。
