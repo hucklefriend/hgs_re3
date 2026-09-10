@@ -54,7 +54,7 @@
                     <div class="my-fear-card__comment" data-grid-block><p>{{ $log->comment }}</p></div>
                 @endif
                 <footer class="my-fear-card__footer" data-grid-block>
-                    <a class="my-fear-card__edit has-site-connection-terminal" href="{{ route('User.FearMeter.Form', ['titleKey' => $fm->gameTitle->key, 'from' => 'fear-meter-list']) }}" aria-label="{{ $fm->gameTitle->name }}の怖さメーターを編集"><span class="site-connection-label">怖さメーターを編集<x-site.connection-terminal /></span></a>
+                    <a class="my-fear-card__edit has-site-connection-terminal" href="{{ route('User.FearMeter.Form', ['titleKey' => $fm->gameTitle->key, 'from' => 'fear-meter-list']) }}" aria-label="{{ $fm->gameTitle->name }}の怖さメーターを編集"><span class="site-connection-label">編集する<x-site.connection-terminal /></span></a>
                 </footer>
             </section>
         @endforeach

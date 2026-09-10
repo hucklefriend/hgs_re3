@@ -909,17 +909,22 @@
     box-shadow: inset 0 0 0 1px var(--site-color-line);
 }
 
-.site-standard-page .my-fear-card__header {
+.site-standard-page .my-fear-card__header,
+.site-standard-page .my-review-card__header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: calc(var(--site-grid-row-size) / 2);
+}
+
+.site-standard-page .my-fear-card__header {
     min-block-size: calc(var(--site-grid-row-size) * 2);
     padding: calc(var(--site-grid-row-size) / 2);
     box-shadow: inset 0 -1px var(--site-color-line);
 }
 
-.site-standard-page .my-fear-card__header h2 {
+.site-standard-page .my-fear-card__header h2,
+.site-standard-page .my-review-card__header h2 {
     margin: 0;
     color: var(--site-color-text);
     font-size: clamp(16px, 2vw, 22px);
@@ -929,7 +934,7 @@
 }
 
 .site-standard-page .my-fear-card__header a,
-.site-standard-page .my-fear-card__edit {
+.site-standard-page .my-review-card__header a {
     display: flex;
     align-items: center;
     min-block-size: 44px;
@@ -999,27 +1004,25 @@
     overflow-wrap: anywhere;
 }
 
-.site-standard-page .my-fear-card__edit {
-    min-block-size: var(--site-grid-row-size);
-}
-
 .site-standard-page .my-fear-card__footer {
     margin: 0;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     min-block-size: var(--site-grid-row-size);
     padding: 0 calc(var(--site-grid-row-size) / 2);
     box-shadow: inset 0 1px var(--site-color-line);
 }
 
 @media (max-width: 767px) {
-    .site-standard-page .my-fear-card__header {
+    .site-standard-page .my-fear-card__header,
+    .site-standard-page .my-review-card__header {
         grid-template-columns: minmax(0, 1fr);
         gap: 0;
     }
 
-    .site-standard-page .my-fear-card__header a {
+    .site-standard-page .my-fear-card__header a,
+    .site-standard-page .my-review-card__header a {
         justify-self: end;
     }
 
@@ -1030,6 +1033,91 @@
 
 @media (max-width: 639px) {
     .site-standard-page .my-fear-list {
+        padding-inline: 0;
+    }
+}
+
+/* レビューの区切り線も背景グリッドへ揃える。 */
+.site-standard-page .my-review-list {
+    gap: var(--site-grid-row-size);
+    padding: var(--site-grid-row-size) var(--site-grid-cell-width);
+    margin-block-start: var(--site-list-grid-offset, 0px);
+}
+
+.site-standard-page .my-review-card {
+    background: rgba(4, 14, 8, 0.64);
+    box-shadow: inset 0 0 0 1px var(--site-color-line);
+}
+
+.site-standard-page .my-review-card__heading-block,
+.site-standard-page .my-review-card__content {
+    padding: calc(var(--site-grid-row-size) / 2);
+}
+
+.site-standard-page .my-review-card__heading-block {
+    min-block-size: calc(var(--site-grid-row-size) * 2);
+    box-shadow: inset 0 -1px var(--site-color-line);
+}
+
+/* マイレビュー：状態、評価、本文、管理操作の順にまとめる。 */
+.site-standard-page .my-review-card__status {
+    margin-block-end: calc(var(--site-grid-row-size) / 4);
+}
+
+.site-standard-page .my-review-card__excerpt {
+    margin-block-start: calc(var(--site-grid-row-size) / 2);
+}
+
+.site-standard-page .my-review-card__excerpt:not(:has(> *)) {
+    display: none;
+}
+
+.site-standard-page .my-review-card__body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    line-height: 1.75;
+}
+
+.site-standard-page .my-review-card__footer {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--site-grid-row-size) / 4);
+    padding: calc(var(--site-grid-row-size) / 4) calc(var(--site-grid-row-size) / 2);
+    box-shadow: inset 0 1px var(--site-color-line);
+    font-size: 12px;
+}
+
+.site-standard-page .my-review-card__footer time {
+    color: var(--site-color-text-meta);
+}
+
+.site-standard-page .my-review-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--site-grid-row-size) / 2);
+}
+
+.site-standard-page .my-review-card__actions a,
+.site-standard-page .my-fear-card__edit {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    font-size: 12px;
+}
+
+.site-standard-page .my-review-card__edit,
+.site-standard-page .my-fear-card__edit {
+    color: var(--site-color-signal);
+    font-weight: 600;
+}
+
+@media (max-width: 639px) {
+    .site-standard-page .my-review-list {
         padding-inline: 0;
     }
 }
